@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.1.3",
+    "version":  "1.1.4",
     "last_updated":  "2026-04-24",
     "disclaimer":  "Ranges are Nash/GTO approximations for study purposes. Verify with professional solvers (GTO Wizard, PioSolver) for critical decisions.",
     "position_notes":  {
@@ -38656,25 +38656,25 @@
                                  "stack":  10,
                                  "position":  "BB",
                                  "action":  "vs_shove_btn",
-                                 "notes":  "BB calls BTN 10BB shove ~30%",
+                                 "notes":  "BB 10BB vs BTN 45% shove: call ~36% (all aces, broad SC)",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call"
                                                    ],
-                                 "target_percentage":  13.6,
-                                 "hand_count":  23,
+                                 "target_percentage":  36.7,
+                                 "hand_count":  62,
                                  "hands":  {
                                                "22":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "33":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "44":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "55":  {
                                                           "call":  1,
@@ -38741,28 +38741,28 @@
                                                            "fold":  0
                                                        },
                                                "A7s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A5s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A4s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A3s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A2s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KQs":  {
                                                            "call":  1,
@@ -38773,28 +38773,28 @@
                                                            "fold":  0
                                                        },
                                                "KTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K8s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K7s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K6s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K5s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K4s":  {
                                                            "call":  0,
@@ -38809,16 +38809,16 @@
                                                            "fold":  1
                                                        },
                                                "QJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q8s":  {
                                                            "call":  0,
@@ -38849,12 +38849,12 @@
                                                            "fold":  1
                                                        },
                                                "JTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J8s":  {
                                                            "call":  0,
@@ -38885,12 +38885,12 @@
                                                            "fold":  1
                                                        },
                                                "T9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "T8s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "T7s":  {
                                                            "call":  0,
@@ -38917,8 +38917,8 @@
                                                            "fold":  1
                                                        },
                                                "98s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "97s":  {
                                                            "call":  0,
@@ -38945,8 +38945,8 @@
                                                            "fold":  1
                                                        },
                                                "87s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "86s":  {
                                                            "call":  0,
@@ -38969,8 +38969,8 @@
                                                            "fold":  1
                                                        },
                                                "76s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "75s":  {
                                                            "call":  0,
@@ -39045,52 +39045,52 @@
                                                            "fold":  0
                                                        },
                                                "A9o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A8o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A7o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A5o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A4o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A3o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A2o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KQo":  {
                                                            "call":  1,
                                                            "fold":  0
                                                        },
                                                "KJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KTo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K9o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K8o":  {
                                                            "call":  0,
@@ -39121,12 +39121,12 @@
                                                            "fold":  1
                                                        },
                                                "QJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q9o":  {
                                                            "call":  0,
@@ -39161,8 +39161,8 @@
                                                            "fold":  1
                                                        },
                                                "JTo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J9o":  {
                                                            "call":  0,
@@ -39346,17 +39346,17 @@
                                 "stack":  10,
                                 "position":  "BB",
                                 "action":  "vs_shove_sb",
-                                "notes":  "BB calls SB 10BB shove ~35%",
+                                "notes":  "BB 10BB vs SB 48% shove: call ~41% (all aces + Kx suited)",
                                 "valid_actions":  [
                                                       "fold",
                                                       "call"
                                                   ],
-                                "target_percentage":  16.6,
-                                "hand_count":  28,
+                                "target_percentage":  40.8,
+                                "hand_count":  69,
                                 "hands":  {
                                               "22":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "33":  {
                                                          "call":  1,
@@ -39435,24 +39435,24 @@
                                                           "fold":  0
                                                       },
                                               "A6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KQs":  {
                                                           "call":  1,
@@ -39467,56 +39467,56 @@
                                                           "fold":  0
                                                       },
                                               "K9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QJs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q6s":  {
                                                           "call":  0,
@@ -39539,16 +39539,16 @@
                                                           "fold":  1
                                                       },
                                               "JTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J7s":  {
                                                           "call":  0,
@@ -39575,12 +39575,12 @@
                                                           "fold":  1
                                                       },
                                               "T9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T7s":  {
                                                           "call":  0,
@@ -39607,8 +39607,8 @@
                                                           "fold":  1
                                                       },
                                               "98s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "97s":  {
                                                           "call":  0,
@@ -39635,8 +39635,8 @@
                                                           "fold":  1
                                                       },
                                               "87s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "86s":  {
                                                           "call":  0,
@@ -39739,56 +39739,56 @@
                                                           "fold":  0
                                                       },
                                               "A8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A7o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A6o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A5o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A4o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A3o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A2o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KQo":  {
                                                           "call":  1,
                                                           "fold":  0
                                                       },
                                               "KJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K7o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K6o":  {
                                                           "call":  0,
@@ -39811,12 +39811,12 @@
                                                           "fold":  1
                                                       },
                                               "QJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q9o":  {
                                                           "call":  0,
@@ -39851,8 +39851,8 @@
                                                           "fold":  1
                                                       },
                                               "JTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9o":  {
                                                           "call":  0,
@@ -40036,33 +40036,33 @@
                                  "stack":  15,
                                  "position":  "BB",
                                  "action":  "vs_shove_btn",
-                                 "notes":  "BB calls BTN 15BB shove ~20%",
+                                 "notes":  "BB 15BB vs BTN 38% shove: call ~30%",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call"
                                                    ],
-                                 "target_percentage":  8.3,
-                                 "hand_count":  14,
+                                 "target_percentage":  30.2,
+                                 "hand_count":  51,
                                  "hands":  {
                                                "22":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "33":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "44":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "55":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "66":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "77":  {
                                                           "call":  1,
@@ -40109,64 +40109,64 @@
                                                            "fold":  0
                                                        },
                                                "ATs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A8s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A7s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A5s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A4s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A3s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A2s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KQs":  {
                                                            "call":  1,
                                                            "fold":  0
                                                        },
                                                "KJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K8s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K7s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K6s":  {
                                                            "call":  0,
@@ -40189,16 +40189,16 @@
                                                            "fold":  1
                                                        },
                                                "QJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q8s":  {
                                                            "call":  0,
@@ -40229,12 +40229,12 @@
                                                            "fold":  1
                                                        },
                                                "JTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J8s":  {
                                                            "call":  0,
@@ -40265,8 +40265,8 @@
                                                            "fold":  1
                                                        },
                                                "T9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "T8s":  {
                                                            "call":  0,
@@ -40297,8 +40297,8 @@
                                                            "fold":  1
                                                        },
                                                "98s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "97s":  {
                                                            "call":  0,
@@ -40417,32 +40417,32 @@
                                                            "fold":  0
                                                        },
                                                "AJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "ATo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A9o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A8o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A7o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A5o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A4o":  {
                                                            "call":  0,
@@ -40457,16 +40457,16 @@
                                                            "fold":  1
                                                        },
                                                "KQo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KTo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K9o":  {
                                                            "call":  0,
@@ -40501,8 +40501,8 @@
                                                            "fold":  1
                                                        },
                                                "QJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTo":  {
                                                            "call":  0,
@@ -40726,25 +40726,25 @@
                                 "stack":  15,
                                 "position":  "BB",
                                 "action":  "vs_shove_sb",
-                                "notes":  "BB calls SB 15BB shove ~25%",
+                                "notes":  "BB 15BB vs SB 42% shove: call ~32%",
                                 "valid_actions":  [
                                                       "fold",
                                                       "call"
                                                   ],
-                                "target_percentage":  10.7,
-                                "hand_count":  18,
+                                "target_percentage":  32,
+                                "hand_count":  54,
                                 "hands":  {
                                               "22":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "33":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "44":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "55":  {
                                                          "call":  1,
@@ -40803,68 +40803,68 @@
                                                           "fold":  0
                                                       },
                                               "A9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KQs":  {
                                                           "call":  1,
                                                           "fold":  0
                                                       },
                                               "KJs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K4s":  {
                                                           "call":  0,
@@ -40879,20 +40879,20 @@
                                                           "fold":  1
                                                       },
                                               "QJs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q7s":  {
                                                           "call":  0,
@@ -40919,12 +40919,12 @@
                                                           "fold":  1
                                                       },
                                               "JTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J8s":  {
                                                           "call":  0,
@@ -40955,8 +40955,8 @@
                                                           "fold":  1
                                                       },
                                               "T9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T8s":  {
                                                           "call":  0,
@@ -40987,8 +40987,8 @@
                                                           "fold":  1
                                                       },
                                               "98s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "97s":  {
                                                           "call":  0,
@@ -41111,20 +41111,20 @@
                                                           "fold":  0
                                                       },
                                               "ATo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A7o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A6o":  {
                                                           "call":  0,
@@ -41147,20 +41147,20 @@
                                                           "fold":  1
                                                       },
                                               "KQo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K8o":  {
                                                           "call":  0,
@@ -41191,8 +41191,8 @@
                                                           "fold":  1
                                                       },
                                               "QJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTo":  {
                                                           "call":  0,
@@ -41231,8 +41231,8 @@
                                                           "fold":  1
                                                       },
                                               "JTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9o":  {
                                                           "call":  0,
@@ -41416,41 +41416,41 @@
                                  "stack":  20,
                                  "position":  "BB",
                                  "action":  "vs_shove_btn",
-                                 "notes":  "BB calls BTN 20BB shove ~15%",
+                                 "notes":  "BB 20BB vs BTN 36% shove: call ~25%",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call"
                                                    ],
-                                 "target_percentage":  5.3,
-                                 "hand_count":  9,
+                                 "target_percentage":  24.9,
+                                 "hand_count":  42,
                                  "hands":  {
                                                "22":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "33":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "44":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "55":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "66":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "77":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "88":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                                "99":  {
                                                           "call":  1,
@@ -41485,60 +41485,60 @@
                                                            "fold":  0
                                                        },
                                                "AJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "ATs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A8s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A7s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A5s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A4s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A3s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A2s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KQs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K9s":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "K8s":  {
                                                            "call":  0,
@@ -41569,12 +41569,12 @@
                                                            "fold":  1
                                                        },
                                                "QJs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "Q9s":  {
                                                            "call":  0,
@@ -41609,8 +41609,8 @@
                                                            "fold":  1
                                                        },
                                                "JTs":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "J9s":  {
                                                            "call":  0,
@@ -41793,28 +41793,28 @@
                                                            "fold":  0
                                                        },
                                                "AQo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "AJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "ATo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A9o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A8o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A7o":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "A6o":  {
                                                            "call":  0,
@@ -41837,12 +41837,12 @@
                                                            "fold":  1
                                                        },
                                                "KQo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "KTo":  {
                                                            "call":  0,
@@ -41881,8 +41881,8 @@
                                                            "fold":  1
                                                        },
                                                "QJo":  {
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "call":  1,
+                                                           "fold":  0
                                                        },
                                                "QTo":  {
                                                            "call":  0,
@@ -42106,37 +42106,37 @@
                                 "stack":  20,
                                 "position":  "BB",
                                 "action":  "vs_shove_sb",
-                                "notes":  "BB calls SB 20BB shove ~18%",
+                                "notes":  "BB 20BB vs SB 38% shove: call ~29%",
                                 "valid_actions":  [
                                                       "fold",
                                                       "call"
                                                   ],
-                                "target_percentage":  7.1,
-                                "hand_count":  12,
+                                "target_percentage":  29,
+                                "hand_count":  49,
                                 "hands":  {
                                               "22":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "33":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "44":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "55":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "66":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "77":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                               "88":  {
                                                          "call":  1,
@@ -42179,64 +42179,64 @@
                                                           "fold":  0
                                                       },
                                               "ATs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KQs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KJs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K6s":  {
                                                           "call":  0,
@@ -42259,16 +42259,16 @@
                                                           "fold":  1
                                                       },
                                               "QJs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q8s":  {
                                                           "call":  0,
@@ -42299,12 +42299,12 @@
                                                           "fold":  1
                                                       },
                                               "JTs":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J8s":  {
                                                           "call":  0,
@@ -42335,8 +42335,8 @@
                                                           "fold":  1
                                                       },
                                               "T9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T8s":  {
                                                           "call":  0,
@@ -42487,32 +42487,32 @@
                                                           "fold":  0
                                                       },
                                               "AJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "ATo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A7o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A6o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A5o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "A4o":  {
                                                           "call":  0,
@@ -42527,12 +42527,12 @@
                                                           "fold":  1
                                                       },
                                               "KQo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "KTo":  {
                                                           "call":  0,
@@ -42571,8 +42571,8 @@
                                                           "fold":  1
                                                       },
                                               "QJo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QTo":  {
                                                           "call":  0,
@@ -42796,13 +42796,13 @@
                                 "stack":  5,
                                 "position":  "BB",
                                 "action":  "vs_shove_btn",
-                                "notes":  "BB calls BTN 5BB shove ~50%",
+                                "notes":  "BB 5BB vs BTN 50%+ shove: call ~58% (huge pot odds)",
                                 "valid_actions":  [
                                                       "fold",
                                                       "call"
                                                   ],
-                                "target_percentage":  30.2,
-                                "hand_count":  51,
+                                "target_percentage":  57.4,
+                                "hand_count":  97,
                                 "hands":  {
                                               "22":  {
                                                          "call":  1,
@@ -42929,24 +42929,24 @@
                                                           "fold":  0
                                                       },
                                               "K6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "QJs":  {
                                                           "call":  1,
@@ -42957,64 +42957,64 @@
                                                           "fold":  0
                                                       },
                                               "Q9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q3s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q2s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "JTs":  {
                                                           "call":  1,
                                                           "fold":  0
                                                       },
                                               "J9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J5s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J4s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J3s":  {
                                                           "call":  0,
@@ -43025,20 +43025,20 @@
                                                           "fold":  1
                                                       },
                                               "T9s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T8s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T7s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T6s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T5s":  {
                                                           "call":  0,
@@ -43057,20 +43057,20 @@
                                                           "fold":  1
                                                       },
                                               "98s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "97s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "96s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "95s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "94s":  {
                                                           "call":  0,
@@ -43085,16 +43085,16 @@
                                                           "fold":  1
                                                       },
                                               "87s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "86s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "85s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "84s":  {
                                                           "call":  0,
@@ -43109,16 +43109,16 @@
                                                           "fold":  1
                                                       },
                                               "76s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "75s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "74s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "73s":  {
                                                           "call":  0,
@@ -43129,12 +43129,12 @@
                                                           "fold":  1
                                                       },
                                               "65s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "64s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "63s":  {
                                                           "call":  0,
@@ -43145,8 +43145,8 @@
                                                           "fold":  1
                                                       },
                                               "54s":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "53s":  {
                                                           "call":  0,
@@ -43233,16 +43233,16 @@
                                                           "fold":  0
                                                       },
                                               "K8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K7o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K6o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "K5o":  {
                                                           "call":  0,
@@ -43265,16 +43265,16 @@
                                                           "fold":  0
                                                       },
                                               "QTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q8o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "Q7o":  {
                                                           "call":  0,
@@ -43301,12 +43301,12 @@
                                                           "fold":  1
                                                       },
                                               "JTo":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "J8o":  {
                                                           "call":  0,
@@ -43337,8 +43337,8 @@
                                                           "fold":  1
                                                       },
                                               "T9o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "T8o":  {
                                                           "call":  0,
@@ -43369,8 +43369,8 @@
                                                           "fold":  1
                                                       },
                                               "98o":  {
-                                                          "call":  0,
-                                                          "fold":  1
+                                                          "call":  1,
+                                                          "fold":  0
                                                       },
                                               "97o":  {
                                                           "call":  0,
@@ -43486,13 +43486,13 @@
                                "stack":  5,
                                "position":  "BB",
                                "action":  "vs_shove_sb",
-                               "notes":  "BB calls SB 5BB shove ~55%",
+                               "notes":  "BB 5BB vs SB 58% shove: call ~62%",
                                "valid_actions":  [
                                                      "fold",
                                                      "call"
                                                  ],
-                               "target_percentage":  34.3,
-                               "hand_count":  58,
+                               "target_percentage":  59.8,
+                               "hand_count":  101,
                                "hands":  {
                                              "22":  {
                                                         "call":  1,
@@ -43627,16 +43627,16 @@
                                                          "fold":  0
                                                      },
                                              "K4s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K3s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K2s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "QJs":  {
                                                          "call":  1,
@@ -43651,28 +43651,28 @@
                                                          "fold":  0
                                                      },
                                              "Q8s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q7s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q6s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q5s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q4s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q3s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q2s":  {
                                                          "call":  0,
@@ -43687,20 +43687,20 @@
                                                          "fold":  0
                                                      },
                                              "J8s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J7s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J6s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J5s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J4s":  {
                                                          "call":  0,
@@ -43719,16 +43719,16 @@
                                                          "fold":  0
                                                      },
                                              "T8s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "T7s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "T6s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "T5s":  {
                                                          "call":  0,
@@ -43747,20 +43747,20 @@
                                                          "fold":  1
                                                      },
                                              "98s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "97s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "96s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "95s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "94s":  {
                                                          "call":  0,
@@ -43775,16 +43775,16 @@
                                                          "fold":  1
                                                      },
                                              "87s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "86s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "85s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "84s":  {
                                                          "call":  0,
@@ -43799,16 +43799,16 @@
                                                          "fold":  1
                                                      },
                                              "76s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "75s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "74s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "73s":  {
                                                          "call":  0,
@@ -43819,12 +43819,12 @@
                                                          "fold":  1
                                                      },
                                              "65s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "64s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "63s":  {
                                                          "call":  0,
@@ -43835,8 +43835,8 @@
                                                          "fold":  1
                                                      },
                                              "54s":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "53s":  {
                                                          "call":  0,
@@ -43927,20 +43927,20 @@
                                                          "fold":  0
                                                      },
                                              "K7o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K6o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K5o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K4o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "K3o":  {
                                                          "call":  0,
@@ -43955,20 +43955,20 @@
                                                          "fold":  0
                                                      },
                                              "QTo":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q9o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q8o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q7o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "Q6o":  {
                                                          "call":  0,
@@ -43995,12 +43995,12 @@
                                                          "fold":  0
                                                      },
                                              "J9o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J8o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "J7o":  {
                                                          "call":  0,
@@ -44027,12 +44027,12 @@
                                                          "fold":  1
                                                      },
                                              "T9o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "T8o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "T7o":  {
                                                          "call":  0,
@@ -44059,12 +44059,12 @@
                                                          "fold":  1
                                                      },
                                              "98o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "97o":  {
-                                                         "call":  0,
-                                                         "fold":  1
+                                                         "call":  1,
+                                                         "fold":  0
                                                      },
                                              "96o":  {
                                                          "call":  0,

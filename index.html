@@ -1440,6 +1440,13 @@ function makeCard(rank, suit) {
 
 function getActionButtons(stack, action, pos) {
   const isShort = stack <= 20;
+  // Normalize specific variants to their generic category so button logic matches.
+  // vs_shove_btn / vs_shove_sb  → vs_shove   (CALL / FOLD only — villain is all-in)
+  // vs_raise_btn / vs_raise_co / vs_raise_sb → vs_raise (CALL / FOLD / 3-BET)
+  let a = action;
+  if (a && a.startsWith('vs_shove')) a = 'vs_shove';
+  else if (a && a.startsWith('vs_raise')) a = 'vs_raise';
+  action = a;
   if (action === 'RFI') {
     if (isShort) {
       return [
