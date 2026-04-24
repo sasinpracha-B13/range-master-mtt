@@ -2026,19 +2026,47 @@ function renderBrowse() {
     return;
   }
   const ranges = App.state.ranges;
-  const stacks = [...new Set(Object.values(ranges).map(r => r.stack))].sort((a,b) => a-b);
-  const positions = [...new Set(Object.values(ranges).map(r => r.position))];
-  const actions = [...new Set(Object.values(ranges).map(r => r.action))];
 
-  if (!browseFilters.stack) browseFilters.stack = String(stacks[0] || 40);
-  if (!browseFilters.pos) browseFilters.pos = positions.includes('BTN') ? 'BTN' : positions[0];
-  if (!browseFilters.action) browseFilters.action = actions.includes('RFI') ? 'RFI' : actions[0];
+  // Filter out metadata keys — only keep objects that have a numeric .stack property
+  const scenarios = Object.values(ranges).filter(r => r && typeof r === 'object' && typeof r.stack === 'number');
+
+  // Build filter options with canonical ordering (no undefined leaking in)
+  const stacks = [...new Set(scenarios.map(r => r.stack))].sort((a, b) => a - b);
+  const POSITION_ORDER = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
+  const ACTION_ORDER   = ['RFI','vs_raise','vs_3bet','vs_shove'];
+  const positions = POSITION_ORDER.filter(p => scenarios.some(r => r.position === p));
+  const actions   = ACTION_ORDER.filter(a => scenarios.some(r => r.action === a));
+
+  // Set defaults only when empty or stale (guard against "undefined" string from old bugs)
+  if (!browseFilters.stack || !stacks.map(String).includes(browseFilters.stack)) {
+    browseFilters.stack = String(stacks.includes(40) ? 40 : stacks[0]);
+  }
+  if (!browseFilters.pos || !positions.includes(browseFilters.pos)) {
+    browseFilters.pos = positions.includes('BTN') ? 'BTN' : positions[0];
+  }
+  if (!browseFilters.action || !actions.includes(browseFilters.action)) {
+    browseFilters.action = actions.includes('RFI') ? 'RFI' : actions[0];
+  }
+
+  console.log('[DEBUG Browse] Filters:', JSON.stringify(browseFilters));
 
   const scenarioKey = Object.keys(ranges).find(k => {
     const s = ranges[k];
-    return String(s.stack) === browseFilters.stack && s.position === browseFilters.pos && s.action === browseFilters.action;
+    return typeof s === 'object' && s !== null &&
+           String(s.stack) === browseFilters.stack &&
+           s.position === browseFilters.pos &&
+           s.action   === browseFilters.action;
   });
   const scenario = scenarioKey ? ranges[scenarioKey] : null;
+
+  console.log('[DEBUG Browse] scenarioKey:', scenarioKey || 'NOT FOUND', '| has data:', !!scenario);
+
+  const noDataMsg = `
+    <div class="empty-state">
+      <div class="icon">📭</div>
+      <p>No data for <strong>${browseFilters.stack}BB ${browseFilters.pos} ${formatActionName(browseFilters.action)}</strong></p>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Try a different filter combination</p>
+    </div>`;
 
   document.getElementById('browseContent').innerHTML = `
     <div class="browse-filters">
@@ -2059,7 +2087,7 @@ function renderBrowse() {
       </div>
     </div>
 
-    ${scenario ? renderHandGrid(scenario, scenarioKey) : '<div class="empty-state"><div class="icon">📭</div><p>No data for this scenario. Try different filters.</p></div>'}
+    ${scenario ? renderHandGrid(scenario, scenarioKey) : noDataMsg}
 
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> 100% aggressive</div>
@@ -2113,15 +2141,15 @@ function getGridCellClass(freqs) {
   if (!freqs) return 'c-gray';
   const aggr = (freqs.raise || 0) + (freqs.shove || 0) + (freqs.threebet || 0) + (freqs.fourbet || 0) + (freqs.call || 0) * 0.5;
   const fold = freqs.fold || 0;
-  if (aggr >= 0.99) return 'c-darkgreen';
-  if (aggr >= 0.7) return 'c-lightgreen';
-  if (aggr >= 0.4 && fold < 0.6) return 'c-yellow';
-  if (fold >= 0.7) return 'c-lightred';
-  if (fold >= 0.99) return 'c-darkred';
-  return 'c-yellow';
+  if (aggr >= 0.99) return 'c-darkgreen';  // ~100% aggressive
+  if (aggr >= 0.7)  return 'c-lightgreen'; // >70% aggressive
+  if (fold >= 0.99) return 'c-darkred';    // ~100% fold (MUST be before fold>=0.7)
+  if (fold >= 0.7)  return 'c-lightred';   // >70% fold
+  return 'c-yellow';                        // mixed
 }
 
 function updateBrowseFilter(type, value) {
+  console.log('[DEBUG Browse] Filter changed:', type, '=', value);
   browseFilters[type] = value;
   renderBrowse();
 }
