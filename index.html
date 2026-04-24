@@ -829,6 +829,13 @@
           </div>
           <div class="mode-card-meta">20 hands · SRS-prioritized weak spots</div>
         </div>
+        <div class="mode-card" data-mode="marginal" onclick="selectMode('marginal')">
+          <div class="mode-card-header">
+            <span style="font-size:20px">🔥</span>
+            <span class="mode-card-title">Marginal Focus</span>
+          </div>
+          <div class="mode-card-meta">20 hands · High-leverage mixed-frequency decisions only</div>
+        </div>
       </div>
 
       <span class="filter-label">Stack Depth</span>
@@ -1322,7 +1329,7 @@ function startDrill() {
   d.startTime = Date.now();
   d.currentIndex = 0;
 
-  const handCount = { quick: 15, deep: 30, weakness: 20 }[d.mode] || 15;
+  const handCount = { quick: 15, deep: 30, weakness: 20, marginal: 20 }[d.mode] || 15;
   d.queue = buildDrillQueue(handCount);
 
   if (d.queue.length === 0) {
@@ -1363,6 +1370,32 @@ function buildDrillQueue(count) {
   });
 
   if (candidates.length === 0) return [];
+
+  // Marginal focus: weighted sampling biased toward mixed-frequency hands (max<0.7)
+  if (d.mode === 'marginal') {
+    const weighted = candidates.map(c => {
+      const maxFreq = Math.max(0, ...Object.values(c.freqs || {}));
+      const isMarginal = maxFreq < 0.7;
+      return { ...c, _weight: isMarginal ? 10 : 3, _isMarginal: isMarginal };
+    });
+    const picked = [];
+    const pool = weighted.slice();
+    const n = Math.min(count, pool.length);
+    for (let i = 0; i < n; i++) {
+      let totalWeight = 0;
+      for (const c of pool) totalWeight += c._weight;
+      if (totalWeight <= 0) break;
+      let r = Math.random() * totalWeight;
+      let idx = 0;
+      for (let j = 0; j < pool.length; j++) {
+        r -= pool[j]._weight;
+        if (r <= 0) { idx = j; break; }
+      }
+      picked.push(pool[idx]);
+      pool.splice(idx, 1);
+    }
+    return picked;
+  }
 
   // Weakness focus: sort by SRS due + low accuracy
   if (d.mode === 'weakness') {
@@ -1801,6 +1834,22 @@ function showDrillComplete() {
   App.state.streaks.current = d.streak;
   App.saveProgress();
 
+  // v1.4.0: lightweight session log for Data Export + Marginal Accuracy metric.
+  logDrillSession({
+    mode: d.mode,
+    handCount: total,
+    accuracy: pct,
+    purePct,
+    mixPct,
+    pureCorrect, mixCorrect, partial, wrong,
+    elapsedMin: elapsed,
+    filters: {
+      stacks: d.stackFilter.slice(),
+      positions: d.posFilter.slice(),
+      action: d.actionFilter
+    }
+  });
+
   const realMistakes = d.answers.filter(a => a.result === 'wrong');
   const mixReminders = d.answers.filter(a => a.result === 'partial');
 
@@ -2000,6 +2049,32 @@ function updateDailyStats(score) {
 }
 
 // ============================================================
+// DRILL SESSION LOG (v1.4.0)
+// ============================================================
+// Lightweight per-session record used by Data Export and the Marginal
+// Accuracy metric on the Progress tab. Capped at 500 entries.
+function logDrillSession(entry) {
+  try {
+    const key = 'drillSessions';
+    let sessions = [];
+    const raw = localStorage.getItem(key);
+    if (raw) { try { sessions = JSON.parse(raw) || []; } catch (e) { sessions = []; } }
+    sessions.push(Object.assign({ timestamp: Date.now(), date: new Date().toISOString().split('T')[0] }, entry));
+    if (sessions.length > 500) sessions = sessions.slice(-500);
+    localStorage.setItem(key, JSON.stringify(sessions));
+  } catch (e) {
+    console.warn('logDrillSession failed:', e);
+  }
+}
+
+function getDrillSessions() {
+  try {
+    const raw = localStorage.getItem('drillSessions');
+    return raw ? (JSON.parse(raw) || []) : [];
+  } catch (e) { return []; }
+}
+
+// ============================================================
 // REASONING TEXT
 // ============================================================
 function getReasoningText(q) {
@@ -2056,6 +2131,7 @@ function renderProgress() {
   const weekHands = getWeekHands();
   const weekAcc = getWeekAccuracy();
   const pm = getPureMixAccuracy();
+  const marginal = getMarginalSessionStats();
 
   // Scenario accuracy
   const scenarios = computeScenarioAccuracy();
@@ -2103,6 +2179,16 @@ function renderProgress() {
           <div style="font-size:12px;color:var(--text-secondary)">${pm.mixAttempts} attempt${pm.mixAttempts===1?'':'s'}</div>
         </div>
       </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔥 Marginal Accuracy</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Marginal Focus sessions drill high-leverage mixed-frequency decisions. Improving here is where you buy the most EV.</div>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <div style="font-size:28px;font-weight:700;color:${marginal.sessions === 0 ? 'var(--text-secondary)' : 'var(--warning)'}">${marginal.sessions === 0 ? '—' : marginal.avgAcc + '%'}</div>
+        <div style="font-size:13px;color:var(--text-secondary)">${marginal.sessions} session${marginal.sessions===1?'':'s'}${marginal.sessions > 0 ? ' · ' + marginal.totalHands + ' hands' : ''}</div>
+      </div>
+      ${marginal.sessions === 0 ? '<div style="font-size:12px;color:var(--text-secondary);margin-top:8px">Try the 🔥 Marginal Focus mode in the Drill tab to start building this metric.</div>' : ''}
     </div>
 
     ${due > 0 ? `
@@ -2192,6 +2278,25 @@ function getPureMixAccuracy() {
     pureAttempts: pureA, mixAttempts: mixA,
     pureAcc: pureA > 0 ? Math.round(purePts / pureA * 100) : 0,
     mixAcc:  mixA  > 0 ? Math.round(mixPts  / mixA  * 100) : 0
+  };
+}
+
+// v1.4.0: Aggregate accuracy across logged Marginal Focus drill sessions.
+function getMarginalSessionStats() {
+  const sessions = getDrillSessions().filter(s => s.mode === 'marginal');
+  if (sessions.length === 0) {
+    return { sessions: 0, avgAcc: 0, totalHands: 0 };
+  }
+  let totalHands = 0, totalWeightedAcc = 0;
+  sessions.forEach(s => {
+    const h = s.handCount || 0;
+    totalHands += h;
+    totalWeightedAcc += (s.accuracy || 0) * h;
+  });
+  return {
+    sessions: sessions.length,
+    totalHands,
+    avgAcc: totalHands > 0 ? Math.round(totalWeightedAcc / totalHands) : 0
   };
 }
 
@@ -2554,7 +2659,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">Default Drill Mode</div>
       <div class="radio-group">
-        ${[['quick','⚡ Quick'],['deep','🧠 Deep'],['weakness','🎯 Weakness']].map(([v,l]) => `
+        ${[['quick','⚡ Quick'],['deep','🧠 Deep'],['weakness','🎯 Weakness'],['marginal','🔥 Marginal']].map(([v,l]) => `
           <label class="radio-option">
             <input type="radio" name="defaultMode" value="${v}" ${s.defaultMode === v ? 'checked' : ''} onchange="updateSetting('defaultMode', '${v}')">
             ${l}
@@ -2578,8 +2683,24 @@ function renderSettings() {
     </div>
 
     <div class="card">
+      <div class="card-title">📊 Data Export</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px;line-height:1.5">
+        Export your drill history as JSON for external AI analysis (e.g. Claude, ChatGPT). No account data or credentials are included — only scenario performance and answer history.
+      </div>
+      <button class="btn btn-secondary btn-full" style="margin-bottom:8px" onclick="downloadExport()">
+        ⬇️ Download JSON
+      </button>
+      <button class="btn btn-secondary btn-full" style="margin-bottom:8px" onclick="copyExportToClipboard()">
+        📋 Copy to Clipboard
+      </button>
+      <button class="btn btn-secondary btn-full" onclick="copyPromptTemplate()">
+        💬 Copy AI Prompt Template
+      </button>
+    </div>
+
+    <div class="card">
       <button class="btn btn-secondary btn-full" style="margin-bottom:10px" onclick="exportProgress()">
-        📤 Export Progress JSON
+        📤 Export Raw Progress JSON
       </button>
       <button class="btn btn-danger btn-full" onclick="showResetModal()">
         🗑️ Reset All Progress
@@ -2619,6 +2740,155 @@ function exportProgress() {
   a.download = `range-master-progress-${new Date().toISOString().split('T')[0]}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// DATA EXPORT FOR EXTERNAL AI ANALYSIS (v1.4.0)
+// ============================================================
+// Produces a structured JSON dump the user can paste into an external LLM for
+// coaching/analysis. Includes aggregate summary, per-scenario accuracy,
+// per-hand history (last N attempts), and identified weak spots.
+function generateExportData() {
+  const progress = App.state.progress || {};
+  const stats = App.state.stats || {};
+  const sessions = getDrillSessions();
+
+  // ---------- SUMMARY ----------
+  const pm = getPureMixAccuracy();
+  const marginal = getMarginalSessionStats();
+  const totalSessions = sessions.length;
+  const avgSessionAcc = totalSessions > 0
+    ? Math.round(sessions.reduce((s, x) => s + (x.accuracy || 0), 0) / totalSessions)
+    : 0;
+
+  const summary = {
+    totalHandsAnswered: stats.totalHands || 0,
+    totalStudyMinutes: Math.round(stats.totalTime || 0),
+    totalSessions,
+    averageSessionAccuracy: avgSessionAcc,
+    pureHandAccuracy: pm.pureAttempts > 0 ? pm.pureAcc : null,
+    mixHandAwareness: pm.mixAttempts > 0 ? pm.mixAcc : null,
+    pureAttempts: pm.pureAttempts,
+    mixAttempts: pm.mixAttempts,
+    marginalSessions: marginal.sessions,
+    marginalAccuracy: marginal.sessions > 0 ? marginal.avgAcc : null,
+    dailyStreak: (App.state.streaks || {}).daily || 0
+  };
+
+  // ---------- SCENARIO BREAKDOWN ----------
+  const scenarioBreakdown = computeScenarioAccuracy()
+    .sort((a, b) => a.acc - b.acc)
+    .map(s => ({
+      scenario: s.label,
+      key: s.key,
+      attempts: s.attempts,
+      correct: s.correct,
+      accuracy: s.acc
+    }));
+
+  // ---------- HAND HISTORY ----------
+  // For each SRS key, emit a compact record: last 10 attempts + aggregate score.
+  const handHistory = [];
+  Object.entries(progress).forEach(([key, srs]) => {
+    const hist = (srs.history || []);
+    if (hist.length === 0) return;
+    const pts = hist.reduce((s, h) => s + (typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0)), 0);
+    handHistory.push({
+      key,
+      attempts: hist.length,
+      totalPoints: Math.round(pts * 10) / 10,
+      accuracy: Math.round(pts / hist.length * 100),
+      isMixed: hist.some(h => h.pure === false),
+      recent: hist.slice(-10).map(h => ({
+        score: typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0),
+        pure: h.pure !== false
+      })),
+      nextReviewDays: srs.interval_days || 1
+    });
+  });
+  handHistory.sort((a, b) => a.accuracy - b.accuracy);
+
+  // ---------- WEAK SPOTS ----------
+  // Hands with >=3 attempts and <70% accuracy, sorted worst-first.
+  const weakSpots = handHistory
+    .filter(h => h.attempts >= 3 && h.accuracy < 70)
+    .slice(0, 25)
+    .map(h => ({
+      key: h.key,
+      attempts: h.attempts,
+      accuracy: h.accuracy,
+      isMixed: h.isMixed
+    }));
+
+  return {
+    version: '1.4.0',
+    exportDate: new Date().toISOString(),
+    summary,
+    scenarioBreakdown,
+    handHistory: handHistory.slice(0, 200), // cap for size
+    weakSpots,
+    recentSessions: sessions.slice(-30)
+  };
+}
+
+function downloadExport() {
+  const data = generateExportData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `range-master-export-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Export downloaded');
+}
+
+function copyExportToClipboard() {
+  const data = generateExportData();
+  const text = JSON.stringify(data, null, 2);
+  if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    // Fallback: select via hidden textarea
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('✓ JSON copied'); }
+    catch (e) { showToast('⚠️ Copy failed — use Download'); }
+    document.body.removeChild(ta);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(
+    () => showToast('✓ JSON copied to clipboard'),
+    () => showToast('⚠️ Copy failed — use Download')
+  );
+}
+
+function copyPromptTemplate() {
+  const template =
+`I've been using Range Master MTT, a preflop GTO poker study app, and exported my drill history as JSON. Please analyze my performance and give me actionable coaching:
+
+1. Identify my top 3 leaks (specific scenario + hand classes).
+2. Tell me whether I have a pure-hand problem, a mixed-hand problem, or both.
+3. Suggest a study plan for the next week: which scenarios to focus on and in what order.
+4. Call out any patterns (e.g. too tight vs BTN, overfolding BB, etc.).
+
+Here is my export JSON:
+
+[PASTE JSON HERE]`;
+  if (!navigator.clipboard || !navigator.clipboard.writeText) {
+    const ta = document.createElement('textarea');
+    ta.value = template;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('✓ Prompt copied'); }
+    catch (e) { showToast('⚠️ Copy failed'); }
+    document.body.removeChild(ta);
+    return;
+  }
+  navigator.clipboard.writeText(template).then(
+    () => showToast('✓ Prompt template copied'),
+    () => showToast('⚠️ Copy failed')
+  );
 }
 
 function showResetModal() {
