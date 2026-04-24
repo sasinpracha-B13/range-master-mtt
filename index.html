@@ -1477,9 +1477,14 @@ function getBestAction(freqs) {
 function handleAnswer(userAction) {
   const d = App.state.drill;
   const q = d.currentQuestion;
+  console.log('[DEBUG] Answer clicked:', userAction);
+  console.log('[DEBUG] Current hand:', q ? q.hand : 'NULL - no current question!');
+  if (!q) { console.error('[DEBUG] currentQuestion is null — cannot handle answer'); return; }
   const responseTime = Date.now() - d.questionStartTime;
   const correctAction = getBestAction(q.freqs);
+  console.log('[DEBUG] Correct action:', correctAction, '| freqs:', JSON.stringify(q.freqs));
   const isCorrect = userAction === correctAction || isActionEquivalent(userAction, correctAction, q.freqs);
+  console.log('[DEBUG] isCorrect:', isCorrect);
 
   const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
   updateSRS(srsKey, isCorrect);
@@ -1511,14 +1516,17 @@ function handleAnswer(userAction) {
       if (val === correctAction) btn.classList.add('correct-highlight');
       else if (val === userAction && !isCorrect) btn.classList.add('wrong-highlight');
     });
+    console.log('[DEBUG] Quick mode: next hand in 1s');
     setTimeout(() => {
       d.currentIndex++;
       if (d.currentIndex >= d.queue.length) showDrillComplete();
       else renderDrillQuestion();
     }, 1000);
   } else {
+    console.log('[DEBUG] Deep/Weakness mode: showing answer screen');
     renderAnswerScreen(userAction, correctAction, isCorrect, q);
   }
+  console.log('[DEBUG] handleAnswer complete — feedback shown');
 }
 
 function isActionEquivalent(user, correct, freqs) {
@@ -1607,7 +1615,7 @@ function showDrillComplete() {
   // Update total study time
   App.state.stats.totalTime += elapsed;
   App.state.streaks.current = d.streak;
-  App.state.saveProgress();
+  App.saveProgress();
 
   const mistakes = d.answers.filter(a => !a.isCorrect);
 
@@ -1705,7 +1713,7 @@ function updateSRS(key, correct) {
     srs.ease_factor = Math.max(1.3, srs.ease_factor - 0.2);
   }
   srs.next_review = now + srs.interval_days * 86400000;
-  App.state.saveProgress();
+  App.saveProgress();
 }
 
 // ============================================================
@@ -1734,7 +1742,7 @@ function updateDailyStats(isCorrect) {
     }
     App.state.streaks.lastPracticeDate = today;
   }
-  App.state.saveProgress();
+  App.saveProgress();
 }
 
 // ============================================================
@@ -2260,7 +2268,7 @@ function renderSettings() {
 
 function updateSetting(key, value) {
   App.state.settings[key] = value;
-  App.state.saveProgress();
+  App.saveProgress();
 }
 
 function exportProgress() {
