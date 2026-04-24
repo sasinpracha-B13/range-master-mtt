@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.2.0",
+    "version":  "1.2.1",
     "last_updated":  "2026-04-24",
     "disclaimer":  "Ranges are Nash/GTO approximations for study purposes. Verify with professional solvers (GTO Wizard, PioSolver) for critical decisions.",
     "position_notes":  {
@@ -44176,14 +44176,14 @@
                               "stack":  100,
                               "position":  "BTN",
                               "action":  "vs_3bet",
-                              "notes":  "BTN 100BB vs 3bet: pure 4bet KK+/AK, wide flat Broadways+SC, edges mixed",
+                              "notes":  "BTN 100BB vs 3bet: pure 4bet KK+/AK, wide flat, A3s/A2s 4bet bluffs (v1.2.1)",
                               "valid_actions":  [
                                                     "fold",
                                                     "call",
                                                     "fourbet"
                                                 ],
-                              "target_percentage":  14.1,
-                              "hand_count":  24,
+                              "target_percentage":  14.6,
+                              "hand_count":  25,
                               "hands":  {
                                             "22":  {
                                                        "fold":  1,
@@ -44301,14 +44301,14 @@
                                                         "fourbet":  0.4
                                                     },
                                             "A3s":  {
-                                                        "fold":  1,
+                                                        "fold":  0.6,
                                                         "call":  0,
-                                                        "fourbet":  0
+                                                        "fourbet":  0.4
                                                     },
                                             "A2s":  {
-                                                        "fold":  1,
+                                                        "fold":  0.7,
                                                         "call":  0,
-                                                        "fourbet":  0
+                                                        "fourbet":  0.3
                                                     },
                                             "KQs":  {
                                                         "fold":  0,
@@ -47616,14 +47616,14 @@
                                   "stack":  100,
                                   "position":  "BB",
                                   "action":  "vs_raise_btn",
-                                  "notes":  "BB 100BB vs BTN open: pure 3bet JJ+/AKs, call wide Broadways + pairs, edge hands mixed",
+                                  "notes":  "BB 100BB vs BTN: pure 3bet JJ+/AKs, wide Broadways/pairs flat, suited connectors added (v1.2.1)",
                                   "valid_actions":  [
                                                         "fold",
                                                         "call",
                                                         "threebet"
                                                     ],
-                                  "target_percentage":  20.2,
-                                  "hand_count":  34,
+                                  "target_percentage":  23.1,
+                                  "hand_count":  39,
                                   "hands":  {
                                                 "22":  {
                                                            "fold":  0,
@@ -47866,8 +47866,8 @@
                                                             "threebet":  0
                                                         },
                                                 "J8s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.5,
+                                                            "call":  0.5,
                                                             "threebet":  0
                                                         },
                                                 "J7s":  {
@@ -47906,8 +47906,8 @@
                                                             "threebet":  0
                                                         },
                                                 "T8s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.4,
+                                                            "call":  0.6,
                                                             "threebet":  0
                                                         },
                                                 "T7s":  {
@@ -47946,8 +47946,8 @@
                                                             "threebet":  0
                                                         },
                                                 "97s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.5,
+                                                            "call":  0.5,
                                                             "threebet":  0
                                                         },
                                                 "96s":  {
@@ -47981,8 +47981,8 @@
                                                             "threebet":  0
                                                         },
                                                 "86s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.6,
+                                                            "call":  0.4,
                                                             "threebet":  0
                                                         },
                                                 "85s":  {
@@ -48006,13 +48006,13 @@
                                                             "threebet":  0
                                                         },
                                                 "76s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.4,
+                                                            "call":  0.6,
                                                             "threebet":  0
                                                         },
                                                 "75s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.6,
+                                                            "call":  0.4,
                                                             "threebet":  0
                                                         },
                                                 "74s":  {
@@ -48031,13 +48031,13 @@
                                                             "threebet":  0
                                                         },
                                                 "65s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.5,
+                                                            "call":  0.5,
                                                             "threebet":  0
                                                         },
                                                 "64s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.6,
+                                                            "call":  0.4,
                                                             "threebet":  0
                                                         },
                                                 "63s":  {
@@ -48051,13 +48051,13 @@
                                                             "threebet":  0
                                                         },
                                                 "54s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.5,
+                                                            "call":  0.5,
                                                             "threebet":  0
                                                         },
                                                 "53s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.7,
+                                                            "call":  0.3,
                                                             "threebet":  0
                                                         },
                                                 "52s":  {
@@ -48066,8 +48066,8 @@
                                                             "threebet":  0
                                                         },
                                                 "43s":  {
-                                                            "fold":  1,
-                                                            "call":  0,
+                                                            "fold":  0.7,
+                                                            "call":  0.3,
                                                             "threebet":  0
                                                         },
                                                 "42s":  {
@@ -48476,14 +48476,14 @@
                                  "stack":  100,
                                  "position":  "BB",
                                  "action":  "vs_raise_co",
-                                 "notes":  "BB 100BB vs CO open: ~20% tighter than vs BTN, fewer edge mixes",
+                                 "notes":  "BB 100BB vs CO: tighter than vs BTN, suited connectors added (v1.2.1)",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call",
                                                        "threebet"
                                                    ],
-                                 "target_percentage":  19.3,
-                                 "hand_count":  33,
+                                 "target_percentage":  20.6,
+                                 "hand_count":  35,
                                  "hands":  {
                                                "22":  {
                                                           "fold":  0,
@@ -48766,8 +48766,8 @@
                                                            "threebet":  0
                                                        },
                                                "T8s":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
                                                            "threebet":  0
                                                        },
                                                "T7s":  {
@@ -48806,8 +48806,8 @@
                                                            "threebet":  0
                                                        },
                                                "97s":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "96s":  {
@@ -48866,8 +48866,8 @@
                                                            "threebet":  0
                                                        },
                                                "76s":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
                                                            "threebet":  0
                                                        },
                                                "75s":  {
@@ -48891,8 +48891,8 @@
                                                            "threebet":  0
                                                        },
                                                "65s":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "64s":  {
@@ -48911,8 +48911,8 @@
                                                            "threebet":  0
                                                        },
                                                "54s":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "53s":  {
@@ -49336,14 +49336,14 @@
                                  "stack":  100,
                                  "position":  "BB",
                                  "action":  "vs_raise_sb",
-                                 "notes":  "BB 100BB vs SB open: defend wide, more mix edges (SB opens ~45%)",
+                                 "notes":  "BB 100BB vs SB: defend wide, offsuit connectors/broadways added (v1.2.1)",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call",
                                                        "threebet"
                                                    ],
-                                 "target_percentage":  30,
-                                 "hand_count":  51,
+                                 "target_percentage":  31.4,
+                                 "hand_count":  53,
                                  "hands":  {
                                                "22":  {
                                                           "fold":  0,
@@ -49506,8 +49506,8 @@
                                                            "threebet":  0
                                                        },
                                                "K5s":  {
-                                                           "fold":  0.3,
-                                                           "call":  0.7,
+                                                           "fold":  1,
+                                                           "call":  0,
                                                            "threebet":  0
                                                        },
                                                "K4s":  {
@@ -49886,18 +49886,18 @@
                                                            "threebet":  0
                                                        },
                                                "K7o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
                                                            "threebet":  0
                                                        },
                                                "K6o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
                                                            "threebet":  0
                                                        },
                                                "K5o":  {
-                                                           "fold":  0.5,
-                                                           "call":  0.5,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "K4o":  {
@@ -49976,13 +49976,13 @@
                                                            "threebet":  0
                                                        },
                                                "J8o":  {
-                                                           "fold":  0.5,
-                                                           "call":  0.5,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "J7o":  {
-                                                           "fold":  0.6,
-                                                           "call":  0.4,
+                                                           "fold":  0.7,
+                                                           "call":  0.3,
                                                            "threebet":  0
                                                        },
                                                "J6o":  {
@@ -50011,13 +50011,13 @@
                                                            "threebet":  0
                                                        },
                                                "T9o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
                                                            "threebet":  0
                                                        },
                                                "T8o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "T7o":  {
@@ -50051,8 +50051,8 @@
                                                            "threebet":  0
                                                        },
                                                "98o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "97o":  {
@@ -50086,8 +50086,8 @@
                                                            "threebet":  0
                                                        },
                                                "87o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
                                                            "threebet":  0
                                                        },
                                                "86o":  {
@@ -50116,8 +50116,8 @@
                                                            "threebet":  0
                                                        },
                                                "76o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.7,
+                                                           "call":  0.3,
                                                            "threebet":  0
                                                        },
                                                "75o":  {
@@ -50141,8 +50141,8 @@
                                                            "threebet":  0
                                                        },
                                                "65o":  {
-                                                           "fold":  1,
-                                                           "call":  0,
+                                                           "fold":  0.7,
+                                                           "call":  0.3,
                                                            "threebet":  0
                                                        },
                                                "64o":  {
