@@ -2335,9 +2335,9 @@ function confirmReset() {
 function showUpdateBanner(worker) {
   const banner = document.getElementById('updateBanner');
   if (!banner) return;
-  banner.classList.remove('hidden');
+  banner.style.display = 'flex';
   document.getElementById('updateBtn').addEventListener('click', () => {
-    banner.classList.add('hidden');
+    banner.style.display = 'none';
     worker.postMessage({ type: 'SKIP_WAITING' });
   });
 }
@@ -2349,10 +2349,11 @@ App.init();
 </script>
 
 <!-- PWA Update Banner -->
-<div id="updateBanner" class="hidden" style="
+<div id="updateBanner" style="
+  display:none;
   position:fixed;bottom:0;left:0;right:0;z-index:9999;
   background:#1e2a3a;border-top:2px solid #d4a574;
-  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;align-items:center;justify-content:space-between;
   font-family:inherit;font-size:14px;color:#e8d5b7;
   box-shadow:0 -4px 16px rgba(0,0,0,0.5);">
   <span>🔄 New version available</span>
