@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.1.2",
+    "version":  "1.1.3",
     "last_updated":  "2026-04-24",
     "disclaimer":  "Ranges are Nash/GTO approximations for study purposes. Verify with professional solvers (GTO Wizard, PioSolver) for critical decisions.",
     "position_notes":  {
@@ -44176,49 +44176,49 @@
                               "stack":  100,
                               "position":  "BTN",
                               "action":  "vs_3bet",
-                              "notes":  "BTN vs BB 3bet: 4bet QQ+/AK + A5s/A4s bluffs, call JJ-22 + Broadways + SC",
+                              "notes":  "BTN 100BB vs BB 3bet: 4bet KK+/AKs/AKo, call wide Broadways + SC, bluff 4bet A5s/A4s mixed",
                               "valid_actions":  [
                                                     "fold",
                                                     "call",
                                                     "fourbet"
                                                 ],
-                              "target_percentage":  18.9,
-                              "hand_count":  32,
+                              "target_percentage":  13,
+                              "hand_count":  22,
                               "hands":  {
                                             "22":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                             "33":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                             "44":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                             "55":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                             "66":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                             "77":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0.6,
+                                                       "fold":  0.4
                                                    },
                                             "88":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0.6,
+                                                       "fold":  0.4
                                                    },
                                             "99":  {
                                                        "fourbet":  0,
@@ -44236,8 +44236,8 @@
                                                        "fold":  0
                                                    },
                                             "QQ":  {
-                                                       "fourbet":  1,
-                                                       "call":  0,
+                                                       "fourbet":  0,
+                                                       "call":  1,
                                                        "fold":  0
                                                    },
                                             "KK":  {
@@ -44291,14 +44291,14 @@
                                                         "fold":  1
                                                     },
                                             "A5s":  {
-                                                        "fourbet":  1,
-                                                        "call":  0,
-                                                        "fold":  0
+                                                        "fourbet":  0.4,
+                                                        "call":  0.2,
+                                                        "fold":  0.4
                                                     },
                                             "A4s":  {
-                                                        "fourbet":  1,
+                                                        "fourbet":  0.4,
                                                         "call":  0,
-                                                        "fold":  0
+                                                        "fold":  0.6
                                                     },
                                             "A3s":  {
                                                         "fourbet":  0,
@@ -44322,8 +44322,8 @@
                                                     },
                                             "KTs":  {
                                                         "fourbet":  0,
-                                                        "call":  1,
-                                                        "fold":  0
+                                                        "call":  0.7,
+                                                        "fold":  0.3
                                                     },
                                             "K9s":  {
                                                         "fourbet":  0,
@@ -44372,8 +44372,8 @@
                                                     },
                                             "QTs":  {
                                                         "fourbet":  0,
-                                                        "call":  1,
-                                                        "fold":  0
+                                                        "call":  0,
+                                                        "fold":  1
                                                     },
                                             "Q9s":  {
                                                         "fourbet":  0,
@@ -44567,8 +44567,8 @@
                                                     },
                                             "76s":  {
                                                         "fourbet":  0,
-                                                        "call":  1,
-                                                        "fold":  0
+                                                        "call":  0,
+                                                        "fold":  1
                                                     },
                                             "75s":  {
                                                         "fourbet":  0,
@@ -44647,13 +44647,13 @@
                                                     },
                                             "AQo":  {
                                                         "fourbet":  0,
-                                                        "call":  0,
-                                                        "fold":  1
+                                                        "call":  1,
+                                                        "fold":  0
                                                     },
                                             "AJo":  {
                                                         "fourbet":  0,
-                                                        "call":  1,
-                                                        "fold":  0
+                                                        "call":  0,
+                                                        "fold":  1
                                                     },
                                             "ATo":  {
                                                         "fourbet":  0,
@@ -44702,8 +44702,8 @@
                                                     },
                                             "KQo":  {
                                                         "fourbet":  0,
-                                                        "call":  1,
-                                                        "fold":  0
+                                                        "call":  0,
+                                                        "fold":  1
                                                     },
                                             "KJo":  {
                                                         "fourbet":  0,
@@ -45036,13 +45036,13 @@
                              "stack":  100,
                              "position":  "CO",
                              "action":  "vs_3bet",
-                             "notes":  "CO vs BTN 3bet: 4bet KK+/AKs, call QQ-77 + Broadways",
+                             "notes":  "CO 100BB vs BTN 3bet: 4bet KK+/AKs, call QQ-66 + Broadways, AKo as call",
                              "valid_actions":  [
                                                    "fold",
                                                    "call",
                                                    "fourbet"
                                                ],
-                             "target_percentage":  11.8,
+                             "target_percentage":  12.1,
                              "hand_count":  20,
                              "hands":  {
                                            "22":  {
@@ -45067,8 +45067,8 @@
                                                   },
                                            "66":  {
                                                       "fourbet":  0,
-                                                      "call":  0,
-                                                      "fold":  1
+                                                      "call":  1,
+                                                      "fold":  0
                                                   },
                                            "77":  {
                                                       "fourbet":  0,
@@ -45507,8 +45507,8 @@
                                                    },
                                            "AQo":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0.5,
+                                                       "fold":  0.5
                                                    },
                                            "AJo":  {
                                                        "fourbet":  0,
@@ -45896,14 +45896,14 @@
                              "stack":  40,
                              "position":  "BTN",
                              "action":  "vs_3bet",
-                             "notes":  "BTN 40BB vs 3bet: 4bet/shove TT+/AQs+/AKo, rare call 99/AJs",
+                             "notes":  "BTN 40BB vs 3bet: shove TT+/AQs+/AKo, no flat (too short to realize equity)",
                              "valid_actions":  [
                                                    "fold",
                                                    "call",
                                                    "fourbet"
                                                ],
-                             "target_percentage":  5.9,
-                             "hand_count":  10,
+                             "target_percentage":  4.7,
+                             "hand_count":  8,
                              "hands":  {
                                            "22":  {
                                                       "fourbet":  0,
@@ -45942,8 +45942,8 @@
                                                   },
                                            "99":  {
                                                       "fourbet":  0,
-                                                      "call":  1,
-                                                      "fold":  0
+                                                      "call":  0,
+                                                      "fold":  1
                                                   },
                                            "TT":  {
                                                       "fourbet":  1,
@@ -45982,8 +45982,8 @@
                                                    },
                                            "AJs":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                            "ATs":  {
                                                        "fourbet":  0,
@@ -46756,14 +46756,14 @@
                              "stack":  60,
                              "position":  "BTN",
                              "action":  "vs_3bet",
-                             "notes":  "BTN 60BB vs 3bet: 4bet JJ+/AK (commit), call 99-TT + premium suited",
+                             "notes":  "BTN 60BB vs 3bet: 4bet commits JJ+/AK, call TT-77 + premium suited",
                              "valid_actions":  [
                                                    "fold",
                                                    "call",
                                                    "fourbet"
                                                ],
-                             "target_percentage":  8.3,
-                             "hand_count":  14,
+                             "target_percentage":  7.7,
+                             "hand_count":  13,
                              "hands":  {
                                            "22":  {
                                                       "fourbet":  0,
@@ -46792,13 +46792,13 @@
                                                   },
                                            "77":  {
                                                       "fourbet":  0,
-                                                      "call":  0,
-                                                      "fold":  1
+                                                      "call":  1,
+                                                      "fold":  0
                                                   },
                                            "88":  {
                                                       "fourbet":  0,
-                                                      "call":  0,
-                                                      "fold":  1
+                                                      "call":  1,
+                                                      "fold":  0
                                                   },
                                            "99":  {
                                                       "fourbet":  0,
@@ -46847,8 +46847,8 @@
                                                    },
                                            "ATs":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                            "A9s":  {
                                                        "fourbet":  0,
@@ -46897,8 +46897,8 @@
                                                    },
                                            "KJs":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                            "KTs":  {
                                                        "fourbet":  0,
@@ -46947,8 +46947,8 @@
                                                    },
                                            "QJs":  {
                                                        "fourbet":  0,
-                                                       "call":  1,
-                                                       "fold":  0
+                                                       "call":  0,
+                                                       "fold":  1
                                                    },
                                            "QTs":  {
                                                        "fourbet":  0,
@@ -52280,4 +52280,3 @@
                                            }
                       }
 }
-

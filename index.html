@@ -1328,7 +1328,13 @@ function buildDrillQueue(count) {
 
     if (!d.stackFilter.includes('all') && !d.stackFilter.includes(String(stack))) return;
     if (!d.posFilter.includes(pos)) return;
-    if (d.actionFilter !== 'all' && d.actionFilter !== action) return;
+    if (d.actionFilter !== 'all') {
+      // UI chips submit generic values ('vs_shove', 'vs_raise') but scenario.action uses
+      // specific variants ('vs_shove_btn', 'vs_shove_sb', 'vs_raise_btn', 'vs_raise_co', 'vs_raise_sb').
+      // Accept either exact match OR prefix match with trailing underscore.
+      const af = d.actionFilter;
+      if (action !== af && !action.startsWith(af + '_')) return;
+    }
 
     Object.entries(scenario.hands || {}).forEach(([hand, freqs]) => {
       candidates.push({ key, stack, pos, action, hand, freqs });
@@ -2157,13 +2163,15 @@ function getHandFromGrid(row, col) {
 
 function getGridCellClass(freqs) {
   if (!freqs) return 'c-gray';
-  const aggr = (freqs.raise || 0) + (freqs.shove || 0) + (freqs.threebet || 0) + (freqs.fourbet || 0) + (freqs.call || 0) * 0.5;
+  const aggr = (freqs.raise || 0) + (freqs.shove || 0) + (freqs.threebet || 0) + (freqs.fourbet || 0);
+  const call = freqs.call || 0;
   const fold = freqs.fold || 0;
-  if (aggr >= 0.99) return 'c-darkgreen';  // ~100% aggressive
-  if (aggr >= 0.7)  return 'c-lightgreen'; // >70% aggressive
-  if (fold >= 0.99) return 'c-darkred';    // ~100% fold (MUST be before fold>=0.7)
-  if (fold >= 0.7)  return 'c-lightred';   // >70% fold
-  return 'c-yellow';                        // mixed
+  if (aggr >= 0.99) return 'c-darkgreen';   // pure aggressive (raise/3bet/4bet/shove)
+  if (fold >= 0.99) return 'c-darkred';     // pure fold (MUST be before fold>=0.7)
+  if (call >= 0.99) return 'c-lightgreen';  // pure call 100%
+  if (fold >= 0.7)  return 'c-lightred';    // mostly fold
+  if (aggr + call >= 0.7) return 'c-lightgreen'; // mostly play (call-heavy)
+  return 'c-yellow';                         // mixed (bluff 4bet, 60/40 call etc.)
 }
 
 function updateBrowseFilter(type, value) {
