@@ -41,6 +41,39 @@ Open in Safari → Share → Add to Home Screen
 
 Hosted on Netlify via GitHub auto-deploy. Requires HTTPS for PWA/service worker (provided by Netlify).
 
+### Deployment Workflow (for updates)
+
+When you make changes and want users to receive them automatically:
+
+1. **Bump the version** in `service-worker.js`:
+   ```js
+   const VERSION = 'v1.0.2';  // increment this
+   ```
+
+2. **Bump the version** in `ranges.json` (if data changed):
+   ```json
+   "version": "1.0.2"
+   ```
+
+3. **Commit and push** to GitHub:
+   ```
+   git add .
+   git commit -m "v1.0.2: describe your changes"
+   git push
+   ```
+
+4. Netlify auto-deploys within ~60 seconds.
+
+5. **How users receive the update:**
+   - On next visit, the new service worker downloads in the background
+   - A gold **"UPDATE NOW"** banner appears at the bottom of the screen
+   - User taps the banner → page reloads with new version
+   - No manual cache clearing needed
+
+6. **First-time iPhone note:** If a user installed the PWA *before* v1.0.1 (the first version with auto-update), they need to do **one** manual cache clear:
+   - Safari → Settings (⚙️) → Clear History and Website Data — or —
+   - Settings app → Safari → Advanced → Website Data → Remove All Website Data
+
 ## Data
 
 `ranges.json` — 148 GTO-approximated scenarios generated from Nash push/fold equilibrium (short stacks) and standard opening percentage models (deep stacks). Regenerate with:
