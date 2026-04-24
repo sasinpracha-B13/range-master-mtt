@@ -1935,10 +1935,15 @@ function getWeekAccuracy() {
 function computeScenarioAccuracy() {
   const map = {};
   Object.entries(App.state.progress).forEach(([key, srs]) => {
-    // key = 10BB_BTN_RFI_AJs
+    // key examples:
+    //   10BB_BTN_RFI_AJs            (simple action)
+    //   5BB_BB_vs_shove_btn_AA      (multi-part action)
+    //   100BB_BTN_vs_3bet_KQs       (multi-part action)
+    // Format: ${stack}BB_${pos}_${action}_${hand}  where action may contain underscores.
+    // Hand is always the LAST segment — so scenKey = everything except the last segment.
     const parts = key.split('_');
     if (parts.length < 4) return;
-    const scenKey = parts.slice(0, 3).join('_');
+    const scenKey = parts.slice(0, -1).join('_');
     if (!map[scenKey]) map[scenKey] = { key: scenKey, label: scenKey.replace(/_/g,' '), attempts: 0, correct: 0 };
     const h = srs.history || [];
     map[scenKey].attempts += h.length;
@@ -2015,11 +2020,14 @@ function startSRSSession() {
 }
 
 function drillWeakSpot(scenKey) {
+  // scenKey format: ${stack}BB_${pos}_${action}
+  // Action may contain underscores (e.g. vs_shove_btn, vs_raise_co).
+  // Stack is parts[0], pos is parts[1], action is everything after.
   const parts = scenKey.split('_');
   if (parts.length >= 3) {
     App.state.drill.stackFilter = [parts[0].replace('BB', '')];
     App.state.drill.posFilter = [parts[1]];
-    App.state.drill.actionFilter = parts[2];
+    App.state.drill.actionFilter = parts.slice(2).join('_');
   }
   App.state.drill.mode = 'weakness';
   switchTab('drill');
