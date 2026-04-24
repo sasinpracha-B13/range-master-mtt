@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Range Master MTT</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Range Master">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="theme-color" content="#0a0e14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --surface: #131a23;
+      --surface2: #1a2332;
+      --border: rgba(255,255,255,0.08);
+      --text: #e4e8f0;
+      --text-secondary: #8a95a8;
+      --mint: #6ee7b7;
+      --gold: #d4a574;
+      --success: #4ade80;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+    }
+    /* TOP NAV (desktop) */
+    .top-nav {
+      display: none;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .top-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-nav-logo {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--mint);
+      margin-right: 24px;
+      padding: 16px 0;
+      white-space: nowrap;
+    }
+    .top-nav-tab {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 16px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .top-nav-tab:hover { color: var(--text); }
+    .top-nav-tab.active { color: var(--mint); border-bottom-color: var(--mint); }
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab-panel { display: none; animation: fadeIn 0.15s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    @keyframes flashGreen {
+      0% { background: var(--surface); }
+      30% { background: rgba(74,222,128,0.2); transform: scale(1.02); }
+      100% { background: var(--surface); transform: scale(1); }
+    }
+    @keyframes flashRed {
+      0% { background: var(--surface); }
+      30% { background: rgba(248,113,113,0.2); }
+      100% { background: var(--surface); }
+    }
+    .animate-slide { animation: slideInRight 0.2s ease; }
+    .animate-correct { animation: flashGreen 0.4s ease; }
+    .animate-wrong { animation: shake 0.3s ease, flashRed 0.4s ease; }
+    /* BOTTOM NAV (mobile) */
+    .bottom-nav {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+    }
+    .bottom-nav-item {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 10px 4px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .bottom-nav-item .icon { font-size: 20px; line-height: 1; }
+    .bottom-nav-item.active { color: var(--mint); }
+    /* CONTAINER */
+    .container { max-width: 680px; margin: 0 auto; padding: 16px; }
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--mint); color: #0a0e14; }
+    .btn-primary:hover { background: #5dd9a7; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.2); }
+    .btn-danger { background: rgba(248,113,113,0.15); color: var(--danger); border: 1px solid rgba(248,113,113,0.3); }
+    .btn-gold { background: rgba(212,165,116,0.15); color: var(--gold); border: 1px solid rgba(212,165,116,0.3); }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 8px 14px; font-size: 13px; }
+    /* MODE CARDS */
+    .mode-cards { display: grid; gap: 10px; margin-bottom: 16px; }
+    .mode-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-card:hover { border-color: rgba(255,255,255,0.2); }
+    .mode-card.selected { border-color: var(--mint); background: rgba(110,231,183,0.05); }
+    .mode-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .mode-card-title { font-weight: 600; font-size: 15px; }
+    .mode-card-meta { font-size: 12px; color: var(--text-secondary); }
+    /* FILTER CHIPS */
+    .filter-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+    .chip:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .chip.selected { background: rgba(110,231,183,0.1); border-color: var(--mint); color: var(--mint); }
+    .chip.pos-early { }
+    .chip.pos-early.selected { background: rgba(248,113,113,0.1); border-color: var(--danger); color: var(--danger); }
+    .chip.pos-middle.selected { background: rgba(251,191,36,0.1); border-color: var(--warning); color: var(--warning); }
+    .chip.pos-late.selected { background: rgba(74,222,128,0.1); border-color: var(--success); color: var(--success); }
+    .chip.pos-blind.selected { background: rgba(96,165,250,0.1); border-color: #60a5fa; color: #60a5fa; }
+    /* DRILL SCREEN */
+    .drill-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .drill-progress-text { font-size: 14px; color: var(--text-secondary); }
+    .drill-progress-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .drill-progress-fill {
+      height: 100%;
+      background: var(--mint);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .streak-badge {
+      background: rgba(251,191,36,0.15);
+      border: 1px solid rgba(251,191,36,0.3);
+      color: var(--warning);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    /* SITUATION CARD */
+    .situation-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .situation-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .situation-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-stack { background: rgba(110,231,183,0.1); color: var(--mint); }
+    .tag-pos { background: rgba(212,165,116,0.1); color: var(--gold); }
+    .tag-action { background: rgba(96,165,250,0.1); color: #60a5fa; }
+    /* PLAYING CARDS */
+    .card-pair { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+    .playing-card {
+      width: 56px;
+      height: 78px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .playing-card .rank {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      color: #1a1a1a;
+    }
+    .playing-card .suit {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .playing-card.suit-heart .rank,
+    .playing-card.suit-diamond .rank { color: #dc2626; }
+    .playing-card.suit-heart .suit,
+    .playing-card.suit-diamond .suit { color: #dc2626; }
+    .playing-card.suit-spade .suit,
+    .playing-card.suit-club .suit { color: #1a1a1a; }
+    .hand-name {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    /* ACTION BUTTONS */
+    .action-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .action-buttons { display: grid; gap: 10px; }
+    .action-btn {
+      padding: 16px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .action-btn:active { transform: scale(0.97); }
+    .action-btn-fold { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--danger); }
+    .action-btn-fold:hover { background: rgba(248,113,113,0.2); border-color: var(--danger); }
+    .action-btn-call { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.3); color: var(--warning); }
+    .action-btn-call:hover { background: rgba(251,191,36,0.2); border-color: var(--warning); }
+    .action-btn-raise { background: rgba(110,231,183,0.1); border-color: rgba(110,231,183,0.3); color: var(--mint); }
+    .action-btn-raise:hover { background: rgba(110,231,183,0.2); border-color: var(--mint); }
+    .action-btn-shove { background: rgba(212,165,116,0.1); border-color: rgba(212,165,116,0.3); color: var(--gold); }
+    .action-btn-shove:hover { background: rgba(212,165,116,0.2); border-color: var(--gold); }
+    .action-btn.correct-highlight { border-color: var(--success); background: rgba(74,222,128,0.15); }
+    .action-btn.wrong-highlight { border-color: var(--danger); background: rgba(248,113,113,0.15); }
+    /* ANSWER SCREEN */
+    .answer-result {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .answer-result.correct { color: var(--success); }
+    .answer-result.wrong { color: var(--danger); }
+    .freq-bar-container { margin-bottom: 8px; }
+    .freq-bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    .freq-bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .freq-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+    .freq-fold { background: var(--danger); }
+    .freq-call { background: var(--warning); }
+    .freq-raise { background: var(--mint); }
+    .freq-shove { background: var(--gold); }
+    .reasoning-box {
+      background: rgba(110,231,183,0.05);
+      border: 1px solid rgba(110,231,183,0.15);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .reasoning-box strong { color: var(--mint); }
+    .hand-stats { display: flex; gap: 16px; font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+    .hand-stats span { display: flex; align-items: center; gap: 4px; }
+    /* NOTIFICATION */
+    .milestone-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--surface);
+      border: 1px solid var(--mint);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--mint);
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .milestone-toast.show { transform: translateX(-50%) translateY(0); }
+    /* DRILL COMPLETE */
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid var(--mint);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .score-number { font-size: 28px; font-weight: 700; color: var(--mint); line-height: 1; }
+    .score-label { font-size: 11px; color: var(--text-secondary); }
+    .mistake-item {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mistake-hand { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .mistake-detail { font-size: 12px; color: var(--text-secondary); }
+    /* PROGRESS TAB */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-value { font-size: 26px; font-weight: 700; color: var(--mint); line-height: 1; }
+    .stat-unit { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    /* SVG CHART */
+    .chart-container { padding: 8px 0; overflow: visible; }
+    .chart-svg { width: 100%; overflow: visible; }
+    /* SCENARIO BARS */
+    .scenario-bar-item { margin-bottom: 10px; }
+    .scenario-bar-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    .scenario-bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .scenario-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+    /* BROWSE TAB */
+    .hand-grid-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+    .hand-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 2px;
+      min-width: 360px;
+      padding: 4px;
+    }
+    .grid-cell {
+      aspect-ratio: 1;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      position: relative;
+      color: rgba(255,255,255,0.9);
+      user-select: none;
+    }
+    .grid-cell:hover { transform: scale(1.15); z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .grid-cell.c-darkgreen { background: #16a34a; }
+    .grid-cell.c-lightgreen { background: #86efac; color: #14532d; }
+    .grid-cell.c-yellow { background: #fbbf24; color: #451a03; }
+    .grid-cell.c-lightred { background: #fca5a5; color: #450a0a; }
+    .grid-cell.c-darkred { background: #dc2626; }
+    .grid-cell.c-gray { background: #374151; color: #9ca3af; }
+    .grid-header-row { display: flex; gap: 2px; min-width: 360px; padding: 0 4px; }
+    .grid-header-cell {
+      flex: 1;
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      padding: 2px 0;
+    }
+    /* HAND POPUP */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 500;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+    }
+    .popup-overlay.hidden { display: none; }
+    .popup-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .popup-title { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .popup-close { background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 4px; }
+    /* SETTINGS TAB */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 15px; }
+    .settings-sublabel { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    /* TOGGLE */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--surface2);
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--mint); border-color: var(--mint); }
+    .toggle input:checked + .toggle-track .toggle-thumb { transform: translateX(20px); background: #0a0e14; }
+    /* RADIO GROUP */
+    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .radio-option input { accent-color: var(--mint); width: 16px; height: 16px; }
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+    .modal-text { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
+    .modal-text p { margin-bottom: 12px; }
+    .modal-text ul { padding-left: 20px; margin-bottom: 12px; }
+    .modal-text li { margin-bottom: 6px; }
+    .modal-text strong { color: var(--text); }
+    .modal-checkbox { display: flex; align-items: center; gap: 10px; margin: 16px 0; cursor: pointer; }
+    .modal-checkbox input { width: 18px; height: 18px; accent-color: var(--mint); }
+    .modal-checkbox span { font-size: 14px; font-weight: 500; }
+    /* TOOLTIP */
+    .tooltip-wrap { position: relative; display: inline-block; }
+    .tooltip-wrap .tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2a3a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .tooltip-wrap:hover .tooltip,
+    .tooltip-wrap:focus-within .tooltip { opacity: 1; }
+    /* IOS INSTALL BANNER */
+    .install-banner {
+      background: rgba(110,231,183,0.1);
+      border: 1px solid rgba(110,231,183,0.3);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 0 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .install-banner button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 16px; }
+    /* LOADING */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--mint);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* SECTION TITLE */
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+    .section-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+    /* SRS BADGE */
+    .srs-badge {
+      background: rgba(96,165,250,0.1);
+      border: 1px solid rgba(96,165,250,0.3);
+      color: #60a5fa;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    /* WEAK SPOT */
+    .weak-spot-item {
+      padding: 12px;
+      background: var(--surface2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .weak-spot-name { font-weight: 600; font-size: 14px; }
+    .weak-spot-stat { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    /* DESKTOP */
+    @media (min-width: 768px) {
+      .top-nav { display: flex; }
+      .bottom-nav { display: none; }
+      .container { padding: 24px 16px; }
+    }
+    @media (max-width: 400px) {
+      .hand-grid { gap: 1px; }
+      .grid-cell { font-size: 7px; }
+    }
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+    .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; line-height: 1.6; }
+    /* LEGEND */
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    /* BROWSE FILTERS */
+    .browse-filters { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .select-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      width: 100%;
+      appearance: none;
+      cursor: pointer;
+    }
+    .select-input:focus { outline: none; border-color: var(--mint); }
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '▾';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+      font-size: 12px;
+    }
+    /* PROGRESS HEADER */
+    .page-header {
+      padding: 16px 16px 0;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-header p { font-size: 14px; color: var(--text-secondary); }
+    /* DIVIDER */
+    .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  </style>
+</head>
+<body>
+
+<!-- DISCLAIMER MODAL -->
+<div class="modal-overlay" id="disclaimerModal">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ Important: Study Tool Only</div>
+    <div class="modal-text">
+      <p>Range Master MTT is designed for <strong>OFFLINE STUDY</strong> of preflop poker ranges. It is <strong>NOT</strong> a real-time assistance tool.</p>
+      <p><strong>❌ DO NOT use this app during live poker play:</strong></p>
+      <ul>
+        <li>Using reference charts/apps during active hands violates Terms of Service of all major poker platforms</li>
+        <li>Violations can result in permanent account ban + fund confiscation</li>
+      </ul>
+      <p><strong>✅ DO use this app:</strong></p>
+      <ul>
+        <li>Before sessions (warm-up drill)</li>
+        <li>After sessions (review mistakes)</li>
+        <li>During free time (focused study)</li>
+      </ul>
+      <p>The goal: memorize ranges so well you don't NEED any reference during play.</p>
+      <p>Ranges shown are approximations based on published Nash/GTO solutions. Play responsibly.</p>
+    </div>
+    <label class="modal-checkbox" id="disclaimerCheck">
+      <input type="checkbox" id="disclaimerCb">
+      <span>I understand — this is for study only</span>
+    </label>
+    <button class="btn btn-primary btn-full" id="disclaimerBtn" disabled onclick="acceptDisclaimer()">Continue →</button>
+  </div>
+</div>
+
+<!-- RESET CONFIRM MODAL -->
+<div class="modal-overlay hidden" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ Reset All Progress?</div>
+    <div class="modal-text">
+      <p>This will permanently delete all your drill history, SRS data, streaks, and stats. This cannot be undone.</p>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-secondary btn-full" onclick="closeResetModal()">Cancel</button>
+      <button class="btn btn-danger btn-full" onclick="confirmReset()">Reset Everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- HAND POPUP (Browse) -->
+<div class="popup-overlay hidden" id="handPopup">
+  <div class="popup-content" id="handPopupContent"></div>
+</div>
+
+<!-- MILESTONE TOAST -->
+<div class="milestone-toast" id="milestoneToast"></div>
+
+<!-- IOS INSTALL BANNER -->
+<div class="install-banner hidden" id="installBanner">
+  <span>💡 Install: Tap Share → Add to Home Screen</span>
+  <button onclick="document.getElementById('installBanner').classList.add('hidden')">✕</button>
+</div>
+
+<!-- TOP NAV (desktop) -->
+<nav class="top-nav" id="topNav">
+  <div class="top-nav-inner">
+    <div class="top-nav-logo">♠ Range Master MTT</div>
+    <button class="top-nav-tab active" data-tab="drill" onclick="switchTab('drill')">🎯 Drill</button>
+    <button class="top-nav-tab" data-tab="progress" onclick="switchTab('progress')">📊 Progress</button>
+    <button class="top-nav-tab" data-tab="browse" onclick="switchTab('browse')">📚 Browse</button>
+    <button class="top-nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+  <!-- DRILL TAB -->
+  <div class="tab-panel active" id="tab-drill">
+    <div id="drillSetup" class="container">
+      <div class="section-title">🎯 Drill Mode</div>
+      <div class="section-subtitle">Choose a mode and customize your session</div>
+
+      <div class="mode-cards" id="modeCards">
+        <div class="mode-card selected" data-mode="quick" onclick="selectMode('quick')">
+          <div class="mode-card-header">
+            <span style="font-size:20px">⚡</span>
+            <span class="mode-card-title">Quick Drill</span>
+          </div>
+          <div class="mode-card-meta">15 hands · ~5 min · Fast feedback only</div>
+        </div>
+        <div class="mode-card" data-mode="deep" onclick="selectMode('deep')">
+          <div class="mode-card-header">
+            <span style="font-size:20px">🧠</span>
+            <span class="mode-card-title">Deep Study</span>
+          </div>
+          <div class="mode-card-meta">30 hands · GTO frequencies + reasoning shown</div>
+        </div>
+        <div class="mode-card" data-mode="weakness" onclick="selectMode('weakness')">
+          <div class="mode-card-header">
+            <span style="font-size:20px">🎯</span>
+            <span class="mode-card-title">Weakness Focus</span>
+          </div>
+          <div class="mode-card-meta">20 hands · SRS-prioritized weak spots</div>
+        </div>
+      </div>
+
+      <span class="filter-label">Stack Depth</span>
+      <div class="chip-group" id="stackChips">
+        <button class="chip selected" data-val="all" onclick="toggleStackFilter('all')">All</button>
+        <button class="chip" data-val="5" onclick="toggleStackFilter('5')">5BB</button>
+        <button class="chip" data-val="10" onclick="toggleStackFilter('10')">10BB</button>
+        <button class="chip" data-val="15" onclick="toggleStackFilter('15')">15BB</button>
+        <button class="chip" data-val="20" onclick="toggleStackFilter('20')">20BB</button>
+        <button class="chip" data-val="40" onclick="toggleStackFilter('40')">40BB</button>
+        <button class="chip" data-val="60" onclick="toggleStackFilter('60')">60BB</button>
+        <button class="chip" data-val="80" onclick="toggleStackFilter('80')">80BB</button>
+        <button class="chip" data-val="100" onclick="toggleStackFilter('100')">100BB</button>
+      </div>
+
+      <span class="filter-label">Position</span>
+      <div class="chip-group" id="positionPresets">
+        <button class="chip selected" data-preset="all" onclick="setPositionPreset('all')">All</button>
+        <button class="chip" data-preset="late" onclick="setPositionPreset('late')">Late only</button>
+        <button class="chip" data-preset="blinds" onclick="setPositionPreset('blinds')">Blinds only</button>
+      </div>
+      <div class="chip-group" id="positionChips">
+        <button class="chip pos-early selected" data-pos="UTG" onclick="togglePosFilter('UTG')">🔴 UTG</button>
+        <button class="chip pos-early selected" data-pos="MP" onclick="togglePosFilter('MP')">🔴 MP</button>
+        <button class="chip pos-middle selected" data-pos="LJ" onclick="togglePosFilter('LJ')">🟡 LJ</button>
+        <button class="chip pos-middle selected" data-pos="HJ" onclick="togglePosFilter('HJ')">🟡 HJ</button>
+        <button class="chip pos-late selected" data-pos="CO" onclick="togglePosFilter('CO')">🟢 CO</button>
+        <button class="chip pos-late selected" data-pos="BTN" onclick="togglePosFilter('BTN')">🟢 BTN</button>
+        <button class="chip pos-blind selected" data-pos="SB" onclick="togglePosFilter('SB')">🔵 SB</button>
+        <button class="chip pos-blind selected" data-pos="BB" onclick="togglePosFilter('BB')">🔵 BB</button>
+      </div>
+
+      <span class="filter-label">Action Type</span>
+      <div class="chip-group" id="actionChips">
+        <button class="chip selected" data-action="all" onclick="toggleActionFilter('all')">All mixed</button>
+        <button class="chip" data-action="RFI" onclick="toggleActionFilter('RFI')">RFI</button>
+        <button class="chip" data-action="vs_raise" onclick="toggleActionFilter('vs_raise')">Face Raise</button>
+        <button class="chip" data-action="vs_3bet" onclick="toggleActionFilter('vs_3bet')">Face 3-Bet</button>
+        <button class="chip" data-action="vs_shove" onclick="toggleActionFilter('vs_shove')">Face Shove</button>
+      </div>
+
+      <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="startDrill()">Start Drill →</button>
+    </div>
+
+    <div id="drillScreen" class="container" style="display:none">
+      <!-- Filled by JS -->
+    </div>
+
+    <div id="drillComplete" class="container" style="display:none">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- PROGRESS TAB -->
+  <div class="tab-panel" id="tab-progress">
+    <div class="page-header">
+      <h1>📊 Progress</h1>
+      <p>Your study stats and performance trends</p>
+    </div>
+    <div class="container" style="padding-top:12px" id="progressContent">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- BROWSE TAB -->
+  <div class="tab-panel" id="tab-browse">
+    <div class="page-header">
+      <h1>📚 Browse Ranges</h1>
+      <p>Explore GTO preflop charts</p>
+    </div>
+    <div class="container" style="padding-top:12px" id="browseContent">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="tab-panel" id="tab-settings">
+    <div class="page-header">
+      <h1>⚙️ Settings</h1>
+    </div>
+    <div class="container" style="padding-top:12px" id="settingsContent">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-item active" data-tab="drill" onclick="switchTab('drill')">
+    <span class="icon">🎯</span>
+    <span>Drill</span>
+  </button>
+  <button class="bottom-nav-item" data-tab="progress" onclick="switchTab('progress')">
+    <span class="icon">📊</span>
+    <span>Progress</span>
+  </button>
+  <button class="bottom-nav-item" data-tab="browse" onclick="switchTab('browse')">
+    <span class="icon">📚</span>
+    <span>Browse</span>
+  </button>
+  <button class="bottom-nav-item" data-tab="settings" onclick="switchTab('settings')">
+    <span class="icon">⚙️</span>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<script>
+// ============================================================
+// CONSTANTS & CONFIG
+// ============================================================
+const RANKS = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
+const SUITS_SYMBOLS = { s: '♠', h: '♥', d: '♦', c: '♣' };
+const SUIT_NAMES = ['s','h','d','c'];
+const POSITIONS = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
+const STACKS = [5,10,15,20,40,60,80,100];
+const POSITION_TOOLTIPS = {
+  UTG: 'First to act preflop. Tightest range.',
+  MP: 'Middle Position. Slightly wider than UTG.',
+  LJ: 'Lojack. Opens wider than MP.',
+  HJ: 'Hijack. Positional advantage growing.',
+  CO: 'Cutoff. One off the button. Wide range.',
+  BTN: 'Button. Last to act. Widest range.',
+  SB: 'Small Blind. Forced bet. Acts first postflop.',
+  BB: 'Big Blind. Last preflop. Gets discount. Defend wide.'
+};
+
+// ============================================================
+// APP STATE
+// ============================================================
+const App = {
+  state: {
+    tab: 'drill',
+    ranges: null,
+    rangesLoaded: false,
+    progress: {},
+    settings: {
+      darkMode: true,
+      dailyGoal: 30,
+      notifications: false,
+      defaultMode: 'quick',
+      positionGrouping: 'grouped'
+    },
+    streaks: {
+      current: 0,
+      daily: 0,
+      personalBest: 0,
+      lastPracticeDate: null
+    },
+    stats: {
+      totalHands: 0,
+      totalTime: 0,
+      dailyHistory: {}
+    },
+    drill: {
+      mode: 'quick',
+      stackFilter: ['all'],
+      posFilter: [...POSITIONS],
+      actionFilter: 'all',
+      queue: [],
+      currentIndex: 0,
+      answers: [],
+      streak: 0,
+      startTime: null,
+      phase: 'setup', // setup | question | answer | complete
+      currentQuestion: null,
+      questionStartTime: null
+    }
+  },
+
+  init() {
+    this.loadProgress();
+    this.loadRanges();
+    this.registerSW();
+    this.checkDisclaimer();
+    this.checkIOSInstall();
+    this.renderSettings();
+    this.renderProgress();
+    this.renderBrowse();
+  },
+
+  async loadRanges() {
+    try {
+      const resp = await fetch('ranges.json');
+      if (!resp.ok) throw new Error('ranges.json not found');
+      this.state.ranges = await resp.json();
+      this.state.rangesLoaded = true;
+      console.log('Ranges loaded:', Object.keys(this.state.ranges).length, 'scenarios');
+    } catch(e) {
+      console.warn('Could not load ranges.json, using built-in data:', e.message);
+      this.state.ranges = getBuiltinRanges();
+      this.state.rangesLoaded = true;
+    }
+    this.renderBrowse();
+  },
+
+  loadProgress() {
+    try {
+      const p = localStorage.getItem('rmtt_progress');
+      if (p) this.state.progress = JSON.parse(p);
+      const s = localStorage.getItem('rmtt_settings');
+      if (s) this.state.settings = { ...this.state.settings, ...JSON.parse(s) };
+      const st = localStorage.getItem('rmtt_streaks');
+      if (st) this.state.streaks = JSON.parse(st);
+      const stats = localStorage.getItem('rmtt_stats');
+      if (stats) this.state.stats = JSON.parse(stats);
+    } catch(e) { console.warn('Progress load error', e); }
+  },
+
+  saveProgress() {
+    try {
+      localStorage.setItem('rmtt_progress', JSON.stringify(this.state.progress));
+      localStorage.setItem('rmtt_settings', JSON.stringify(this.state.settings));
+      localStorage.setItem('rmtt_streaks', JSON.stringify(this.state.streaks));
+      localStorage.setItem('rmtt_stats', JSON.stringify(this.state.stats));
+    } catch(e) { console.warn('Save error', e); }
+  },
+
+  registerSW() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
+  },
+
+  checkDisclaimer() {
+    const accepted = localStorage.getItem('rmtt_disclaimer');
+    if (!accepted) {
+      document.getElementById('disclaimerModal').style.display = 'flex';
+    } else {
+      document.getElementById('disclaimerModal').style.display = 'none';
+    }
+  },
+
+  checkIOSInstall() {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone;
+    if (isIOS && !isStandalone) {
+      document.getElementById('installBanner').classList.remove('hidden');
+    }
+  }
+};
+
+// ============================================================
+// BUILT-IN RANGES (fallback if ranges.json unavailable)
+// ============================================================
+function getBuiltinRanges() {
+  const ranges = {};
+  // Generate realistic GTO-approximated ranges
+  const scenarios = [
+    // [stack, position, actionType]
+    [10,'BTN','RFI'], [10,'CO','RFI'], [10,'SB','RFI'],
+    [10,'UTG','RFI'], [10,'BB','vs_raise'],
+    [20,'BTN','RFI'], [20,'CO','RFI'], [20,'HJ','RFI'],
+    [20,'UTG','RFI'], [20,'SB','vs_raise'], [20,'BB','vs_raise'],
+    [40,'BTN','RFI'], [40,'CO','RFI'], [40,'HJ','RFI'],
+    [40,'LJ','RFI'], [40,'MP','RFI'], [40,'UTG','RFI'],
+    [40,'BTN','vs_3bet'], [40,'CO','vs_3bet'],
+    [100,'BTN','RFI'], [100,'CO','RFI'], [100,'HJ','RFI'],
+    [100,'LJ','RFI'], [100,'MP','RFI'], [100,'UTG','RFI'],
+    [100,'BTN','vs_3bet'], [100,'SB','vs_raise'],
+    [15,'BTN','RFI'], [15,'UTG','RFI'], [15,'SB','vs_raise'],
+    [5,'BTN','RFI'], [5,'CO','RFI'], [5,'BB','vs_raise'],
+  ];
+
+  scenarios.forEach(([stack, pos, action]) => {
+    const key = `${stack}BB_${pos}_${action}`;
+    ranges[key] = generateRangeForScenario(stack, pos, action);
+  });
+  return ranges;
+}
+
+function generateRangeForScenario(stack, pos, action) {
+  const hands = {};
+  const allHands = getAllHandNames();
+
+  // Position tightness multiplier
+  const posMult = { UTG:0.55, MP:0.62, LJ:0.68, HJ:0.75, CO:0.82, BTN:0.95, SB:0.65, BB:0.85 }[pos] || 0.7;
+  const isShort = stack <= 20;
+
+  allHands.forEach(hand => {
+    const strength = getHandStrength(hand);
+    const threshold = 1 - posMult;
+
+    if (action === 'RFI') {
+      if (isShort) {
+        // Short stack: shove or fold
+        if (strength > threshold) {
+          hands[hand] = { shove: Math.min(1, strength * 1.1 + (stack <= 10 ? 0.1 : 0)), fold: 0 };
+          hands[hand].fold = Math.max(0, 1 - hands[hand].shove);
+        } else {
+          hands[hand] = { shove: 0, fold: 1 };
+        }
+      } else {
+        // Deep stack: raise or fold, sometimes mixed
+        if (strength > threshold + 0.15) {
+          hands[hand] = { raise: 1, fold: 0 };
+        } else if (strength > threshold) {
+          const r = Math.round((strength - threshold) / 0.15 * 10) / 10;
+          hands[hand] = { raise: Math.min(1, r), fold: Math.max(0, 1-r) };
+        } else {
+          hands[hand] = { raise: 0, fold: 1 };
+        }
+      }
+    } else if (action === 'vs_raise') {
+      if (isShort) {
+        if (strength > threshold + 0.2) {
+          hands[hand] = { shove: 1, fold: 0 };
+        } else if (strength > threshold + 0.1) {
+          hands[hand] = { shove: 0.6, call: 0.1, fold: 0.3 };
+        } else if (strength > threshold) {
+          hands[hand] = { call: 0.5, fold: 0.5 };
+        } else {
+          hands[hand] = { fold: 1 };
+        }
+      } else {
+        if (strength > threshold + 0.25) {
+          hands[hand] = { threebet: 1, fold: 0 };
+        } else if (strength > threshold + 0.1) {
+          hands[hand] = { call: 0.7, threebet: 0.3, fold: 0 };
+        } else if (strength > threshold) {
+          hands[hand] = { call: 0.5, fold: 0.5 };
+        } else {
+          hands[hand] = { fold: 1 };
+        }
+      }
+    } else if (action === 'vs_3bet') {
+      if (strength > threshold + 0.3) {
+        hands[hand] = { fourbet: 1, fold: 0 };
+      } else if (strength > threshold + 0.15) {
+        hands[hand] = { call: 0.6, fourbet: 0.4, fold: 0 };
+      } else if (strength > threshold + 0.05) {
+        hands[hand] = { call: 0.4, fold: 0.6 };
+      } else {
+        hands[hand] = { fold: 1 };
+      }
+    }
+  });
+
+  return { stack, position: pos, action, hands };
+}
+
+function getAllHandNames() {
+  const hands = [];
+  for (let i = 0; i < RANKS.length; i++) {
+    for (let j = 0; j < RANKS.length; j++) {
+      if (i === j) hands.push(RANKS[i]+RANKS[j]); // pair
+      else if (i < j) hands.push(RANKS[i]+RANKS[j]+'s'); // suited
+      else hands.push(RANKS[j]+RANKS[i]+'o'); // offsuit
+    }
+  }
+  return hands;
+}
+
+function getHandStrength(hand) {
+  // Returns 0-1 normalized strength
+  const isPair = hand.length === 2;
+  const isSuited = hand.endsWith('s');
+  const r1 = RANKS.indexOf(hand[0]);
+  const r2 = RANKS.indexOf(hand[1] === hand[0] ? hand[0] : hand[1]);
+  const highRank = Math.min(r1, r2);
+  const lowRank = Math.max(r1, r2);
+  const gap = lowRank - highRank;
+
+  let base = (13 - highRank) / 13;
+  if (isPair) {
+    base = 0.5 + (13 - highRank) / 26;
+  } else {
+    base = (13 - highRank) / 13 * 0.7 + (13 - lowRank) / 13 * 0.3;
+    base -= gap * 0.04;
+    if (isSuited) base += 0.06;
+  }
+  return Math.max(0, Math.min(1, base));
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  App.state.tab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.bottom-nav-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.top-nav-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  if (tab === 'progress') renderProgress();
+  if (tab === 'browse') renderBrowse();
+  if (tab === 'settings') renderSettings();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+// ============================================================
+// DISCLAIMER
+// ============================================================
+document.getElementById('disclaimerCb').addEventListener('change', function() {
+  document.getElementById('disclaimerBtn').disabled = !this.checked;
+});
+function acceptDisclaimer() {
+  localStorage.setItem('rmtt_disclaimer', '1');
+  document.getElementById('disclaimerModal').style.display = 'none';
+}
+
+// ============================================================
+// DRILL SETUP
+// ============================================================
+function selectMode(mode) {
+  App.state.drill.mode = mode;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('selected', c.dataset.mode === mode));
+}
+
+function toggleStackFilter(val) {
+  const d = App.state.drill;
+  if (val === 'all') {
+    d.stackFilter = ['all'];
+    document.querySelectorAll('#stackChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.val === 'all'));
+    return;
+  }
+  if (d.stackFilter.includes('all')) {
+    d.stackFilter = [];
+  }
+  const idx = d.stackFilter.indexOf(val);
+  if (idx > -1) d.stackFilter.splice(idx, 1);
+  else d.stackFilter.push(val);
+  if (d.stackFilter.length === 0) d.stackFilter = ['all'];
+  document.querySelectorAll('#stackChips .chip').forEach(c => {
+    if (c.dataset.val === 'all') c.classList.toggle('selected', d.stackFilter.includes('all'));
+    else c.classList.toggle('selected', d.stackFilter.includes(c.dataset.val));
+  });
+}
+
+function setPositionPreset(preset) {
+  const d = App.state.drill;
+  document.querySelectorAll('#positionPresets .chip').forEach(c => c.classList.toggle('selected', c.dataset.preset === preset));
+  if (preset === 'all') d.posFilter = [...POSITIONS];
+  else if (preset === 'late') d.posFilter = ['CO','BTN'];
+  else if (preset === 'blinds') d.posFilter = ['SB','BB'];
+  document.querySelectorAll('#positionChips .chip').forEach(c => {
+    c.classList.toggle('selected', d.posFilter.includes(c.dataset.pos));
+  });
+}
+
+function togglePosFilter(pos) {
+  const d = App.state.drill;
+  const idx = d.posFilter.indexOf(pos);
+  if (idx > -1) d.posFilter.splice(idx, 1);
+  else d.posFilter.push(pos);
+  if (d.posFilter.length === 0) d.posFilter = ['BTN'];
+  document.querySelectorAll('#positionChips .chip').forEach(c => {
+    c.classList.toggle('selected', d.posFilter.includes(c.dataset.pos));
+  });
+  document.querySelectorAll('#positionPresets .chip').forEach(c => c.classList.remove('selected'));
+}
+
+function toggleActionFilter(val) {
+  App.state.drill.actionFilter = val;
+  document.querySelectorAll('#actionChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.action === val));
+}
+
+// ============================================================
+// DRILL ENGINE
+// ============================================================
+function startDrill() {
+  if (!App.state.rangesLoaded) {
+    alert('Ranges still loading, please wait...');
+    return;
+  }
+  const d = App.state.drill;
+  d.phase = 'question';
+  d.answers = [];
+  d.streak = 0;
+  d.startTime = Date.now();
+  d.currentIndex = 0;
+
+  const handCount = { quick: 15, deep: 30, weakness: 20 }[d.mode] || 15;
+  d.queue = buildDrillQueue(handCount);
+
+  if (d.queue.length === 0) {
+    alert('No scenarios match your filters. Please adjust your selections.');
+    return;
+  }
+
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'block';
+  document.getElementById('drillComplete').style.display = 'none';
+  renderDrillQuestion();
+}
+
+function buildDrillQueue(count) {
+  const d = App.state.drill;
+  const ranges = App.state.ranges;
+  if (!ranges) return [];
+
+  let candidates = [];
+  Object.entries(ranges).forEach(([key, scenario]) => {
+    const stack = scenario.stack;
+    const pos = scenario.position;
+    const action = scenario.action;
+
+    if (!d.stackFilter.includes('all') && !d.stackFilter.includes(String(stack))) return;
+    if (!d.posFilter.includes(pos)) return;
+    if (d.actionFilter !== 'all' && d.actionFilter !== action) return;
+
+    Object.entries(scenario.hands || {}).forEach(([hand, freqs]) => {
+      candidates.push({ key, stack, pos, action, hand, freqs });
+    });
+  });
+
+  if (candidates.length === 0) return [];
+
+  // Weakness focus: sort by SRS due + low accuracy
+  if (d.mode === 'weakness') {
+    const now = Date.now();
+    candidates.sort((a, b) => {
+      const keyA = getSRSKey(a.stack, a.pos, a.action, a.hand);
+      const keyB = getSRSKey(b.stack, b.pos, b.action, b.hand);
+      const srsA = App.state.progress[keyA];
+      const srsB = App.state.progress[keyB];
+      const dueA = srsA ? (srsA.next_review || 0) - now : -999999;
+      const dueB = srsB ? (srsB.next_review || 0) - now : -999999;
+      return dueA - dueB;
+    });
+    return candidates.slice(0, count);
+  }
+
+  // Shuffle for quick/deep
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+  return candidates.slice(0, count);
+}
+
+function renderDrillQuestion() {
+  const d = App.state.drill;
+  const q = d.queue[d.currentIndex];
+  if (!q) { showDrillComplete(); return; }
+  d.currentQuestion = q;
+  d.questionStartTime = Date.now();
+
+  const total = d.queue.length;
+  const current = d.currentIndex + 1;
+  const pct = ((d.currentIndex) / total * 100).toFixed(0);
+
+  const cards = buildCardHTML(q.hand);
+  const actions = getActionButtons(q.stack, q.action, q.pos);
+  const streakBadge = d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : '';
+
+  document.getElementById('drillScreen').innerHTML = `
+    <div class="drill-header">
+      <span class="drill-progress-text">Q ${current}/${total}</span>
+      ${streakBadge}
+    </div>
+    <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${pct}%"></div></div>
+
+    <div class="situation-card animate-slide" id="handCard">
+      <div class="card-title">📊 Situation</div>
+      <div class="situation-tags">
+        <span class="situation-tag tag-stack">${q.stack}BB</span>
+        <span class="situation-tag tag-pos">
+          <span class="tooltip-wrap">${q.pos}<span class="tooltip">${POSITION_TOOLTIPS[q.pos]||''}</span></span>
+        </span>
+        <span class="situation-tag tag-action">${formatActionName(q.action)}</span>
+      </div>
+      <div class="card-title">🃏 Your hand:</div>
+      ${cards}
+      <div class="hand-name">${q.hand}</div>
+    </div>
+
+    <div class="action-label">Your action?</div>
+    <div class="action-buttons" id="actionButtons">
+      ${actions.map(a => `<button class="action-btn action-btn-${a.cls}" onclick="handleAnswer('${a.value}')">${a.label}</button>`).join('')}
+    </div>
+  `;
+}
+
+function buildCardHTML(hand) {
+  const isPair = hand.length === 2;
+  const isSuited = hand.endsWith('s');
+  const r1 = hand[0];
+  const r2 = isPair ? hand[1] : hand[1] === hand[0] ? hand[0] : hand[1];
+
+  let suit1, suit2;
+  if (isPair) {
+    suit1 = 's'; suit2 = 'h';
+  } else if (isSuited) {
+    const pick = ['s','h','d','c'][Math.floor(Math.random()*4)];
+    suit1 = suit2 = pick;
+  } else {
+    suit1 = 's'; suit2 = 'h';
+  }
+
+  return `<div class="card-pair">
+    ${makeCard(r1, suit1)}
+    ${makeCard(r2, suit2)}
+  </div>`;
+}
+
+function makeCard(rank, suit) {
+  return `<div class="playing-card suit-${suit === 's' ? 'spade' : suit === 'h' ? 'heart' : suit === 'd' ? 'diamond' : 'club'}">
+    <span class="rank">${rank}</span>
+    <span class="suit">${SUITS_SYMBOLS[suit]}</span>
+  </div>`;
+}
+
+function getActionButtons(stack, action, pos) {
+  const isShort = stack <= 20;
+  if (action === 'RFI') {
+    if (isShort) {
+      return [
+        { value: 'fold', label: 'FOLD', cls: 'fold' },
+        { value: 'raise', label: stack <= 10 ? 'ALL-IN / SHOVE' : 'MIN-RAISE', cls: 'raise' },
+        { value: 'shove', label: 'ALL-IN', cls: 'shove' }
+      ].filter((_, i) => stack <= 10 ? i !== 1 : i !== 2);
+    } else {
+      return [
+        { value: 'fold', label: 'FOLD', cls: 'fold' },
+        { value: 'raise', label: 'RAISE (2.5x)', cls: 'raise' },
+      ];
+    }
+  } else if (action === 'vs_raise') {
+    if (isShort) {
+      return [
+        { value: 'fold', label: 'FOLD', cls: 'fold' },
+        { value: 'call', label: 'CALL', cls: 'call' },
+        { value: 'shove', label: 'ALL-IN / SHOVE', cls: 'shove' }
+      ];
+    } else {
+      return [
+        { value: 'fold', label: 'FOLD', cls: 'fold' },
+        { value: 'call', label: 'CALL', cls: 'call' },
+        { value: 'threebet', label: '3-BET', cls: 'raise' }
+      ];
+    }
+  } else if (action === 'vs_3bet') {
+    return [
+      { value: 'fold', label: 'FOLD', cls: 'fold' },
+      { value: 'call', label: 'CALL', cls: 'call' },
+      { value: 'fourbet', label: '4-BET', cls: 'raise' }
+    ];
+  } else if (action === 'vs_shove') {
+    return [
+      { value: 'fold', label: 'FOLD', cls: 'fold' },
+      { value: 'call', label: 'CALL (ALL-IN)', cls: 'call' }
+    ];
+  }
+  return [
+    { value: 'fold', label: 'FOLD', cls: 'fold' },
+    { value: 'raise', label: 'RAISE', cls: 'raise' }
+  ];
+}
+
+function formatActionName(action) {
+  const map = { RFI: 'RFI', vs_raise: 'vs Raise', vs_3bet: 'vs 3-Bet', vs_shove: 'vs Shove' };
+  return map[action] || action;
+}
+
+function getBestAction(freqs) {
+  if (!freqs) return 'fold';
+  let best = 'fold', bestVal = 0;
+  Object.entries(freqs).forEach(([k, v]) => {
+    if (v > bestVal) { bestVal = v; best = k; }
+  });
+  return best;
+}
+
+function handleAnswer(userAction) {
+  const d = App.state.drill;
+  const q = d.currentQuestion;
+  const responseTime = Date.now() - d.questionStartTime;
+  const correctAction = getBestAction(q.freqs);
+  const isCorrect = userAction === correctAction || isActionEquivalent(userAction, correctAction, q.freqs);
+
+  const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
+  updateSRS(srsKey, isCorrect);
+
+  if (isCorrect) {
+    d.streak++;
+    if (d.streak > App.state.streaks.personalBest) {
+      App.state.streaks.personalBest = d.streak;
+      showToast('👑 New personal best!');
+    } else if (d.streak === 10) {
+      showToast('🎯 10 perfect answers!');
+    } else if (d.streak === 5) {
+      showToast('🔥 5 in a row!');
+    }
+  } else {
+    d.streak = 0;
+  }
+
+  d.answers.push({ q, userAction, correctAction, isCorrect, responseTime });
+  updateDailyStats(isCorrect);
+
+  if (d.mode === 'quick') {
+    // Flash and move on
+    const handCard = document.getElementById('handCard');
+    if (handCard) handCard.classList.add(isCorrect ? 'animate-correct' : 'animate-wrong');
+    // Highlight buttons
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      const val = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+      if (val === correctAction) btn.classList.add('correct-highlight');
+      else if (val === userAction && !isCorrect) btn.classList.add('wrong-highlight');
+    });
+    setTimeout(() => {
+      d.currentIndex++;
+      if (d.currentIndex >= d.queue.length) showDrillComplete();
+      else renderDrillQuestion();
+    }, 1000);
+  } else {
+    renderAnswerScreen(userAction, correctAction, isCorrect, q);
+  }
+}
+
+function isActionEquivalent(user, correct, freqs) {
+  // Treat shove/raise as equivalent if scenario uses one or other
+  if ((user === 'shove' && correct === 'raise') || (user === 'raise' && correct === 'shove')) {
+    return (freqs.shove || 0) + (freqs.raise || 0) >= 0.5;
+  }
+  return false;
+}
+
+function renderAnswerScreen(userAction, correctAction, isCorrect, q) {
+  const d = App.state.drill;
+  const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
+  const srs = App.state.progress[srsKey];
+  const reasoning = getReasoningText(q);
+  const nextDays = srs ? srs.interval_days : 1;
+
+  let freqBars = '';
+  if (q.freqs) {
+    const colorMap = { fold: 'freq-fold', call: 'freq-call', raise: 'freq-raise', threebet: 'freq-raise', fourbet: 'freq-raise', shove: 'freq-shove' };
+    freqBars = Object.entries(q.freqs).map(([action, pct]) => {
+      if (pct <= 0) return '';
+      const pctPct = Math.round(pct * 100);
+      return `<div class="freq-bar-container">
+        <div class="freq-bar-label"><span>${formatActionLabel(action)}</span><span>${pctPct}%</span></div>
+        <div class="freq-bar-track"><div class="freq-bar-fill ${colorMap[action]||'freq-raise'}" style="width:${pctPct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  const history = (srs && srs.history) || [];
+  const seen = history.length;
+  const correct = history.filter(h => h.correct).length;
+
+  document.getElementById('drillScreen').innerHTML = `
+    <div class="drill-header">
+      <span class="drill-progress-text">Q ${d.currentIndex+1}/${d.queue.length}</span>
+      ${d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : ''}
+    </div>
+    <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${(d.currentIndex/d.queue.length*100).toFixed(0)}%"></div></div>
+
+    <div class="situation-card ${isCorrect ? 'animate-correct' : 'animate-wrong'}">
+      <div class="answer-result ${isCorrect ? 'correct' : 'wrong'}">
+        ${isCorrect ? '✅ Correct! ' : '❌ Wrong — the correct answer was '}<strong>${formatActionLabel(correctAction).toUpperCase()}</strong>
+      </div>
+
+      <div class="situation-tags">
+        <span class="situation-tag tag-stack">${q.stack}BB</span>
+        <span class="situation-tag tag-pos">${q.pos}</span>
+        <span class="situation-tag tag-action">${formatActionName(q.action)}</span>
+        <span style="font-family:JetBrains Mono;font-weight:600;font-size:13px;color:var(--text)">${q.hand}</span>
+      </div>
+
+      <div class="card-title">📊 GTO Frequencies:</div>
+      ${freqBars}
+
+      <div class="reasoning-box">💡 ${reasoning}</div>
+
+      <div class="hand-stats">
+        <span>📈 Seen: ${seen + 1}</span>
+        <span>✓ ${correct + (isCorrect ? 1 : 0)}/${seen + 1}</span>
+        <span>🔔 Next: ${nextDays === 1 ? 'tomorrow' : 'in ' + nextDays + ' days'}</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="nextDrillHand()" style="margin-top:8px">
+      ${d.currentIndex + 1 >= d.queue.length ? 'Finish Drill ✓' : 'Next Hand →'}
+    </button>
+  `;
+}
+
+function nextDrillHand() {
+  const d = App.state.drill;
+  d.currentIndex++;
+  if (d.currentIndex >= d.queue.length) showDrillComplete();
+  else renderDrillQuestion();
+}
+
+function showDrillComplete() {
+  const d = App.state.drill;
+  const elapsed = Math.round((Date.now() - d.startTime) / 1000 / 60 * 10) / 10;
+  const total = d.answers.length;
+  const correct = d.answers.filter(a => a.isCorrect).length;
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+
+  // Update total study time
+  App.state.stats.totalTime += elapsed;
+  App.state.streaks.current = d.streak;
+  App.state.saveProgress();
+
+  const mistakes = d.answers.filter(a => !a.isCorrect);
+
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'block';
+  document.getElementById('drillComplete').innerHTML = `
+    <div style="text-align:center;padding:16px 0 8px">
+      <div class="score-circle">
+        <div class="score-number">${pct}%</div>
+        <div class="score-label">${correct}/${total}</div>
+      </div>
+      <div class="section-title">Drill Complete!</div>
+      <div class="section-subtitle">${elapsed} min · ${d.mode} mode</div>
+    </div>
+
+    ${mistakes.length > 0 ? `
+    <div class="card">
+      <div class="card-title">❌ Mistakes (${mistakes.length})</div>
+      ${mistakes.slice(0, 8).map(m => `
+        <div class="mistake-item">
+          <div>
+            <div class="mistake-hand">${m.q.hand}</div>
+            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionName(m.q.action)}</div>
+          </div>
+          <div style="text-align:right;font-size:12px">
+            <div style="color:var(--danger)">You: ${formatActionLabel(m.userAction)}</div>
+            <div style="color:var(--success)">GTO: ${formatActionLabel(m.correctAction)}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>` : `<div class="card"><div style="text-align:center;padding:12px;color:var(--success);font-weight:600">🎯 Perfect score! No mistakes!</div></div>`}
+
+    <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
+      <button class="btn btn-secondary" onclick="resetToDrillSetup()">← Back to Setup</button>
+      <button class="btn btn-primary" onclick="restartSameDrill()">Drill Again</button>
+    </div>
+  `;
+}
+
+function resetToDrillSetup() {
+  document.getElementById('drillSetup').style.display = 'block';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  App.state.drill.phase = 'setup';
+}
+
+function restartSameDrill() {
+  document.getElementById('drillScreen').style.display = 'block';
+  document.getElementById('drillComplete').style.display = 'none';
+  startDrill();
+}
+
+function formatActionLabel(action) {
+  const map = { fold: 'Fold', call: 'Call', raise: 'Raise', threebet: '3-Bet', fourbet: '4-Bet', shove: 'All-In' };
+  return map[action] || action;
+}
+
+// ============================================================
+// SRS SYSTEM
+// ============================================================
+function getSRSKey(stack, pos, action, hand) {
+  return `${stack}BB_${pos}_${action}_${hand}`;
+}
+
+function getSRS(key) {
+  if (!App.state.progress[key]) {
+    App.state.progress[key] = {
+      ease_factor: 2.5,
+      interval_days: 1,
+      repetitions: 0,
+      last_reviewed: null,
+      next_review: null,
+      history: []
+    };
+  }
+  return App.state.progress[key];
+}
+
+function updateSRS(key, correct) {
+  const srs = getSRS(key);
+  const now = Date.now();
+  srs.last_reviewed = now;
+  srs.history.push({ timestamp: now, correct });
+  if (srs.history.length > 50) srs.history = srs.history.slice(-50);
+
+  if (correct) {
+    if (srs.repetitions === 0) srs.interval_days = 1;
+    else if (srs.repetitions === 1) srs.interval_days = 3;
+    else srs.interval_days = Math.round(srs.interval_days * srs.ease_factor);
+    srs.ease_factor = Math.min(2.5, srs.ease_factor + 0.1);
+    srs.repetitions++;
+  } else {
+    srs.repetitions = 0;
+    srs.interval_days = 1;
+    srs.ease_factor = Math.max(1.3, srs.ease_factor - 0.2);
+  }
+  srs.next_review = now + srs.interval_days * 86400000;
+  App.state.saveProgress();
+}
+
+// ============================================================
+// DAILY STATS
+// ============================================================
+function updateDailyStats(isCorrect) {
+  const today = new Date().toISOString().split('T')[0];
+  if (!App.state.stats.dailyHistory[today]) {
+    App.state.stats.dailyHistory[today] = { hands: 0, correct: 0 };
+  }
+  App.state.stats.dailyHistory[today].hands++;
+  if (isCorrect) App.state.stats.dailyHistory[today].correct++;
+  App.state.stats.totalHands++;
+
+  // Daily streak
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const d4am = new Date(); d4am.setHours(4, 0, 0, 0);
+  const last = App.state.streaks.lastPracticeDate;
+  if (last !== today) {
+    if (last === yesterday || (Date.now() < d4am.getTime() && last === today)) {
+      App.state.streaks.daily++;
+    } else if (!last) {
+      App.state.streaks.daily = 1;
+    } else {
+      App.state.streaks.daily = 1;
+    }
+    App.state.streaks.lastPracticeDate = today;
+  }
+  App.state.saveProgress();
+}
+
+// ============================================================
+// REASONING TEXT
+// ============================================================
+function getReasoningText(q) {
+  const { stack, pos, action, hand, freqs } = q;
+  const bestAction = getBestAction(freqs);
+  const isShort = stack <= 20;
+
+  if (action === 'RFI') {
+    if (stack <= 10) {
+      if (bestAction === 'shove') return `<strong>${hand}</strong> at ${stack}BB from ${pos} is a clear shove. With only ${stack}BB, ICM pressure makes fold equity critical. This hand has strong equity vs calling ranges.`;
+      return `<strong>${hand}</strong> at ${stack}BB from ${pos} — fold equity is minimal. Preserve stack for better spots.`;
+    }
+    if (stack <= 20) {
+      if (bestAction === 'raise' || bestAction === 'shove') return `<strong>${hand}</strong> at ${stack}BB from ${pos}. At this depth, min-raise-or-fold is standard. ${hand} is strong enough to enter.`;
+      return `<strong>${hand}</strong> at ${stack}BB from ${pos} folds here. Tight is right at 15-20BB — wait for better spots given ICM dynamics.`;
+    }
+    if (stack >= 40) {
+      if (bestAction === 'raise') return `<strong>${hand}</strong> from ${pos} at ${stack}BB is a standard open. Position advantage and hand strength justify the ${pos === 'BTN' ? '2.2x' : '2.5x'} raise.`;
+      return `<strong>${hand}</strong> from ${pos} at ${stack}BB folds. Hand strength falls below the opening threshold for this position.`;
+    }
+  }
+  if (action === 'vs_raise') {
+    if (bestAction === 'threebet' || bestAction === 'shove') return `<strong>${hand}</strong> 3-bets or shoves facing a raise. Strong hand + positional value = don't just call.`;
+    if (bestAction === 'call') return `<strong>${hand}</strong> calls facing the raise. Hand has good equity but not enough to re-raise profitably at this stack depth.`;
+    return `<strong>${hand}</strong> folds facing the raise. Insufficient equity or positional disadvantage to continue profitably.`;
+  }
+  if (action === 'vs_3bet') {
+    if (bestAction === 'fourbet') return `<strong>${hand}</strong> 4-bets facing the 3-bet. Either value (premium hands) or bluff (suited blockers) — this hand qualifies.`;
+    if (bestAction === 'call') return `<strong>${hand}</strong> calls the 3-bet. Decent hand with good playability postflop.`;
+    return `<strong>${hand}</strong> folds to the 3-bet. The hand doesn't have enough equity or blocker value to continue.`;
+  }
+  return `<strong>${hand}</strong> — GTO recommends ${formatActionLabel(bestAction)}. Study the frequency breakdown above.`;
+}
+
+// ============================================================
+// MILESTONE TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('milestoneToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// PROGRESS TAB
+// ============================================================
+function renderProgress() {
+  const stats = App.state.stats;
+  const streaks = App.state.streaks;
+  const progress = App.state.progress;
+
+  // This week stats
+  const weekHands = getWeekHands();
+  const weekAcc = getWeekAccuracy();
+
+  // Scenario accuracy
+  const scenarios = computeScenarioAccuracy();
+  const weak3 = scenarios.filter(s => s.attempts >= 5).sort((a,b) => a.acc - b.acc).slice(0, 3);
+
+  // SRS due
+  const now = Date.now();
+  const due = Object.values(progress).filter(s => s.next_review && s.next_review <= now).length;
+
+  // Chart data
+  const chartData = buildChartData();
+
+  document.getElementById('progressContent').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">${weekHands}</div>
+        <div class="stat-unit">Hands this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${weekAcc}%</div>
+        <div class="stat-unit">Accuracy this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${streaks.daily}<span style="font-size:20px">🔥</span></div>
+        <div class="stat-unit">Daily streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${Math.round(stats.totalTime)}</div>
+        <div class="stat-unit">Min studied total</div>
+      </div>
+    </div>
+
+    ${due > 0 ? `
+    <div class="card" style="border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.05)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <span>🔔 <strong>${due}</strong> hands due for review today</span>
+        <button class="btn btn-sm" style="background:rgba(96,165,250,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.3)" onclick="startSRSSession()">Start Review Session →</button>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-title">📈 Accuracy Trend (30 days)</div>
+      ${renderAccuracyChart(chartData)}
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Accuracy by Scenario</div>
+      ${scenarios.length === 0 ? '<div class="empty-state"><p>No data yet. Start drilling to see stats!</p></div>' :
+        scenarios.sort((a,b) => a.acc - b.acc).slice(0, 12).map(s => {
+          const color = s.acc < 60 ? 'var(--danger)' : s.acc < 80 ? 'var(--warning)' : 'var(--success)';
+          return `<div class="scenario-bar-item">
+            <div class="scenario-bar-header">
+              <span>${s.label}</span>
+              <span style="color:${color};font-weight:600">${s.acc}%</span>
+            </div>
+            <div class="scenario-bar-track">
+              <div class="scenario-bar-fill" style="width:${s.acc}%;background:${color}"></div>
+            </div>
+          </div>`;
+        }).join('')}
+    </div>
+
+    ${weak3.length > 0 ? `
+    <div class="card">
+      <div class="card-title">⚠️ Top Weak Spots</div>
+      ${weak3.map(s => `
+        <div class="weak-spot-item">
+          <div>
+            <div class="weak-spot-name">${s.label}</div>
+            <div class="weak-spot-stat">${s.correct}/${s.attempts} correct (${s.acc}%)</div>
+          </div>
+          <button class="btn btn-sm btn-gold" onclick="drillWeakSpot('${s.key}')">Focus Drill →</button>
+        </div>
+      `).join('')}
+    </div>` : ''}
+  `;
+}
+
+function getWeekHands() {
+  const now = new Date();
+  let total = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    total += (App.state.stats.dailyHistory[key] || {}).hands || 0;
+  }
+  return total;
+}
+
+function getWeekAccuracy() {
+  const now = new Date();
+  let hands = 0, correct = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const day = App.state.stats.dailyHistory[key] || {};
+    hands += day.hands || 0;
+    correct += day.correct || 0;
+  }
+  return hands > 0 ? Math.round(correct / hands * 100) : 0;
+}
+
+function computeScenarioAccuracy() {
+  const map = {};
+  Object.entries(App.state.progress).forEach(([key, srs]) => {
+    // key = 10BB_BTN_RFI_AJs
+    const parts = key.split('_');
+    if (parts.length < 4) return;
+    const scenKey = parts.slice(0, 3).join('_');
+    if (!map[scenKey]) map[scenKey] = { key: scenKey, label: scenKey.replace(/_/g,' '), attempts: 0, correct: 0 };
+    const h = srs.history || [];
+    map[scenKey].attempts += h.length;
+    map[scenKey].correct += h.filter(x => x.correct).length;
+  });
+  return Object.values(map).map(s => ({
+    ...s, acc: s.attempts > 0 ? Math.round(s.correct / s.attempts * 100) : 0
+  }));
+}
+
+function buildChartData() {
+  const days = 30;
+  const result = [];
+  const now = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const day = App.state.stats.dailyHistory[key] || { hands: 0, correct: 0 };
+    result.push({ date: key, hands: day.hands, correct: day.correct });
+  }
+  // 7-day moving average
+  return result.map((d, i) => {
+    const window = result.slice(Math.max(0, i-6), i+1);
+    const totalH = window.reduce((s,x) => s + x.hands, 0);
+    const totalC = window.reduce((s,x) => s + x.correct, 0);
+    return { ...d, avg: totalH > 0 ? totalC / totalH * 100 : null };
+  });
+}
+
+function renderAccuracyChart(data) {
+  const w = 600, h = 120;
+  const pad = { top: 10, right: 10, bottom: 20, left: 30 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+
+  const points = data.filter(d => d.avg !== null);
+  if (points.length < 2) return '<div style="color:var(--text-secondary);font-size:13px;text-align:center;padding:20px">No data yet — start drilling!</div>';
+
+  const maxAcc = 100;
+  const minAcc = 0;
+  const xStep = chartW / (data.length - 1);
+
+  // Build polyline
+  const linePoints = data.map((d, i) => {
+    if (d.avg === null) return null;
+    const x = pad.left + i * xStep;
+    const y = pad.top + chartH - (d.avg - minAcc) / (maxAcc - minAcc) * chartH;
+    return `${x},${y}`;
+  }).filter(Boolean).join(' ');
+
+  // Y grid lines
+  const gridLines = [0, 25, 50, 75, 100].map(pct => {
+    const y = pad.top + chartH - (pct / 100) * chartH;
+    return `<line x1="${pad.left}" y1="${y}" x2="${w - pad.right}" y2="${y}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <text x="${pad.left - 4}" y="${y + 4}" fill="#8a95a8" font-size="9" text-anchor="end">${pct}%</text>`;
+  }).join('');
+
+  return `<div class="chart-container">
+    <svg class="chart-svg" viewBox="0 0 ${w} ${h}">
+      ${gridLines}
+      <polyline points="${linePoints}" fill="none" stroke="var(--mint)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <text x="${pad.left}" y="${h - 2}" fill="#8a95a8" font-size="9">30 days ago</text>
+      <text x="${w - pad.right}" y="${h - 2}" fill="#8a95a8" font-size="9" text-anchor="end">Today</text>
+    </svg>
+    <div style="font-size:11px;color:var(--text-secondary);text-align:center;margin-top:4px">7-day moving average accuracy</div>
+  </div>`;
+}
+
+function startSRSSession() {
+  // Override drill settings to SRS due cards
+  App.state.drill.mode = 'weakness';
+  switchTab('drill');
+  startDrill();
+}
+
+function drillWeakSpot(scenKey) {
+  const parts = scenKey.split('_');
+  if (parts.length >= 3) {
+    App.state.drill.stackFilter = [parts[0].replace('BB', '')];
+    App.state.drill.posFilter = [parts[1]];
+    App.state.drill.actionFilter = parts[2];
+  }
+  App.state.drill.mode = 'weakness';
+  switchTab('drill');
+}
+
+// ============================================================
+// BROWSE TAB
+// ============================================================
+let browseFilters = { stack: '', pos: '', action: '' };
+
+function renderBrowse() {
+  if (!App.state.rangesLoaded) {
+    document.getElementById('browseContent').innerHTML = `<div class="loading-screen"><div class="spinner"></div><div>Loading ranges...</div></div>`;
+    return;
+  }
+  const ranges = App.state.ranges;
+  const stacks = [...new Set(Object.values(ranges).map(r => r.stack))].sort((a,b) => a-b);
+  const positions = [...new Set(Object.values(ranges).map(r => r.position))];
+  const actions = [...new Set(Object.values(ranges).map(r => r.action))];
+
+  if (!browseFilters.stack) browseFilters.stack = String(stacks[0] || 40);
+  if (!browseFilters.pos) browseFilters.pos = positions.includes('BTN') ? 'BTN' : positions[0];
+  if (!browseFilters.action) browseFilters.action = actions.includes('RFI') ? 'RFI' : actions[0];
+
+  const scenarioKey = Object.keys(ranges).find(k => {
+    const s = ranges[k];
+    return String(s.stack) === browseFilters.stack && s.position === browseFilters.pos && s.action === browseFilters.action;
+  });
+  const scenario = scenarioKey ? ranges[scenarioKey] : null;
+
+  document.getElementById('browseContent').innerHTML = `
+    <div class="browse-filters">
+      <div class="select-wrapper">
+        <select class="select-input" id="browseStack" onchange="updateBrowseFilter('stack', this.value)">
+          ${stacks.map(s => `<option value="${s}" ${String(s)===browseFilters.stack?'selected':''}>${s}BB</option>`).join('')}
+        </select>
+      </div>
+      <div class="select-wrapper">
+        <select class="select-input" id="browsePos" onchange="updateBrowseFilter('pos', this.value)">
+          ${positions.map(p => `<option value="${p}" ${p===browseFilters.pos?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="select-wrapper">
+        <select class="select-input" id="browseAction" onchange="updateBrowseFilter('action', this.value)">
+          ${actions.map(a => `<option value="${a}" ${a===browseFilters.action?'selected':''}>${formatActionName(a)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    ${scenario ? renderHandGrid(scenario, scenarioKey) : '<div class="empty-state"><div class="icon">📭</div><p>No data for this scenario. Try different filters.</p></div>'}
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> 100% aggressive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#86efac"></div> >70% aggressive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Mixed 40-60%</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fca5a5"></div> >70% fold</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> 100% fold</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#374151"></div> No data</div>
+    </div>
+
+    ${scenario ? `<button class="btn btn-primary btn-full" style="margin-top:12px" onclick="studyThisScenario('${browseFilters.stack}','${browseFilters.pos}','${browseFilters.action}')">Study This Scenario →</button>` : ''}
+  `;
+}
+
+function renderHandGrid(scenario, scenarioKey) {
+  const hands = scenario.hands || {};
+  let gridCells = '';
+
+  for (let row = 0; row < 13; row++) {
+    for (let col = 0; col < 13; col++) {
+      const hand = getHandFromGrid(row, col);
+      const freqs = hands[hand];
+      const cls = getGridCellClass(freqs);
+      gridCells += `<div class="grid-cell ${cls}" onclick="showHandPopup('${hand}','${scenarioKey}')" title="${hand}">${hand.replace('s','').replace('o','')}</div>`;
+    }
+  }
+
+  return `
+    <div class="grid-header-row">
+      <div class="grid-header-cell"></div>
+      ${RANKS.map(r => `<div class="grid-header-cell">${r}</div>`).join('')}
+    </div>
+    <div style="display:flex;gap:2px;min-width:360px;padding:0 4px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        ${RANKS.map(r => `<div style="width:20px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:JetBrains Mono;color:var(--text-secondary);aspect-ratio:1">${r}</div>`).join('')}
+      </div>
+      <div class="hand-grid-wrapper" style="flex:1">
+        <div class="hand-grid">${gridCells}</div>
+      </div>
+    </div>
+  `;
+}
+
+function getHandFromGrid(row, col) {
+  if (row === col) return RANKS[row] + RANKS[col]; // pair
+  if (row < col) return RANKS[row] + RANKS[col] + 's'; // suited (upper right)
+  return RANKS[col] + RANKS[row] + 'o'; // offsuit (lower left)
+}
+
+function getGridCellClass(freqs) {
+  if (!freqs) return 'c-gray';
+  const aggr = (freqs.raise || 0) + (freqs.shove || 0) + (freqs.threebet || 0) + (freqs.fourbet || 0) + (freqs.call || 0) * 0.5;
+  const fold = freqs.fold || 0;
+  if (aggr >= 0.99) return 'c-darkgreen';
+  if (aggr >= 0.7) return 'c-lightgreen';
+  if (aggr >= 0.4 && fold < 0.6) return 'c-yellow';
+  if (fold >= 0.7) return 'c-lightred';
+  if (fold >= 0.99) return 'c-darkred';
+  return 'c-yellow';
+}
+
+function updateBrowseFilter(type, value) {
+  browseFilters[type] = value;
+  renderBrowse();
+}
+
+function showHandPopup(hand, scenarioKey) {
+  const scenario = App.state.ranges[scenarioKey];
+  if (!scenario) return;
+  const freqs = (scenario.hands || {})[hand] || {};
+  const srsKey = getSRSKey(scenario.stack, scenario.position, scenario.action, hand);
+  const srs = App.state.progress[srsKey];
+  const history = (srs && srs.history) || [];
+  const seen = history.length;
+  const correct = history.filter(h => h.correct).length;
+  const acc = seen > 0 ? Math.round(correct / seen * 100) : null;
+
+  const colorMap = { fold: 'freq-fold', call: 'freq-call', raise: 'freq-raise', threebet: 'freq-raise', fourbet: 'freq-raise', shove: 'freq-shove' };
+
+  document.getElementById('handPopupContent').innerHTML = `
+    <div class="popup-header">
+      <span class="popup-title">${hand}</span>
+      <button class="popup-close" onclick="closeHandPopup()">✕</button>
+    </div>
+    <div class="situation-tags" style="margin-bottom:12px">
+      <span class="situation-tag tag-stack">${scenario.stack}BB</span>
+      <span class="situation-tag tag-pos">${scenario.position}</span>
+      <span class="situation-tag tag-action">${formatActionName(scenario.action)}</span>
+    </div>
+    ${Object.entries(freqs).map(([a, p]) => {
+      const pctPct = Math.round(p * 100);
+      if (pctPct <= 0) return '';
+      return `<div class="freq-bar-container">
+        <div class="freq-bar-label"><span>${formatActionLabel(a)}</span><span>${pctPct}%</span></div>
+        <div class="freq-bar-track"><div class="freq-bar-fill ${colorMap[a]||'freq-raise'}" style="width:${pctPct}%"></div></div>
+      </div>`;
+    }).join('')}
+    ${seen > 0 ? `<div class="hand-stats" style="margin:12px 0"><span>📈 Seen: ${seen}</span><span>✓ ${correct}/${seen}</span>${acc !== null ? `<span>Accuracy: ${acc}%</span>` : ''}</div>` : '<div style="font-size:13px;color:var(--text-secondary);margin:12px 0">No history yet</div>'}
+    <button class="btn btn-primary btn-full" onclick="drillThisHand('${hand}','${scenarioKey}')">Drill this hand →</button>
+  `;
+  document.getElementById('handPopup').classList.remove('hidden');
+}
+
+function closeHandPopup() {
+  document.getElementById('handPopup').classList.add('hidden');
+}
+
+document.getElementById('handPopup').addEventListener('click', function(e) {
+  if (e.target === this) closeHandPopup();
+});
+
+function drillThisHand(hand, scenarioKey) {
+  closeHandPopup();
+  const scenario = App.state.ranges[scenarioKey];
+  if (!scenario) return;
+  App.state.drill.stackFilter = [String(scenario.stack)];
+  App.state.drill.posFilter = [scenario.position];
+  App.state.drill.actionFilter = scenario.action;
+  App.state.drill.mode = 'deep';
+  switchTab('drill');
+  // Update UI to reflect filters
+  document.querySelectorAll('#stackChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.val === String(scenario.stack)));
+  document.querySelectorAll('#positionChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.pos === scenario.position));
+  document.querySelectorAll('#actionChips .chip').forEach(c => c.classList.toggle('selected', c.dataset.action === scenario.action));
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('selected', c.dataset.mode === 'deep'));
+}
+
+function studyThisScenario(stack, pos, action) {
+  App.state.drill.stackFilter = [stack];
+  App.state.drill.posFilter = [pos];
+  App.state.drill.actionFilter = action;
+  App.state.drill.mode = 'deep';
+  selectMode('deep');
+  switchTab('drill');
+}
+
+// ============================================================
+// SETTINGS TAB
+// ============================================================
+function renderSettings() {
+  const s = App.state.settings;
+  document.getElementById('settingsContent').innerHTML = `
+    <div class="card">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Dark Mode</div>
+          <div class="settings-sublabel">Always on for this app</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" ${s.darkMode ? 'checked' : ''} onchange="updateSetting('darkMode', this.checked)">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">PWA Notifications</div>
+          <div class="settings-sublabel">Daily study reminders</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" ${s.notifications ? 'checked' : ''} onchange="updateSetting('notifications', this.checked)">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Daily Goal</div>
+      <div class="radio-group">
+        ${[15, 30, 45].map(v => `
+          <label class="radio-option">
+            <input type="radio" name="dailyGoal" value="${v}" ${s.dailyGoal === v ? 'checked' : ''} onchange="updateSetting('dailyGoal', ${v})">
+            ${v} min
+          </label>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Default Drill Mode</div>
+      <div class="radio-group">
+        ${[['quick','⚡ Quick'],['deep','🧠 Deep'],['weakness','🎯 Weakness']].map(([v,l]) => `
+          <label class="radio-option">
+            <input type="radio" name="defaultMode" value="${v}" ${s.defaultMode === v ? 'checked' : ''} onchange="updateSetting('defaultMode', '${v}')">
+            ${l}
+          </label>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Position Grouping</div>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="posGroup" value="grouped" ${s.positionGrouping==='grouped'?'checked':''} onchange="updateSetting('positionGrouping','grouped')">
+          Grouped (by street)
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="posGroup" value="flat" ${s.positionGrouping==='flat'?'checked':''} onchange="updateSetting('positionGrouping','flat')">
+          Flat list
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-secondary btn-full" style="margin-bottom:10px" onclick="exportProgress()">
+        📤 Export Progress JSON
+      </button>
+      <button class="btn btn-danger btn-full" onclick="showResetModal()">
+        🗑️ Reset All Progress
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">About</div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.0</p>
+        <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
+        <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
+        <div class="divider"></div>
+        <p style="color:var(--warning)">⚠️ <strong style="color:var(--text)">Study Tool Only.</strong> Do not use during live play. Using assistance tools during play violates the Terms of Service of all major poker platforms and may result in account bans.</p>
+      </div>
+    </div>
+  `;
+}
+
+function updateSetting(key, value) {
+  App.state.settings[key] = value;
+  App.state.saveProgress();
+}
+
+function exportProgress() {
+  const data = {
+    progress: App.state.progress,
+    settings: App.state.settings,
+    streaks: App.state.streaks,
+    stats: App.state.stats,
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `range-master-progress-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showResetModal() {
+  document.getElementById('resetModal').classList.remove('hidden');
+}
+
+function closeResetModal() {
+  document.getElementById('resetModal').classList.add('hidden');
+}
+
+function confirmReset() {
+  localStorage.removeItem('rmtt_progress');
+  localStorage.removeItem('rmtt_settings');
+  localStorage.removeItem('rmtt_streaks');
+  localStorage.removeItem('rmtt_stats');
+  App.state.progress = {};
+  App.state.settings = { darkMode: true, dailyGoal: 30, notifications: false, defaultMode: 'quick', positionGrouping: 'grouped' };
+  App.state.streaks = { current: 0, daily: 0, personalBest: 0, lastPracticeDate: null };
+  App.state.stats = { totalHands: 0, totalTime: 0, dailyHistory: {} };
+  closeResetModal();
+  renderSettings();
+  showToast('✓ Progress reset');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+App.init();
+</script>
+</body>
+</html>

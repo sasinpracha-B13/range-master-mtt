@@ -1,0 +1,8 @@
+.claude/
+gen-ranges.ps1
+gen-icons.ps1
+generate-ranges.js
+gen_ranges.ps1
+*.ps1
+*.js
+!service-worker.js
