@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.2.1",
+    "version":  "1.2.2",
     "last_updated":  "2026-04-24",
     "disclaimer":  "Ranges are Nash/GTO approximations for study purposes. Verify with professional solvers (GTO Wizard, PioSolver) for critical decisions.",
     "position_notes":  {
@@ -49336,7 +49336,7 @@
                                  "stack":  100,
                                  "position":  "BB",
                                  "action":  "vs_raise_sb",
-                                 "notes":  "BB 100BB vs SB: defend wide, offsuit connectors/broadways added (v1.2.1)",
+                                 "notes":  "BB 100BB vs SB: defend wide, offsuit connectors + AJo/AJs 3bet mixing (v1.2.2)",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call",
@@ -49422,8 +49422,8 @@
                                                        },
                                                "AJs":  {
                                                            "fold":  0,
-                                                           "call":  0.7,
-                                                           "threebet":  0.3
+                                                           "call":  0.2,
+                                                           "threebet":  0.8
                                                        },
                                                "ATs":  {
                                                            "fold":  0,
@@ -49812,8 +49812,8 @@
                                                        },
                                                "AJo":  {
                                                            "fold":  0,
-                                                           "call":  1,
-                                                           "threebet":  0
+                                                           "call":  0.5,
+                                                           "threebet":  0.5
                                                        },
                                                "ATo":  {
                                                            "fold":  0,
@@ -51056,859 +51056,859 @@
                                  "stack":  40,
                                  "position":  "BB",
                                  "action":  "vs_raise_btn",
-                                 "notes":  "40BB BB vs BTN เนโฌโ€ aggressive 3bet (often as shove), call broadways",
+                                 "notes":  "BB 40BB vs BTN: pure 3bet JJ+/AK, wide flat Broadways+SC, suited connectors + thin Kx/Ax mixed (v1.2.2)",
                                  "valid_actions":  [
                                                        "fold",
                                                        "call",
                                                        "threebet"
                                                    ],
-                                 "target_percentage":  18.3,
-                                 "hand_count":  31,
+                                 "target_percentage":  27.3,
+                                 "hand_count":  46,
                                  "hands":  {
                                                "22":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "33":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "44":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "55":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "66":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "77":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "88":  {
-                                                          "threebet":  0,
+                                                          "fold":  0,
                                                           "call":  1,
-                                                          "fold":  0
+                                                          "threebet":  0
                                                       },
                                                "99":  {
-                                                          "threebet":  0,
-                                                          "call":  1,
-                                                          "fold":  0
+                                                          "fold":  0,
+                                                          "call":  0.5,
+                                                          "threebet":  0.5
                                                       },
                                                "TT":  {
-                                                          "threebet":  0,
-                                                          "call":  1,
-                                                          "fold":  0
+                                                          "fold":  0,
+                                                          "call":  0.4,
+                                                          "threebet":  0.6
                                                       },
                                                "JJ":  {
-                                                          "threebet":  1,
+                                                          "fold":  0,
                                                           "call":  0,
-                                                          "fold":  0
+                                                          "threebet":  1
                                                       },
                                                "QQ":  {
-                                                          "threebet":  1,
+                                                          "fold":  0,
                                                           "call":  0,
-                                                          "fold":  0
+                                                          "threebet":  1
                                                       },
                                                "KK":  {
-                                                          "threebet":  1,
+                                                          "fold":  0,
                                                           "call":  0,
-                                                          "fold":  0
+                                                          "threebet":  1
                                                       },
                                                "AA":  {
-                                                          "threebet":  1,
+                                                          "fold":  0,
                                                           "call":  0,
-                                                          "fold":  0
+                                                          "threebet":  1
                                                       },
                                                "AKs":  {
-                                                           "threebet":  1,
+                                                           "fold":  0,
                                                            "call":  0,
-                                                           "fold":  0
+                                                           "threebet":  1
                                                        },
                                                "AQs":  {
-                                                           "threebet":  1,
-                                                           "call":  0,
-                                                           "fold":  0
+                                                           "fold":  0,
+                                                           "call":  0.4,
+                                                           "threebet":  0.6
                                                        },
                                                "AJs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "ATs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A9s":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A8s":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A7s":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A6s":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A5s":  {
-                                                           "threebet":  0,
-                                                           "call":  1,
-                                                           "fold":  0
+                                                           "fold":  0.7,
+                                                           "call":  0,
+                                                           "threebet":  0.3
                                                        },
                                                "A4s":  {
-                                                           "threebet":  0,
-                                                           "call":  1,
-                                                           "fold":  0
+                                                           "fold":  0.7,
+                                                           "call":  0,
+                                                           "threebet":  0.3
                                                        },
                                                "A3s":  {
-                                                           "threebet":  0,
-                                                           "call":  1,
-                                                           "fold":  0
+                                                           "fold":  1,
+                                                           "call":  0,
+                                                           "threebet":  0
                                                        },
                                                "A2s":  {
-                                                           "threebet":  0,
-                                                           "call":  1,
-                                                           "fold":  0
+                                                           "fold":  1,
+                                                           "call":  0,
+                                                           "threebet":  0
                                                        },
                                                "KQs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "KJs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "KTs":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "K9s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "K8s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "K7s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "K6s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "K5s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "K4s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K3s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K2s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "QJs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "QTs":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "Q9s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.4,
+                                                           "call":  0.6,
+                                                           "threebet":  0
                                                        },
                                                "Q8s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q7s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q6s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q5s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q4s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q3s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q2s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "JTs":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "J9s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.4,
+                                                           "call":  0.6,
+                                                           "threebet":  0
                                                        },
                                                "J8s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "J7s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J6s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J5s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J4s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J3s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J2s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T9s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "T8s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "T7s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T6s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T5s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T4s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T3s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T2s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "98s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "97s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "96s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "95s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "94s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "93s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "92s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "87s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "86s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "85s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "84s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "83s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "82s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "76s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "75s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "74s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "73s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "72s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "65s":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "64s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "63s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "62s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "54s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "53s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "52s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "43s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "42s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "32s":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "AKo":  {
-                                                           "threebet":  1,
+                                                           "fold":  0,
                                                            "call":  0,
-                                                           "fold":  0
+                                                           "threebet":  1
                                                        },
                                                "AQo":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "AJo":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0,
+                                                           "call":  1,
+                                                           "threebet":  0
                                                        },
                                                "ATo":  {
-                                                           "threebet":  0,
+                                                           "fold":  0,
                                                            "call":  1,
-                                                           "fold":  0
+                                                           "threebet":  0
                                                        },
                                                "A9o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "A8o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "A7o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "A6o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.5,
+                                                           "call":  0.5,
+                                                           "threebet":  0
                                                        },
                                                "A5o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "A4o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "A3o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "A2o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "KQo":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "KJo":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.4,
+                                                           "call":  0.6,
+                                                           "threebet":  0
                                                        },
                                                "KTo":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.4,
+                                                           "call":  0.6,
+                                                           "threebet":  0
                                                        },
                                                "K9o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "K8o":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "K7o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K6o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K5o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K4o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K3o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "K2o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "QJo":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "QTo":  {
-                                                           "threebet":  0,
-                                                           "call":  0,
-                                                           "fold":  1
+                                                           "fold":  0.6,
+                                                           "call":  0.4,
+                                                           "threebet":  0
                                                        },
                                                "Q9o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q8o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q7o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q6o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q5o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q4o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q3o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "Q2o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "JTo":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J9o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J8o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J7o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J6o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J5o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J4o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J3o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "J2o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T9o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T8o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T7o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T6o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T5o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T4o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T3o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "T2o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "98o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "97o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "96o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "95o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "94o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "93o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "92o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "87o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "86o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "85o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "84o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "83o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "82o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "76o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "75o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "74o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "73o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "72o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "65o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "64o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "63o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "62o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "54o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "53o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "52o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "43o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "42o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        },
                                                "32o":  {
-                                                           "threebet":  0,
+                                                           "fold":  1,
                                                            "call":  0,
-                                                           "fold":  1
+                                                           "threebet":  0
                                                        }
                                            }
                              },
