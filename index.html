@@ -101,9 +101,15 @@
       30% { background: rgba(248,113,113,0.2); }
       100% { background: var(--surface); }
     }
+    @keyframes flashYellow {
+      0% { background: var(--surface); }
+      30% { background: rgba(251,191,36,0.2); transform: scale(1.01); }
+      100% { background: var(--surface); transform: scale(1); }
+    }
     .animate-slide { animation: slideInRight 0.2s ease; }
     .animate-correct { animation: flashGreen 0.4s ease; }
     .animate-wrong { animation: shake 0.3s ease, flashRed 0.4s ease; }
+    .animate-partial { animation: flashYellow 0.4s ease; }
     /* BOTTOM NAV (mobile) */
     .bottom-nav {
       background: var(--surface);
@@ -328,6 +334,7 @@
     .action-btn-shove { background: rgba(212,165,116,0.1); border-color: rgba(212,165,116,0.3); color: var(--gold); }
     .action-btn-shove:hover { background: rgba(212,165,116,0.2); border-color: var(--gold); }
     .action-btn.correct-highlight { border-color: var(--success); background: rgba(74,222,128,0.15); }
+    .action-btn.partial-highlight { border-color: var(--warning); background: rgba(251,191,36,0.15); }
     .action-btn.wrong-highlight { border-color: var(--danger); background: rgba(248,113,113,0.15); }
     /* ANSWER SCREEN */
     .answer-result {
@@ -337,7 +344,21 @@
       text-align: center;
     }
     .answer-result.correct { color: var(--success); }
+    .answer-result.partial { color: var(--warning); }
     .answer-result.wrong { color: var(--danger); }
+    .edu-note {
+      background: rgba(110,231,183,0.06);
+      border-left: 3px solid var(--mint);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .edu-note.partial { background: rgba(251,191,36,0.08); border-left-color: var(--warning); }
+    .edu-note.wrong { background: rgba(248,113,113,0.08); border-left-color: var(--danger); }
+    .edu-note strong { color: var(--text); }
     .freq-bar-container { margin-bottom: 8px; }
     .freq-bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
     .freq-bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
@@ -1516,22 +1537,51 @@ function getBestAction(freqs) {
   return best;
 }
 
+// v1.2.0 learning-first scoring.
+// Returns effective frequency of the user's chosen action, treating shove/raise
+// and 3bet/4bet aggressive buckets as interchangeable so the user never gets
+// punished for picking the "aggressive" button when the scenario uses a
+// different label (shove vs raise, threebet vs fourbet etc).
+function getEffectiveFreq(userAction, freqs) {
+  if (!freqs) return 0;
+  const direct = freqs[userAction] || 0;
+  // Aggressive equivalence: shove <-> raise <-> threebet <-> fourbet.
+  const AGGRO = new Set(['shove','raise','threebet','fourbet']);
+  if (AGGRO.has(userAction)) {
+    let agg = 0;
+    for (const k of AGGRO) agg += freqs[k] || 0;
+    return Math.max(direct, agg);
+  }
+  return direct;
+}
+
+// Returns { result: 'correct'|'partial'|'wrong', score: 1|0.5|0, userFreq, isPure }
+function classifyAnswer(userAction, freqs) {
+  const f = getEffectiveFreq(userAction, freqs);
+  // A scenario is "pure" when one action dominates at >=95%.
+  const maxFreq = Math.max(0, ...Object.values(freqs || {}));
+  const isPure = maxFreq >= 0.95;
+  let result, score;
+  if (f >= 0.7)      { result = 'correct'; score = 1.0; }
+  else if (f >= 0.3) { result = 'partial'; score = 0.5; }
+  else               { result = 'wrong';   score = 0.0; }
+  return { result, score, userFreq: f, isPure };
+}
+
 function handleAnswer(userAction) {
   const d = App.state.drill;
   const q = d.currentQuestion;
   console.log('[DEBUG] Answer clicked:', userAction);
-  console.log('[DEBUG] Current hand:', q ? q.hand : 'NULL - no current question!');
   if (!q) { console.error('[DEBUG] currentQuestion is null — cannot handle answer'); return; }
   const responseTime = Date.now() - d.questionStartTime;
   const correctAction = getBestAction(q.freqs);
-  console.log('[DEBUG] Correct action:', correctAction, '| freqs:', JSON.stringify(q.freqs));
-  const isCorrect = userAction === correctAction || isActionEquivalent(userAction, correctAction, q.freqs);
-  console.log('[DEBUG] isCorrect:', isCorrect);
+  const cls = classifyAnswer(userAction, q.freqs);
+  console.log('[DEBUG] classify:', cls, '| freqs:', JSON.stringify(q.freqs));
 
   const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
-  updateSRS(srsKey, isCorrect);
+  updateSRS(srsKey, cls.score, cls.isPure);
 
-  if (isCorrect) {
+  if (cls.result === 'correct') {
     d.streak++;
     if (d.streak > App.state.streaks.personalBest) {
       App.state.streaks.personalBest = d.streak;
@@ -1541,50 +1591,87 @@ function handleAnswer(userAction) {
     } else if (d.streak === 5) {
       showToast('🔥 5 in a row!');
     }
-  } else {
+  } else if (cls.result === 'wrong') {
     d.streak = 0;
   }
+  // Partial does not break the streak but also does not extend it.
 
-  d.answers.push({ q, userAction, correctAction, isCorrect, responseTime });
-  updateDailyStats(isCorrect);
+  d.answers.push({ q, userAction, correctAction, responseTime,
+                   result: cls.result, score: cls.score, userFreq: cls.userFreq, isPure: cls.isPure });
+  updateDailyStats(cls.score);
+
+  // Always show the freq-bar answer screen so the user sees the GTO mix.
+  // In quick mode we auto-advance; in deep/weakness mode the user clicks Next.
+  renderAnswerScreen(userAction, correctAction, cls, q);
 
   if (d.mode === 'quick') {
-    // Flash and move on
-    const handCard = document.getElementById('handCard');
-    if (handCard) handCard.classList.add(isCorrect ? 'animate-correct' : 'animate-wrong');
-    // Highlight buttons
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      const val = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-      if (val === correctAction) btn.classList.add('correct-highlight');
-      else if (val === userAction && !isCorrect) btn.classList.add('wrong-highlight');
-    });
-    console.log('[DEBUG] Quick mode: next hand in 1s');
-    setTimeout(() => {
+    const delay = cls.result === 'correct' ? 1600 : 2400;
+    d._quickAdvanceTimer = setTimeout(() => {
       d.currentIndex++;
       if (d.currentIndex >= d.queue.length) showDrillComplete();
       else renderDrillQuestion();
-    }, 1000);
-  } else {
-    console.log('[DEBUG] Deep/Weakness mode: showing answer screen');
-    renderAnswerScreen(userAction, correctAction, isCorrect, q);
+    }, delay);
   }
   console.log('[DEBUG] handleAnswer complete — feedback shown');
 }
 
 function isActionEquivalent(user, correct, freqs) {
-  // Treat shove/raise as equivalent if scenario uses one or other
+  // Kept for backward compat: treat shove/raise as equivalent.
   if ((user === 'shove' && correct === 'raise') || (user === 'raise' && correct === 'shove')) {
     return (freqs.shove || 0) + (freqs.raise || 0) >= 0.5;
   }
   return false;
 }
 
-function renderAnswerScreen(userAction, correctAction, isCorrect, q) {
+function getFreqPattern(freqs) {
+  // Returns a short educational note describing the frequency pattern.
+  if (!freqs) return '';
+  const vals = Object.values(freqs);
+  const maxF = Math.max(...vals);
+  if (maxF >= 0.99) return 'pure';
+  if (maxF >= 0.7)  return 'dominant';
+  if (maxF >= 0.55) return 'leaning';
+  return 'mix';
+}
+
+function getEducationalNote(q, userAction, cls) {
+  const pattern = getFreqPattern(q.freqs);
+  const correctAction = getBestAction(q.freqs);
+  const userPct = Math.round(cls.userFreq * 100);
+  const bestPct = Math.round((q.freqs[correctAction] || 0) * 100);
+
+  if (pattern === 'pure') {
+    if (cls.result === 'correct') {
+      return `<strong>Pure ${formatActionLabel(correctAction)} (100%).</strong> This hand has one clear GTO action — no mixing. Lock it in.`;
+    }
+    return `<strong>Pure ${formatActionLabel(correctAction)} (${bestPct}%).</strong> This is a non-mixed hand. Always take the same action here; there's no GTO justification for anything else.`;
+  }
+  if (pattern === 'dominant') {
+    if (cls.result === 'correct') {
+      return `<strong>Near-pure ${formatActionLabel(correctAction)} (${bestPct}%).</strong> Dominant action — pick it almost every time. A tiny mix exists for balance, but for practice you should default here.`;
+    }
+    if (cls.result === 'partial') {
+      return `<strong>Mixed hand.</strong> ${formatActionLabel(userAction)} is played ${userPct}% of the time — valid but rare. The dominant action is ${formatActionLabel(correctAction)} (${bestPct}%). Prefer the dominant line in most spots.`;
+    }
+    return `<strong>Low-frequency choice.</strong> ${formatActionLabel(userAction)} is played only ${userPct}% of the time. The dominant GTO action is ${formatActionLabel(correctAction)} at ${bestPct}%.`;
+  }
+  // leaning or true mix
+  if (cls.result === 'correct') {
+    return `<strong>Mixed hand — you picked the majority line.</strong> ${formatActionLabel(correctAction)} ${bestPct}% / ${formatActionLabel(userAction)} covers the primary strategy, but the other branch is also valid for balance.`;
+  }
+  if (cls.result === 'partial') {
+    return `<strong>Mixed hand — valid alternative.</strong> ${formatActionLabel(userAction)} is played ${userPct}% here. Both actions are GTO-legal; frequency defines how often. Remember: this is a splitter, not a lock.`;
+  }
+  return `<strong>True mixed hand.</strong> The GTO mix is roughly ${Object.entries(q.freqs).filter(([,v])=>v>=0.1).map(([k,v])=>`${formatActionLabel(k)} ${Math.round(v*100)}%`).join(' / ')}. ${formatActionLabel(userAction)} falls outside that mix.`;
+}
+
+function renderAnswerScreen(userAction, correctAction, cls, q) {
   const d = App.state.drill;
   const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
   const srs = App.state.progress[srsKey];
   const reasoning = getReasoningText(q);
   const nextDays = srs ? srs.interval_days : 1;
+  const isCorrect = cls.result === 'correct';
 
   let freqBars = '';
   if (q.freqs) {
@@ -1601,7 +1688,18 @@ function renderAnswerScreen(userAction, correctAction, isCorrect, q) {
 
   const history = (srs && srs.history) || [];
   const seen = history.length;
-  const correct = history.filter(h => h.correct).length;
+  // Backward compat: legacy entries have only { correct: bool }; new entries have { score }.
+  const pointsBefore = history.reduce((s,h) => s + (typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0)), 0);
+
+  const resultIcon = cls.result === 'correct' ? '✅' : cls.result === 'partial' ? '≈' : '❌';
+  const resultText = cls.result === 'correct'
+    ? 'Correct!'
+    : cls.result === 'partial'
+      ? `Partial — Mixed hand (${Math.round(cls.userFreq*100)}% freq)`
+      : `Wrong — low frequency (${Math.round(cls.userFreq*100)}%)`;
+  const animateCls = cls.result === 'correct' ? 'animate-correct' : cls.result === 'partial' ? 'animate-partial' : 'animate-wrong';
+  const eduNote = getEducationalNote(q, userAction, cls);
+  const quickMode = d.mode === 'quick';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
@@ -1610,9 +1708,10 @@ function renderAnswerScreen(userAction, correctAction, isCorrect, q) {
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${(d.currentIndex/d.queue.length*100).toFixed(0)}%"></div></div>
 
-    <div class="situation-card ${isCorrect ? 'animate-correct' : 'animate-wrong'}">
-      <div class="answer-result ${isCorrect ? 'correct' : 'wrong'}">
-        ${isCorrect ? '✅ Correct! ' : '❌ Wrong — the correct answer was '}<strong>${formatActionLabel(correctAction).toUpperCase()}</strong>
+    <div class="situation-card ${animateCls}">
+      <div class="answer-result ${cls.result}">
+        ${resultIcon} ${resultText}
+        ${cls.result !== 'correct' ? `<div style="font-size:14px;font-weight:500;margin-top:4px;color:var(--text-secondary)">GTO pick: <strong style="color:var(--text)">${formatActionLabel(correctAction).toUpperCase()}</strong> · Your pick: <strong style="color:var(--text)">${formatActionLabel(userAction).toUpperCase()}</strong></div>` : ''}
       </div>
 
       <div class="situation-tags">
@@ -1625,19 +1724,30 @@ function renderAnswerScreen(userAction, correctAction, isCorrect, q) {
       <div class="card-title">📊 GTO Frequencies:</div>
       ${freqBars}
 
+      <div class="edu-note ${cls.result}">${eduNote}</div>
+
       <div class="reasoning-box">💡 ${reasoning}</div>
 
       <div class="hand-stats">
         <span>📈 Seen: ${seen + 1}</span>
-        <span>✓ ${correct + (isCorrect ? 1 : 0)}/${seen + 1}</span>
+        <span>✓ ${(pointsBefore + cls.score).toFixed(1)}/${seen + 1} pts</span>
         <span>🔔 Next: ${nextDays === 1 ? 'tomorrow' : 'in ' + nextDays + ' days'}</span>
       </div>
     </div>
 
-    <button class="btn btn-primary btn-full" onclick="nextDrillHand()" style="margin-top:8px">
-      ${d.currentIndex + 1 >= d.queue.length ? 'Finish Drill ✓' : 'Next Hand →'}
-    </button>
+    ${quickMode
+      ? `<div style="text-align:center;font-size:12px;color:var(--text-secondary);margin-top:8px">Auto-advancing… <button class="btn btn-secondary btn-sm" onclick="skipAutoAdvance()" style="margin-left:8px">Next now →</button></div>`
+      : `<button class="btn btn-primary btn-full" onclick="nextDrillHand()" style="margin-top:8px">
+          ${d.currentIndex + 1 >= d.queue.length ? 'Finish Drill ✓' : 'Next Hand →'}
+        </button>`
+    }
   `;
+}
+
+function skipAutoAdvance() {
+  const d = App.state.drill;
+  if (d._quickAdvanceTimer) { clearTimeout(d._quickAdvanceTimer); d._quickAdvanceTimer = null; }
+  nextDrillHand();
 }
 
 function nextDrillHand() {
@@ -1651,44 +1761,128 @@ function showDrillComplete() {
   const d = App.state.drill;
   const elapsed = Math.round((Date.now() - d.startTime) / 1000 / 60 * 10) / 10;
   const total = d.answers.length;
-  const correct = d.answers.filter(a => a.isCorrect).length;
-  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+
+  // v1.2.0 three-state breakdown.
+  const pureCorrect = d.answers.filter(a => a.result === 'correct' && a.isPure).length;
+  const mixCorrect  = d.answers.filter(a => a.result === 'correct' && !a.isPure).length;
+  const partial     = d.answers.filter(a => a.result === 'partial').length;
+  const wrong       = d.answers.filter(a => a.result === 'wrong').length;
+  const totalPoints = d.answers.reduce((s,a) => s + (a.score || 0), 0);
+  const pct = total > 0 ? Math.round(totalPoints / total * 100) : 0;
+
+  // Pure-vs-mix split within this drill.
+  const pureAttempts = d.answers.filter(a => a.isPure);
+  const mixAttempts  = d.answers.filter(a => !a.isPure);
+  const purePts = pureAttempts.reduce((s,a)=>s+(a.score||0),0);
+  const mixPts  = mixAttempts.reduce((s,a)=>s+(a.score||0),0);
+  const purePct = pureAttempts.length > 0 ? Math.round(purePts/pureAttempts.length*100) : null;
+  const mixPct  = mixAttempts.length  > 0 ? Math.round(mixPts /mixAttempts.length *100) : null;
+
+  // Key insight text.
+  let insight;
+  if (total === 0) {
+    insight = 'No hands drilled.';
+  } else if (wrong === 0 && partial === 0) {
+    insight = `🎯 Flawless. You nailed every pure spot and every mix. Raise the difficulty.`;
+  } else if (wrong === 0) {
+    insight = `👍 Solid run — no outright mistakes. ${partial} mix-hand${partial===1?'':'s'} landed on a valid but non-dominant branch. Keep leaning toward the majority action.`;
+  } else if (purePct !== null && purePct >= 90 && mixPct !== null && mixPct < 70) {
+    insight = `💡 Your pure-spot play is sharp (${purePct}%) but mixed hands are dragging you down (${mixPct}%). Study the freq bars — mixed hands reward picking the dominant line.`;
+  } else if (mixPct !== null && mixPct >= 80 && purePct !== null && purePct < 80) {
+    insight = `⚠️ Mix awareness is good (${mixPct}%) but you're missing pure spots (${purePct}%). Pure hands are non-negotiable — review the red mistakes below.`;
+  } else if (wrong >= partial) {
+    insight = `🎯 Focus on the ${wrong} real mistake${wrong===1?'':'s'} first — these are hands where your pick is played <30% of the time.`;
+  } else {
+    insight = `📊 Most stumbles were on mixed hands. Mix awareness gets better with reps — keep tracking the frequency bars.`;
+  }
 
   // Update total study time
   App.state.stats.totalTime += elapsed;
   App.state.streaks.current = d.streak;
   App.saveProgress();
 
-  const mistakes = d.answers.filter(a => !a.isCorrect);
+  const realMistakes = d.answers.filter(a => a.result === 'wrong');
+  const mixReminders = d.answers.filter(a => a.result === 'partial');
+
+  const pctColor = pct >= 85 ? 'var(--success)' : pct >= 65 ? 'var(--warning)' : 'var(--danger)';
 
   document.getElementById('drillScreen').style.display = 'none';
   document.getElementById('drillComplete').style.display = 'block';
   document.getElementById('drillComplete').innerHTML = `
     <div style="text-align:center;padding:16px 0 8px">
-      <div class="score-circle">
-        <div class="score-number">${pct}%</div>
-        <div class="score-label">${correct}/${total}</div>
+      <div class="score-circle" style="border-color:${pctColor}">
+        <div class="score-number" style="color:${pctColor}">${pct}%</div>
+        <div class="score-label">${totalPoints.toFixed(1)}/${total} pts</div>
       </div>
       <div class="section-title">Drill Complete!</div>
       <div class="section-subtitle">${elapsed} min · ${d.mode} mode</div>
     </div>
 
-    ${mistakes.length > 0 ? `
     <div class="card">
-      <div class="card-title">❌ Mistakes (${mistakes.length})</div>
-      ${mistakes.slice(0, 8).map(m => `
+      <div class="card-title">📊 Breakdown</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px">
+        <div style="text-align:center;padding:10px;border-radius:8px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25)">
+          <div style="font-size:20px;font-weight:700;color:var(--success)">${pureCorrect}</div>
+          <div style="font-size:11px;color:var(--text-secondary)">Pure ✓</div>
+        </div>
+        <div style="text-align:center;padding:10px;border-radius:8px;background:rgba(110,231,183,0.08);border:1px solid rgba(110,231,183,0.2)">
+          <div style="font-size:20px;font-weight:700;color:var(--mint)">${mixCorrect}</div>
+          <div style="font-size:11px;color:var(--text-secondary)">Mix majority</div>
+        </div>
+        <div style="text-align:center;padding:10px;border-radius:8px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25)">
+          <div style="font-size:20px;font-weight:700;color:var(--warning)">${partial}</div>
+          <div style="font-size:11px;color:var(--text-secondary)">Mix partial ≈</div>
+        </div>
+        <div style="text-align:center;padding:10px;border-radius:8px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25)">
+          <div style="font-size:20px;font-weight:700;color:var(--danger)">${wrong}</div>
+          <div style="font-size:11px;color:var(--text-secondary)">Wrong ✗</div>
+        </div>
+      </div>
+      ${(purePct !== null || mixPct !== null) ? `
+      <div style="display:flex;gap:12px;margin-top:12px;font-size:13px;color:var(--text-secondary)">
+        ${purePct !== null ? `<div>Pure hands: <strong style="color:var(--text)">${purePct}%</strong> (${pureAttempts.length})</div>` : ''}
+        ${mixPct !== null ? `<div>Mix awareness: <strong style="color:var(--text)">${mixPct}%</strong> (${mixAttempts.length})</div>` : ''}
+      </div>` : ''}
+      <div class="edu-note" style="margin-top:12px">${insight}</div>
+    </div>
+
+    ${realMistakes.length > 0 ? `
+    <div class="card">
+      <div class="card-title" style="color:var(--danger)">❌ Real Mistakes (${realMistakes.length})</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 10px">Hands where your pick is played &lt;30% of the time. Review these first.</div>
+      ${realMistakes.slice(0, 10).map(m => `
         <div class="mistake-item">
           <div>
             <div class="mistake-hand">${m.q.hand}</div>
             <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionName(m.q.action)}</div>
           </div>
           <div style="text-align:right;font-size:12px">
-            <div style="color:var(--danger)">You: ${formatActionLabel(m.userAction)}</div>
+            <div style="color:var(--danger)">You: ${formatActionLabel(m.userAction)} (${Math.round(m.userFreq*100)}%)</div>
             <div style="color:var(--success)">GTO: ${formatActionLabel(m.correctAction)}</div>
           </div>
         </div>
       `).join('')}
-    </div>` : `<div class="card"><div style="text-align:center;padding:12px;color:var(--success);font-weight:600">🎯 Perfect score! No mistakes!</div></div>`}
+    </div>` : ''}
+
+    ${mixReminders.length > 0 ? `
+    <div class="card">
+      <div class="card-title" style="color:var(--warning)">≈ Mix Reminders (${mixReminders.length})</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 10px">Valid mix picks (30-70% freq). Not mistakes — just not the dominant branch.</div>
+      ${mixReminders.slice(0, 10).map(m => `
+        <div class="mistake-item">
+          <div>
+            <div class="mistake-hand">${m.q.hand}</div>
+            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionName(m.q.action)}</div>
+          </div>
+          <div style="text-align:right;font-size:12px">
+            <div style="color:var(--warning)">You: ${formatActionLabel(m.userAction)} (${Math.round(m.userFreq*100)}%)</div>
+            <div style="color:var(--mint)">Majority: ${formatActionLabel(m.correctAction)}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>` : ''}
+
+    ${realMistakes.length === 0 && mixReminders.length === 0 ? `<div class="card"><div style="text-align:center;padding:12px;color:var(--success);font-weight:600">🎯 Perfect score! No mistakes!</div></div>` : ''}
 
     <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
       <button class="btn btn-secondary" onclick="resetToDrillSetup()">← Back to Setup</button>
@@ -1736,19 +1930,31 @@ function getSRS(key) {
   return App.state.progress[key];
 }
 
-function updateSRS(key, correct) {
+// v1.2.0: score is 1.0 | 0.5 | 0; isPure flags whether the hand has a single
+// dominant GTO action (vs a true mixed hand). Both are stored per-attempt so
+// the Progress tab can split "pure accuracy" from "mix awareness".
+function updateSRS(key, score, isPure) {
+  // Legacy call sites may still pass a boolean — normalize.
+  if (typeof score === 'boolean') score = score ? 1.0 : 0.0;
+  if (typeof isPure === 'undefined') isPure = true;
   const srs = getSRS(key);
   const now = Date.now();
   srs.last_reviewed = now;
-  srs.history.push({ timestamp: now, correct });
+  srs.history.push({ timestamp: now, score, pure: !!isPure, correct: score >= 0.7 });
   if (srs.history.length > 50) srs.history = srs.history.slice(-50);
 
-  if (correct) {
+  // SRS scheduling: full credit for correct, partial credit for mix-aware
+  // answers (don't fully reset interval on partial).
+  if (score >= 0.7) {
     if (srs.repetitions === 0) srs.interval_days = 1;
     else if (srs.repetitions === 1) srs.interval_days = 3;
     else srs.interval_days = Math.round(srs.interval_days * srs.ease_factor);
     srs.ease_factor = Math.min(2.5, srs.ease_factor + 0.1);
     srs.repetitions++;
+  } else if (score >= 0.3) {
+    // Partial — don't reset but cap growth.
+    srs.interval_days = Math.max(1, Math.round(srs.interval_days * 0.8));
+    srs.ease_factor = Math.max(1.5, srs.ease_factor - 0.05);
   } else {
     srs.repetitions = 0;
     srs.interval_days = 1;
@@ -1761,13 +1967,19 @@ function updateSRS(key, correct) {
 // ============================================================
 // DAILY STATS
 // ============================================================
-function updateDailyStats(isCorrect) {
+function updateDailyStats(score) {
+  // v1.2.0: score is 0..1. Legacy boolean call sites are normalized.
+  if (typeof score === 'boolean') score = score ? 1.0 : 0.0;
   const today = new Date().toISOString().split('T')[0];
   if (!App.state.stats.dailyHistory[today]) {
-    App.state.stats.dailyHistory[today] = { hands: 0, correct: 0 };
+    App.state.stats.dailyHistory[today] = { hands: 0, correct: 0, points: 0 };
   }
-  App.state.stats.dailyHistory[today].hands++;
-  if (isCorrect) App.state.stats.dailyHistory[today].correct++;
+  const day = App.state.stats.dailyHistory[today];
+  if (typeof day.points !== 'number') day.points = day.correct || 0;
+  day.hands++;
+  day.points += score;
+  // Keep legacy "correct" field meaning full-credit answers only.
+  if (score >= 0.7) day.correct++;
   App.state.stats.totalHands++;
 
   // Daily streak
@@ -1843,6 +2055,7 @@ function renderProgress() {
   // This week stats
   const weekHands = getWeekHands();
   const weekAcc = getWeekAccuracy();
+  const pm = getPureMixAccuracy();
 
   // Scenario accuracy
   const scenarios = computeScenarioAccuracy();
@@ -1863,7 +2076,7 @@ function renderProgress() {
       </div>
       <div class="stat-card">
         <div class="stat-value">${weekAcc}%</div>
-        <div class="stat-unit">Accuracy this week</div>
+        <div class="stat-unit">Score this week</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${streaks.daily}<span style="font-size:20px">🔥</span></div>
@@ -1872,6 +2085,23 @@ function renderProgress() {
       <div class="stat-card">
         <div class="stat-value">${Math.round(stats.totalTime)}</div>
         <div class="stat-unit">Min studied total</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 Pure vs Mix Accuracy</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Pure hands have one GTO action. Mixed hands split between two — "awareness" counts any valid branch.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="padding:14px;border-radius:10px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25)">
+          <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Pure hands</div>
+          <div style="font-size:28px;font-weight:700;color:var(--success);margin:4px 0">${pm.pureAttempts === 0 ? '—' : pm.pureAcc + '%'}</div>
+          <div style="font-size:12px;color:var(--text-secondary)">${pm.pureAttempts} attempt${pm.pureAttempts===1?'':'s'}</div>
+        </div>
+        <div style="padding:14px;border-radius:10px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25)">
+          <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Mix awareness</div>
+          <div style="font-size:28px;font-weight:700;color:var(--warning);margin:4px 0">${pm.mixAttempts === 0 ? '—' : pm.mixAcc + '%'}</div>
+          <div style="font-size:12px;color:var(--text-secondary)">${pm.mixAttempts} attempt${pm.mixAttempts===1?'':'s'}</div>
+        </div>
       </div>
     </div>
 
@@ -1933,16 +2163,36 @@ function getWeekHands() {
 }
 
 function getWeekAccuracy() {
+  // v1.2.0: points-based (0.5 for partial) when available; falls back to
+  // legacy `correct` counter for older daily rollups.
   const now = new Date();
-  let hands = 0, correct = 0;
+  let hands = 0, points = 0;
   for (let i = 0; i < 7; i++) {
     const d = new Date(now); d.setDate(d.getDate() - i);
     const key = d.toISOString().split('T')[0];
     const day = App.state.stats.dailyHistory[key] || {};
     hands += day.hands || 0;
-    correct += day.correct || 0;
+    points += typeof day.points === 'number' ? day.points : (day.correct || 0);
   }
-  return hands > 0 ? Math.round(correct / hands * 100) : 0;
+  return hands > 0 ? Math.round(points / hands * 100) : 0;
+}
+
+function getPureMixAccuracy() {
+  // Split aggregated score across pure and mixed hands using SRS history entries.
+  let pureA = 0, purePts = 0, mixA = 0, mixPts = 0;
+  Object.values(App.state.progress).forEach(srs => {
+    (srs.history || []).forEach(h => {
+      const s = typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0);
+      // Legacy entries without a `pure` flag: assume pure (pre-v1.2.0 all hands were treated as pure).
+      if (h.pure === false) { mixA++;  mixPts += s; }
+      else                   { pureA++; purePts += s; }
+    });
+  });
+  return {
+    pureAttempts: pureA, mixAttempts: mixA,
+    pureAcc: pureA > 0 ? Math.round(purePts / pureA * 100) : 0,
+    mixAcc:  mixA  > 0 ? Math.round(mixPts  / mixA  * 100) : 0
+  };
 }
 
 function computeScenarioAccuracy() {
@@ -1957,13 +2207,15 @@ function computeScenarioAccuracy() {
     const parts = key.split('_');
     if (parts.length < 4) return;
     const scenKey = parts.slice(0, -1).join('_');
-    if (!map[scenKey]) map[scenKey] = { key: scenKey, label: scenKey.replace(/_/g,' '), attempts: 0, correct: 0 };
+    if (!map[scenKey]) map[scenKey] = { key: scenKey, label: scenKey.replace(/_/g,' '), attempts: 0, correct: 0, points: 0 };
     const h = srs.history || [];
     map[scenKey].attempts += h.length;
-    map[scenKey].correct += h.filter(x => x.correct).length;
+    // Points = sum of per-attempt scores (partial counts 0.5).
+    map[scenKey].points += h.reduce((s,x) => s + (typeof x.score === 'number' ? x.score : (x.correct ? 1 : 0)), 0);
+    map[scenKey].correct += h.filter(x => (typeof x.score === 'number' ? x.score >= 0.7 : x.correct)).length;
   });
   return Object.values(map).map(s => ({
-    ...s, acc: s.attempts > 0 ? Math.round(s.correct / s.attempts * 100) : 0
+    ...s, acc: s.attempts > 0 ? Math.round(s.points / s.attempts * 100) : 0
   }));
 }
 
@@ -1975,14 +2227,15 @@ function buildChartData() {
     const d = new Date(now); d.setDate(d.getDate() - i);
     const key = d.toISOString().split('T')[0];
     const day = App.state.stats.dailyHistory[key] || { hands: 0, correct: 0 };
-    result.push({ date: key, hands: day.hands, correct: day.correct });
+    const points = typeof day.points === 'number' ? day.points : (day.correct || 0);
+    result.push({ date: key, hands: day.hands, correct: day.correct, points });
   }
-  // 7-day moving average
+  // 7-day moving average (points-based for v1.2.0)
   return result.map((d, i) => {
     const window = result.slice(Math.max(0, i-6), i+1);
     const totalH = window.reduce((s,x) => s + x.hands, 0);
-    const totalC = window.reduce((s,x) => s + x.correct, 0);
-    return { ...d, avg: totalH > 0 ? totalC / totalH * 100 : null };
+    const totalP = window.reduce((s,x) => s + x.points, 0);
+    return { ...d, avg: totalH > 0 ? totalP / totalH * 100 : null };
   });
 }
 
