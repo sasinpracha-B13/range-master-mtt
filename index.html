@@ -1480,7 +1480,17 @@ function getActionButtons(stack, action, pos) {
 }
 
 function formatActionName(action) {
-  const map = { RFI: 'RFI', vs_raise: 'vs Raise', vs_3bet: 'vs 3-Bet', vs_shove: 'vs Shove' };
+  const map = {
+    RFI: 'RFI',
+    vs_raise: 'vs Raise',
+    vs_3bet: 'vs 3-Bet',
+    vs_shove: 'vs Shove',
+    vs_shove_btn: 'vs Shove (BTN)',
+    vs_shove_sb:  'vs Shove (SB)',
+    vs_raise_btn: 'vs Raise (BTN)',
+    vs_raise_co:  'vs Raise (CO)',
+    vs_raise_sb:  'vs Raise (SB)'
+  };
   return map[action] || action;
 }
 
@@ -2033,7 +2043,7 @@ function renderBrowse() {
   // Build filter options with canonical ordering (no undefined leaking in)
   const stacks = [...new Set(scenarios.map(r => r.stack))].sort((a, b) => a - b);
   const POSITION_ORDER = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
-  const ACTION_ORDER   = ['RFI','vs_raise','vs_3bet','vs_shove'];
+  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_3bet','vs_shove','vs_shove_btn','vs_shove_sb'];
   const positions = POSITION_ORDER.filter(p => scenarios.some(r => r.position === p));
   const actions   = ACTION_ORDER.filter(a => scenarios.some(r => r.action === a));
 
