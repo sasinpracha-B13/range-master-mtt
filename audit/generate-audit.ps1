@@ -14,15 +14,26 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $projectRoot
 
 $j = Get-Content ranges.json -Raw | ConvertFrom-Json
-$keys = $j.PSObject.Properties.Name | Where-Object { $_ -notin 'version','last_updated' } | Sort-Object {
+
+# v1.5.6: filter to objects that are actual scenarios (have a 'stack' field).
+# This excludes version/last_updated (strings) and metadata (object with no stack).
+$keys = $j.PSObject.Properties.Name | Where-Object {
+    $val = $j.$_
+    $val -is [PSCustomObject] -and ($val.PSObject.Properties.Name -contains 'stack')
+} | Sort-Object {
     $s = $j.$_
     "{0:D3}_{1}_{2}" -f $s.stack, $s.position, $s.action
 }
 
 # ---- CSV (flat) ----------------------------------------------------------
+# v1.5.6 columns:
+#   is_mixed    : max_freq < 0.999  (any scenario with multiple non-zero actions
+#                                    incl. 95/5 splits)
+#   is_marginal : max_freq < 0.7    (matches Marginal Focus mode threshold —
+#                                    "no single action is strongly dominant")
 $ALL_ACTIONS = @('fold','call','check','limp','raise','threebet','fourbet','shove')
 $csv = New-Object System.Collections.Generic.List[string]
-$csv.Add(("scenario,stack,position,action,hand," + ($ALL_ACTIONS -join ',') + ",max_freq,is_mixed"))
+$csv.Add(("scenario,stack,position,action,hand," + ($ALL_ACTIONS -join ',') + ",max_freq,is_mixed,is_marginal"))
 
 foreach ($k in $keys) {
     $s = $j.$k
@@ -39,7 +50,8 @@ foreach ($k in $keys) {
         }
         $row += $vals
         $row += ("{0:F2}" -f $maxF)
-        $row += $(if ($maxF -lt 0.95) { 'TRUE' } else { 'FALSE' })
+        $row += $(if ($maxF -lt 0.999) { 'TRUE' } else { 'FALSE' })  # is_mixed
+        $row += $(if ($maxF -lt 0.7)   { 'TRUE' } else { 'FALSE' })  # is_marginal
         $csv.Add(($row -join ','))
     }
 }
@@ -51,7 +63,9 @@ $md = New-Object System.Collections.Generic.List[string]
 $md.Add("# Range Audit -- ranges.json v$($j.version)")
 $md.Add("")
 $md.Add("- Last updated: $($j.last_updated)")
-$md.Add("- Total scenarios: $($keys.Count)")
+$md.Add("- **Trainable scenarios: $($keys.Count)**")
+$allTopKeys = $j.PSObject.Properties.Name
+$md.Add("- Top-level keys: $($allTopKeys.Count) (= $($keys.Count) scenarios + $($allTopKeys.Count - $keys.Count) reserved: $((($allTopKeys | Where-Object { $keys -notcontains $_ }) -join ', ')))")
 $md.Add("- Generated: $((Get-Date).ToString('yyyy-MM-dd HH:mm'))")
 $md.Add("")
 $md.Add("## Continue% matrix")
