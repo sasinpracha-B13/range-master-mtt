@@ -1458,7 +1458,7 @@ function renderDrillQuestion() {
         <span class="situation-tag tag-pos">
           <span class="tooltip-wrap">${q.pos}<span class="tooltip">${POSITION_TOOLTIPS[q.pos]||''}</span></span>
         </span>
-        <span class="situation-tag tag-action">${formatActionName(q.action)}</span>
+        <span class="situation-tag tag-action">${formatActionDisplay(q.action, q.freqs)}</span>
       </div>
       <div class="card-title">🃏 Your hand:</div>
       ${cards}
@@ -1620,6 +1620,19 @@ function formatActionName(action) {
     vs_limp_sb: 'vs Limp (SB)'
   };
   return map[action] || action;
+}
+
+// v1.5.8: scenario-aware action label. Distinguishes pure push/fold RFI
+// (5/10/15BB all positions, 20BB except SB) from open-raise RFI (40BB+ and
+// 20BB SB which has the limp/raise mix from v1.5.0). Detection is based on
+// freqs keys, not hardcoded stack/position rules — robust to future schema.
+function formatActionDisplay(action, freqs) {
+  if (action === 'RFI' && freqs) {
+    const keys = Object.keys(freqs);
+    const isPushFold = keys.length === 2 && keys.includes('fold') && keys.includes('shove');
+    if (isPushFold) return 'Push/Fold RFI';
+  }
+  return formatActionName(action);
 }
 
 function getBestAction(freqs) {
@@ -1821,7 +1834,7 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
       <div class="situation-tags">
         <span class="situation-tag tag-stack">${q.stack}BB</span>
         <span class="situation-tag tag-pos">${q.pos}</span>
-        <span class="situation-tag tag-action">${formatActionName(q.action)}</span>
+        <span class="situation-tag tag-action">${formatActionDisplay(q.action, q.freqs)}</span>
         <span style="font-family:JetBrains Mono;font-weight:600;font-size:13px;color:var(--text)">${q.hand}</span>
       </div>
 
@@ -1974,7 +1987,7 @@ function showDrillComplete() {
         <div class="mistake-item">
           <div>
             <div class="mistake-hand">${m.q.hand}</div>
-            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionName(m.q.action)}</div>
+            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionDisplay(m.q.action, m.q.freqs)}</div>
           </div>
           <div style="text-align:right;font-size:12px">
             <div style="color:var(--danger)">You: ${formatActionLabel(m.userAction)} (${Math.round(m.userFreq*100)}%)</div>
@@ -1992,7 +2005,7 @@ function showDrillComplete() {
         <div class="mistake-item">
           <div>
             <div class="mistake-hand">${m.q.hand}</div>
-            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionName(m.q.action)}</div>
+            <div class="mistake-detail">${m.q.stack}BB ${m.q.pos} ${formatActionDisplay(m.q.action, m.q.freqs)}</div>
           </div>
           <div style="text-align:right;font-size:12px">
             <div style="color:var(--warning)">You: ${formatActionLabel(m.userAction)} (${Math.round(m.userFreq*100)}%)</div>
@@ -2637,7 +2650,7 @@ function showHandPopup(hand, scenarioKey) {
     <div class="situation-tags" style="margin-bottom:12px">
       <span class="situation-tag tag-stack">${scenario.stack}BB</span>
       <span class="situation-tag tag-pos">${scenario.position}</span>
-      <span class="situation-tag tag-action">${formatActionName(scenario.action)}</span>
+      <span class="situation-tag tag-action">${formatActionDisplay(scenario.action, freqs)}</span>
     </div>
     ${Object.entries(freqs).map(([a, p]) => {
       const pctPct = Math.round(p * 100);
@@ -2781,7 +2794,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.7</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.8</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2892,7 +2905,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.5.7',
+    version: '1.5.8',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
