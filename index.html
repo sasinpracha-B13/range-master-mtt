@@ -1606,17 +1606,19 @@ function formatActionName(action) {
   const map = {
     RFI: 'RFI',
     vs_raise: 'vs Raise',
-    vs_3bet: 'vs 3-Bet',
+    vs_3bet: 'vs 3-Bet (any)',
     vs_shove: 'vs Shove',
     vs_shove_btn: 'vs Shove (BTN)',
     vs_shove_sb:  'vs Shove (SB)',
     vs_shove_co:  'vs Shove (CO)',
     vs_shove_hj:  'vs Shove (HJ)',
-    vs_raise_btn: 'vs Raise (BTN)',
-    vs_raise_co:  'vs Raise (CO)',
-    vs_raise_sb:  'vs Raise (SB)',
-    vs_raise_hj:  'vs Raise (HJ)',
+    vs_raise_utg: 'vs Raise (UTG)',
+    vs_raise_mp:  'vs Raise (MP)',
     vs_raise_lj:  'vs Raise (LJ)',
+    vs_raise_hj:  'vs Raise (HJ)',
+    vs_raise_co:  'vs Raise (CO)',
+    vs_raise_btn: 'vs Raise (BTN)',
+    vs_raise_sb:  'vs Raise (SB)',
     vs_3bet_btn:  'vs 3-Bet (BTN)',
     vs_3bet_sb:   'vs 3-Bet (SB)',
     vs_3bet_bb:   'vs 3-Bet (BB)',
@@ -2510,7 +2512,23 @@ function renderBrowse() {
   // Build filter options with canonical ordering (no undefined leaking in)
   const stacks = [...new Set(scenarios.map(r => r.stack))].sort((a, b) => a - b);
   const POSITION_ORDER = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
-  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_raise_hj','vs_raise_lj','vs_3bet','vs_3bet_btn','vs_3bet_sb','vs_3bet_bb','vs_shove','vs_shove_btn','vs_shove_sb','vs_shove_co','vs_shove_hj','vs_limp','vs_limp_sb'];
+  // v1.6.2: ordering rules:
+  //  - vs_raise variants sorted by canonical opener position UTG->SB
+  //  - vs_3bet specific (BTN/SB/BB) come BEFORE generic 'vs_3bet'
+  //    (legacy scenarios like 100BB_CO_vs_3bet averaged across openers)
+  //  - vs_shove variants sorted by canonical jammer position HJ->SB
+  //  - All action keys present in data are now in ACTION_ORDER explicitly
+  //    (vs_raise_mp, vs_raise_utg were previously falling through to the
+  //    self-healing fallback at end of dropdown).
+  const ACTION_ORDER = [
+    'RFI',
+    'vs_raise',
+    'vs_raise_utg','vs_raise_mp','vs_raise_lj','vs_raise_hj','vs_raise_co','vs_raise_btn','vs_raise_sb',
+    'vs_3bet_btn','vs_3bet_sb','vs_3bet_bb','vs_3bet',
+    'vs_shove',
+    'vs_shove_hj','vs_shove_co','vs_shove_btn','vs_shove_sb',
+    'vs_limp','vs_limp_sb'
+  ];
   const positions = POSITION_ORDER.filter(p => scenarios.some(r => r.position === p));
   // v1.5.10: ACTION_ORDER is now self-healing. Any action key present in
   // scenarios but missing from ACTION_ORDER is appended at end (alphabetically)
@@ -2809,7 +2827,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.6.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.6.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2920,7 +2938,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.6.1',
+    version: '1.6.2',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
