@@ -1616,6 +1616,7 @@ function formatActionName(action) {
     vs_raise_co:  'vs Raise (CO)',
     vs_raise_sb:  'vs Raise (SB)',
     vs_raise_hj:  'vs Raise (HJ)',
+    vs_raise_lj:  'vs Raise (LJ)',
     vs_limp: 'vs Limp',
     vs_limp_sb: 'vs Limp (SB)'
   };
@@ -2506,9 +2507,20 @@ function renderBrowse() {
   // Build filter options with canonical ordering (no undefined leaking in)
   const stacks = [...new Set(scenarios.map(r => r.stack))].sort((a, b) => a - b);
   const POSITION_ORDER = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
-  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_raise_hj','vs_3bet','vs_shove','vs_shove_btn','vs_shove_sb','vs_shove_co','vs_shove_hj','vs_limp','vs_limp_sb'];
+  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_raise_hj','vs_raise_lj','vs_3bet','vs_shove','vs_shove_btn','vs_shove_sb','vs_shove_co','vs_shove_hj','vs_limp','vs_limp_sb'];
   const positions = POSITION_ORDER.filter(p => scenarios.some(r => r.position === p));
-  const actions   = ACTION_ORDER.filter(a => scenarios.some(r => r.action === a));
+  // v1.5.10: ACTION_ORDER is now self-healing. Any action key present in
+  // scenarios but missing from ACTION_ORDER is appended at end (alphabetically)
+  // — prevents Browse-unreachable bugs like v1.5.2 vs_raise_lj which was
+  // hidden for 8 versions.
+  const dataActions = [...new Set(scenarios.map(r => r.action))];
+  const knownActions   = ACTION_ORDER.filter(a => dataActions.includes(a));
+  const unknownActions = dataActions.filter(a => !ACTION_ORDER.includes(a)).sort();
+  if (unknownActions.length > 0) {
+    console.warn('[Browse] action keys not in ACTION_ORDER (auto-appended):', unknownActions,
+      '— add to ACTION_ORDER + formatActionName for canonical positioning.');
+  }
+  const actions = [...knownActions, ...unknownActions];
 
   // Set defaults only when empty or stale (guard against "undefined" string from old bugs)
   if (!browseFilters.stack || !stacks.map(String).includes(browseFilters.stack)) {
@@ -2794,7 +2806,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.9</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.10</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2905,7 +2917,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.5.9',
+    version: '1.5.10',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
