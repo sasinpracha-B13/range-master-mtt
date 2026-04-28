@@ -1619,6 +1619,8 @@ function formatActionName(action) {
     vs_raise_co:  'vs Raise (CO)',
     vs_raise_btn: 'vs Raise (BTN)',
     vs_raise_sb:  'vs Raise (SB)',
+    vs_3bet_hj:   'vs 3-Bet (HJ)',
+    vs_3bet_co:   'vs 3-Bet (CO)',
     vs_3bet_btn:  'vs 3-Bet (BTN)',
     vs_3bet_sb:   'vs 3-Bet (SB)',
     vs_3bet_bb:   'vs 3-Bet (BB)',
@@ -2524,7 +2526,7 @@ function renderBrowse() {
     'RFI',
     'vs_raise',
     'vs_raise_utg','vs_raise_mp','vs_raise_lj','vs_raise_hj','vs_raise_co','vs_raise_btn','vs_raise_sb',
-    'vs_3bet_btn','vs_3bet_sb','vs_3bet_bb','vs_3bet',
+    'vs_3bet_hj','vs_3bet_co','vs_3bet_btn','vs_3bet_sb','vs_3bet_bb','vs_3bet',
     'vs_shove',
     'vs_shove_hj','vs_shove_co','vs_shove_btn','vs_shove_sb',
     'vs_limp','vs_limp_sb'
@@ -2827,7 +2829,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.6.6</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.6.7</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2938,7 +2940,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.6.6',
+    version: '1.6.7',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
