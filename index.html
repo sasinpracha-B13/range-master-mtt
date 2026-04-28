@@ -1693,6 +1693,76 @@ function classifyAnswer(userAction, freqs) {
   return { result, score, userFreq: f, isPure };
 }
 
+// v1.7.2: Classify a mistake into a leak category. Called only when the
+// user's answer is wrong (or partial — caller decides). Returns null if the
+// answer is correct or the scenario doesn't fit a leak pattern.
+//
+// Categories (matches user-spec taxonomy):
+//   overfold_bb            BB defense, fold when correct = call/3bet
+//   overdefend_bb          BB defense, call/3bet when correct = fold
+//   missed_rejam           Rejam scenario, fold/call when correct = shove
+//   punt_rejam             Rejam scenario, shove when correct = fold/call
+//   calloff_too_loose      vs_shove, call when correct = fold
+//   calloff_too_tight      vs_shove, fold when correct = call
+//   overfold_vs_3bet       vs_3bet_*, fold when correct = call/4bet
+//   overcontinue_vs_3bet   vs_3bet_*, continue when correct = fold
+//   missed_fourbet_value   vs_3bet_*, fold/call when correct = 4bet AND hand is value
+//   overbluff_fourbet      vs_3bet_*, 4bet when correct = fold AND hand is weak
+//   sb_limp_misclass       SB RFI mix wrong (limp/raise/shove/fold)
+//   pushfold_too_tight     short-stack RFI fold when correct = shove
+//   pushfold_too_loose     short-stack RFI shove when correct = fold
+//   bb_vs_limp_misclass    BB vs SB limp wrong call
+//   open_misclass          generic open RFI wrong
+//   uncategorized          fallback for unmatched patterns
+function classifyMistake(q, userAction, correctAction, cls) {
+  if (!q || cls.result === 'correct') return null;
+  const meta = (App.state.ranges && App.state.ranges[
+    `${q.stack}BB_${q.pos}_${q.action}`
+  ]) ? App.state.ranges[`${q.stack}BB_${q.pos}_${q.action}`].meta : null;
+  const module = meta && meta.module ? meta.module : '';
+  const isPassive = a => a === 'fold' || a === 'check';
+  const isAggressive = a => ['raise','threebet','fourbet','shove','limp'].includes(a);
+  const correctIsPassive = isPassive(correctAction);
+  const userIsPassive = isPassive(userAction);
+
+  // Module-aware classification (precedence matters).
+  if (module === 'bb_vs_raise') {
+    return correctIsPassive ? 'overdefend_bb' : 'overfold_bb';
+  }
+  if (module === 'rejam') {
+    if (correctAction === 'shove' && userAction !== 'shove') return 'missed_rejam';
+    if (userAction === 'shove' && correctAction !== 'shove') return 'punt_rejam';
+    // Other rejam errors (call vs fold mix) → fall through to overfold_bb-like
+    return correctIsPassive ? 'overdefend_bb' : 'overfold_bb';
+  }
+  if (module === 'call_vs_jam') {
+    return userAction === 'call' ? 'calloff_too_loose' : 'calloff_too_tight';
+  }
+  if (module === 'open_vs_3bet' || module === 'legacy_generic_3bet') {
+    if (correctAction === 'fourbet' && userAction !== 'fourbet') return 'missed_fourbet_value';
+    if (userAction === 'fourbet' && correctAction !== 'fourbet') return 'overbluff_fourbet';
+    if (correctIsPassive && !userIsPassive) return 'overcontinue_vs_3bet';
+    if (!correctIsPassive && userIsPassive) return 'overfold_vs_3bet';
+    return 'uncategorized';
+  }
+  if (module === 'push_fold_rfi') {
+    if (correctAction === 'shove' && userAction === 'fold') return 'pushfold_too_tight';
+    if (userAction === 'shove' && correctAction === 'fold') return 'pushfold_too_loose';
+    return 'uncategorized';
+  }
+  if (module === 'open_rfi') {
+    // Could be SB limp mix or generic open
+    if (q.pos === 'SB' && q.freqs && Object.keys(q.freqs).includes('limp')) {
+      return 'sb_limp_misclass';
+    }
+    return 'open_misclass';
+  }
+  if (module === 'bb_vs_sb_limp') {
+    return 'bb_vs_limp_misclass';
+  }
+  return 'uncategorized';
+}
+
 function handleAnswer(userAction) {
   const d = App.state.drill;
   const q = d.currentQuestion;
@@ -1703,8 +1773,11 @@ function handleAnswer(userAction) {
   const cls = classifyAnswer(userAction, q.freqs);
   console.log('[DEBUG] classify:', cls, '| freqs:', JSON.stringify(q.freqs));
 
+  // v1.7.2: classify mistake category for non-correct answers
+  const mistakeCategory = classifyMistake(q, userAction, correctAction, cls);
+
   const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
-  updateSRS(srsKey, cls.score, cls.isPure);
+  updateSRS(srsKey, cls.score, cls.isPure, mistakeCategory);
 
   if (cls.result === 'correct') {
     d.streak++;
@@ -1722,7 +1795,8 @@ function handleAnswer(userAction) {
   // Partial does not break the streak but also does not extend it.
 
   d.answers.push({ q, userAction, correctAction, responseTime,
-                   result: cls.result, score: cls.score, userFreq: cls.userFreq, isPure: cls.isPure });
+                   result: cls.result, score: cls.score, userFreq: cls.userFreq, isPure: cls.isPure,
+                   mistakeCategory });
   updateDailyStats(cls.score);
 
   // Always show the freq-bar answer screen so the user sees the GTO mix.
@@ -2074,14 +2148,17 @@ function getSRS(key) {
 // v1.2.0: score is 1.0 | 0.5 | 0; isPure flags whether the hand has a single
 // dominant GTO action (vs a true mixed hand). Both are stored per-attempt so
 // the Progress tab can split "pure accuracy" from "mix awareness".
-function updateSRS(key, score, isPure) {
+function updateSRS(key, score, isPure, mistakeCategory) {
   // Legacy call sites may still pass a boolean — normalize.
   if (typeof score === 'boolean') score = score ? 1.0 : 0.0;
   if (typeof isPure === 'undefined') isPure = true;
   const srs = getSRS(key);
   const now = Date.now();
   srs.last_reviewed = now;
-  srs.history.push({ timestamp: now, score, pure: !!isPure, correct: score >= 0.7 });
+  // v1.7.2: include mistakeCategory if present (correct answers store null/undefined → omit)
+  const entry = { timestamp: now, score, pure: !!isPure, correct: score >= 0.7 };
+  if (mistakeCategory) entry.mistakeCategory = mistakeCategory;
+  srs.history.push(entry);
   if (srs.history.length > 50) srs.history = srs.history.slice(-50);
 
   // SRS scheduling: full credit for correct, partial credit for mix-aware
@@ -2929,7 +3006,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -3039,13 +3116,53 @@ function generateExportData() {
       isMixed: h.isMixed
     }));
 
+  // ---------- LEAK CATEGORIES (v1.7.2) ----------
+  // Aggregate mistake categories across all SRS history entries.
+  const leakCounts = {};
+  Object.values(progress).forEach(srs => {
+    (srs.history || []).forEach(h => {
+      if (h.mistakeCategory) {
+        leakCounts[h.mistakeCategory] = (leakCounts[h.mistakeCategory] || 0) + 1;
+      }
+    });
+  });
+  const leakCategories = Object.entries(leakCounts)
+    .map(([category, count]) => ({ category, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // ---------- MODULE BREAKDOWN (v1.7.2) ----------
+  // Aggregate accuracy + attempts by module from scenario metadata.
+  const moduleStats = {};
+  const ranges = App.state.ranges || {};
+  Object.entries(progress).forEach(([key, srs]) => {
+    const parts = key.split('_');
+    if (parts.length < 4) return;
+    const scenKey = parts.slice(0, -1).join('_');
+    const scen = ranges[scenKey];
+    if (!scen || !scen.meta) return;
+    const m = scen.meta.module;
+    if (!moduleStats[m]) moduleStats[m] = { module: m, attempts: 0, points: 0 };
+    const hist = srs.history || [];
+    moduleStats[m].attempts += hist.length;
+    moduleStats[m].points += hist.reduce((s, x) => s + (typeof x.score === 'number' ? x.score : (x.correct ? 1 : 0)), 0);
+  });
+  const moduleBreakdown = Object.values(moduleStats)
+    .map(m => ({
+      module: m.module,
+      attempts: m.attempts,
+      accuracy: m.attempts > 0 ? Math.round(m.points / m.attempts * 100) : 0
+    }))
+    .sort((a, b) => a.accuracy - b.accuracy);
+
   return {
-    version: '1.7.1',
+    version: '1.7.2',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
     handHistory: handHistory.slice(0, 200), // cap for size
     weakSpots,
+    leakCategories,           // v1.7.2: aggregated mistake taxonomy
+    moduleBreakdown,          // v1.7.2: accuracy by module
     recentSessions: sessions.slice(-30)
   };
 }
