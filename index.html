@@ -2360,6 +2360,12 @@ function renderProgress() {
       ${marginal.sessions === 0 ? '<div style="font-size:12px;color:var(--text-secondary);margin-top:8px">Try the 🔥 Marginal Focus mode in the Drill tab to start building this metric.</div>' : ''}
     </div>
 
+    <div class="card">
+      <div class="card-title">🩸 Leak Report</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Categorized mistakes from your drill history (v1.7.2+). Top leak = where you bleed the most EV.</div>
+      ${renderLeakReport()}
+    </div>
+
     ${due > 0 ? `
     <div class="card" style="border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.05)">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
@@ -2467,6 +2473,112 @@ function getMarginalSessionStats() {
     totalHands,
     avgAcc: totalHands > 0 ? Math.round(totalWeightedAcc / totalHands) : 0
   };
+}
+
+// v1.7.3: Aggregate leak categories + worst modules from SRS history.
+function getLeakReport() {
+  const progress = App.state.progress || {};
+  const ranges = App.state.ranges || {};
+
+  const leakCounts = {};
+  const moduleStats = {};
+  let totalAttempts = 0;
+  let totalMistakes = 0;
+
+  Object.entries(progress).forEach(([key, srs]) => {
+    const hist = srs.history || [];
+    const parts = key.split('_');
+    if (parts.length < 4) return;
+    const scenKey = parts.slice(0, -1).join('_');
+    const scen = ranges[scenKey];
+    const module = (scen && scen.meta) ? scen.meta.module : 'unknown';
+
+    if (!moduleStats[module]) moduleStats[module] = { attempts: 0, points: 0 };
+
+    hist.forEach(h => {
+      totalAttempts++;
+      const score = typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0);
+      moduleStats[module].attempts++;
+      moduleStats[module].points += score;
+      if (h.mistakeCategory) {
+        leakCounts[h.mistakeCategory] = (leakCounts[h.mistakeCategory] || 0) + 1;
+        totalMistakes++;
+      }
+    });
+  });
+
+  const topLeaks = Object.entries(leakCounts)
+    .map(([category, count]) => ({ category, count, pct: totalMistakes > 0 ? Math.round(count / totalMistakes * 100) : 0 }))
+    .sort((a, b) => b.count - a.count);
+
+  const worstModules = Object.entries(moduleStats)
+    .filter(([, m]) => m.attempts >= 5)
+    .map(([module, m]) => ({ module, attempts: m.attempts, accuracy: Math.round(m.points / m.attempts * 100) }))
+    .sort((a, b) => a.accuracy - b.accuracy);
+
+  return { topLeaks, worstModules, totalAttempts, totalMistakes };
+}
+
+// Friendly labels for the leak taxonomy. Add new categories here when
+// classifyMistake() grows.
+const LEAK_LABELS = {
+  overfold_bb:           { label: 'Overfold BB',                desc: 'BB folded when call/3bet was correct' },
+  overdefend_bb:         { label: 'Overdefend BB',              desc: 'BB called/3bet when fold was correct' },
+  missed_rejam:          { label: 'Missed Rejam',               desc: 'Folded/called when shove was correct' },
+  punt_rejam:            { label: 'Punt Rejam',                 desc: 'Shoved when fold/call was correct' },
+  calloff_too_loose:     { label: 'Call-off Too Loose',         desc: 'Called all-in when fold was correct' },
+  calloff_too_tight:     { label: 'Call-off Too Tight',         desc: 'Folded all-in when call was correct' },
+  overfold_vs_3bet:      { label: 'Overfold vs 3-Bet',          desc: 'Folded vs 3bet when call/4bet correct' },
+  overcontinue_vs_3bet:  { label: 'Overcontinue vs 3-Bet',      desc: 'Continued vs 3bet when fold correct' },
+  missed_fourbet_value:  { label: 'Missed 4-Bet Value',         desc: 'Did not 4bet when 4bet was correct' },
+  overbluff_fourbet:     { label: 'Overbluff 4-Bet',            desc: '4bet when fold/call was correct' },
+  sb_limp_misclass:      { label: 'SB Limp Misclassify',        desc: 'Wrong choice in SB limp/raise/shove mix' },
+  pushfold_too_tight:    { label: 'Push/Fold Too Tight',        desc: 'Folded short-stack RFI when shove correct' },
+  pushfold_too_loose:    { label: 'Push/Fold Too Loose',        desc: 'Shoved short-stack RFI when fold correct' },
+  bb_vs_limp_misclass:   { label: 'BB vs Limp Misclassify',     desc: 'Wrong choice facing SB limp' },
+  open_misclass:         { label: 'Open RFI Misclassify',       desc: 'Wrong open choice (raise/fold/etc)' },
+  uncategorized:         { label: 'Uncategorized',              desc: 'Mistake outside known taxonomy' }
+};
+
+function renderLeakReport() {
+  const r = getLeakReport();
+  if (r.totalAttempts === 0) {
+    return '<div style="font-size:12px;color:var(--text-secondary)">No drill history yet. Drill a few sessions to populate this report.</div>';
+  }
+  if (r.totalMistakes === 0) {
+    return '<div style="font-size:12px;color:var(--success)">🎯 No categorized mistakes in your history. Either flawless or all attempts predate v1.7.2.</div>';
+  }
+
+  let html = '<div style="display:grid;gap:6px">';
+  // Top 5 leaks
+  for (const leak of r.topLeaks.slice(0, 5)) {
+    const meta = LEAK_LABELS[leak.category] || { label: leak.category, desc: '' };
+    const barWidth = leak.pct;
+    html += `<div style="padding:10px 12px;border-radius:8px;background:var(--surface2);border:1px solid rgba(255,255,255,0.05)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="font-weight:600;font-size:13px">${meta.label}</div>
+        <div style="font-size:13px"><strong style="color:var(--danger)">${leak.count}</strong> <span style="color:var(--text-secondary)">(${leak.pct}%)</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${meta.desc}</div>
+      <div style="height:4px;background:var(--surface);border-radius:2px;margin-top:6px;overflow:hidden">
+        <div style="height:100%;width:${barWidth}%;background:var(--danger);border-radius:2px"></div>
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+
+  // Worst module callout
+  if (r.worstModules.length > 0) {
+    const worst = r.worstModules[0];
+    const moduleLabel = (MODULE_DISPLAY[worst.module] && MODULE_DISPLAY[worst.module].label) || worst.module;
+    html += `<div style="margin-top:12px;padding:10px 12px;border-radius:8px;background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.2)">
+      <div style="font-size:12px;color:var(--text-secondary)">Worst module:</div>
+      <div style="font-size:14px;font-weight:600;margin-top:2px">${moduleLabel} <span style="color:var(--danger)">${worst.accuracy}%</span> <span style="color:var(--text-secondary);font-size:12px;font-weight:400">(${worst.attempts} attempts)</span></div>
+    </div>`;
+  }
+
+  html += `<div style="font-size:11px;color:var(--text-secondary);margin-top:10px;line-height:1.4">${r.totalMistakes} categorized mistake${r.totalMistakes===1?'':'s'} of ${r.totalAttempts} total attempt${r.totalAttempts===1?'':'s'}. Drill more to surface deeper patterns.</div>`;
+  return html;
 }
 
 function computeScenarioAccuracy() {
@@ -3006,7 +3118,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.2</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.3</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -3155,7 +3267,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.7.2',
+    version: '1.7.3',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
