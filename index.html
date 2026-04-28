@@ -2735,6 +2735,98 @@ function studyThisScenario(stack, pos, action) {
 }
 
 // ============================================================
+// COVERAGE MAP (v1.7.1)
+// ============================================================
+// Aggregates scenario metadata by module and renders a coverage table.
+// Modules with high spotFrequency are shown first; legacy modules at the end.
+const MODULE_DISPLAY = {
+  push_fold_rfi:        { label: '⚡ Push/Fold RFI',         order: 1, desc: '5-20BB shove/fold first-in' },
+  open_rfi:             { label: '🎯 Open RFI',              order: 2, desc: '40-100BB raise/fold (+ SB limp)' },
+  rejam:                { label: '🔥 Rejam',                 order: 3, desc: '15-25BB rejam vs raise' },
+  call_vs_jam:          { label: '📞 Call vs Jam',           order: 4, desc: 'Facing all-in pre' },
+  bb_vs_raise:          { label: '🛡️ BB vs Raise',           order: 5, desc: '40-100BB BB defense' },
+  bb_vs_sb_limp:        { label: '👀 BB vs SB Limp',         order: 6, desc: 'BB facing SB limp' },
+  open_vs_3bet:         { label: '⚔️ Open vs 3-Bet',         order: 7, desc: 'Opener facing opener-specific 3bet' },
+  legacy_generic_3bet:  { label: '🗃️ Legacy Generic 3-Bet',  order: 8, desc: 'Pre-v1.6 averaged scenarios' }
+};
+
+function getCoverageStats() {
+  const ranges = App.state.ranges;
+  if (!ranges) return null;
+  const stats = {};
+  for (const key of Object.keys(ranges)) {
+    const s = ranges[key];
+    if (!s || typeof s !== 'object' || typeof s.stack !== 'number') continue;
+    if (!s.meta || !s.meta.module) continue;
+    const m = s.meta.module;
+    if (!stats[m]) {
+      stats[m] = { count: 0, confidenceCounts: {}, freqCounts: {}, sampleKey: key };
+    }
+    stats[m].count++;
+    const conf = s.meta.confidence || 'unknown';
+    stats[m].confidenceCounts[conf] = (stats[m].confidenceCounts[conf] || 0) + 1;
+    const freq = s.meta.spotFrequency || 'unknown';
+    stats[m].freqCounts[freq] = (stats[m].freqCounts[freq] || 0) + 1;
+  }
+  return stats;
+}
+
+function renderCoverageMap() {
+  if (!App.state.rangesLoaded) return '<div style="font-size:12px;color:var(--text-secondary)">Loading scenarios...</div>';
+  const stats = getCoverageStats();
+  if (!stats) return '<div style="font-size:12px;color:var(--text-secondary)">No metadata loaded.</div>';
+  const totalScenarios = Object.values(stats).reduce((sum, x) => sum + x.count, 0);
+
+  const rows = Object.keys(stats)
+    .map(m => ({ module: m, ...stats[m], display: MODULE_DISPLAY[m] || { label: m, order: 99, desc: '' } }))
+    .sort((a, b) => a.display.order - b.display.order);
+
+  // Dominant confidence per module (highest count)
+  const dominantConfidence = (cc) => {
+    const order = ['high','medium-high','medium','medium-low','low'];
+    let bestConf = 'medium', bestCount = 0;
+    for (const c of order) {
+      if (cc[c] && cc[c] > bestCount) { bestConf = c; bestCount = cc[c]; }
+    }
+    return bestConf;
+  };
+  const confColor = { high: 'var(--success)', 'medium-high': 'var(--mint)', medium: 'var(--warning)', 'medium-low': '#fb923c', low: 'var(--danger)' };
+
+  let html = `<div style="display:grid;gap:6px">`;
+  for (const r of rows) {
+    const conf = dominantConfidence(r.confidenceCounts);
+    const color = confColor[conf] || 'var(--text-secondary)';
+    html += `<div onclick="filterBrowseByModule('${r.module}')" style="padding:10px 12px;border-radius:8px;background:var(--surface2);border:1px solid rgba(255,255,255,0.05);cursor:pointer">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div style="font-weight:600;font-size:14px">${r.display.label}</div>
+        <div style="font-size:13px;color:var(--text-secondary)"><strong style="color:var(--text)">${r.count}</strong> scenarios</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px">
+        <div style="font-size:11px;color:var(--text-secondary)">${r.display.desc}</div>
+        <div style="font-size:11px;color:${color};font-weight:600">${conf}</div>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+  html += `<div style="font-size:11px;color:var(--text-secondary);margin-top:10px;line-height:1.4">Total: <strong style="color:var(--text)">${totalScenarios}</strong> trainable scenarios across <strong style="color:var(--text)">${rows.length}</strong> modules. Confidence reflects when each module's ranges were last reviewed/polished.</div>`;
+  return html;
+}
+
+// Click handler: jump to Browse tab and pre-filter by a representative
+// scenario from the module (using sampleKey).
+function filterBrowseByModule(module) {
+  const stats = getCoverageStats();
+  if (!stats || !stats[module]) return;
+  const sampleKey = stats[module].sampleKey;
+  const s = App.state.ranges[sampleKey];
+  if (!s) return;
+  browseFilters.stack = String(s.stack);
+  browseFilters.pos = s.position;
+  browseFilters.action = s.action;
+  switchTab('browse');
+}
+
+// ============================================================
 // SETTINGS TAB
 // ============================================================
 function renderSettings() {
@@ -2802,6 +2894,14 @@ function renderSettings() {
     </div>
 
     <div class="card">
+      <div class="card-title">🗺️ Coverage Map</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px;line-height:1.5">
+        Scenario coverage by module (v1.7.0+). Click a module to filter Browse to that group.
+      </div>
+      <div id="coverageMapBody">${renderCoverageMap()}</div>
+    </div>
+
+    <div class="card">
       <div class="card-title">📊 Data Export</div>
       <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px;line-height:1.5">
         Export your drill history as JSON for external AI analysis (e.g. Claude, ChatGPT). No account data or credentials are included — only scenario performance and answer history.
@@ -2829,7 +2929,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2940,7 +3040,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.7.0',
+    version: '1.7.1',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
