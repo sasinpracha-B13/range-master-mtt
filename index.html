@@ -852,6 +852,7 @@
         <button class="chip" data-val="10" onclick="toggleStackFilter('10')">10BB</button>
         <button class="chip" data-val="15" onclick="toggleStackFilter('15')">15BB</button>
         <button class="chip" data-val="20" onclick="toggleStackFilter('20')">20BB</button>
+        <button class="chip" data-val="25" onclick="toggleStackFilter('25')">25BB</button>
         <button class="chip" data-val="40" onclick="toggleStackFilter('40')">40BB</button>
         <button class="chip" data-val="60" onclick="toggleStackFilter('60')">60BB</button>
         <button class="chip" data-val="80" onclick="toggleStackFilter('80')">80BB</button>
@@ -1612,6 +1613,7 @@ function formatActionName(action) {
     vs_raise_btn: 'vs Raise (BTN)',
     vs_raise_co:  'vs Raise (CO)',
     vs_raise_sb:  'vs Raise (SB)',
+    vs_raise_hj:  'vs Raise (HJ)',
     vs_limp: 'vs Limp',
     vs_limp_sb: 'vs Limp (SB)'
   };
@@ -2489,7 +2491,7 @@ function renderBrowse() {
   // Build filter options with canonical ordering (no undefined leaking in)
   const stacks = [...new Set(scenarios.map(r => r.stack))].sort((a, b) => a - b);
   const POSITION_ORDER = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
-  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_3bet','vs_shove','vs_shove_btn','vs_shove_sb','vs_limp','vs_limp_sb'];
+  const ACTION_ORDER   = ['RFI','vs_raise','vs_raise_btn','vs_raise_co','vs_raise_sb','vs_raise_hj','vs_3bet','vs_shove','vs_shove_btn','vs_shove_sb','vs_limp','vs_limp_sb'];
   const positions = POSITION_ORDER.filter(p => scenarios.some(r => r.position === p));
   const actions   = ACTION_ORDER.filter(a => scenarios.some(r => r.action === a));
 
@@ -2777,7 +2779,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2888,7 +2890,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.5.0',
+    version: '1.5.1',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
