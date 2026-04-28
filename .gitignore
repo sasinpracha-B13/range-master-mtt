@@ -1,8 +1,16 @@
 .claude/
-gen-ranges.ps1
-gen-icons.ps1
-generate-ranges.js
-gen_ranges.ps1
+
+# Patch scripts (one-shot per release, not committed)
 *.ps1
 *.js
+.commitmsg.txt
+
+# But DO commit shared tooling and committed scripts
 !service-worker.js
+!tools/*.ps1
+!audit/generate-audit.ps1
+
+# Generated audit output -- regenerate on demand from ranges.json
+audit/ranges-flat.csv
+audit/ranges-summary.md
+audit/checksum.txt

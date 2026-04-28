@@ -959,7 +959,7 @@ const RANKS = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
 const SUITS_SYMBOLS = { s: '♠', h: '♥', d: '♦', c: '♣' };
 const SUIT_NAMES = ['s','h','d','c'];
 const POSITIONS = ['UTG','MP','LJ','HJ','CO','BTN','SB','BB'];
-const STACKS = [5,10,15,20,40,60,80,100];
+const STACKS = [5,10,15,20,25,40,60,80,100];
 const POSITION_TOOLTIPS = {
   UTG: 'First to act preflop. Tightest range.',
   MP: 'Middle Position. Slightly wider than UTG.',
@@ -2781,7 +2781,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.4</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.5.5</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -2892,7 +2892,7 @@ function generateExportData() {
     }));
 
   return {
-    version: '1.5.4',
+    version: '1.5.5',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,

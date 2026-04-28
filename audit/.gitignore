@@ -1,0 +1,5 @@
+# Generated audit output -- regenerate with audit/generate-audit.ps1.
+# Source of truth is ranges.json at repo root.
+ranges-flat.csv
+ranges-summary.md
+checksum.txt
