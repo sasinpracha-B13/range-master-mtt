@@ -519,6 +519,47 @@
       z-index: 2;
     }
     .hero-banner-eyebrow::before { content: '◆ '; opacity: 0.7; }
+    /* v1.8.11: post-rank-up state — stronger card glow + promoted badge */
+    .mastery-hero.recently-promoted {
+      box-shadow:
+        0 0 48px var(--rank-glow, rgba(212,175,55,0.30)),
+        inset 0 0 24px rgba(0,0,0,0.35);
+      animation: hero-promoted-glow 4s ease-in-out infinite;
+    }
+    @keyframes hero-promoted-glow {
+      0%, 100% { box-shadow: 0 0 36px var(--rank-glow, rgba(212,175,55,0.18)), inset 0 0 24px rgba(0,0,0,0.35); }
+      50%      { box-shadow: 0 0 56px var(--rank-glow, rgba(212,175,55,0.35)), inset 0 0 24px rgba(0,0,0,0.35); }
+    }
+    .hero-promoted-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.45);
+      color: var(--rank-color, #d4af37);
+      border: 1px solid var(--rank-color, #d4af37);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      box-shadow: 0 0 12px var(--rank-glow, rgba(212,175,55,0.35));
+      z-index: 2;
+      animation: hero-promoted-pulse 2.4s ease-in-out infinite;
+    }
+    .hero-promoted-badge .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--rank-color, #d4af37);
+      box-shadow: 0 0 8px var(--rank-color, #d4af37);
+    }
+    @keyframes hero-promoted-pulse {
+      0%, 100% { box-shadow: 0 0 10px var(--rank-glow, rgba(212,175,55,0.30)); }
+      50%      { box-shadow: 0 0 18px var(--rank-glow, rgba(212,175,55,0.55)); }
+    }
     .mastery-hero > *:not(.hero-texture-layer):not(.hero-character-layer):not(.hero-dust-layer) { position: relative; z-index: 1; }
     .mastery-hero-row {
       display: flex;
@@ -1446,6 +1487,26 @@
     .rank-emblem-newrank-wrap {
       position: relative;
       animation: emblem-reveal 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1, emblem-shine 3s ease-in-out infinite 0.9s;
+      overflow: visible;
+    }
+    /* v1.8.11: one-time diagonal light sweep across the new emblem at reveal */
+    .rank-emblem-newrank-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: linear-gradient(110deg,
+        transparent 30%,
+        rgba(255,255,255,0.55) 50%,
+        transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      animation: emblem-light-sweep 1.4s ease-out 0.7s 1;
+    }
+    @keyframes emblem-light-sweep {
+      0%   { opacity: 0; transform: translateX(-80%) rotate(0deg); }
+      50%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translateX(80%) rotate(0deg); }
     }
     @keyframes emblem-reveal {
       0%   { transform: scale(0.35) rotate(-12deg); opacity: 0; filter: brightness(2); }
@@ -1537,9 +1598,20 @@
     .boss-victory-rankup-line strong { color: var(--rank-color, #d4af37); }
     .boss-victory-rewards {
       margin: 16px auto 0;
-      max-width: 320px;
+      max-width: 340px;
       display: grid;
       gap: 6px;
+    }
+    .boss-victory-rewards-title {
+      font-size: 10px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--rank-color, #d4af37);
+      opacity: 0.85;
+      text-align: left;
+      padding-left: 4px;
+      margin-bottom: 2px;
     }
     .boss-victory-reward-row {
       display: flex;
@@ -1551,6 +1623,36 @@
       border: 1px solid rgba(212,175,55,0.25);
       font-size: 13px;
       color: #d4af37;
+    }
+    /* v1.8.11: certified row gets stronger glow */
+    .boss-victory-reward-row.certified {
+      background: linear-gradient(90deg, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.06) 100%);
+      border-color: rgba(212,175,55,0.5);
+      box-shadow: 0 0 14px rgba(212,175,55,0.20);
+    }
+    /* v1.8.11: badge-unlock row gets a "loot pill" treatment */
+    .boss-victory-reward-row.badge-unlock {
+      background:
+        linear-gradient(90deg, rgba(96,165,250,0.10) 0%, rgba(96,165,250,0.04) 100%);
+      border-color: var(--zone-accent, rgba(96,165,250,0.4));
+    }
+    .boss-victory-reward-row.badge-unlock .reward-label { color: var(--zone-accent, #60a5fa); font-weight: 600; }
+    .boss-victory-reward-row.badge-unlock .reward-icon { color: var(--zone-accent, #60a5fa); }
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--zone-accent, #60a5fa);
+      color: #0d1117 !important;
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      font-weight: 800;
+      box-shadow: 0 0 12px var(--zone-accent, rgba(96,165,250,0.5));
+      animation: badge-shine 3s ease-in-out infinite;
+    }
+    @keyframes badge-shine {
+      0%, 100% { box-shadow: 0 0 8px var(--zone-accent, rgba(96,165,250,0.4)); }
+      50%      { box-shadow: 0 0 18px var(--zone-accent, rgba(96,165,250,0.7)); }
     }
     .boss-victory-reward-row .reward-icon { font-size: 16px; }
     .boss-victory-reward-row .reward-label { flex: 1; text-align: left; color: var(--text); }
@@ -1604,6 +1706,29 @@
       line-height: 1.6;
     }
     .boss-defeat-reason strong { color: var(--text); }
+    /* v1.8.11: actionable Recommended Next block on Boss Failed */
+    .boss-defeat-recommend {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: rgba(96,165,250,0.05);
+      border: 1px solid rgba(96,165,250,0.25);
+      border-radius: 8px;
+      text-align: left;
+    }
+    .boss-defeat-recommend .recommend-eyebrow {
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 4px;
+    }
+    .boss-defeat-recommend .recommend-line {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .boss-defeat-recommend .recommend-line strong { color: var(--text); }
 
     /* ============================================================ */
     /* MISSION CONTRACT CARD v1.8.8 — Today's Mission as a contract  */
@@ -5402,110 +5527,211 @@ function getRankCharacterSvgBody(rank) {
       `;
     case 'Silver':
     case 'Ranger':
-      // Hooded scout with bow drawn
+      // v1.8.11: Hooded scout — crouched stance, drawn bow w/ taut string, arrow nocked, scout tracks behind
       return `
-        <!-- body -->
-        <path d="M86 80 L78 110 L78 168 L100 168 L100 110 L122 110 L122 168 L144 168 L144 110 L136 80 Z" fill="currentColor"/>
+        <!-- ground tracks behind scout -->
+        <circle cx="36" cy="194" r="2" fill="currentColor" opacity="0.4"/>
+        <circle cx="50" cy="190" r="2" fill="currentColor" opacity="0.4"/>
+        <circle cx="64" cy="194" r="2" fill="currentColor" opacity="0.4"/>
+        <!-- horizon line -->
+        <path d="M0 178 L200 178" stroke="currentColor" stroke-width="0.7" opacity="0.18"/>
+        <!-- crouched body -->
+        <path d="M88 110 L78 138 L82 178 L102 178 L102 130 L122 130 L122 178 L142 178 L138 138 L130 110 Z" fill="currentColor"/>
+        <!-- shoulder cloak fold -->
+        <path d="M86 110 Q80 116 78 138" fill="none" stroke="#0d1117" stroke-width="1.5" opacity="0.45"/>
         <!-- hood -->
-        <path d="M86 80 Q90 56 110 56 Q130 56 134 80 Q124 70 110 70 Q96 70 86 80 Z" fill="currentColor"/>
-        <!-- bow (curved arc) -->
-        <path d="M40 80 Q26 130 40 180" fill="none" stroke="currentColor" stroke-width="3"/>
-        <!-- bowstring -->
-        <line x1="40" y1="80" x2="40" y2="180" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
-        <!-- arrow -->
-        <line x1="40" y1="130" x2="120" y2="130" stroke="currentColor" stroke-width="2"/>
-        <polygon points="116,124 130,130 116,136" fill="currentColor"/>
+        <path d="M82 100 Q86 70 110 66 Q132 70 136 100 Q124 86 110 86 Q96 86 82 100 Z" fill="currentColor"/>
+        <!-- hood inner -->
+        <path d="M92 92 Q110 100 128 92" fill="none" stroke="#0d1117" stroke-width="1.5" opacity="0.5"/>
+        <!-- glint eye -->
+        <circle cx="116" cy="88" r="1.4" fill="currentColor"/>
+        <!-- bow arc (held in left hand, tilted) -->
+        <path d="M30 60 Q14 124 36 196" fill="none" stroke="currentColor" stroke-width="3.5"/>
+        <!-- bowstring (slightly drawn) -->
+        <path d="M30 60 Q56 130 36 196" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+        <!-- arrow nocked horizontal -->
+        <line x1="56" y1="130" x2="170" y2="130" stroke="currentColor" stroke-width="2"/>
+        <polygon points="166,124 180,130 166,136" fill="currentColor"/>
+        <!-- arrow fletching -->
+        <polygon points="56,128 64,130 56,132" fill="currentColor" opacity="0.7"/>
+        <!-- quiver hint behind back -->
+        <rect x="148" y="100" width="6" height="22" fill="currentColor" opacity="0.6"/>
       `;
     case 'Gold':
     case 'Knight':
-      // Armored knight upright with sword resting in front + shield
+      // v1.8.11: Armored knight in defensive stance — sword pointed down, shield raised, helm w/ visor
       return `
-        <!-- sword vertical center -->
-        <line x1="100" y1="40" x2="100" y2="180" stroke="currentColor" stroke-width="6"/>
-        <line x1="80" y1="60" x2="120" y2="60" stroke="currentColor" stroke-width="4"/>
-        <circle cx="100" cy="186" r="6" fill="currentColor"/>
-        <!-- shield silhouette behind -->
-        <path d="M50 90 L50 140 Q50 170 100 188 Q150 170 150 140 L150 90 Z" fill="currentColor" opacity="0.55"/>
-        <!-- helm -->
-        <ellipse cx="100" cy="44" rx="14" ry="14" fill="currentColor"/>
-        <rect x="92" y="40" width="16" height="6" fill="#0d1117" opacity="0.55"/>
+        <!-- ground line -->
+        <line x1="40" y1="196" x2="160" y2="196" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+        <!-- shield (raised on left, larger) -->
+        <path d="M40 84 L40 144 Q40 174 78 188 Q116 174 116 144 L116 84 Z" fill="currentColor"/>
+        <!-- shield boss + cross -->
+        <circle cx="78" cy="130" r="9" fill="#0d1117" opacity="0.5"/>
+        <line x1="78" y1="92" x2="78" y2="172" stroke="#0d1117" stroke-width="2.5" opacity="0.55"/>
+        <line x1="48" y1="130" x2="108" y2="130" stroke="#0d1117" stroke-width="2.5" opacity="0.55"/>
+        <!-- shield rivets -->
+        <circle cx="48" cy="92" r="1.5" fill="#0d1117" opacity="0.65"/>
+        <circle cx="108" cy="92" r="1.5" fill="#0d1117" opacity="0.65"/>
+        <circle cx="48" cy="160" r="1.5" fill="#0d1117" opacity="0.65"/>
+        <circle cx="108" cy="160" r="1.5" fill="#0d1117" opacity="0.65"/>
+        <!-- body silhouette -->
+        <path d="M108 100 L104 178 L138 178 L142 100 Z" fill="currentColor"/>
+        <!-- pauldron / shoulder armor -->
+        <ellipse cx="125" cy="108" rx="14" ry="9" fill="currentColor"/>
+        <!-- helm with visor -->
+        <ellipse cx="124" cy="78" rx="15" ry="17" fill="currentColor"/>
+        <rect x="116" y="80" width="16" height="3" fill="#0d1117" opacity="0.7"/>
+        <!-- helm crest plate -->
+        <path d="M110 60 L124 50 L138 60 L138 68 L110 68 Z" fill="currentColor"/>
+        <!-- sword pointed downward to ground (right hand) -->
+        <line x1="160" y1="100" x2="160" y2="194" stroke="currentColor" stroke-width="5"/>
+        <line x1="146" y1="106" x2="174" y2="106" stroke="currentColor" stroke-width="3.5"/>
+        <circle cx="160" cy="98" r="3.5" fill="currentColor"/>
       `;
     case 'Platinum':
     case 'Champion':
-      // Champion holding raised trophy + laurel crown
+      // v1.8.11: Triumphant champion w/ raised trophy + laurel rays + crown of light
       return `
-        <!-- arms raised holding trophy -->
-        <path d="M75 105 L60 70 L70 70 L85 105 Z" fill="currentColor"/>
-        <path d="M125 105 L140 70 L130 70 L115 105 Z" fill="currentColor"/>
-        <!-- trophy cup -->
-        <path d="M70 50 L70 75 Q70 90 100 92 Q130 90 130 75 L130 50 Z" fill="currentColor"/>
-        <!-- trophy stem -->
-        <rect x="92" y="92" width="16" height="14" fill="currentColor"/>
-        <rect x="80" y="106" width="40" height="6" fill="currentColor"/>
-        <!-- body -->
-        <path d="M80 110 L75 165 L125 165 L120 110 Z" fill="currentColor"/>
-        <!-- legs -->
-        <rect x="84" y="165" width="14" height="30" fill="currentColor"/>
-        <rect x="102" y="165" width="14" height="30" fill="currentColor"/>
-        <!-- laurel crown side leaves on trophy -->
-        <ellipse cx="60" cy="62" rx="6" ry="3" fill="currentColor" opacity="0.7" transform="rotate(-30 60 62)"/>
-        <ellipse cx="140" cy="62" rx="6" ry="3" fill="currentColor" opacity="0.7" transform="rotate(30 140 62)"/>
+        <!-- light rays from trophy -->
+        <line x1="100" y1="20" x2="100" y2="44" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <line x1="76" y1="28" x2="84" y2="46" stroke="currentColor" stroke-width="1.2" opacity="0.45"/>
+        <line x1="124" y1="28" x2="116" y2="46" stroke="currentColor" stroke-width="1.2" opacity="0.45"/>
+        <line x1="60" y1="46" x2="74" y2="56" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+        <line x1="140" y1="46" x2="126" y2="56" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+        <!-- ground line -->
+        <line x1="50" y1="196" x2="150" y2="196" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+        <!-- arms raised supporting trophy -->
+        <path d="M70 105 L56 72 L66 70 L82 105 Z" fill="currentColor"/>
+        <path d="M130 105 L144 72 L134 70 L118 105 Z" fill="currentColor"/>
+        <!-- trophy cup w/ inner rim -->
+        <path d="M64 50 L64 78 Q64 96 100 98 Q136 96 136 78 L136 50 Z" fill="currentColor"/>
+        <path d="M70 56 L70 72 Q70 86 100 88 Q130 86 130 72 L130 56 Z" fill="#0d1117" opacity="0.35"/>
+        <!-- trophy handles -->
+        <path d="M64 60 Q52 60 52 76 Q52 88 64 84" fill="none" stroke="currentColor" stroke-width="3"/>
+        <path d="M136 60 Q148 60 148 76 Q148 88 136 84" fill="none" stroke="currentColor" stroke-width="3"/>
+        <!-- trophy stem + base -->
+        <rect x="92" y="98" width="16" height="14" fill="currentColor"/>
+        <rect x="76" y="112" width="48" height="6" fill="currentColor"/>
+        <!-- body silhouette -->
+        <path d="M82 116 L74 178 L82 196 L118 196 L126 178 L118 116 Z" fill="currentColor"/>
+        <!-- helm/head -->
+        <ellipse cx="100" cy="116" rx="11" ry="10" fill="currentColor"/>
+        <!-- laurel crown -->
+        <path d="M88 110 Q92 100 100 100 Q108 100 112 110" fill="none" stroke="currentColor" stroke-width="2"/>
+        <ellipse cx="91" cy="106" rx="2.5" ry="3.5" fill="currentColor" opacity="0.75" transform="rotate(-25 91 106)"/>
+        <ellipse cx="109" cy="106" rx="2.5" ry="3.5" fill="currentColor" opacity="0.75" transform="rotate(25 109 106)"/>
       `;
     case 'Diamond':
     case 'Warlord':
-      // Battle commander with massive blade resting + cape silhouette
+      // v1.8.11: Battle commander — wide cape, spiked horned helm, massive blade w/ ember sparks, crimson aura
       return `
-        <!-- cape -->
-        <path d="M70 70 Q40 110 50 200 L100 180 L150 200 Q160 110 130 70 Z" fill="currentColor" opacity="0.6"/>
-        <!-- body silhouette -->
-        <path d="M82 70 L78 130 L122 130 L118 70 Z" fill="currentColor"/>
-        <!-- helm/head -->
-        <ellipse cx="100" cy="56" rx="14" ry="16" fill="currentColor"/>
-        <!-- horns / spikes on helm -->
-        <polygon points="84,52 78,38 92,48" fill="currentColor"/>
-        <polygon points="116,52 122,38 108,48" fill="currentColor"/>
-        <!-- massive blade resting forward-right -->
-        <polygon points="130,80 175,180 165,185 155,180 125,90" fill="currentColor"/>
-        <!-- crossguard -->
-        <rect x="120" y="78" width="20" height="6" fill="currentColor"/>
+        <!-- ember sparks behind figure -->
+        <circle cx="34" cy="60" r="1.5" fill="currentColor" opacity="0.55"/>
+        <circle cx="50" cy="50" r="1.2" fill="currentColor" opacity="0.45"/>
+        <circle cx="160" cy="50" r="1.5" fill="currentColor" opacity="0.55"/>
+        <circle cx="178" cy="60" r="1.2" fill="currentColor" opacity="0.45"/>
+        <circle cx="44" cy="120" r="1" fill="currentColor" opacity="0.4"/>
+        <circle cx="170" cy="120" r="1" fill="currentColor" opacity="0.4"/>
+        <!-- ground horizon -->
+        <line x1="0" y1="178" x2="200" y2="178" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+        <!-- huge cape spread behind -->
+        <path d="M64 72 Q22 116 32 200 L100 184 L168 200 Q178 116 136 72 Z" fill="currentColor" opacity="0.55"/>
+        <!-- cape inner highlight -->
+        <path d="M80 84 Q56 130 64 196" fill="none" stroke="#0d1117" stroke-width="1.5" opacity="0.4"/>
+        <path d="M120 84 Q144 130 136 196" fill="none" stroke="#0d1117" stroke-width="1.5" opacity="0.4"/>
+        <!-- pauldrons (shoulder armor) -->
+        <ellipse cx="74" cy="92" rx="16" ry="11" fill="currentColor"/>
+        <ellipse cx="126" cy="92" rx="16" ry="11" fill="currentColor"/>
+        <!-- pauldron spike -->
+        <polygon points="74,72 80,90 68,90" fill="currentColor"/>
+        <polygon points="126,72 132,90 120,90" fill="currentColor"/>
+        <!-- body / chest plate -->
+        <path d="M82 96 L78 156 L122 156 L118 96 Z" fill="currentColor"/>
+        <!-- chest emblem (negative line) -->
+        <path d="M100 110 L100 144 M88 122 L112 122" stroke="#0d1117" stroke-width="2" opacity="0.55"/>
+        <!-- horned helm -->
+        <ellipse cx="100" cy="60" rx="15" ry="17" fill="currentColor"/>
+        <!-- helm visor slit -->
+        <rect x="92" y="60" width="16" height="3" fill="#ef4444" opacity="0.85"/>
+        <!-- horns -->
+        <path d="M84 50 Q72 38 64 28 Q76 38 88 50 Z" fill="currentColor"/>
+        <path d="M116 50 Q128 38 136 28 Q124 38 112 50 Z" fill="currentColor"/>
+        <!-- massive blade pointed forward-right (ember tip) -->
+        <polygon points="130,80 188,170 178,180 168,176 124,92" fill="currentColor"/>
+        <rect x="118" y="78" width="22" height="6" fill="currentColor"/>
+        <circle cx="186" cy="172" r="3" fill="#ef4444" opacity="0.7"/>
       `;
     case 'Master':
     case 'Mythic':
-      // Robed mage with floating crystal sigil above outstretched hand
+      // v1.8.11: Arcane master — robed figure w/ rune circle aura + floating crystal + dual orbiting motes
       return `
-        <!-- robe -->
-        <path d="M82 90 Q70 100 65 200 L135 200 Q130 100 118 90 Z" fill="currentColor"/>
-        <!-- hood + head -->
-        <path d="M82 90 Q86 60 100 56 Q114 60 118 90 Q108 80 100 80 Q92 80 82 90 Z" fill="currentColor"/>
-        <!-- arm raised -->
-        <path d="M118 100 L150 70 L155 78 L125 110 Z" fill="currentColor"/>
+        <!-- outer rune circle (back) -->
+        <circle cx="100" cy="120" r="78" fill="none" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+        <circle cx="100" cy="120" r="62" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+        <!-- rune marks on circle (4 cardinal) -->
+        <line x1="100" y1="42" x2="100" y2="48" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+        <line x1="178" y1="120" x2="172" y2="120" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+        <line x1="22" y1="120" x2="28" y2="120" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+        <line x1="100" y1="198" x2="100" y2="192" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+        <!-- robe sweep -->
+        <path d="M82 96 Q66 110 60 200 L140 200 Q134 110 118 96 Z" fill="currentColor"/>
+        <!-- inner robe shadow -->
+        <path d="M100 96 L100 200" stroke="#0d1117" stroke-width="1.5" opacity="0.4"/>
+        <!-- shoulder fold -->
+        <path d="M82 96 Q86 100 100 100 Q114 100 118 96" fill="none" stroke="#0d1117" stroke-width="1" opacity="0.5"/>
+        <!-- deep hood (face hidden) -->
+        <path d="M82 96 Q86 60 100 56 Q114 60 118 96 Q110 84 100 84 Q90 84 82 96 Z" fill="currentColor"/>
+        <path d="M88 80 Q100 96 112 80" fill="none" stroke="#0d1117" stroke-width="2" opacity="0.7"/>
+        <!-- raised arm w/ sleeve -->
+        <path d="M118 110 L150 70 L160 78 L125 116 Z" fill="currentColor"/>
         <!-- floating crystal above hand -->
-        <polygon points="155,40 168,55 155,80 142,55" fill="currentColor"/>
-        <polygon points="155,46 163,55 155,72 147,55" fill="#0d1117" opacity="0.45"/>
-        <!-- rune circle aura -->
-        <circle cx="155" cy="58" r="26" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
-        <circle cx="155" cy="58" r="32" fill="none" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+        <polygon points="156,38 172,55 156,82 140,55" fill="currentColor"/>
+        <polygon points="156,46 166,55 156,74 146,55" fill="#0d1117" opacity="0.5"/>
+        <!-- crystal core glow -->
+        <circle cx="156" cy="58" r="3" fill="currentColor"/>
+        <!-- orbiting motes -->
+        <circle cx="180" cy="58" r="2" fill="currentColor" opacity="0.7"/>
+        <circle cx="132" cy="58" r="2" fill="currentColor" opacity="0.7"/>
+        <!-- crystal halo -->
+        <circle cx="156" cy="58" r="22" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4"/>
       `;
     case 'Grandmaster':
     case 'EndBoss':
     case 'End Boss':
-      // Dark crowned figure on throne — ominous silhouette
+      // v1.8.11: Dark Sovereign on a high jagged throne — crown w/ jewel, two glowing crimson eyes, cape, throne spires
       return `
-        <!-- throne back -->
-        <path d="M50 60 L50 200 L150 200 L150 60 L130 50 L120 70 L110 50 L100 70 L90 50 L80 70 L70 50 Z" fill="currentColor" opacity="0.55"/>
-        <!-- figure -->
-        <path d="M82 90 L78 180 L122 180 L118 90 Z" fill="currentColor"/>
+        <!-- throne back with tall jagged spires -->
+        <path d="M30 60 L30 200 L170 200 L170 60 L160 36 L150 56 L140 30 L130 56 L120 22 L110 56 L100 30 L90 56 L80 22 L70 56 L60 30 L50 56 L40 36 Z" fill="currentColor" opacity="0.55"/>
+        <!-- throne arms -->
+        <rect x="30" y="120" width="22" height="80" fill="currentColor" opacity="0.7"/>
+        <rect x="148" y="120" width="22" height="80" fill="currentColor" opacity="0.7"/>
+        <!-- skull motifs on throne arms -->
+        <circle cx="41" cy="138" r="4" fill="#0d1117" opacity="0.65"/>
+        <circle cx="159" cy="138" r="4" fill="#0d1117" opacity="0.65"/>
+        <!-- main figure body -->
+        <path d="M82 92 L78 188 L122 188 L118 92 Z" fill="currentColor"/>
         <!-- shoulders + cape spread -->
-        <path d="M70 95 L82 90 L82 130 L60 140 Z" fill="currentColor"/>
-        <path d="M130 95 L118 90 L118 130 L140 140 Z" fill="currentColor"/>
-        <!-- head -->
+        <path d="M68 100 L82 90 L82 140 L52 152 Z" fill="currentColor"/>
+        <path d="M132 100 L118 90 L118 140 L148 152 Z" fill="currentColor"/>
+        <!-- robe inner shadow -->
+        <path d="M100 92 L100 188" stroke="#0d1117" stroke-width="1.5" opacity="0.55"/>
+        <!-- pauldron spikes -->
+        <polygon points="68,100 60,82 78,92" fill="currentColor"/>
+        <polygon points="132,100 140,82 122,92" fill="currentColor"/>
+        <!-- head (deep shadow) -->
         <ellipse cx="100" cy="64" rx="14" ry="16" fill="currentColor"/>
-        <!-- crown -->
-        <path d="M82 50 L86 30 L94 44 L100 22 L106 44 L114 30 L118 50 Z" fill="currentColor"/>
-        <rect x="82" y="50" width="36" height="4" fill="currentColor"/>
-        <!-- ominous eyes (negative space) -->
-        <circle cx="94" cy="62" r="2" fill="#ef4444" opacity="0.85"/>
-        <circle cx="106" cy="62" r="2" fill="#ef4444" opacity="0.85"/>
+        <!-- crown w/ tall spires + central jewel -->
+        <path d="M80 50 L84 26 L92 44 L100 18 L108 44 L116 26 L120 50 Z" fill="currentColor"/>
+        <rect x="80" y="50" width="40" height="5" fill="currentColor"/>
+        <circle cx="100" cy="32" r="2.5" fill="#ef4444"/>
+        <circle cx="84" cy="38" r="1.5" fill="currentColor"/>
+        <circle cx="116" cy="38" r="1.5" fill="currentColor"/>
+        <!-- ominous glowing eyes -->
+        <circle cx="93" cy="62" r="2.5" fill="#ef4444"/>
+        <circle cx="107" cy="62" r="2.5" fill="#ef4444"/>
+        <!-- eye glow halos -->
+        <circle cx="93" cy="62" r="4.5" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.4"/>
+        <circle cx="107" cy="62" r="4.5" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.4"/>
       `;
     default:
       return `<circle cx="100" cy="100" r="60" fill="currentColor" opacity="0.4"/>`;
@@ -5947,15 +6173,27 @@ function _renderMasteryImpl() {
   const heroVars = rankCssVars(overallRank);
   const heroProgressPct = Math.min(100, masteryScore);
 
-  // ---------- HERO RANK SCENE (v1.8.8 + v1.8.9 character layer) ----------
+  // ---------- HERO RANK SCENE (v1.8.8 + v1.8.9 character layer + v1.8.11 post-rank-up state) ----------
   // Layered scene: aura + sigil watermark + texture + character silhouette + foreground content.
   // Larger rank emblem with collectible double-ring frame.
+  // v1.8.11: when a rank-up happened in the last 24h (or any module rank-up,
+  // since overall rank is computed from modules), show a "RECENTLY PROMOTED"
+  // badge + stronger aura on the hero card.
+  const recent = profile.recentRankUp;
+  const recentlyPromoted = recent && (Date.now() - recent.timestamp) < (24 * 60 * 60 * 1000);
+  const promotedClass = recentlyPromoted ? ' recently-promoted' : '';
+  const promotedBadge = recentlyPromoted ? `
+    <div class="hero-promoted-badge" style="--rank-color:${rankCssVars(recent.newRank).color};--rank-glow:${rankCssVars(recent.newRank).glow}">
+      <span class="dot"></span>RECENTLY PROMOTED · ${moduleCleanLabel(recent.module)} ${rankDisplay(recent.newRank)}
+    </div>
+  ` : '';
   let html = `
-    <div class="mastery-hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}">
+    <div class="mastery-hero${promotedClass}" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}">
       <div class="hero-texture-layer"></div>
       <div class="hero-character-layer">${renderRankCharacterSvg(overallRank, { width: 280, height: 280, tint: 'currentColor' })}</div>
       <div class="hero-dust-layer"><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="hero-banner-eyebrow">Rank Profile</div>
+      ${promotedBadge}
       <div class="mastery-hero-row">
         <div class="rank-emblem hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">${renderRankEmblemSVG(overallRank, 'large')}</div>
         <div class="hero-meta">
@@ -6497,6 +6735,14 @@ function showChallengeResult() {
     });
     profile.certifications.masteryScore = computeMasteryScore(profile.moduleRanks);
     rankUp = { oldRank, newRank: ch.targetRank };
+    // v1.8.11: track most-recent rank-up so Home Hero can show
+    // "RECENTLY PROMOTED" badge + stronger aura for ~24h after.
+    profile.recentRankUp = {
+      module: ch.module,
+      oldRank,
+      newRank: ch.targetRank,
+      timestamp: Date.now()
+    };
   }
 
   App.saveProgress();
@@ -6575,20 +6821,21 @@ function renderChallengeResultScreen(ch, result, rankUp) {
         ` : ''}
 
         <div class="boss-victory-rewards">
-          <div class="boss-victory-reward-row">
-            <span class="reward-icon">★</span>
-            <span class="reward-label">Mastery Points</span>
-            <span class="reward-value">+${masteryDelta.toFixed(1)}</span>
-          </div>
-          <div class="boss-victory-reward-row">
+          <div class="boss-victory-rewards-title">▾ Loot &amp; Certification</div>
+          <div class="boss-victory-reward-row certified">
             <span class="reward-icon">⚔</span>
             <span class="reward-label">${moduleCleanLabel(ch.module)} Boss certified</span>
             <span class="reward-value">${rankDisplay(ch.targetRank)}</span>
           </div>
           <div class="boss-victory-reward-row">
+            <span class="reward-icon">★</span>
+            <span class="reward-label">Mastery Points</span>
+            <span class="reward-value">+${masteryDelta.toFixed(1)}</span>
+          </div>
+          <div class="boss-victory-reward-row badge-unlock">
             <span class="reward-icon">◆</span>
             <span class="reward-label">${zone.zone} Badge</span>
-            <span class="reward-value">UNLOCKED</span>
+            <span class="reward-value badge-pill">UNLOCKED</span>
           </div>
         </div>
       </div>
@@ -6609,8 +6856,24 @@ function renderChallengeResultScreen(ch, result, rankUp) {
       </div>
     `;
   } else {
-    // ----- DEFEAT SCREEN -----
+    // ----- DEFEAT SCREEN (v1.8.11: Recommended Next Mission + 3-CTA) -----
     const rankVarsTarget = rankCssVars(ch.targetRank);
+    // Identify weakest score axis for actionable recommendation
+    const weakSpotMap = [
+      { id: 'overall',  label: 'Overall accuracy',     gap: result.overallPct - t.overall },
+      { id: 'pure',     label: 'Pure-spot accuracy',   gap: t.pure ? (result.purePct - t.pure) : 100 },
+      { id: 'mixed',    label: 'Mixed awareness',      gap: t.mixed ? (result.mixedPct - t.mixed) : 100 },
+      { id: 'critical', label: 'Critical mistake rate', gap: t.criticalMax !== undefined ? (t.criticalMax - result.criticalPct) : 100 }
+    ].sort((a, b) => a.gap - b.gap);
+    const weakSpot = weakSpotMap[0];
+    const weakSpotCopy = weakSpot.id === 'critical'
+      ? `Too many 0%-frequency punts (${result.criticalPct}%). Run a focused mission to lock the obvious folds.`
+      : weakSpot.id === 'pure'
+      ? `Pure-spot accuracy (${result.purePct}%) below ${t.pure}%. Drill the pool again — pure hands are the foundation.`
+      : weakSpot.id === 'mixed'
+      ? `Mix awareness (${result.mixedPct}%) below ${t.mixed}%. Marginal Focus mode forces these reps.`
+      : `Overall accuracy (${result.overallPct}%) below ${t.overall}%. Run another ${moduleCleanLabel(ch.module)} mission to build reps.`;
+
     html = `
       <div class="boss-defeat-card" style="--rank-color:${rankVarsTarget.color};--rank-glow:${rankVarsTarget.glow};--zone-accent:${zone.accent}">
         <div class="boss-defeat-stamp">⚔ BOSS HOLDS ⚔</div>
@@ -6618,6 +6881,10 @@ function renderChallengeResultScreen(ch, result, rankUp) {
         <div class="boss-victory-zone">${zone.glyph} ${zone.zone}</div>
         <div class="boss-defeat-no-loss">Your existing rank is unchanged. No penalty for the attempt.</div>
         ${failReason ? `<div class="boss-defeat-reason"><strong>Why:</strong> ${failReason}</div>` : ''}
+        <div class="boss-defeat-recommend">
+          <div class="recommend-eyebrow">▸ Recommended Next</div>
+          <div class="recommend-line"><strong>Train ${weakSpot.label}.</strong> ${weakSpotCopy}</div>
+        </div>
       </div>
 
       <div class="card">
@@ -6628,9 +6895,11 @@ function renderChallengeResultScreen(ch, result, rankUp) {
         </div>
       </div>
 
-      <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
+      <!-- v1.8.11: 3-CTA hierarchy on Boss Failed -->
+      <div class="boss-victory-cta-stack">
+        <button class="btn-mastery-primary" onclick="masteryTrainModule('${ch.module}')">▶ Train Weak Spot · ${moduleCleanLabel(ch.module)}</button>
+        <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('retry')">⚔ Retry Boss</button>
         <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('home')">← Back to Home</button>
-        <button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">⚔ Attempt Again</button>
       </div>
     `;
   }
@@ -7119,7 +7388,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.10</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.11</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
