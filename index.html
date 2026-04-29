@@ -709,6 +709,133 @@
       font-weight: 600;
       margin-bottom: 4px;
     }
+
+    /* ============================================================ */
+    /* CHALLENGE / BOSS TEST UI v1.8.2                              */
+    /* ============================================================ */
+    .challenge-banner {
+      padding: 16px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--rank-bg, rgba(212,175,55,0.10)) 0%, #12131A 100%);
+      border: 1.5px solid var(--rank-color, #d4af37);
+      box-shadow: 0 0 24px var(--rank-glow, rgba(212,175,55,0.15));
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .challenge-banner::before {
+      content: '🏆';
+      position: absolute;
+      top: -18px;
+      right: -10px;
+      font-size: 80px;
+      opacity: 0.06;
+    }
+    .challenge-banner-title {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+    .challenge-banner-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .challenge-rank-flow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0 8px;
+    }
+    .challenge-arrow {
+      font-size: 20px;
+      color: var(--rank-color, #d4af37);
+    }
+    .challenge-req-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .challenge-req {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    .challenge-req-label { color: var(--text-secondary); }
+    .challenge-req-value { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+
+    /* In-flight challenge header (when answering hands) */
+    .challenge-header-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--rank-bg, rgba(212,175,55,0.15));
+      color: var(--rank-color, #d4af37);
+      border: 1px solid var(--rank-color, #d4af37);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    /* Challenge result UI */
+    .challenge-result-banner {
+      text-align: center;
+      padding: 24px 18px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .challenge-result-banner.passed {
+      background: linear-gradient(135deg, rgba(74,222,128,0.12) 0%, rgba(74,222,128,0.02) 100%);
+      border: 2px solid rgba(74,222,128,0.5);
+      box-shadow: 0 0 32px rgba(74,222,128,0.18);
+    }
+    .challenge-result-banner.failed {
+      background: linear-gradient(135deg, rgba(248,113,113,0.10) 0%, rgba(248,113,113,0.02) 100%);
+      border: 2px solid rgba(248,113,113,0.4);
+    }
+    .challenge-result-icon { font-size: 48px; line-height: 1; margin-bottom: 6px; }
+    .challenge-result-title { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .challenge-result-sub { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .challenge-rank-up {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .challenge-score-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .challenge-score-cell {
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .challenge-score-cell.passed { border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.05); }
+    .challenge-score-cell.failed { border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.05); }
+    .challenge-score-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .challenge-score-value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .challenge-score-target { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
     .reasoning-box {
       background: rgba(110,231,183,0.05);
       border: 1px solid rgba(110,231,183,0.15);
@@ -1231,6 +1358,11 @@
 
     <div id="drillComplete" class="container" style="display:none">
       <!-- Filled by JS -->
+    </div>
+
+    <!-- v1.8.2 Module Boss Test entry (shown when entering challenge mode) -->
+    <div id="challengeSetup" class="container" style="display:none">
+      <!-- Filled by JS via renderChallengeSetup() -->
     </div>
   </div>
 
@@ -1838,10 +1970,14 @@ function renderDrillQuestion() {
   const cards = buildCardHTML(q.hand);
   const actions = getActionButtons(q.stack, q.action, q.pos, q.freqs);
   const streakBadge = d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : '';
+  // v1.8.2: challenge mode header badge
+  const challengeBadge = (d.mode === 'challenge' && d.challenge)
+    ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
+    : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
-      <span class="drill-progress-text">Q ${current}/${total}</span>
+      <span class="drill-progress-text">${challengeBadge} Q ${current}/${total}</span>
       ${streakBadge}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${pct}%"></div></div>
@@ -2171,8 +2307,13 @@ function handleAnswer(userAction) {
   // v1.7.2: classify mistake category for non-correct answers
   const mistakeCategory = classifyMistake(q, userAction, correctAction, cls);
 
-  const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
-  updateSRS(srsKey, cls.score, cls.isPure, mistakeCategory);
+  // v1.8.2: Challenge mode keeps Practice SRS history clean (per spec
+  // "Existing drill history remains separate from official challenge results")
+  const isChallenge = d.mode === 'challenge';
+  if (!isChallenge) {
+    const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
+    updateSRS(srsKey, cls.score, cls.isPure, mistakeCategory);
+  }
 
   if (cls.result === 'correct') {
     d.streak++;
@@ -2192,7 +2333,8 @@ function handleAnswer(userAction) {
   d.answers.push({ q, userAction, correctAction, responseTime,
                    result: cls.result, score: cls.score, userFreq: cls.userFreq, isPure: cls.isPure,
                    mistakeCategory });
-  updateDailyStats(cls.score);
+  // v1.8.2: skip Practice daily stats during challenge to keep streams separate
+  if (!isChallenge) updateDailyStats(cls.score);
 
   // Always show the freq-bar answer screen so the user sees the GTO mix.
   // In quick mode we auto-advance; in deep/weakness mode the user clicks Next.
@@ -2202,8 +2344,10 @@ function handleAnswer(userAction) {
     const delay = cls.result === 'correct' ? 1600 : 2400;
     d._quickAdvanceTimer = setTimeout(() => {
       d.currentIndex++;
-      if (d.currentIndex >= d.queue.length) showDrillComplete();
-      else renderDrillQuestion();
+      if (d.currentIndex >= d.queue.length) {
+        if (d.mode === 'challenge') showChallengeResult();
+        else showDrillComplete();
+      } else renderDrillQuestion();
     }, delay);
   }
   console.log('[DEBUG] handleAnswer complete — feedback shown');
@@ -2347,8 +2491,13 @@ function skipAutoAdvance() {
 function nextDrillHand() {
   const d = App.state.drill;
   d.currentIndex++;
-  if (d.currentIndex >= d.queue.length) showDrillComplete();
-  else renderDrillQuestion();
+  if (d.currentIndex >= d.queue.length) {
+    // v1.8.2: route to challenge result if challenge mode
+    if (d.mode === 'challenge') showChallengeResult();
+    else showDrillComplete();
+  } else {
+    renderDrillQuestion();
+  }
 }
 
 function showDrillComplete() {
@@ -2396,6 +2545,8 @@ function showDrillComplete() {
   App.saveProgress();
 
   // v1.4.0: lightweight session log for Data Export + Marginal Accuracy metric.
+  // v1.8.2: challenge mode tracked separately via profile.challengeResults — skip drillSessions log.
+  if (d.mode === 'challenge') return;
   logDrillSession({
     mode: d.mode,
     handCount: total,
@@ -3605,11 +3756,13 @@ function getBestNextUpgrade(moduleRanks, moduleAccs) {
 
 // CTA handlers
 function masteryStartRecommendedDrill() {
+  // v1.8.2: route to Boss Test for the recommended module
   const upgrade = getBestNextUpgrade(App.state.profile.moduleRanks, getModuleAccuracies());
-  if (upgrade && typeof showToast === 'function') {
-    showToast(`Recommended: ${upgrade.info.label}`);
+  if (upgrade) {
+    masteryOpenChallengeSetup(upgrade.module);
+  } else {
+    switchTab('drill');
   }
-  switchTab('drill');
 }
 function masteryViewPath() {
   const el = document.getElementById('masteryPathSection');
@@ -3618,11 +3771,8 @@ function masteryViewPath() {
   }
 }
 function masteryTrainModule(moduleKey) {
-  const info = MODULE_DISPLAY_INFO[moduleKey];
-  if (info && typeof showToast === 'function') {
-    showToast(`Train: ${info.label}`);
-  }
-  switchTab('drill');
+  // v1.8.2: open Module Boss Test setup screen (Challenge Mode)
+  masteryOpenChallengeSetup(moduleKey);
 }
 function masteryStartMission() {
   if (typeof showToast === 'function') showToast(`Today's mission queued`);
@@ -3802,13 +3952,446 @@ function renderMastery() {
   }
   html += `</div></div>`;
 
+  // ---------- RECENT CHALLENGE HISTORY (v1.8.2) ----------
+  const recentResults = (profile.challengeResults || []).slice(-5).reverse();
+  if (recentResults.length > 0) {
+    html += `<div class="card">
+      <div class="mastery-section-title"><span class="accent-bar"></span>Recent Boss Tests</div>
+      <div class="mastery-card-sub">Your last ${recentResults.length} attempt${recentResults.length===1?'':'s'} (latest first).</div>
+      <div style="display:grid;gap:6px">`;
+    for (const r of recentResults) {
+      const moduleInfo = MODULE_DISPLAY_INFO[r.module] || { label: r.module };
+      const dateStr = new Date(r.date).toLocaleDateString();
+      const v = rankCssVars(r.targetRank);
+      html += `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid ${r.passed ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.2)'}">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            ${renderRankEmblem(r.targetRank, 'small')}
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:600">${moduleInfo.label}</div>
+              <div style="font-size:11px;color:var(--text-secondary)">${rankDisplay(r.targetRank)} target · ${r.handCount} hands · ${dateStr}</div>
+            </div>
+          </div>
+          <div style="text-align:right;font-size:12px">
+            <div style="font-weight:700;color:${r.passed ? 'var(--success)' : 'var(--danger)'}">${r.passed ? '✓ Passed' : '✗ Failed'}</div>
+            <div style="font-size:11px;color:var(--text-secondary)">${r.scores.overall}% overall</div>
+          </div>
+        </div>
+      `;
+    }
+    html += `</div></div>`;
+  }
+
   // ---------- FOUNDATION EXPLAINER (compact, at bottom) ----------
   html += `<div class="foundation-card">
     <div class="foundation-card-title">Mastery System Preview</div>
-    <div>Module ranks currently start at Wanderer. Official ranks unlock through Challenge Mode (v1.8.2) and Overall Exams (v1.8.3). Drill history shows up as <em>estimated</em> rank — a preview of where you'll likely land.</div>
+    <div>Click <strong>Train</strong> on any module to take an official Boss Test. Rank up to climb the ladder. Overall Exams unlock in v1.8.3 once Mastery Score thresholds are met.</div>
   </div>`;
 
   document.getElementById('masteryContent').innerHTML = html;
+}
+
+// ============================================================
+// CHALLENGE / BOSS TEST MODE (v1.8.2)
+// ============================================================
+// Official Module Rank-up tests. Internal target ranks use Bronze..Grandmaster.
+// Display labels: Squire / Ranger / Knight / Champion / Warlord / Mythic / End Boss.
+//
+// Pass criteria per target rank (per spec §11):
+//   handCount + accuracy thresholds
+// On pass:
+//   - profile.moduleRanks[module] = targetRank
+//   - profile.moduleRankHistory.push({...})
+//   - profile.certifications.masteryScore recomputed
+// Always recorded:
+//   - profile.challengeResults.push({...})
+
+const CHALLENGE_THRESHOLDS = {
+  Bronze:      { hands: 50,  overall: 78 },
+  Silver:      { hands: 75,  overall: 84, pure: 85 },
+  Gold:        { hands: 100, overall: 88, pure: 92, mixed: 70 },
+  Platinum:    { hands: 125, overall: 91, pure: 94, mixed: 78 },
+  Diamond:     { hands: 150, overall: 93, pure: 96, mixed: 82, criticalMax: 8 },
+  Master:      { hands: 175, overall: 95, pure: 97, mixed: 85, criticalMax: 5 },
+  Grandmaster: { hands: 200, overall: 96, pure: 98, mixed: 88, criticalMax: 4 }
+};
+
+// Returns scenarios that map to a given mastery module (e.g. 'bb_defense').
+function getModuleScenarios(masteryModule) {
+  const ranges = App.state.ranges || {};
+  const out = [];
+  for (const key of Object.keys(ranges)) {
+    const s = ranges[key];
+    if (!s || typeof s !== 'object' || typeof s.stack !== 'number') continue;
+    if (!s.meta || !s.meta.module) continue;
+    if (metaModuleToMastery(s.meta.module) === masteryModule) {
+      out.push({ key, scenario: s });
+    }
+  }
+  return out;
+}
+
+// Seeded RNG (LCG, 32-bit) — deterministic per challenge attempt.
+function makeSeededRng(seed) {
+  let state = (seed >>> 0) || 1;
+  return function() {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 0x100000000;
+  };
+}
+
+// Build a challenge queue: flatten module scenarios into hand objects, then
+// shuffle + slice. v1.8.2 uses simple uniform sampling. Quotas per stack /
+// hand-class are deferred (architecturally fine to add in v1.8.3+ since the
+// queue shape matches existing drill queue).
+function buildChallengeQueue(masteryModule, targetRank, seed) {
+  const cfg = CHALLENGE_THRESHOLDS[targetRank];
+  if (!cfg) return [];
+  const handCount = cfg.hands;
+  const pool = getModuleScenarios(masteryModule);
+  if (pool.length === 0) return [];
+
+  const allHands = [];
+  for (const item of pool) {
+    const s = item.scenario;
+    for (const hand of Object.keys(s.hands)) {
+      allHands.push({
+        key: item.key,
+        stack: s.stack,
+        pos: s.position,
+        action: s.action,
+        hand,
+        freqs: s.hands[hand]
+      });
+    }
+  }
+  if (allHands.length === 0) return [];
+
+  // Fisher-Yates shuffle with seeded RNG.
+  const rng = makeSeededRng(seed);
+  for (let i = allHands.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = allHands[i]; allHands[i] = allHands[j]; allHands[j] = tmp;
+  }
+  // If module pool is smaller than handCount, repeat (shuffled again).
+  let queue = allHands.slice(0, handCount);
+  if (queue.length < handCount) {
+    while (queue.length < handCount) {
+      for (let i = allHands.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const tmp = allHands[i]; allHands[i] = allHands[j]; allHands[j] = tmp;
+      }
+      queue = queue.concat(allHands.slice(0, handCount - queue.length));
+    }
+  }
+  return queue;
+}
+
+// Score a completed challenge against its target thresholds.
+function evaluateChallenge(answers, targetRank) {
+  const cfg = CHALLENGE_THRESHOLDS[targetRank] || {};
+  const total = answers.length;
+  const overallPts = answers.reduce((s, a) => s + (a.score || 0), 0);
+  const overallPct = total > 0 ? Math.round(overallPts / total * 100) : 0;
+
+  const pureAnswers = answers.filter(a => a.isPure);
+  const mixedAnswers = answers.filter(a => !a.isPure);
+  const purePts = pureAnswers.reduce((s, a) => s + (a.score || 0), 0);
+  const purePct = pureAnswers.length > 0 ? Math.round(purePts / pureAnswers.length * 100) : 100;
+
+  // Mixed awareness = % of mixed-hand attempts where user picked any non-zero
+  // GTO action (i.e. didn't pick a 0% punt). Score-based partial credit is
+  // already baked into overall accuracy; this metric specifically measures
+  // "are you aware of the GTO mix branches?"
+  const mixedAware = mixedAnswers.filter(a => (a.userFreq || 0) > 0).length;
+  const mixedPct = mixedAnswers.length > 0 ? Math.round(mixedAware / mixedAnswers.length * 100) : 100;
+
+  // Critical mistakes = picked a 0% action (true punt) on any hand.
+  const critical = answers.filter(a => (a.userFreq || 0) === 0).length;
+  const criticalPct = total > 0 ? Math.round(critical / total * 100) : 0;
+
+  const thresholds = {
+    overall:  cfg.overall || 0,
+    pure:     cfg.pure || 0,
+    mixed:    cfg.mixed || 0,
+    criticalMax: (cfg.criticalMax !== undefined ? cfg.criticalMax : 100)
+  };
+  const passed = (overallPct >= thresholds.overall) &&
+                 (purePct    >= thresholds.pure) &&
+                 (mixedPct   >= thresholds.mixed) &&
+                 (criticalPct <= thresholds.criticalMax);
+
+  return {
+    passed, overallPct, purePct, mixedPct, criticalPct,
+    total, pureCount: pureAnswers.length, mixedCount: mixedAnswers.length,
+    criticalCount: critical,
+    thresholds
+  };
+}
+
+// ----- Challenge entry / boss test setup screen -----
+function masteryOpenChallengeSetup(masteryModule) {
+  const profile = App.state.profile;
+  const currentRank = profile.moduleRanks[masteryModule] || 'Unranked';
+  const nextRank = getNextModuleRank(currentRank);
+  if (!nextRank) {
+    if (typeof showToast === 'function') showToast('Already at End Boss for this module');
+    return;
+  }
+  // Stash intent + switch to Drill tab where challengeSetup lives
+  App.state.drill.challenge = { module: masteryModule, targetRank: nextRank, seed: null, startedAt: null };
+  App.state.drill.mode = 'challenge';
+  switchTab('drill');
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  document.getElementById('challengeSetup').style.display = 'block';
+  renderChallengeSetup();
+}
+
+function renderChallengeSetup() {
+  const ch = App.state.drill.challenge;
+  if (!ch) return;
+  const profile = App.state.profile;
+  const currentRank = profile.moduleRanks[ch.module] || 'Unranked';
+  const targetRank = ch.targetRank;
+  const cfg = CHALLENGE_THRESHOLDS[targetRank];
+  const info = MODULE_DISPLAY_INFO[ch.module];
+  const targetVars = rankCssVars(targetRank);
+
+  const pool = getModuleScenarios(ch.module);
+  const poolHandCount = pool.reduce((sum, item) => sum + Object.keys(item.scenario.hands).length, 0);
+
+  const reqRow = (label, value, target) => `
+    <div class="challenge-req">
+      <span class="challenge-req-label">${label}</span>
+      <span class="challenge-req-value">${value}${target ? ` <span style="color:var(--text-secondary);font-weight:400;font-size:11px">(${target})</span>` : ''}</span>
+    </div>
+  `;
+
+  const html = `
+    <div class="challenge-banner" style="--rank-color:${targetVars.color};--rank-bg:${targetVars.bg};--rank-glow:${targetVars.glow}">
+      <div class="challenge-banner-title">Module Boss Test</div>
+      <div class="challenge-banner-name">${info.label}</div>
+      <div class="challenge-rank-flow">
+        ${renderRankEmblem(currentRank, 'small')}
+        <span class="challenge-arrow">→</span>
+        ${renderRankEmblem(targetRank, 'small')}
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600">${rankDisplay(currentRank)} → ${rankDisplay(targetRank)}</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">Current → Target</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mastery-section-title"><span class="accent-bar"></span>Pass Conditions</div>
+      <div class="mastery-card-sub">All thresholds must be met. One miss = fail. No partial rank-up.</div>
+      <div class="challenge-req-list">
+        ${reqRow('Hands', cfg.hands, '')}
+        ${reqRow('Overall accuracy', '≥ ' + cfg.overall + '%', '')}
+        ${cfg.pure ? reqRow('Pure-hand accuracy', '≥ ' + cfg.pure + '%', '') : ''}
+        ${cfg.mixed ? reqRow('Mixed awareness', '≥ ' + cfg.mixed + '%', '') : ''}
+        ${cfg.criticalMax !== undefined ? reqRow('Critical mistakes (0% picks)', '≤ ' + cfg.criticalMax + '%', '') : ''}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mastery-section-title"><span class="accent-bar"></span>Test Setup</div>
+      <div class="mastery-card-sub">
+        Hands sampled deterministically from the ${info.label.replace(/^[^A-Za-z]+/, '').trim()} scenario pool
+        (${pool.length} scenarios · ${poolHandCount} unique hands). Each attempt uses a fresh random seed.
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);padding:10px 12px;border-radius:8px;margin-top:8px">
+        <strong style="color:var(--text)">⚠️ Important:</strong> Failing this test does NOT lower your rank. Your existing Practice drill history is unaffected.
+      </div>
+    </div>
+
+    <div class="hero-cta-row">
+      <button class="btn-mastery-primary" onclick="masteryStartChallenge()" style="flex:1.5">▶  Start Boss Test</button>
+      <button class="btn-mastery-secondary" onclick="masteryCancelChallenge()" style="flex:1">Back to Home</button>
+    </div>
+  `;
+
+  document.getElementById('challengeSetup').innerHTML = html;
+}
+
+function masteryCancelChallenge() {
+  App.state.drill.mode = 'quick';
+  App.state.drill.challenge = null;
+  document.getElementById('challengeSetup').style.display = 'none';
+  switchTab('mastery');
+}
+
+function masteryStartChallenge() {
+  const ch = App.state.drill.challenge;
+  if (!ch) return;
+  const seed = (Date.now() ^ Math.floor(Math.random() * 0xFFFFFFFF)) >>> 0;
+  ch.seed = seed;
+  ch.startedAt = Date.now();
+  const queue = buildChallengeQueue(ch.module, ch.targetRank, seed);
+  if (queue.length === 0) {
+    if (typeof showToast === 'function') showToast('No scenarios available for this module');
+    return;
+  }
+  const d = App.state.drill;
+  d.queue = queue;
+  d.currentIndex = 0;
+  d.answers = [];
+  d.streak = 0;
+  d.startTime = Date.now();
+  d.phase = 'question';
+  document.getElementById('challengeSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'block';
+  document.getElementById('drillComplete').style.display = 'none';
+  renderDrillQuestion();
+}
+
+// Replaces showDrillComplete when challenge mode finishes.
+function showChallengeResult() {
+  const d = App.state.drill;
+  const ch = d.challenge;
+  if (!ch) { showDrillComplete(); return; }
+
+  const result = evaluateChallenge(d.answers, ch.targetRank);
+  const profile = App.state.profile;
+
+  // Persist challenge result regardless of pass/fail
+  const resultRecord = {
+    module: ch.module,
+    targetRank: ch.targetRank,
+    targetRankDisplay: rankDisplay(ch.targetRank),
+    passed: result.passed,
+    date: new Date().toISOString(),
+    handCount: result.total,
+    scores: {
+      overall:  result.overallPct,
+      pure:     result.purePct,
+      mixed:    result.mixedPct,
+      critical: result.criticalPct
+    },
+    thresholds: result.thresholds,
+    pureCount: result.pureCount,
+    mixedCount: result.mixedCount,
+    criticalCount: result.criticalCount,
+    seed: ch.seed
+  };
+  if (!Array.isArray(profile.challengeResults)) profile.challengeResults = [];
+  profile.challengeResults.push(resultRecord);
+
+  // Rank-up if passed
+  let rankUp = null;
+  if (result.passed) {
+    const oldRank = profile.moduleRanks[ch.module] || 'Unranked';
+    profile.moduleRanks[ch.module] = ch.targetRank;
+    if (!Array.isArray(profile.moduleRankHistory)) profile.moduleRankHistory = [];
+    profile.moduleRankHistory.push({
+      module: ch.module,
+      oldRank,
+      newRank: ch.targetRank,
+      date: new Date().toISOString(),
+      testId: ch.seed
+    });
+    profile.certifications.masteryScore = computeMasteryScore(profile.moduleRanks);
+    rankUp = { oldRank, newRank: ch.targetRank };
+  }
+
+  App.saveProgress();
+  renderChallengeResultScreen(ch, result, rankUp);
+}
+
+function renderChallengeResultScreen(ch, result, rankUp) {
+  const info = MODULE_DISPLAY_INFO[ch.module];
+  const t = result.thresholds;
+
+  const cell = (label, value, suffix, threshold, comparator) => {
+    const passed = comparator(value, threshold);
+    return `
+      <div class="challenge-score-cell ${passed ? 'passed' : 'failed'}">
+        <div class="challenge-score-label">${label}</div>
+        <div class="challenge-score-value">${value}${suffix}</div>
+        <div class="challenge-score-target">${passed ? '✓' : '✗'} target ${threshold}${suffix}</div>
+      </div>
+    `;
+  };
+
+  const cells = [
+    cell('Overall', result.overallPct, '%', t.overall, (a, b) => a >= b),
+    cell('Pure', result.purePct, '%', t.pure, (a, b) => a >= b),
+    cell('Mixed Awareness', result.mixedPct, '%', t.mixed, (a, b) => a >= b),
+    cell('Critical Mistakes', result.criticalPct, '%', t.criticalMax, (a, b) => a <= b)
+  ].join('');
+
+  // Identify the failing reason for fail mode
+  let failReason = '';
+  if (!result.passed) {
+    const fails = [];
+    if (result.overallPct < t.overall) fails.push(`Overall ${result.overallPct}% (need ≥${t.overall}%)`);
+    if (result.purePct < t.pure) fails.push(`Pure ${result.purePct}% (need ≥${t.pure}%)`);
+    if (result.mixedPct < t.mixed) fails.push(`Mixed ${result.mixedPct}% (need ≥${t.mixed}%)`);
+    if (result.criticalPct > t.criticalMax) fails.push(`Critical ${result.criticalPct}% (need ≤${t.criticalMax}%)`);
+    if (fails.length > 0) failReason = fails.join(' · ');
+  }
+
+  const html = `
+    <div class="challenge-result-banner ${result.passed ? 'passed' : 'failed'}">
+      <div class="challenge-result-icon">${result.passed ? '🏆' : '⚔️'}</div>
+      <div class="challenge-result-title" style="color:${result.passed ? 'var(--success)' : 'var(--danger)'}">${result.passed ? 'Boss Test Passed' : 'Boss Test Failed'}</div>
+      <div class="challenge-result-sub">${info.label} · ${rankDisplay(ch.targetRank)} target · ${result.total} hands</div>
+      ${rankUp ? `
+        <div class="challenge-rank-up">
+          ${renderRankEmblem(rankUp.oldRank, 'small')}
+          <span class="challenge-arrow" style="font-size:24px;color:var(--success)">→</span>
+          ${renderRankEmblem(rankUp.newRank, 'small')}
+        </div>
+        <div style="margin-top:6px;font-size:13px;color:var(--success);font-weight:600">Rank up: ${rankDisplay(rankUp.oldRank)} → ${rankDisplay(rankUp.newRank)}</div>
+      ` : ''}
+      ${failReason ? `<div style="margin-top:10px;font-size:11px;color:var(--text-secondary);line-height:1.6">Failed because: ${failReason}</div>` : ''}
+    </div>
+
+    <div class="challenge-score-grid">
+      ${cells}
+    </div>
+
+    <div class="card" style="font-size:12px;color:var(--text-secondary);line-height:1.6">
+      <strong style="color:var(--text)">Breakdown:</strong>
+      ${result.pureCount} pure-hand attempts · ${result.mixedCount} mixed-hand attempts · ${result.criticalCount} critical (0%) picks
+    </div>
+
+    <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
+      <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('home')">← Back to Home</button>
+      <button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">${result.passed && getNextModuleRank(ch.targetRank) ? 'Try Next Rank →' : 'Try Again'}</button>
+    </div>
+  `;
+
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'block';
+  document.getElementById('drillComplete').innerHTML = html;
+}
+
+function masteryAfterChallenge(action) {
+  const d = App.state.drill;
+  const ch = d.challenge;
+  if (action === 'retry' && ch) {
+    // If they passed and there's a higher rank, target that next; else retry same
+    const profile = App.state.profile;
+    const justAchieved = profile.moduleRanks[ch.module];
+    const nextUp = getNextModuleRank(justAchieved);
+    if (nextUp && profile.moduleRanks[ch.module] === ch.targetRank) {
+      // Just upgraded — try next rank
+      ch.targetRank = nextUp;
+    }
+    // Reopen setup screen with same module
+    masteryOpenChallengeSetup(ch.module);
+    return;
+  }
+  // Default: back to home
+  d.mode = 'quick';
+  d.challenge = null;
+  document.getElementById('drillSetup').style.display = 'block';
+  document.getElementById('drillComplete').style.display = 'none';
+  document.getElementById('challengeSetup').style.display = 'none';
+  switchTab('mastery');
 }
 
 // ============================================================
@@ -4006,7 +4589,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -4155,7 +4738,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.8.1',
+    version: '1.8.2',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
