@@ -800,6 +800,7 @@
   <div class="top-nav-inner">
     <div class="top-nav-logo">♠ Range Master MTT</div>
     <button class="top-nav-tab active" data-tab="drill" onclick="switchTab('drill')">🎯 Drill</button>
+    <button class="top-nav-tab" data-tab="mastery" onclick="switchTab('mastery')">🏆 Mastery</button>
     <button class="top-nav-tab" data-tab="progress" onclick="switchTab('progress')">📊 Progress</button>
     <button class="top-nav-tab" data-tab="browse" onclick="switchTab('browse')">📚 Browse</button>
     <button class="top-nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
@@ -929,6 +930,16 @@
       <!-- Filled by JS -->
     </div>
   </div>
+
+  <!-- MASTERY TAB (v1.8.0) -->
+  <div class="tab-panel" id="tab-mastery">
+    <div class="page-header">
+      <h1>🏆 Mastery</h1>
+    </div>
+    <div class="container" style="padding-top:12px" id="masteryContent">
+      <!-- Filled by JS via renderMastery() -->
+    </div>
+  </div>
 </div>
 
 <!-- BOTTOM NAV (mobile) -->
@@ -936,6 +947,10 @@
   <button class="bottom-nav-item active" data-tab="drill" onclick="switchTab('drill')">
     <span class="icon">🎯</span>
     <span>Drill</span>
+  </button>
+  <button class="bottom-nav-item" data-tab="mastery" onclick="switchTab('mastery')">
+    <span class="icon">🏆</span>
+    <span>Mastery</span>
   </button>
   <button class="bottom-nav-item" data-tab="progress" onclick="switchTab('progress')">
     <span class="icon">📊</span>
@@ -1011,6 +1026,33 @@ const App = {
       phase: 'setup', // setup | question | answer | complete
       currentQuestion: null,
       questionStartTime: null
+    },
+    // v1.8.0: Mastery Path data model. All optional/safe-defaults so
+    // existing users without profile don't break. Module ranks all start
+    // Unranked — official ranks unlock via Challenge Mode (v1.8.1+).
+    profile: {
+      totalXP: 0,
+      xpLevel: 1,
+      certifications: {
+        overallRank: 'Unranked',
+        masteryScore: 0,
+        lastCertificationDate: null,
+        certificationFreshness: 100
+      },
+      moduleRanks: {
+        push_fold: 'Unranked',
+        call_vs_jam: 'Unranked',
+        bb_defense: 'Unranked',
+        blind_battle: 'Unranked',
+        rejam: 'Unranked',
+        open_vs_3bet: 'Unranked',
+        mixed_decision: 'Unranked'
+      },
+      moduleRankHistory: [],
+      overallExamHistory: [],
+      challengeResults: [],
+      badges: [],
+      dailyMission: { generatedAt: null, missions: [], completed: [] }
     }
   },
 
@@ -1050,6 +1092,19 @@ const App = {
       if (st) this.state.streaks = JSON.parse(st);
       const stats = localStorage.getItem('rmtt_stats');
       if (stats) this.state.stats = JSON.parse(stats);
+      // v1.8.0: profile persistence (deep-merge to keep new defaults if
+      // localStorage was written by an older version that lacked some keys)
+      const prof = localStorage.getItem('rmtt_profile');
+      if (prof) {
+        const parsed = JSON.parse(prof);
+        this.state.profile = {
+          ...this.state.profile,
+          ...parsed,
+          certifications: { ...this.state.profile.certifications, ...(parsed.certifications || {}) },
+          moduleRanks:    { ...this.state.profile.moduleRanks,    ...(parsed.moduleRanks    || {}) },
+          dailyMission:   { ...this.state.profile.dailyMission,   ...(parsed.dailyMission   || {}) }
+        };
+      }
     } catch(e) { console.warn('Progress load error', e); }
   },
 
@@ -1059,6 +1114,7 @@ const App = {
       localStorage.setItem('rmtt_settings', JSON.stringify(this.state.settings));
       localStorage.setItem('rmtt_streaks', JSON.stringify(this.state.streaks));
       localStorage.setItem('rmtt_stats', JSON.stringify(this.state.stats));
+      localStorage.setItem('rmtt_profile', JSON.stringify(this.state.profile));
     } catch(e) { console.warn('Save error', e); }
   },
 
@@ -1253,6 +1309,7 @@ function switchTab(tab) {
   if (tab === 'progress') renderProgress();
   if (tab === 'browse') renderBrowse();
   if (tab === 'settings') renderSettings();
+  if (tab === 'mastery') renderMastery();
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
@@ -2924,6 +2981,321 @@ function studyThisScenario(stack, pos, action) {
 }
 
 // ============================================================
+// MASTERY PATH (v1.8.0)
+// ============================================================
+// Foundation for the Mastery Path / Personal Preflop Academy progression.
+// 4 progression layers: XP Level, Module Rank, Mastery Score, Overall Rank.
+//
+// IMPORTANT design rules (per spec):
+//   - Internal rank enums are stable: Unranked..Grandmaster
+//   - User-facing display names are vivid: Wanderer..End Boss
+//   - Practice Mode does NOT change Module Ranks. Only Challenge/Exam modes
+//     (v1.8.1+) update official ranks.
+//   - Mastery Score = sum(weight * rankMultiplier) for each module.
+//   - Overall Rank is NOT auto-derived from Mastery Score. Mastery Score
+//     only unlocks exam eligibility; Overall Rank is awarded after passing
+//     the corresponding Overall Exam (v1.8.2+).
+
+// ----- Rank constants -----
+const INTERNAL_RANKS = ['Unranked','Bronze','Silver','Gold','Platinum','Diamond','Master','Grandmaster'];
+
+const RANK_DISPLAY = {
+  Unranked:    'Wanderer',
+  Bronze:      'Squire',
+  Silver:      'Ranger',
+  Gold:        'Knight',
+  Platinum:    'Champion',
+  Diamond:     'Warlord',
+  Master:      'Mythic',
+  Grandmaster: 'End Boss'
+};
+
+const RANK_MULTIPLIERS = {
+  Unranked:    0.00,
+  Bronze:      0.35,
+  Silver:      0.50,
+  Gold:        0.65,
+  Platinum:    0.78,
+  Diamond:     0.88,
+  Master:      0.95,
+  Grandmaster: 1.00
+};
+
+// Per-rank brand colors (from spec section 16).
+const RANK_COLOR = {
+  Unranked:    '#6b7280',  // stone gray
+  Bronze:      '#a16207',  // bronze/copper
+  Silver:      '#10b981',  // emerald
+  Gold:        '#60a5fa',  // steel blue
+  Platinum:    '#fbbf24',  // gold
+  Diamond:     '#dc2626',  // crimson
+  Master:      '#a855f7',  // violet/arcane
+  Grandmaster: '#0f172a'   // obsidian (paired with gold accent in UI)
+};
+
+// Module weights total = 100. Higher weight = more impact on Mastery Score.
+const MODULE_WEIGHTS = {
+  bb_defense:     25,
+  open_vs_3bet:   20,
+  push_fold:      15,
+  call_vs_jam:    15,
+  rejam:          10,
+  blind_battle:   10,
+  mixed_decision:  5
+};
+
+const MODULE_DISPLAY_INFO = {
+  bb_defense:     { label: '🛡️ BB Defense',     icon: '🛡️', desc: '40-100BB BB facing single raise' },
+  open_vs_3bet:   { label: '⚔️ Open vs 3-Bet',   icon: '⚔️', desc: 'Opener defending against 3bet' },
+  push_fold:      { label: '⚡ Push/Fold',       icon: '⚡', desc: '5-20BB short-stack RFI shove/fold' },
+  call_vs_jam:    { label: '📞 Call vs Jam',     icon: '📞', desc: 'Facing all-in preflop' },
+  rejam:          { label: '🔥 Rejam',           icon: '🔥', desc: '15-25BB rejam vs raise' },
+  blind_battle:   { label: '👀 Blind Battle',    icon: '👀', desc: 'BB vs SB limp + SB-related spots' },
+  mixed_decision: { label: '🧠 Mixed Decision',  icon: '🧠', desc: 'Open RFI deep-stack + complex mixes' }
+};
+
+// Map v1.7.0 metadata module → v1.8.0 mastery module. Some metadata modules
+// collapse into the same mastery module (e.g. legacy_generic_3bet folds into
+// open_vs_3bet for ranking purposes).
+function metaModuleToMastery(metaModule) {
+  const map = {
+    push_fold_rfi:       'push_fold',
+    call_vs_jam:         'call_vs_jam',
+    bb_vs_raise:         'bb_defense',
+    bb_vs_sb_limp:       'blind_battle',
+    rejam:               'rejam',
+    open_vs_3bet:        'open_vs_3bet',
+    legacy_generic_3bet: 'open_vs_3bet',
+    open_rfi:            'mixed_decision'
+  };
+  return map[metaModule] || 'mixed_decision';
+}
+
+// Mastery Score = sum(moduleWeight * rankMultiplier) over all 7 modules.
+function computeMasteryScore(moduleRanks) {
+  let total = 0;
+  for (const m of Object.keys(MODULE_WEIGHTS)) {
+    const rank = (moduleRanks && moduleRanks[m]) || 'Unranked';
+    const mult = RANK_MULTIPLIERS[rank] || 0;
+    total += MODULE_WEIGHTS[m] * mult;
+  }
+  return Math.round(total * 10) / 10;
+}
+
+// Overall Exam unlock thresholds (Mastery Score floor only — gates checked separately).
+const OVERALL_UNLOCK_THRESHOLDS = {
+  Bronze:      25,
+  Silver:      40,
+  Gold:        55,
+  Platinum:    70,
+  Diamond:     82,
+  Master:      90,
+  Grandmaster: 95
+};
+
+// Get the next overall rank above current.
+function getNextOverallRank(currentRank) {
+  const idx = INTERNAL_RANKS.indexOf(currentRank);
+  if (idx < 0 || idx >= INTERNAL_RANKS.length - 1) return null;
+  return INTERNAL_RANKS[idx + 1];
+}
+
+function getNextModuleRank(currentRank) {
+  const idx = INTERNAL_RANKS.indexOf(currentRank);
+  if (idx < 0 || idx >= INTERNAL_RANKS.length - 1) return null;
+  return INTERNAL_RANKS[idx + 1];
+}
+
+// Estimate a module's "potential" rank from existing drill accuracy. NOT used
+// to set official ranks — purely a UX hint shown next to Unranked modules so
+// users with existing drill history see where they stand before Challenge
+// Mode (v1.8.1+) makes ranks earnable.
+function estimateRankFromAccuracy(accuracy) {
+  if (accuracy >= 96) return 'Master';
+  if (accuracy >= 92) return 'Diamond';
+  if (accuracy >= 88) return 'Platinum';
+  if (accuracy >= 82) return 'Gold';
+  if (accuracy >= 75) return 'Silver';
+  if (accuracy >= 65) return 'Bronze';
+  return 'Unranked';
+}
+
+// Compute current accuracy per mastery module from SRS history.
+function getModuleAccuracies() {
+  const result = {};
+  for (const m of Object.keys(MODULE_WEIGHTS)) {
+    result[m] = { attempts: 0, points: 0, accuracy: null };
+  }
+  const ranges = App.state.ranges || {};
+  const progress = App.state.progress || {};
+  for (const [key, srs] of Object.entries(progress)) {
+    const parts = key.split('_');
+    if (parts.length < 4) continue;
+    const scenKey = parts.slice(0, -1).join('_');
+    const scen = ranges[scenKey];
+    if (!scen || !scen.meta) continue;
+    const mastery = metaModuleToMastery(scen.meta.module);
+    if (!result[mastery]) continue;
+    const hist = srs.history || [];
+    result[mastery].attempts += hist.length;
+    result[mastery].points += hist.reduce((s, h) => s + (typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0)), 0);
+  }
+  for (const m of Object.keys(result)) {
+    if (result[m].attempts > 0) {
+      result[m].accuracy = Math.round(result[m].points / result[m].attempts * 100);
+    }
+  }
+  return result;
+}
+
+// XP level: very simple curve (placeholder). 100 XP per level, soft cap.
+function xpToLevel(totalXP) {
+  return Math.floor(Math.sqrt(totalXP / 50)) + 1;
+}
+
+// Format helpers for display.
+function rankDisplay(internalRank) {
+  return RANK_DISPLAY[internalRank] || internalRank;
+}
+
+function rankBadge(internalRank, opts) {
+  opts = opts || {};
+  const display = rankDisplay(internalRank);
+  const color = RANK_COLOR[internalRank] || '#6b7280';
+  const size = opts.size || 'normal';
+  const fontSize = size === 'large' ? '15px' : size === 'small' ? '11px' : '13px';
+  const padding = size === 'large' ? '6px 12px' : size === 'small' ? '2px 6px' : '4px 8px';
+  return `<span style="display:inline-block;padding:${padding};border-radius:6px;background:${color}22;border:1px solid ${color}66;color:${color};font-size:${fontSize};font-weight:600;letter-spacing:0.3px">${display}</span>`;
+}
+
+// ============================================================
+// MASTERY UI (v1.8.0)
+// ============================================================
+function renderMastery() {
+  const profile = App.state.profile;
+  const masteryScore = computeMasteryScore(profile.moduleRanks);
+  const overallRank = profile.certifications.overallRank;
+  const nextOverall = getNextOverallRank(overallRank);
+  const nextThreshold = nextOverall ? OVERALL_UNLOCK_THRESHOLDS[nextOverall] : null;
+  const xpLevel = xpToLevel(profile.totalXP);
+  const moduleAccs = getModuleAccuracies();
+
+  // ---------- HOME COMMAND CENTER ----------
+  let homeHtml = `
+    <div class="card" style="background:linear-gradient(135deg,#1a1d28 0%,#12131A 100%);border:1px solid rgba(212,175,55,0.2)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
+        <div>
+          <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px">Overall Rank</div>
+          <div style="font-size:28px;font-weight:700;color:${RANK_COLOR[overallRank]};margin-top:2px">${rankDisplay(overallRank)}</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">internal: ${overallRank}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px">XP Level</div>
+          <div style="font-size:28px;font-weight:700;color:#d4af37;margin-top:2px">${xpLevel}</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${profile.totalXP} XP</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+          <span>Mastery Score</span>
+          <span><strong style="color:var(--text)">${masteryScore.toFixed(1)}</strong> / 100</span>
+        </div>
+        <div style="height:10px;background:var(--surface2);border-radius:5px;overflow:hidden">
+          <div style="height:100%;width:${masteryScore}%;background:linear-gradient(90deg,#d4af37,#fbbf24);border-radius:5px;transition:width 0.6s ease"></div>
+        </div>
+        ${nextOverall ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:6px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts (${(nextThreshold - masteryScore).toFixed(1)} pts needed)</div>` : '<div style="font-size:11px;color:var(--success);margin-top:6px">🏆 End Boss reached</div>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 Today's Mission</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6">
+        Daily missions and Best Next Upgrade recommendations come in <strong>v1.8.3</strong>.
+        For now, head to the Drill tab and use Marginal Focus or Weakness Focus to grind your weakest module.
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(96,165,250,0.2);background:rgba(96,165,250,0.03)">
+      <div style="font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px">📋 v1.8.0 Foundation</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6">
+        Module Ranks all start <strong>Wanderer</strong> (Unranked). Practice Mode does not change ranks.
+        Official ranks unlock via <strong>Challenge Mode</strong> (v1.8.1) and <strong>Overall Exams</strong> (v1.8.2).
+        Your existing drill history shows up below as <em>estimated</em> rank — a preview of where you'll likely land
+        when Challenge Mode arrives.
+      </div>
+    </div>
+  `;
+
+  // ---------- MASTERY PATH (module cards) ----------
+  let modulesHtml = `<div class="card"><div class="card-title">🗺️ Mastery Path</div>
+    <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Each module has its own rank. Mastery Score is weighted by module importance — BB Defense and Open vs 3-Bet count most.</div>
+    <div style="display:grid;gap:10px">`;
+
+  // Sort by weight desc so most important modules surface first
+  const moduleKeys = Object.keys(MODULE_WEIGHTS).sort((a, b) => MODULE_WEIGHTS[b] - MODULE_WEIGHTS[a]);
+  for (const m of moduleKeys) {
+    const rank = profile.moduleRanks[m] || 'Unranked';
+    const weight = MODULE_WEIGHTS[m];
+    const mult = RANK_MULTIPLIERS[rank];
+    const points = Math.round(weight * mult * 10) / 10;
+    const info = MODULE_DISPLAY_INFO[m];
+    const acc = moduleAccs[m];
+    const estimated = acc.accuracy !== null ? estimateRankFromAccuracy(acc.accuracy) : null;
+    const nextRank = getNextModuleRank(rank);
+    const nextPoints = nextRank ? Math.round(weight * RANK_MULTIPLIERS[nextRank] * 10) / 10 : null;
+
+    modulesHtml += `
+      <div style="padding:12px 14px;border-radius:10px;background:var(--surface2);border:1px solid rgba(255,255,255,0.05)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">
+          <div>
+            <div style="font-weight:600;font-size:14px">${info.label}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:1px">${info.desc} · weight ${weight}</div>
+          </div>
+          <div>${rankBadge(rank)}</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:8px">
+          <div style="color:var(--text-secondary)">Points: <strong style="color:var(--text)">${points}</strong> / ${weight}${nextRank ? ` · next ${rankDisplay(nextRank)} = ${nextPoints}` : ''}</div>
+          ${acc.accuracy !== null ?
+            `<div style="font-size:11px;color:var(--text-secondary)">Drill acc: <strong style="color:var(--text)">${acc.accuracy}%</strong> (${acc.attempts}) · est ${estimated ? rankDisplay(estimated) : '—'}</div>`
+            : '<div style="font-size:11px;color:var(--text-secondary)">No drill history yet</div>'
+          }
+        </div>
+        <div style="height:6px;background:var(--surface);border-radius:3px;margin-top:8px;overflow:hidden">
+          <div style="height:100%;width:${(points / weight * 100).toFixed(1)}%;background:${RANK_COLOR[rank]};border-radius:3px;opacity:0.8"></div>
+        </div>
+      </div>
+    `;
+  }
+  modulesHtml += `</div></div>`;
+
+  // ---------- OVERALL EXAM LADDER (preview, locked in v1.8.0) ----------
+  let ladderHtml = `<div class="card">
+    <div class="card-title">⚔️ Overall Exam Ladder</div>
+    <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Each exam unlocks at a Mastery Score threshold. Exams launch in <strong>v1.8.2</strong>.</div>
+    <div style="display:grid;gap:6px">`;
+  for (const r of INTERNAL_RANKS.slice(1)) {
+    const threshold = OVERALL_UNLOCK_THRESHOLDS[r];
+    const reached = masteryScore >= threshold;
+    const isCurrent = r === overallRank;
+    const isNext = r === nextOverall;
+    const stateLabel = reached ? '✅ Score reached' : `🔒 Need ${(threshold - masteryScore).toFixed(1)} more pts`;
+    ladderHtml += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px;background:${isNext ? 'rgba(212,175,55,0.06)' : 'var(--surface2)'};border:1px solid ${isNext ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.05)'};opacity:${reached || isNext ? 1 : 0.55}">
+        <div>
+          ${rankBadge(r)}
+          <span style="font-size:11px;color:var(--text-secondary);margin-left:8px">${rankDisplay(r)} Exam · need ${threshold} pts</span>
+        </div>
+        <div style="font-size:11px;color:${reached ? 'var(--success)' : 'var(--text-secondary)'}">${stateLabel}</div>
+      </div>
+    `;
+  }
+  ladderHtml += `</div></div>`;
+
+  document.getElementById('masteryContent').innerHTML = homeHtml + modulesHtml + ladderHtml;
+}
+
+// ============================================================
 // COVERAGE MAP (v1.7.1)
 // ============================================================
 // Aggregates scenario metadata by module and renders a coverage table.
@@ -3118,7 +3490,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.7.3</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -3267,7 +3639,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.7.3',
+    version: '1.8.0',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
