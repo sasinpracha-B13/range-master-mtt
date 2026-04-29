@@ -449,7 +449,22 @@
           rgba(255,255,255,0.012) 15px
         );
     }
-    .mastery-hero > *:not(.hero-texture-layer) { position: relative; z-index: 1; }
+    /* L3.5: rank-specific character silhouette behind text (v1.8.9).
+       Subtle 16% opacity, anchored bottom-right, color-tinted to rank. */
+    .hero-character-layer {
+      position: absolute;
+      right: -18px;
+      bottom: -22px;
+      width: 220px;
+      height: 220px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.16;
+      color: var(--rank-color, #94a3b8);
+      filter: drop-shadow(0 0 18px var(--rank-glow, rgba(0,0,0,0.4)));
+    }
+    .hero-character-layer svg { width: 100%; height: 100%; display: block; }
+    .mastery-hero > *:not(.hero-texture-layer):not(.hero-character-layer) { position: relative; z-index: 1; }
     .mastery-hero-row {
       display: flex;
       align-items: center;
@@ -559,6 +574,19 @@
       background: var(--zone-accent, #60a5fa);
       box-shadow: 0 0 14px var(--zone-accent, #60a5fa);
     }
+    /* Zone scene banner above the brief content (v1.8.9 illustrated layer) */
+    .mission-brief-scene-banner {
+      position: absolute;
+      right: -14px; top: -10px;
+      width: 260px;
+      height: 90px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.20;
+      filter: drop-shadow(0 0 10px var(--zone-glow, rgba(96,165,250,0.3)));
+    }
+    .mission-brief-scene-banner svg { width: 100%; height: 100%; display: block; }
+    .mission-brief-card > *:not(.mission-brief-scene-banner) { position: relative; z-index: 1; }
     .mission-brief-eyebrow {
       font-size: 11px;
       letter-spacing: 1.6px;
@@ -1029,19 +1057,20 @@
       transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
       overflow: hidden;
     }
-    /* L1: zone watermark glyph on right side */
-    .module-card-v2::after {
-      content: var(--zone-glyph-content, '');
+    /* v1.8.9: zone scene SVG watermark on right side (replaces emoji glyph) */
+    .module-card-scene-watermark {
       position: absolute;
-      right: -8px; top: 50%; transform: translateY(-50%);
-      font-size: 80px;
-      line-height: 1;
-      opacity: 0.06;
-      color: var(--zone-accent, #94a3b8);
+      right: -10px; top: 50%; transform: translateY(-50%);
+      width: 160px;
+      height: 80px;
       pointer-events: none;
       z-index: 0;
+      opacity: 0.10;
+      filter: drop-shadow(0 0 6px var(--zone-glow, rgba(96,165,250,0.2)));
     }
-    .module-card-v2 > * { position: relative; z-index: 1; }
+    .module-card-scene-watermark svg { width: 100%; height: 100%; display: block; }
+    .module-card-v2 > *:not(.module-card-scene-watermark) { position: relative; z-index: 1; }
+    .module-card-v2.highlighted .module-card-scene-watermark { opacity: 0.16; }
     .module-card-v2.highlighted {
       border-color: var(--zone-accent, rgba(212,175,55,0.5));
       box-shadow: 0 0 24px var(--zone-glow, rgba(212,175,55,0.18));
@@ -1171,10 +1200,20 @@
       0%, 100% { filter: drop-shadow(0 0 6px var(--rank-color, transparent)); }
       50%      { filter: drop-shadow(0 0 14px var(--rank-color, transparent)); }
     }
-    .exam-step.locked-far { opacity: 0.42; }
+    .exam-step.locked-far { opacity: 0.58; }
     .exam-step.unlocked {
       background: linear-gradient(90deg, rgba(74,222,128,0.06) 0%, transparent 90%);
     }
+    /* v1.8.9: End Boss step gets ominous treatment even when locked */
+    .exam-step.end-boss-step {
+      background: linear-gradient(90deg, rgba(239,68,68,0.10) 0%, transparent 90%) !important;
+      border-left: 3px solid rgba(239,68,68,0.4);
+      padding-left: 9px;
+    }
+    .exam-step.end-boss-step .exam-step-emblem-wrap {
+      filter: drop-shadow(0 0 10px rgba(239,68,68,0.55));
+    }
+    .exam-step.end-boss-step .exam-step-name { color: #f87171; }
     .exam-step-info { flex: 1; min-width: 0; }
     .exam-step-name { font-size: 13px; font-weight: 600; }
     .exam-step-req { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
@@ -1195,6 +1234,247 @@
       margin-left: 6px;
       vertical-align: middle;
     }
+
+    /* ============================================================ */
+    /* BOSS VICTORY MOMENT v1.8.9 — Boss Cleared celebration         */
+    /* ============================================================ */
+    .boss-victory-card {
+      position: relative;
+      padding: 24px 18px 18px;
+      border-radius: 16px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, var(--rank-glow, rgba(212,175,55,0.32)) 0%, transparent 60%),
+        radial-gradient(circle at 50% 100%, var(--zone-glow, rgba(96,165,250,0.18)) 0%, transparent 60%),
+        linear-gradient(180deg, #1a2030 0%, #0d1117 80%);
+      border: 2px solid var(--rank-color, #d4af37);
+      box-shadow:
+        0 0 48px var(--rank-glow, rgba(212,175,55,0.30)),
+        inset 0 0 32px rgba(0,0,0,0.4);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    /* Light burst rays radiating from top center */
+    .boss-victory-burst {
+      position: absolute;
+      left: 50%; top: -40px;
+      width: 1px; height: 1px;
+      background: transparent;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .boss-victory-burst::before {
+      content: '';
+      position: absolute;
+      left: -200px; top: 0;
+      width: 400px; height: 400px;
+      transform-origin: 50% 0%;
+      background:
+        conic-gradient(from -90deg,
+          transparent 0deg,
+          var(--rank-color, rgba(212,175,55,0.18)) 4deg,
+          transparent 8deg,
+          transparent 16deg,
+          var(--rank-color, rgba(212,175,55,0.14)) 20deg,
+          transparent 24deg,
+          transparent 36deg,
+          var(--rank-color, rgba(212,175,55,0.18)) 40deg,
+          transparent 44deg,
+          transparent 56deg,
+          var(--rank-color, rgba(212,175,55,0.12)) 60deg,
+          transparent 64deg,
+          transparent 76deg,
+          var(--rank-color, rgba(212,175,55,0.14)) 80deg,
+          transparent 84deg,
+          transparent 360deg
+        );
+      opacity: 0.35;
+      filter: blur(0.5px);
+    }
+    /* Particle field — 8 small sparkle dots that drift up from emblem */
+    .boss-victory-particles {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .boss-victory-particles span {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--rank-color, #d4af37);
+      box-shadow: 0 0 8px var(--rank-color, #d4af37);
+      bottom: 30%;
+      animation: particle-rise 4.2s ease-out infinite;
+      opacity: 0;
+    }
+    .boss-victory-particles span:nth-child(1) { left: 18%; animation-delay: 0.0s; }
+    .boss-victory-particles span:nth-child(2) { left: 30%; animation-delay: 0.4s; }
+    .boss-victory-particles span:nth-child(3) { left: 42%; animation-delay: 0.8s; }
+    .boss-victory-particles span:nth-child(4) { left: 54%; animation-delay: 1.2s; }
+    .boss-victory-particles span:nth-child(5) { left: 66%; animation-delay: 1.6s; }
+    .boss-victory-particles span:nth-child(6) { left: 78%; animation-delay: 2.0s; }
+    .boss-victory-particles span:nth-child(7) { left: 24%; animation-delay: 2.4s; }
+    .boss-victory-particles span:nth-child(8) { left: 72%; animation-delay: 2.8s; }
+    @keyframes particle-rise {
+      0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+      15%  { opacity: 0.85; }
+      85%  { opacity: 0.55; }
+      100% { transform: translateY(-180px) scale(1.1); opacity: 0; }
+    }
+    .boss-victory-card > *:not(.boss-victory-burst):not(.boss-victory-particles) {
+      position: relative;
+      z-index: 1;
+    }
+    .boss-victory-stamp {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: var(--rank-color, #d4af37);
+      color: #0d1117;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      box-shadow: 0 0 24px var(--rank-glow, rgba(212,175,55,0.5));
+      animation: stamp-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+    }
+    @keyframes stamp-pop {
+      0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+      60%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .boss-victory-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-top: 10px;
+      color: var(--text);
+    }
+    .boss-victory-zone {
+      font-size: 12px;
+      color: var(--zone-accent, var(--text-secondary));
+      font-weight: 600;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+    .boss-victory-rankup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 22px auto 6px;
+    }
+    .boss-victory-rankup-side { text-align: center; }
+    .rankup-side-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 6px;
+    }
+    .rankup-side-label.new { color: var(--rank-color, #d4af37); font-weight: 700; }
+    .boss-victory-rankup-beam {
+      position: relative;
+      flex: 1;
+      max-width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.05) 0%,
+        var(--rank-color, #d4af37) 50%,
+        rgba(255,255,255,0.05) 100%);
+      border-radius: 2px;
+      box-shadow: 0 0 12px var(--rank-color, #d4af37);
+      animation: beam-pulse 1.8s ease-in-out infinite;
+    }
+    .boss-victory-rankup-beam::after {
+      content: '▶';
+      position: absolute;
+      right: -4px; top: 50%; transform: translateY(-50%);
+      color: var(--rank-color, #d4af37);
+      font-size: 14px;
+      filter: drop-shadow(0 0 6px var(--rank-color, #d4af37));
+    }
+    @keyframes beam-pulse {
+      0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--rank-color, #d4af37); }
+      50%      { opacity: 1;   box-shadow: 0 0 18px var(--rank-color, #d4af37); }
+    }
+    .boss-victory-rankup-line {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .boss-victory-rankup-line strong { color: var(--rank-color, #d4af37); }
+    .boss-victory-rewards {
+      margin: 16px auto 0;
+      max-width: 320px;
+      display: grid;
+      gap: 6px;
+    }
+    .boss-victory-reward-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.25);
+      font-size: 13px;
+      color: #d4af37;
+    }
+    .boss-victory-reward-row .reward-icon { font-size: 16px; }
+    .boss-victory-reward-row .reward-label { flex: 1; text-align: left; color: var(--text); }
+    .boss-victory-reward-row .reward-value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #d4af37;
+    }
+
+    /* Defeat screen — solemn, no celebration */
+    .boss-defeat-card {
+      position: relative;
+      padding: 22px 18px 16px;
+      border-radius: 14px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(248,113,113,0.12) 0%, transparent 60%),
+        linear-gradient(180deg, #1a1d24 0%, #0d1117 90%);
+      border: 1px solid rgba(248,113,113,0.4);
+      box-shadow:
+        inset 0 0 32px rgba(0,0,0,0.35);
+      margin-bottom: 14px;
+    }
+    .boss-defeat-stamp {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(248,113,113,0.15);
+      color: #f87171;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 1px solid rgba(248,113,113,0.5);
+    }
+    .boss-defeat-no-loss {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .boss-defeat-reason {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(248,113,113,0.04);
+      border: 1px solid rgba(248,113,113,0.18);
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .boss-defeat-reason strong { color: var(--text); }
 
     /* ============================================================ */
     /* MISSION CONTRACT CARD v1.8.8 — Today's Mission as a contract  */
@@ -1613,6 +1893,19 @@
           rgba(255,255,255,0.014) 15px
         );
     }
+    /* Zone scene banner inside the mission result stamp (v1.8.9) */
+    .mission-result-scene {
+      position: absolute;
+      left: 50%; top: -8px; transform: translateX(-50%);
+      width: 280px;
+      height: 80px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.16;
+      filter: drop-shadow(0 0 8px var(--zone-glow, rgba(96,165,250,0.3)));
+    }
+    .mission-result-scene svg { width: 100%; height: 100%; display: block; }
+    .mission-result-stamp > *:not(.mission-result-scene) { position: relative; z-index: 1; }
     .mission-result-eyebrow {
       font-size: 11px;
       letter-spacing: 1.6px;
@@ -3629,6 +3922,7 @@ function showDrillComplete() {
     }
     missionStampHtml = `
       <div class="mission-result-stamp" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow};--score-color:${pctColor}">
+        <div class="mission-result-scene" style="color:${zone.accent}">${renderZoneSceneSvg(d.moduleFilter, { width: 280, height: 80 })}</div>
         <div class="mission-result-eyebrow">▸ ${verdictText}</div>
         <div class="mission-result-zone">${zone.glyph} ${zone.zone}</div>
         <div class="mission-result-motto">${zone.motto}</div>
@@ -4894,6 +5188,305 @@ function renderRankEmblemSVG(rank, size) {
   return `<svg class="rank-emblem-svg rank-emblem-${size}" viewBox="0 0 64 64" width="${dim}" height="${dim}" style="filter: drop-shadow(0 0 6px ${acc}66);">${inner}</svg>`;
 }
 
+// ============================================================
+// ILLUSTRATION SYSTEM v1.8.9
+// ============================================================
+// Subtle illustrated art layer. Two SVG families:
+//   1) RANK CHARACTERS — silhouette per rank, used as Hero card watermark
+//      (low opacity 14-18% behind text). Each is a stylized half-body
+//      figure in viewBox 0 0 200 200, single-color (passed in at render
+//      time so it can match rank accent or any custom tint).
+//   2) ZONE SCENES — silhouette per zone, used on Mission Brief banner +
+//      module card watermark + Mission Result accent. viewBox 0 0 240 120
+//      (landscape, header-banner shape).
+//
+// Style rules:
+//   - silhouette / semi-flat
+//   - simple paths, recognizable at low opacity
+//   - color-tintable via "currentColor"
+//   - never noisy; never childish
+
+// Returns inline SVG body (no <svg> wrapper) — caller wraps + sizes.
+function getRankCharacterSvgBody(rank) {
+  // viewBox 0 0 200 200; figure roughly fills 60-180 horizontally
+  switch (rank) {
+    case 'Unranked':
+    case 'Wanderer':
+      // Cloaked pathfinder with hood + walking staff + compass at hip
+      return `
+        <!-- staff -->
+        <line x1="62" y1="60" x2="80" y2="200" stroke="currentColor" stroke-width="3"/>
+        <!-- cloak silhouette -->
+        <path d="M100 60 Q70 70 65 110 L55 200 L150 200 L142 115 Q140 75 110 62 Z" fill="currentColor"/>
+        <!-- hood opening -->
+        <path d="M100 60 Q86 65 84 84 Q86 96 100 100 Q116 96 118 84 Q116 65 100 60 Z" fill="currentColor" opacity="0.6"/>
+        <!-- inner shadow line on hood -->
+        <path d="M88 78 Q100 86 112 78" fill="none" stroke="#0d1117" stroke-width="2" opacity="0.55"/>
+        <!-- compass at hip -->
+        <circle cx="124" cy="148" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        <polygon points="124,140 127,148 124,156 121,148" fill="currentColor"/>
+      `;
+    case 'Bronze':
+    case 'Squire':
+      // Trainee crouching with small shield raised
+      return `
+        <!-- shield -->
+        <path d="M70 90 L70 140 Q70 165 100 178 Q130 165 130 140 L130 90 Z" fill="currentColor"/>
+        <!-- shield boss -->
+        <circle cx="100" cy="128" r="8" fill="#0d1117" opacity="0.4"/>
+        <line x1="100" y1="100" x2="100" y2="170" stroke="#0d1117" stroke-width="2" opacity="0.45"/>
+        <!-- helmet/head behind shield -->
+        <ellipse cx="100" cy="76" rx="14" ry="16" fill="currentColor"/>
+        <!-- helm crest -->
+        <path d="M94 60 L100 50 L106 60" fill="currentColor"/>
+      `;
+    case 'Silver':
+    case 'Ranger':
+      // Hooded scout with bow drawn
+      return `
+        <!-- body -->
+        <path d="M86 80 L78 110 L78 168 L100 168 L100 110 L122 110 L122 168 L144 168 L144 110 L136 80 Z" fill="currentColor"/>
+        <!-- hood -->
+        <path d="M86 80 Q90 56 110 56 Q130 56 134 80 Q124 70 110 70 Q96 70 86 80 Z" fill="currentColor"/>
+        <!-- bow (curved arc) -->
+        <path d="M40 80 Q26 130 40 180" fill="none" stroke="currentColor" stroke-width="3"/>
+        <!-- bowstring -->
+        <line x1="40" y1="80" x2="40" y2="180" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <!-- arrow -->
+        <line x1="40" y1="130" x2="120" y2="130" stroke="currentColor" stroke-width="2"/>
+        <polygon points="116,124 130,130 116,136" fill="currentColor"/>
+      `;
+    case 'Gold':
+    case 'Knight':
+      // Armored knight upright with sword resting in front + shield
+      return `
+        <!-- sword vertical center -->
+        <line x1="100" y1="40" x2="100" y2="180" stroke="currentColor" stroke-width="6"/>
+        <line x1="80" y1="60" x2="120" y2="60" stroke="currentColor" stroke-width="4"/>
+        <circle cx="100" cy="186" r="6" fill="currentColor"/>
+        <!-- shield silhouette behind -->
+        <path d="M50 90 L50 140 Q50 170 100 188 Q150 170 150 140 L150 90 Z" fill="currentColor" opacity="0.55"/>
+        <!-- helm -->
+        <ellipse cx="100" cy="44" rx="14" ry="14" fill="currentColor"/>
+        <rect x="92" y="40" width="16" height="6" fill="#0d1117" opacity="0.55"/>
+      `;
+    case 'Platinum':
+    case 'Champion':
+      // Champion holding raised trophy + laurel crown
+      return `
+        <!-- arms raised holding trophy -->
+        <path d="M75 105 L60 70 L70 70 L85 105 Z" fill="currentColor"/>
+        <path d="M125 105 L140 70 L130 70 L115 105 Z" fill="currentColor"/>
+        <!-- trophy cup -->
+        <path d="M70 50 L70 75 Q70 90 100 92 Q130 90 130 75 L130 50 Z" fill="currentColor"/>
+        <!-- trophy stem -->
+        <rect x="92" y="92" width="16" height="14" fill="currentColor"/>
+        <rect x="80" y="106" width="40" height="6" fill="currentColor"/>
+        <!-- body -->
+        <path d="M80 110 L75 165 L125 165 L120 110 Z" fill="currentColor"/>
+        <!-- legs -->
+        <rect x="84" y="165" width="14" height="30" fill="currentColor"/>
+        <rect x="102" y="165" width="14" height="30" fill="currentColor"/>
+        <!-- laurel crown side leaves on trophy -->
+        <ellipse cx="60" cy="62" rx="6" ry="3" fill="currentColor" opacity="0.7" transform="rotate(-30 60 62)"/>
+        <ellipse cx="140" cy="62" rx="6" ry="3" fill="currentColor" opacity="0.7" transform="rotate(30 140 62)"/>
+      `;
+    case 'Diamond':
+    case 'Warlord':
+      // Battle commander with massive blade resting + cape silhouette
+      return `
+        <!-- cape -->
+        <path d="M70 70 Q40 110 50 200 L100 180 L150 200 Q160 110 130 70 Z" fill="currentColor" opacity="0.6"/>
+        <!-- body silhouette -->
+        <path d="M82 70 L78 130 L122 130 L118 70 Z" fill="currentColor"/>
+        <!-- helm/head -->
+        <ellipse cx="100" cy="56" rx="14" ry="16" fill="currentColor"/>
+        <!-- horns / spikes on helm -->
+        <polygon points="84,52 78,38 92,48" fill="currentColor"/>
+        <polygon points="116,52 122,38 108,48" fill="currentColor"/>
+        <!-- massive blade resting forward-right -->
+        <polygon points="130,80 175,180 165,185 155,180 125,90" fill="currentColor"/>
+        <!-- crossguard -->
+        <rect x="120" y="78" width="20" height="6" fill="currentColor"/>
+      `;
+    case 'Master':
+    case 'Mythic':
+      // Robed mage with floating crystal sigil above outstretched hand
+      return `
+        <!-- robe -->
+        <path d="M82 90 Q70 100 65 200 L135 200 Q130 100 118 90 Z" fill="currentColor"/>
+        <!-- hood + head -->
+        <path d="M82 90 Q86 60 100 56 Q114 60 118 90 Q108 80 100 80 Q92 80 82 90 Z" fill="currentColor"/>
+        <!-- arm raised -->
+        <path d="M118 100 L150 70 L155 78 L125 110 Z" fill="currentColor"/>
+        <!-- floating crystal above hand -->
+        <polygon points="155,40 168,55 155,80 142,55" fill="currentColor"/>
+        <polygon points="155,46 163,55 155,72 147,55" fill="#0d1117" opacity="0.45"/>
+        <!-- rune circle aura -->
+        <circle cx="155" cy="58" r="26" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="155" cy="58" r="32" fill="none" stroke="currentColor" stroke-width="1" opacity="0.25"/>
+      `;
+    case 'Grandmaster':
+    case 'EndBoss':
+    case 'End Boss':
+      // Dark crowned figure on throne — ominous silhouette
+      return `
+        <!-- throne back -->
+        <path d="M50 60 L50 200 L150 200 L150 60 L130 50 L120 70 L110 50 L100 70 L90 50 L80 70 L70 50 Z" fill="currentColor" opacity="0.55"/>
+        <!-- figure -->
+        <path d="M82 90 L78 180 L122 180 L118 90 Z" fill="currentColor"/>
+        <!-- shoulders + cape spread -->
+        <path d="M70 95 L82 90 L82 130 L60 140 Z" fill="currentColor"/>
+        <path d="M130 95 L118 90 L118 130 L140 140 Z" fill="currentColor"/>
+        <!-- head -->
+        <ellipse cx="100" cy="64" rx="14" ry="16" fill="currentColor"/>
+        <!-- crown -->
+        <path d="M82 50 L86 30 L94 44 L100 22 L106 44 L114 30 L118 50 Z" fill="currentColor"/>
+        <rect x="82" y="50" width="36" height="4" fill="currentColor"/>
+        <!-- ominous eyes (negative space) -->
+        <circle cx="94" cy="62" r="2" fill="#ef4444" opacity="0.85"/>
+        <circle cx="106" cy="62" r="2" fill="#ef4444" opacity="0.85"/>
+      `;
+    default:
+      return `<circle cx="100" cy="100" r="60" fill="currentColor" opacity="0.4"/>`;
+  }
+}
+
+// Returns a complete <svg> tag for use as background/inline image.
+// `tint` defaults to currentColor; opacity applied by parent CSS.
+function renderRankCharacterSvg(rank, opts) {
+  opts = opts || {};
+  const w = opts.width || 200;
+  const h = opts.height || 200;
+  const tint = opts.tint || 'currentColor';
+  const body = getRankCharacterSvgBody(rank);
+  return `<svg class="rank-character-svg" viewBox="0 0 200 200" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="color:${tint}">${body}</svg>`;
+}
+
+// Zone scenes — landscape banner illustrations per module zone.
+// viewBox 0 0 240 120; designed to live at low opacity behind text.
+function getZoneSceneSvgBody(moduleId) {
+  switch (moduleId) {
+    case 'push_fold':
+      // Short Stack Arena — circular arena ring + diagonal lightning bolts
+      return `
+        <ellipse cx="120" cy="84" rx="96" ry="22" fill="none" stroke="currentColor" stroke-width="2"/>
+        <ellipse cx="120" cy="78" rx="78" ry="14" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <!-- lightning -->
+        <polygon points="48,18 70,18 56,52 78,52 40,108 56,68 36,68" fill="currentColor"/>
+        <polygon points="190,12 210,12 196,46 218,46 180,102 196,62 176,62" fill="currentColor" opacity="0.7"/>
+        <!-- crowd dots -->
+        <circle cx="60" cy="84" r="2" fill="currentColor" opacity="0.6"/>
+        <circle cx="180" cy="84" r="2" fill="currentColor" opacity="0.6"/>
+        <circle cx="120" cy="64" r="2" fill="currentColor" opacity="0.4"/>
+      `;
+    case 'call_vs_jam':
+      // All-In Gate — giant double-door gate + chain links + flame
+      return `
+        <!-- gate frame -->
+        <path d="M50 110 L50 30 Q50 18 60 18 L180 18 Q190 18 190 30 L190 110" fill="none" stroke="currentColor" stroke-width="3"/>
+        <!-- gate doors -->
+        <rect x="55" y="32" width="60" height="78" fill="currentColor" opacity="0.4"/>
+        <rect x="125" y="32" width="60" height="78" fill="currentColor" opacity="0.4"/>
+        <!-- door hinges/rivets -->
+        <circle cx="62" cy="44" r="2" fill="currentColor"/>
+        <circle cx="62" cy="98" r="2" fill="currentColor"/>
+        <circle cx="178" cy="44" r="2" fill="currentColor"/>
+        <circle cx="178" cy="98" r="2" fill="currentColor"/>
+        <!-- chain across center -->
+        <line x1="55" y1="68" x2="185" y2="68" stroke="currentColor" stroke-width="2"/>
+        <circle cx="80" cy="68" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="120" cy="68" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="160" cy="68" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      `;
+    case 'bb_defense':
+      // Big Blind Fortress — battlements + tower silhouette + shield
+      return `
+        <!-- battlements -->
+        <path d="M30 110 L30 60 L42 60 L42 50 L54 50 L54 60 L66 60 L66 50 L78 50 L78 60 L90 60 L90 110 Z" fill="currentColor" opacity="0.55"/>
+        <!-- center tower -->
+        <path d="M96 110 L96 40 L108 40 L108 30 L120 30 L120 24 L132 24 L132 30 L144 30 L144 40 L156 40 L156 110 Z" fill="currentColor"/>
+        <!-- right wall -->
+        <path d="M162 110 L162 60 L174 60 L174 50 L186 50 L186 60 L198 60 L198 50 L210 50 L210 60 L222 60 L222 110 Z" fill="currentColor" opacity="0.55"/>
+        <!-- center shield emblem -->
+        <path d="M126 56 L126 80 Q126 92 126 92 Q126 92 126 92 L126 56 Z" fill="none"/>
+        <path d="M120 60 L120 80 Q120 92 126 96 Q132 92 132 80 L132 60 Z" fill="currentColor"/>
+        <!-- tower window -->
+        <rect x="123" y="50" width="6" height="10" fill="#0d1117" opacity="0.6"/>
+      `;
+    case 'blind_battle':
+      // Blind Duel — two facing silhouettes + crossed lines
+      return `
+        <!-- left figure -->
+        <path d="M48 110 L48 50 L72 50 L72 110 Z" fill="currentColor"/>
+        <ellipse cx="60" cy="38" rx="12" ry="14" fill="currentColor"/>
+        <!-- right figure -->
+        <path d="M168 110 L168 50 L192 50 L192 110 Z" fill="currentColor"/>
+        <ellipse cx="180" cy="38" rx="12" ry="14" fill="currentColor"/>
+        <!-- crossed gaze line / bridge -->
+        <line x1="72" y1="50" x2="168" y2="50" stroke="currentColor" stroke-width="2" opacity="0.55"/>
+        <line x1="72" y1="80" x2="168" y2="80" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+        <!-- center duel eye -->
+        <ellipse cx="120" cy="65" rx="14" ry="8" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="120" cy="65" r="3" fill="currentColor"/>
+      `;
+    case 'rejam':
+      // Rejam Battlefield — flame + crossed swords
+      return `
+        <!-- flames -->
+        <path d="M60 110 Q40 90 50 70 Q56 84 64 76 Q66 60 78 56 Q72 76 86 80 Q98 84 90 110 Z" fill="currentColor" opacity="0.55"/>
+        <path d="M170 110 Q150 90 160 70 Q166 84 174 76 Q176 60 188 56 Q182 76 196 80 Q208 84 200 110 Z" fill="currentColor" opacity="0.55"/>
+        <!-- crossed swords -->
+        <line x1="80" y1="20" x2="180" y2="100" stroke="currentColor" stroke-width="4"/>
+        <line x1="180" y1="20" x2="80" y2="100" stroke="currentColor" stroke-width="4"/>
+        <!-- crossguards -->
+        <line x1="70" y1="30" x2="90" y2="10" stroke="currentColor" stroke-width="3"/>
+        <line x1="170" y1="10" x2="190" y2="30" stroke="currentColor" stroke-width="3"/>
+        <!-- pommels -->
+        <circle cx="80" cy="20" r="4" fill="currentColor"/>
+        <circle cx="180" cy="20" r="4" fill="currentColor"/>
+        <!-- center spark -->
+        <polygon points="130,55 138,60 130,65 122,60" fill="currentColor"/>
+      `;
+    case 'open_vs_3bet':
+      // 3-Bet Labyrinth — maze grid + crossed blades center
+      return `
+        <!-- maze walls (simplified meander pattern) -->
+        <path d="M30 100 L30 60 L60 60 L60 90 L90 90 L90 40 L120 40 L120 80 L150 80 L150 30 L180 30 L180 100" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M40 110 L40 80 L70 80 L70 110" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <path d="M200 110 L200 50 L220 50" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <!-- crossed blades center -->
+        <line x1="100" y1="20" x2="160" y2="80" stroke="currentColor" stroke-width="3"/>
+        <line x1="160" y1="20" x2="100" y2="80" stroke="currentColor" stroke-width="3"/>
+        <circle cx="130" cy="50" r="5" fill="currentColor"/>
+      `;
+    case 'mixed_decision':
+      // Mist Zone — fog wisps + central crystal eye
+      return `
+        <!-- fog wisps -->
+        <path d="M20 78 Q60 64 100 78 Q140 92 180 78 Q210 70 230 80" fill="none" stroke="currentColor" stroke-width="3" opacity="0.55"/>
+        <path d="M20 96 Q60 82 100 96 Q140 110 180 96 Q210 88 230 98" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.4"/>
+        <path d="M30 60 Q70 48 110 60 Q150 72 190 60 Q210 56 220 60" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+        <!-- central crystal eye -->
+        <polygon points="120,30 144,52 120,80 96,52" fill="currentColor"/>
+        <polygon points="120,38 138,52 120,72 102,52" fill="#0d1117" opacity="0.5"/>
+        <ellipse cx="120" cy="52" rx="6" ry="10" fill="currentColor"/>
+        <circle cx="120" cy="52" r="3" fill="#0d1117" opacity="0.7"/>
+      `;
+    default:
+      return `<rect x="40" y="40" width="160" height="40" fill="currentColor" opacity="0.3"/>`;
+  }
+}
+
+function renderZoneSceneSvg(moduleId, opts) {
+  opts = opts || {};
+  const w = opts.width || 240;
+  const h = opts.height || 120;
+  const tint = opts.tint || 'currentColor';
+  const body = getZoneSceneSvgBody(moduleId);
+  return `<svg class="zone-scene-svg" viewBox="0 0 240 120" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="color:${tint}">${body}</svg>`;
+}
+
 // Map v1.7.0 metadata module → v1.8.0 mastery module. Some metadata modules
 // collapse into the same mastery module (e.g. legacy_generic_3bet folds into
 // open_vs_3bet for ranking purposes).
@@ -5194,12 +5787,13 @@ function _renderMasteryImpl() {
   const heroVars = rankCssVars(overallRank);
   const heroProgressPct = Math.min(100, masteryScore);
 
-  // ---------- HERO RANK SCENE (v1.8.8) ----------
-  // Layered scene: aura + sigil watermark + texture + foreground content.
+  // ---------- HERO RANK SCENE (v1.8.8 + v1.8.9 character layer) ----------
+  // Layered scene: aura + sigil watermark + texture + character silhouette + foreground content.
   // Larger rank emblem with collectible double-ring frame.
   let html = `
     <div class="mastery-hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}">
       <div class="hero-texture-layer"></div>
+      <div class="hero-character-layer">${renderRankCharacterSvg(overallRank, { width: 220, height: 220, tint: 'currentColor' })}</div>
       <div class="mastery-hero-row">
         <div class="rank-emblem hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">${renderRankEmblemSVG(overallRank, 'large')}</div>
         <div class="hero-meta">
@@ -5330,6 +5924,7 @@ function _renderMasteryImpl() {
     const progressColor = rank === 'Unranked' ? zone.accent : fillColor;
     html += `
       <div class="module-card-v2 ${isHighlighted ? 'highlighted' : ''}" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow};--zone-glyph-content:'${zone.glyph}'">
+        <div class="module-card-scene-watermark" style="color:${zone.accent}">${renderZoneSceneSvg(m, { width: 160, height: 80 })}</div>
         <div class="module-card-row1">
           <div style="display:flex;align-items:flex-start;min-width:0">
             <span class="module-card-icon-badge">${zone.glyph}</span>
@@ -5375,7 +5970,8 @@ function _renderMasteryImpl() {
     const cls = ['exam-step',
       isNext ? 'next-target' : '',
       reached && !isNext ? 'unlocked' : '',
-      isFar ? 'locked-far' : ''
+      isFar ? 'locked-far' : '',
+      r === 'Grandmaster' ? 'end-boss-step' : ''
     ].filter(Boolean).join(' ');
     const status = reached
       ? '<span style="color:var(--success)">✓ Eligible</span>'
@@ -5425,8 +6021,8 @@ function _renderMasteryImpl() {
 
   // ---------- FOUNDATION EXPLAINER (compact, at bottom) ----------
   html += `<div class="foundation-card">
-    <div class="foundation-card-title">Mastery System Preview</div>
-    <div>Click <strong>Train</strong> on any module to take an official Boss Test. Rank up to climb the ladder. Overall Exams unlock in v1.8.3 once Mastery Score thresholds are met.</div>
+    <div class="foundation-card-title">How Mastery Works</div>
+    <div>Run <strong>Missions</strong> on each zone to build XP and study reps. Take the <strong>Boss Test</strong> to certify your Module Rank. Each module rank lifts your Mastery Score — climb the Rank Path to unlock Overall Exams and the End Boss.</div>
   </div>`;
 
   document.getElementById('masteryContent').innerHTML = html;
@@ -5746,7 +6342,11 @@ function showChallengeResult() {
 }
 
 function renderChallengeResultScreen(ch, result, rankUp) {
+  // v1.8.9: Boss result is now a full Victory Moment for passed runs.
+  // Stamp + rank-up beam + trophy crest + reward panel + Try Next Boss CTA.
   const info = MODULE_DISPLAY_INFO[ch.module];
+  const zone = getModuleZone(ch.module);
+  const bossName = getBossName(ch.module);
   const t = result.thresholds;
 
   const cell = (label, value, suffix, threshold, comparator) => {
@@ -5778,36 +6378,91 @@ function renderChallengeResultScreen(ch, result, rankUp) {
     if (fails.length > 0) failReason = fails.join(' · ');
   }
 
-  const html = `
-    <div class="challenge-result-banner ${result.passed ? 'passed' : 'failed'}">
-      <div class="challenge-result-icon">${result.passed ? '🏆' : '⚔️'}</div>
-      <div class="challenge-result-title" style="color:${result.passed ? 'var(--success)' : 'var(--danger)'}">${result.passed ? 'Boss Test Passed' : 'Boss Test Failed'}</div>
-      <div class="challenge-result-sub">${info.label} · ${rankDisplay(ch.targetRank)} target · ${result.total} hands</div>
-      ${rankUp ? `
-        <div class="challenge-rank-up">
-          ${renderRankEmblem(rankUp.oldRank, 'small')}
-          <span class="challenge-arrow" style="font-size:24px;color:var(--success)">→</span>
-          ${renderRankEmblem(rankUp.newRank, 'small')}
+  let html;
+  if (result.passed) {
+    // ----- VICTORY MOMENT -----
+    const rankVarsTarget = rankCssVars(ch.targetRank);
+    const masteryDelta = rankUp ? Math.round((MODULE_WEIGHTS[ch.module] * (RANK_MULTIPLIERS[rankUp.newRank] - RANK_MULTIPLIERS[rankUp.oldRank])) * 10) / 10 : 0;
+    const nextTarget = getNextModuleRank(ch.targetRank);
+    html = `
+      <div class="boss-victory-card" style="--rank-color:${rankVarsTarget.color};--rank-glow:${rankVarsTarget.glow};--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+        <div class="boss-victory-burst"></div>
+        <div class="boss-victory-particles">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
         </div>
-        <div style="margin-top:6px;font-size:13px;color:var(--success);font-weight:600">Rank up: ${rankDisplay(rankUp.oldRank)} → ${rankDisplay(rankUp.newRank)}</div>
-      ` : ''}
-      ${failReason ? `<div style="margin-top:10px;font-size:11px;color:var(--text-secondary);line-height:1.6">Failed because: ${failReason}</div>` : ''}
-    </div>
+        <div class="boss-victory-stamp">★ BOSS CLEARED ★</div>
+        <div class="boss-victory-title">${bossName} Defeated</div>
+        <div class="boss-victory-zone">${zone.glyph} ${zone.zone}</div>
 
-    <div class="challenge-score-grid">
-      ${cells}
-    </div>
+        ${rankUp ? `
+          <div class="boss-victory-rankup">
+            <div class="boss-victory-rankup-side">
+              ${renderRankEmblem(rankUp.oldRank, 'small')}
+              <div class="rankup-side-label">${rankDisplay(rankUp.oldRank)}</div>
+            </div>
+            <div class="boss-victory-rankup-beam"></div>
+            <div class="boss-victory-rankup-side new">
+              ${renderRankEmblem(rankUp.newRank)}
+              <div class="rankup-side-label new">${rankDisplay(rankUp.newRank)}</div>
+            </div>
+          </div>
+          <div class="boss-victory-rankup-line">RANK UP · <strong>${rankDisplay(rankUp.oldRank)} → ${rankDisplay(rankUp.newRank)}</strong></div>
+        ` : ''}
 
-    <div class="card" style="font-size:12px;color:var(--text-secondary);line-height:1.6">
-      <strong style="color:var(--text)">Breakdown:</strong>
-      ${result.pureCount} pure-hand attempts · ${result.mixedCount} mixed-hand attempts · ${result.criticalCount} critical (0%) picks
-    </div>
+        <div class="boss-victory-rewards">
+          <div class="boss-victory-reward-row">
+            <span class="reward-icon">★</span>
+            <span class="reward-label">Mastery Points</span>
+            <span class="reward-value">+${masteryDelta.toFixed(1)}</span>
+          </div>
+          <div class="boss-victory-reward-row">
+            <span class="reward-icon">⚔</span>
+            <span class="reward-label">${moduleCleanLabel(ch.module)} Boss certified</span>
+            <span class="reward-value">${rankDisplay(ch.targetRank)}</span>
+          </div>
+        </div>
+      </div>
 
-    <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
-      <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('home')">← Back to Home</button>
-      <button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">${result.passed && getNextModuleRank(ch.targetRank) ? 'Try Next Rank →' : 'Try Again'}</button>
-    </div>
-  `;
+      <div class="card">
+        <div class="card-title">Performance</div>
+        <div class="challenge-score-grid">${cells}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.6">
+          ${result.pureCount} pure attempts · ${result.mixedCount} mixed attempts · ${result.criticalCount} critical (0%) picks
+        </div>
+      </div>
+
+      <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
+        <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('home')">← Back to Home</button>
+        <button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">${nextTarget ? '⚔ Try ' + rankDisplay(nextTarget) + ' Boss' : '⚔ Replay Boss'}</button>
+      </div>
+    `;
+  } else {
+    // ----- DEFEAT SCREEN -----
+    const rankVarsTarget = rankCssVars(ch.targetRank);
+    html = `
+      <div class="boss-defeat-card" style="--rank-color:${rankVarsTarget.color};--rank-glow:${rankVarsTarget.glow};--zone-accent:${zone.accent}">
+        <div class="boss-defeat-stamp">⚔ BOSS HOLDS ⚔</div>
+        <div class="boss-victory-title">${bossName} Repelled You</div>
+        <div class="boss-victory-zone">${zone.glyph} ${zone.zone}</div>
+        <div class="boss-defeat-no-loss">Your existing rank is unchanged. No penalty for the attempt.</div>
+        ${failReason ? `<div class="boss-defeat-reason"><strong>Why:</strong> ${failReason}</div>` : ''}
+      </div>
+
+      <div class="card">
+        <div class="card-title">Performance</div>
+        <div class="challenge-score-grid">${cells}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.6">
+          ${result.pureCount} pure attempts · ${result.mixedCount} mixed attempts · ${result.criticalCount} critical (0%) picks
+        </div>
+      </div>
+
+      <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:8px">
+        <button class="btn-mastery-secondary" onclick="masteryAfterChallenge('home')">← Back to Home</button>
+        <button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">⚔ Attempt Again</button>
+      </div>
+    `;
+  }
 
   document.getElementById('drillScreen').style.display = 'none';
   document.getElementById('drillComplete').style.display = 'block';
@@ -5966,6 +6621,7 @@ function renderMissionBrief() {
 
   el.innerHTML = `
     <div class="mission-brief-card" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+      <div class="mission-brief-scene-banner" style="color:${zone.accent}">${renderZoneSceneSvg(m.module, { width: 320, height: 100 })}</div>
       <div class="mission-brief-eyebrow">▸ Mission Brief</div>
       <div class="mission-brief-name">${m.name}</div>
       <div class="mission-brief-meta">${cleanLabel} · ${difficultyLine}</div>
@@ -6292,7 +6948,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.8</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.9</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
