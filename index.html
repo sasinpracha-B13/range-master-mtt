@@ -2524,6 +2524,76 @@
     .logo-family-row .rank-emblem { width: 48px; height: 48px; }
     .logo-family-row .rank-emblem .rank-emblem-svg { width: 28px; height: 28px; }
 
+    /* v1.9.4: A2 BEFORE/AFTER comparison rows */
+    .logo-lab-ab-row {
+      margin-top: 14px;
+      padding: 12px 10px;
+      border-radius: 8px;
+      background: #0d1117;
+    }
+    .logo-lab-ab-label {
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .logo-lab-ab-pair {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .logo-lab-ab-pair.stacked {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .logo-lab-ab-cell {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 10px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .logo-lab-ab-cell.wide { width: 100%; }
+    .ab-tag {
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #1a1d28;
+      color: #94a3b8;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      border: 1px solid rgba(148,163,184,0.40);
+    }
+    .ab-tag.after {
+      color: #fbbf24;
+      border-color: #d4af37;
+      background: #0d1117;
+      box-shadow: 0 0 8px rgba(251,191,36,0.30);
+    }
+    .logo-lab-512-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .logo-lab-512-wrap svg {
+      max-width: 100%;
+      height: auto;
+    }
+
     /* Foundation explainer (de-emphasized) */
     .foundation-card {
       padding: 12px 14px;
@@ -6745,6 +6815,87 @@ function renderLogoA2(size) {
   </svg>`;
 }
 
+// ----- A2 v2: polished app icon (v1.9.4) -----
+// Refinements over A2 v1:
+//   - More tactical spade silhouette (angular shoulders + sharper apex)
+//   - Center facet line down spade (engraved-metal seam, not generic playing-card spade)
+//   - Brighter chevron + apex spark — readable at 32px
+//   - Beveled frame: outer bright gold stroke + inner dark stroke = engraved depth
+//   - Stronger gold gradient (#fde68a → #fbbf24 → #d4af37 → #7a5a13)
+//   - Deeper background contrast + ambient gold light wash from top-left
+function renderLogoA2v2(size) {
+  size = size || 180;
+  // Unique gradient id per render so multiple sizes don't share a singleton
+  const u = 'a2v2-' + size;
+  return `<svg class="logo-a2-v2" viewBox="0 0 1024 1024" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${u}-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#1f2230"/>
+        <stop offset="100%" stop-color="#06080c"/>
+      </linearGradient>
+      <radialGradient id="${u}-bg-light" cx="22%" cy="18%" r="65%">
+        <stop offset="0%" stop-color="#d4af37" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${u}-spade" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#fde68a"/>
+        <stop offset="35%" stop-color="#fbbf24"/>
+        <stop offset="70%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#7a5a13"/>
+      </linearGradient>
+      <linearGradient id="${u}-facet" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.40"/>
+        <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="${u}-chevron" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#fff7d6"/>
+        <stop offset="100%" stop-color="#fbbf24"/>
+      </linearGradient>
+    </defs>
+
+    <!-- L1: dark gradient base -->
+    <rect x="0" y="0" width="1024" height="1024" rx="184" fill="url(#${u}-bg)"/>
+    <!-- L2: top-left ambient gold light wash for depth -->
+    <rect x="0" y="0" width="1024" height="1024" rx="184" fill="url(#${u}-bg-light)"/>
+
+    <!-- L3: outer engraved frame — bright gold stroke (top of bevel) -->
+    <rect x="40" y="40" width="944" height="944" rx="160" fill="none" stroke="#d4af37" stroke-width="3.5" opacity="0.70"/>
+    <!-- L4: inner shadow stroke — dark line just inside outer = beveled depth -->
+    <rect x="48" y="48" width="928" height="928" rx="153" fill="none" stroke="#000000" stroke-width="2" opacity="0.50"/>
+
+    <!-- L5: spade body — more angular silhouette
+         (sharper apex + harder shoulder taper than v1's standard playing-card curve) -->
+    <path d="M512 168
+             Q412 248 358 360
+             Q306 472 320 558
+             Q328 642 412 660
+             Q470 660 504 622
+             L496 706
+             L528 706
+             L520 622
+             Q554 660 612 660
+             Q696 642 704 558
+             Q718 472 666 360
+             Q612 248 512 168 Z"
+          fill="url(#${u}-spade)"
+          filter="drop-shadow(0 8px 22px rgba(212,175,55,0.36))"/>
+
+    <!-- L6: center facet line (engraved-metal seam) -->
+    <line x1="512" y1="208" x2="512" y2="640" stroke="url(#${u}-facet)" stroke-width="3"/>
+
+    <!-- L7: top-left specular highlight (premium gloss) -->
+    <ellipse cx="438" cy="318" rx="28" ry="13" fill="#ffffff" opacity="0.34" transform="rotate(-32 438 318)"/>
+
+    <!-- L8: rising chevron — bigger, white-gold for max readability at 32px -->
+    <polygon points="420,920 512,712 604,920"
+             fill="url(#${u}-chevron)"
+             filter="drop-shadow(0 0 18px rgba(255,247,214,0.75))"/>
+    <!-- L9: spark at chevron apex — punctuates the "rising" gesture -->
+    <circle cx="512" cy="712" r="9" fill="#ffffff" opacity="0.9"/>
+    <circle cx="512" cy="712" r="20" fill="#fff7d6" opacity="0.30"/>
+  </svg>`;
+}
+
 // ----- B2: Merged Spade-Arrow Crest (full logo) -----
 function renderLogoB2(opts) {
   opts = opts || {};
@@ -9311,35 +9462,72 @@ function renderLogoSystemPreview() {
   return `
     <div class="logo-lab">
 
-      <!-- A. App Icon Preview -->
+      <!-- A. App Icon Preview — v1.9.4: BEFORE vs AFTER polish pass -->
       <div class="logo-lab-section">
-        <div class="logo-lab-section-title">A · App Icon Preview (A2 — Framed Spade Path)</div>
-        <div class="logo-lab-section-sub">Rounded-square frame · dark navy bg · subtle gold inner border · spade with stem replaced by rising chevron. Verify readability across icon sizes.</div>
-        <div class="logo-lab-row dark-bg">
-          <div class="logo-lab-cell">
-            ${renderLogoA2(32)}
-            <div class="logo-lab-cell-caption">32px (favicon)</div>
-          </div>
-          <div class="logo-lab-cell">
-            ${renderLogoA2(64)}
-            <div class="logo-lab-cell-caption">64px (apple-touch)</div>
-          </div>
-          <div class="logo-lab-cell">
-            ${renderLogoA2(120)}
-            <div class="logo-lab-cell-caption">120px (home screen)</div>
-          </div>
-        </div>
-        <div class="logo-lab-row neutral-bg" style="margin-top:8px">
-          <div class="logo-lab-cell">
-            ${renderLogoA2(64)}
-            <div class="logo-lab-cell-caption">on neutral bg</div>
-          </div>
-          <div class="logo-lab-cell">
-            ${renderLogoA2(120)}
-            <div class="logo-lab-cell-caption">on neutral bg</div>
+        <div class="logo-lab-section-title">A · App Icon · BEFORE vs AFTER polish</div>
+        <div class="logo-lab-section-sub">v1.9.4 polish: more angular spade silhouette · center facet line for engraved-metal feel · brighter chevron + apex spark for 32px readability · beveled frame depth (outer bright gold + inner dark) · stronger gold gradient.</div>
+
+        <!-- 32px row -->
+        <div class="logo-lab-ab-row">
+          <div class="logo-lab-ab-label">32px</div>
+          <div class="logo-lab-ab-pair">
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag">BEFORE</div>
+              ${renderLogoA2(32)}
+            </div>
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag after">AFTER</div>
+              ${renderLogoA2v2(32)}
+            </div>
           </div>
         </div>
-        <div class="logo-lab-note">Holds at 32px? Rounded-square presence + spade-with-chevron silhouette should both read.</div>
+
+        <!-- 64px row -->
+        <div class="logo-lab-ab-row">
+          <div class="logo-lab-ab-label">64px</div>
+          <div class="logo-lab-ab-pair">
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag">BEFORE</div>
+              ${renderLogoA2(64)}
+            </div>
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag after">AFTER</div>
+              ${renderLogoA2v2(64)}
+            </div>
+          </div>
+        </div>
+
+        <!-- 180px row -->
+        <div class="logo-lab-ab-row">
+          <div class="logo-lab-ab-label">180px</div>
+          <div class="logo-lab-ab-pair">
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag">BEFORE</div>
+              ${renderLogoA2(180)}
+            </div>
+            <div class="logo-lab-ab-cell">
+              <div class="ab-tag after">AFTER</div>
+              ${renderLogoA2v2(180)}
+            </div>
+          </div>
+        </div>
+
+        <!-- 512px row — capped to viewport for mobile but renders at full SVG quality -->
+        <div class="logo-lab-ab-row">
+          <div class="logo-lab-ab-label">512px (production icon size)</div>
+          <div class="logo-lab-ab-pair stacked">
+            <div class="logo-lab-ab-cell wide">
+              <div class="ab-tag">BEFORE · v1</div>
+              <div class="logo-lab-512-wrap">${renderLogoA2(512)}</div>
+            </div>
+            <div class="logo-lab-ab-cell wide">
+              <div class="ab-tag after">AFTER · v2</div>
+              <div class="logo-lab-512-wrap">${renderLogoA2v2(512)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="logo-lab-note">Compare: at 32px the AFTER chevron + spark should pop against the spade. At 180/512px the AFTER spade should read as forged metal (center facet) rather than flat playing-card spade.</div>
       </div>
 
       <!-- B. Top Nav Preview -->
@@ -9568,7 +9756,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.3</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.4</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
