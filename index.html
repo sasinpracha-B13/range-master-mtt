@@ -1849,9 +1849,9 @@
     .boss-defeat-recommend .recommend-line strong { color: var(--text); }
 
     /* ============================================================ */
-    /* OVERALL EXAM CLAIM v1.8.12 — focused rank-up entry            */
+    /* OVERALL EXAM v1.9.0 — Brief + Session badge + Pass/Fail       */
     /* ============================================================ */
-    .overall-exam-claim {
+    .overall-exam-brief, .overall-exam-claim {
       position: relative;
       padding: 22px 18px 18px;
       border-radius: 16px;
@@ -1866,6 +1866,152 @@
       margin: 12px auto;
       max-width: 100%;
       overflow: hidden;
+    }
+    /* v1.9.0: in-session header badge — rank-colored, distinct from challenge / mission */
+    .overall-exam-header-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--rank-bg, rgba(212,175,55,0.15));
+      color: var(--rank-color, #d4af37);
+      border: 1px solid var(--rank-color, #d4af37);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px var(--rank-color, rgba(212,175,55,0.4));
+    }
+    /* In-flight strip styled with rank-color, separate from zone-mission strip */
+    .mission-objective-strip.overall-exam-strip {
+      border-color: var(--zone-accent, #d4af37);
+    }
+    /* Brief sections — extend the boss-gate-row pattern */
+    .overall-exam-section {
+      text-align: left;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .overall-exam-section-title {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    /* Quota distribution grid */
+    .overall-exam-quota-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+    }
+    .overall-exam-quota-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      font-size: 12px;
+    }
+    .overall-exam-quota-row .quota-glyph { font-size: 14px; flex-shrink: 0; }
+    .overall-exam-quota-row .quota-label { flex: 1; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .overall-exam-quota-row .quota-count { font-weight: 700; color: var(--rank-color, #d4af37); font-variant-numeric: tabular-nums; }
+    /* Reward row */
+    .overall-exam-reward-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.25);
+      font-size: 13px;
+      color: #d4af37;
+    }
+    .overall-exam-reward-row .reward-icon { font-size: 16px; }
+    .overall-exam-reward-row .reward-label { flex: 1; text-align: left; color: var(--text); }
+    .overall-exam-reward-row .reward-value { font-weight: 700; color: var(--rank-color, #d4af37); }
+    /* Mission/Boss/Overall Exam explainer */
+    .overall-exam-explainer {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(96,165,250,0.04);
+      border: 1px solid rgba(96,165,250,0.18);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      text-align: left;
+    }
+    .overall-exam-explainer strong { color: #60a5fa; }
+    .overall-exam-explainer em { color: var(--text); font-style: normal; font-weight: 700; }
+    /* Gates not met block */
+    .overall-exam-gates-fail {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(248,113,113,0.06);
+      border: 1px solid rgba(248,113,113,0.30);
+      text-align: left;
+    }
+    .gates-fail-eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #f87171;
+      margin-bottom: 6px;
+    }
+    .gates-fail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 12px;
+      border-bottom: 1px dashed rgba(255,255,255,0.04);
+    }
+    .gates-fail-row:last-child { border-bottom: none; }
+    .gates-fail-row .label { color: var(--text-secondary); }
+    .gates-fail-row .value { color: var(--text); font-weight: 700; }
+    .gates-fail-row .value .req { color: var(--text-secondary); font-weight: 500; font-size: 10px; margin-left: 4px; }
+    /* Per-module breakdown on result */
+    .overall-exam-module-grid { display: grid; gap: 4px; }
+    .overall-exam-module-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto auto;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: var(--surface2);
+      font-size: 12px;
+    }
+    .overall-exam-module-row .m-glyph { font-size: 14px; text-align: center; }
+    .overall-exam-module-row .m-label { color: var(--text); font-weight: 600; }
+    .overall-exam-module-row .m-acc { color: var(--rank-color, #d4af37); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .overall-exam-module-row .m-attempts { color: var(--text-secondary); font-size: 10px; min-width: 28px; text-align: right; }
+    /* Fail reasons block */
+    .exam-fail-reasons {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(248,113,113,0.05);
+      border: 1px solid rgba(248,113,113,0.22);
+      text-align: left;
+    }
+    .exam-fail-reasons-title {
+      font-size: 11px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .exam-fail-reason-row {
+      font-size: 12px;
+      color: #f87171;
+      padding: 2px 0;
     }
     .overall-exam-eyebrow {
       font-size: 11px;
@@ -3168,7 +3314,10 @@ const App = {
       // user enters a Zone via Mastery). Holds objective targets + reward
       // calc context. Cleared when user exits mission or starts a Direct
       // Drill from the bottom nav.
-      mission: null
+      mission: null,
+      // v1.9.0: active Overall Exam (set by openOverallExam → startOverallExam).
+      // { targetRank, exam (definition), seed, startedAt }
+      overallExam: null
     },
     // v1.8.0: Mastery Path data model. All optional/safe-defaults so
     // existing users without profile don't break. Module ranks all start
@@ -3683,23 +3832,30 @@ function renderDrillQuestion() {
   const challengeBadge = (d.mode === 'challenge' && d.challenge)
     ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
     : '';
-  // v1.8.6: zone-themed active mission badge (only when a module mission is active and not in boss test)
-  const missionBadge = (d.moduleFilter && d.mode !== 'challenge')
+  // v1.9.0: distinct OVERALL EXAM header badge — uses target-rank color
+  const overallExamBadge = (d.mode === 'overall_exam' && d.overallExam)
+    ? `<span class="overall-exam-header-badge" style="--rank-color:${rankCssVars(d.overallExam.targetRank).color};--rank-bg:${rankCssVars(d.overallExam.targetRank).bg}">⚔ ${d.overallExam.exam.name}</span>`
+    : '';
+  // v1.8.6: zone-themed active mission badge (only when a module mission is active and not in cert flow)
+  const missionBadge = (d.moduleFilter && d.mode !== 'challenge' && d.mode !== 'overall_exam')
     ? (() => {
         const z = getModuleZone(d.moduleFilter);
         return `<span class="mission-header-badge" style="--zone-accent:${z.accent};--zone-glow:${z.glow}"><span class="glyph">${z.glyph}</span> ${z.zone}</span>`;
       })()
     : '';
   // v1.8.7: live mission objective strip — only when a mission instance exists
-  const missionStrip = (d.mission && d.mode !== 'challenge') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
+  const missionStrip = (d.mission && d.mode !== 'challenge' && d.mode !== 'overall_exam') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
+  // v1.9.0: live OVERALL EXAM objective strip
+  const overallExamStrip = (d.mode === 'overall_exam' && d.overallExam) ? renderOverallExamObjectiveStrip(d.overallExam, d.answers) : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
-      <span class="drill-progress-text">${challengeBadge}${missionBadge} Q ${current}/${total}</span>
+      <span class="drill-progress-text">${challengeBadge}${overallExamBadge}${missionBadge} Q ${current}/${total}</span>
       ${streakBadge}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${pct}%"></div></div>
     ${missionStrip}
+    ${overallExamStrip}
 
     <div class="situation-card animate-slide" id="handCard">
       <div class="card-title">📊 Situation</div>
@@ -4051,10 +4207,13 @@ function handleAnswer(userAction) {
   // v1.7.2: classify mistake category for non-correct answers
   const mistakeCategory = classifyMistake(q, userAction, correctAction, cls);
 
-  // v1.8.2: Challenge mode keeps Practice SRS history clean (per spec
-  // "Existing drill history remains separate from official challenge results")
+  // v1.8.2 + v1.9.0: Challenge mode AND Overall Exam mode keep Practice SRS
+  // history clean (per spec "Existing drill history remains separate from
+  // official certification results")
   const isChallenge = d.mode === 'challenge';
-  if (!isChallenge) {
+  const isOverallExam = d.mode === 'overall_exam';
+  const isCertification = isChallenge || isOverallExam;
+  if (!isCertification) {
     const srsKey = getSRSKey(q.stack, q.pos, q.action, q.hand);
     updateSRS(srsKey, cls.score, cls.isPure, mistakeCategory);
   }
@@ -4077,8 +4236,8 @@ function handleAnswer(userAction) {
   d.answers.push({ q, userAction, correctAction, responseTime,
                    result: cls.result, score: cls.score, userFreq: cls.userFreq, isPure: cls.isPure,
                    mistakeCategory });
-  // v1.8.2: skip Practice daily stats during challenge to keep streams separate
-  if (!isChallenge) updateDailyStats(cls.score);
+  // v1.8.2 + v1.9.0: skip Practice daily stats during certification flows
+  if (!isCertification) updateDailyStats(cls.score);
 
   // Always show the freq-bar answer screen so the user sees the GTO mix.
   // In quick mode we auto-advance; in deep/weakness mode the user clicks Next.
@@ -4090,6 +4249,7 @@ function handleAnswer(userAction) {
       d.currentIndex++;
       if (d.currentIndex >= d.queue.length) {
         if (d.mode === 'challenge') showChallengeResult();
+        else if (d.mode === 'overall_exam') showOverallExamResult();
         else showDrillComplete();
       } else renderDrillQuestion();
     }, delay);
@@ -4188,7 +4348,11 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
   const challengeBadgeAns = (d.mode === 'challenge' && d.challenge)
     ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
     : '';
-  const missionBadgeAns = (d.moduleFilter && d.mode !== 'challenge')
+  // v1.9.0: overall exam header badge on answer screen
+  const overallExamBadgeAns = (d.mode === 'overall_exam' && d.overallExam)
+    ? `<span class="overall-exam-header-badge" style="--rank-color:${rankCssVars(d.overallExam.targetRank).color};--rank-bg:${rankCssVars(d.overallExam.targetRank).bg}">⚔ ${d.overallExam.exam.name}</span>`
+    : '';
+  const missionBadgeAns = (d.moduleFilter && d.mode !== 'challenge' && d.mode !== 'overall_exam')
     ? (() => {
         const z = getModuleZone(d.moduleFilter);
         return `<span class="mission-header-badge" style="--zone-accent:${z.accent};--zone-glow:${z.glow}"><span class="glyph">${z.glyph}</span> ${z.zone}</span>`;
@@ -4196,15 +4360,18 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
     : '';
 
   // v1.8.7: live mission objective strip on answer screen
-  const missionStripAns = (d.mission && d.mode !== 'challenge') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
+  const missionStripAns = (d.mission && d.mode !== 'challenge' && d.mode !== 'overall_exam') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
+  // v1.9.0: live overall exam objective strip on answer screen
+  const overallExamStripAns = (d.mode === 'overall_exam' && d.overallExam) ? renderOverallExamObjectiveStrip(d.overallExam, d.answers) : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
-      <span class="drill-progress-text">${challengeBadgeAns}${missionBadgeAns} Q ${d.currentIndex+1}/${d.queue.length}</span>
+      <span class="drill-progress-text">${challengeBadgeAns}${overallExamBadgeAns}${missionBadgeAns} Q ${d.currentIndex+1}/${d.queue.length}</span>
       ${d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : ''}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${(d.currentIndex/d.queue.length*100).toFixed(0)}%"></div></div>
     ${missionStripAns}
+    ${overallExamStripAns}
 
     <div class="situation-card ${animateCls}">
       <div class="answer-result ${cls.result}">
@@ -4254,7 +4421,9 @@ function nextDrillHand() {
   d.currentIndex++;
   if (d.currentIndex >= d.queue.length) {
     // v1.8.2: route to challenge result if challenge mode
+    // v1.9.0: route to overall exam result if overall_exam mode
     if (d.mode === 'challenge') showChallengeResult();
+    else if (d.mode === 'overall_exam') showOverallExamResult();
     else showDrillComplete();
   } else {
     renderDrillQuestion();
@@ -4269,7 +4438,7 @@ function showDrillComplete() {
   // v1.8.7: Award XP for Practice / Mission sessions (NOT challenge — challenge tracked separately).
   // Mission XP = 1 XP/hand + per-objective bonuses + perfect bonus.
   // Direct Drill (no mission) XP = 1 XP/hand + 5 completion + 10 accuracy bonus (legacy v1.8.4).
-  if (d.mode !== 'challenge' && total > 0) {
+  if (d.mode !== 'challenge' && d.mode !== 'overall_exam' && total > 0) {
     const accPct = total > 0 ? Math.round(d.answers.reduce((s,a) => s + (a.score||0), 0) / total * 100) : 0;
     const xpFromHands = total;
     let xpObjectiveBonus = 0;
@@ -5577,6 +5746,41 @@ function renderMissionObjectiveStrip(mission, answers) {
   `;
 }
 
+// v1.9.0: Live objective strip during an Overall Exam session — Hands progress,
+// running accuracy vs target, critical mistake counter vs cap. Visual style
+// uses the target-rank color rather than a zone color since this is a
+// cross-module overall certification.
+function renderOverallExamObjectiveStrip(oe, answers) {
+  if (!oe || !oe.exam) return '';
+  const exam = oe.exam;
+  const total = answers.length;
+  const correct = answers.filter(a => a.result === 'correct').length;
+  const partial = answers.filter(a => a.result === 'partial').length;
+  const points = correct + 0.5 * partial;
+  const accuracy = total > 0 ? Math.round((points / total) * 100) : null;
+  const critical = countCriticalMistakes(answers);
+  const handsCls = total >= exam.handCount ? 'passing' : '';
+  const accCls = accuracy === null ? '' : (accuracy >= exam.accuracyTarget ? 'passing' : (accuracy >= exam.accuracyTarget - 6 ? 'warning' : 'failing'));
+  const critCls = critical > exam.criticalMax ? 'failing' : (critical === exam.criticalMax ? 'warning' : 'passing');
+  const v = rankCssVars(oe.targetRank);
+  return `
+    <div class="mission-objective-strip overall-exam-strip" style="--zone-accent:${v.color};--zone-glow:${v.glow}">
+      <div class="mission-objective-cell">
+        <div class="label">Hands</div>
+        <div class="value ${handsCls}">${total}/${exam.handCount}</div>
+      </div>
+      <div class="mission-objective-cell">
+        <div class="label">Accuracy</div>
+        <div class="value ${accCls}">${accuracy === null ? '—' : accuracy + '%'} <span style="opacity:0.6;font-size:10px">/${exam.accuracyTarget}%</span></div>
+      </div>
+      <div class="mission-objective-cell">
+        <div class="label">Critical</div>
+        <div class="value ${critCls}">${critical}<span style="opacity:0.6;font-size:10px">/${exam.criticalMax}</span></div>
+      </div>
+    </div>
+  `;
+}
+
 // v1.8.7: Boss display name — derived from zone (e.g. Big Blind Boss).
 // Uses zone name minus generic suffix (Fortress/Arena/Gate/Battlefield/etc.)
 // so we get "Big Blind Boss" / "Short Stack Boss" etc.
@@ -6162,6 +6366,204 @@ const OVERALL_UNLOCK_THRESHOLDS = {
   Grandmaster: 95
 };
 
+// ============================================================
+// OVERALL EXAM DEFINITIONS v1.9.0
+// ============================================================
+// Each Overall Exam is a multi-module certification test. The user must
+// already meet the Mastery Score gate (and optional module-rank gates)
+// before they can attempt. Pass = certify the new Overall Rank.
+//
+// moduleQuotas: hand budget per mastery module. Sum should equal
+//   exam.handCount. Sampler picks that many hands from each module
+//   pool, then shuffles the combined queue.
+// gates: pre-flight requirements. masteryScore is mandatory; modulesAtLeast
+//   is optional and lets higher-rank exams require certain module ranks
+//   first (e.g. Knight requires BB Defense >= Silver).
+const OVERALL_EXAM_DEFINITIONS = {
+  Bronze: {
+    name: 'Squire Exam',
+    handCount: 50,
+    accuracyTarget: 78,
+    criticalMax: 8,
+    moduleQuotas: { push_fold: 12, call_vs_jam: 8, bb_defense: 12, rejam: 6, open_vs_3bet: 8, blind_battle: 2, mixed_decision: 2 },
+    gates: { masteryScore: 25 }
+  },
+  Silver: {
+    name: 'Ranger Exam',
+    handCount: 60,
+    accuracyTarget: 82,
+    criticalMax: 6,
+    moduleQuotas: { push_fold: 12, call_vs_jam: 10, bb_defense: 14, rejam: 8, open_vs_3bet: 10, blind_battle: 3, mixed_decision: 3 },
+    gates: { masteryScore: 40, modulesAtLeast: { push_fold: 'Bronze', bb_defense: 'Bronze' } }
+  },
+  Gold: {
+    name: 'Knight Exam',
+    handCount: 70,
+    accuracyTarget: 86,
+    criticalMax: 5,
+    moduleQuotas: { push_fold: 14, call_vs_jam: 10, bb_defense: 16, rejam: 8, open_vs_3bet: 14, blind_battle: 4, mixed_decision: 4 },
+    gates: { masteryScore: 55, modulesAtLeast: { bb_defense: 'Silver', push_fold: 'Silver', open_vs_3bet: 'Bronze' } }
+  },
+  Platinum: {
+    name: 'Champion Exam',
+    handCount: 80,
+    accuracyTarget: 89,
+    criticalMax: 4,
+    moduleQuotas: { push_fold: 16, call_vs_jam: 12, bb_defense: 18, rejam: 10, open_vs_3bet: 14, blind_battle: 5, mixed_decision: 5 },
+    gates: { masteryScore: 70, modulesAtLeast: { bb_defense: 'Gold', push_fold: 'Silver', open_vs_3bet: 'Silver', call_vs_jam: 'Bronze' } }
+  },
+  Diamond: {
+    name: 'Warlord Exam',
+    handCount: 90,
+    accuracyTarget: 92,
+    criticalMax: 3,
+    moduleQuotas: { push_fold: 18, call_vs_jam: 14, bb_defense: 20, rejam: 10, open_vs_3bet: 16, blind_battle: 6, mixed_decision: 6 },
+    gates: { masteryScore: 82, modulesAtLeast: { bb_defense: 'Platinum', push_fold: 'Gold', open_vs_3bet: 'Gold', call_vs_jam: 'Silver', rejam: 'Silver' } }
+  },
+  Master: {
+    name: 'Mythic Exam',
+    handCount: 100,
+    accuracyTarget: 95,
+    criticalMax: 2,
+    moduleQuotas: { push_fold: 20, call_vs_jam: 14, bb_defense: 22, rejam: 12, open_vs_3bet: 18, blind_battle: 7, mixed_decision: 7 },
+    gates: { masteryScore: 90, modulesAtLeast: { bb_defense: 'Diamond', push_fold: 'Platinum', open_vs_3bet: 'Platinum', call_vs_jam: 'Gold', rejam: 'Gold' } }
+  },
+  Grandmaster: {
+    name: 'End Boss Exam',
+    handCount: 120,
+    accuracyTarget: 97,
+    criticalMax: 1,
+    moduleQuotas: { push_fold: 22, call_vs_jam: 16, bb_defense: 26, rejam: 14, open_vs_3bet: 22, blind_battle: 10, mixed_decision: 10 },
+    gates: { masteryScore: 95, modulesAtLeast: { bb_defense: 'Master', push_fold: 'Diamond', open_vs_3bet: 'Diamond', call_vs_jam: 'Platinum', rejam: 'Platinum' } }
+  }
+};
+
+function getOverallExamForRank(targetRank) {
+  return OVERALL_EXAM_DEFINITIONS[targetRank] || null;
+}
+
+// Verify a profile meets every gate for an exam. Returns
+// { passed, failures: [{ id, label, required, actual }] } so the brief
+// screen can render exactly which gates are still missing.
+function checkOverallExamGates(profile, targetRank) {
+  const exam = getOverallExamForRank(targetRank);
+  if (!exam) return { passed: false, failures: [{ id: 'no_exam', label: 'No exam defined', required: '-', actual: '-' }] };
+  const failures = [];
+  const masteryScore = computeMasteryScore(profile.moduleRanks);
+  if (exam.gates.masteryScore && masteryScore < exam.gates.masteryScore) {
+    failures.push({ id: 'masteryScore', label: 'Mastery Score', required: exam.gates.masteryScore + ' pts', actual: masteryScore.toFixed(1) + ' pts' });
+  }
+  if (exam.gates.modulesAtLeast) {
+    for (const [moduleKey, requiredRank] of Object.entries(exam.gates.modulesAtLeast)) {
+      const userRank = profile.moduleRanks[moduleKey] || 'Unranked';
+      const reqIdx = INTERNAL_RANKS.indexOf(requiredRank);
+      const userIdx = INTERNAL_RANKS.indexOf(userRank);
+      if (userIdx < reqIdx) {
+        failures.push({
+          id: 'module_' + moduleKey,
+          label: moduleCleanLabel(moduleKey) + ' rank',
+          required: rankDisplay(requiredRank) + ' or higher',
+          actual: rankDisplay(userRank)
+        });
+      }
+    }
+  }
+  return { passed: failures.length === 0, failures };
+}
+
+// Build a multi-module exam queue. Uses seeded LCG so the same seed
+// produces the same exam (useful for retry consistency / debugging).
+// For each module quota, samples that many hands from the module's
+// scenario pool (with replacement if the pool is small), then
+// shuffles the final combined queue.
+function buildOverallExamQueue(targetRank, seed) {
+  const exam = getOverallExamForRank(targetRank);
+  if (!exam) return [];
+  const rng = makeSeededRng(seed);
+  const queue = [];
+  for (const [moduleKey, quota] of Object.entries(exam.moduleQuotas)) {
+    if (!quota || quota <= 0) continue;
+    const pool = getModuleScenarios(moduleKey);
+    if (pool.length === 0) continue;
+    // Flatten module pool to all { key, stack, pos, action, hand, freqs }
+    const allHands = [];
+    for (const item of pool) {
+      const s = item.scenario;
+      for (const hand of Object.keys(s.hands)) {
+        allHands.push({
+          key: item.key, stack: s.stack, pos: s.position,
+          action: s.action, hand, freqs: s.hands[hand]
+        });
+      }
+    }
+    if (allHands.length === 0) continue;
+    // Shuffle module hands with seed
+    for (let i = allHands.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      const tmp = allHands[i]; allHands[i] = allHands[j]; allHands[j] = tmp;
+    }
+    // Take quota hands; with-replacement if pool < quota
+    let taken = 0;
+    let cursor = 0;
+    while (taken < quota) {
+      queue.push(allHands[cursor % allHands.length]);
+      cursor++;
+      taken++;
+    }
+  }
+  // Final cross-module shuffle so exam doesn't group by module
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = queue[i]; queue[i] = queue[j]; queue[j] = tmp;
+  }
+  return queue;
+}
+
+// Score a completed Overall Exam against its pass conditions.
+// Returns full breakdown including per-module accuracy for the result screen.
+function evaluateOverallExam(answers, targetRank) {
+  const exam = getOverallExamForRank(targetRank);
+  if (!exam) return null;
+  const total = answers.length;
+  const overallPts = answers.reduce((s, a) => s + (a.score || 0), 0);
+  const overallPct = total > 0 ? Math.round(overallPts / total * 100) : 0;
+  const pureAns = answers.filter(a => a.isPure);
+  const purePts = pureAns.reduce((s, a) => s + (a.score || 0), 0);
+  const purePct = pureAns.length > 0 ? Math.round(purePts / pureAns.length * 100) : 100;
+  const mixedAns = answers.filter(a => !a.isPure);
+  const mixedAware = mixedAns.filter(a => (a.userFreq || 0) > 0).length;
+  const mixedPct = mixedAns.length > 0 ? Math.round(mixedAware / mixedAns.length * 100) : 100;
+  const criticalCount = countCriticalMistakes(answers);
+  // Per-module breakdown (count attempts + accuracy)
+  const moduleBreakdown = {};
+  for (const a of answers) {
+    if (!a.q) continue;
+    const meta = (App.state.ranges && App.state.ranges[`${a.q.stack}BB_${a.q.pos}_${a.q.action}`]) ?
+      App.state.ranges[`${a.q.stack}BB_${a.q.pos}_${a.q.action}`].meta : null;
+    const masteryModule = (meta && meta.module) ? metaModuleToMastery(meta.module) : 'unknown';
+    if (!moduleBreakdown[masteryModule]) moduleBreakdown[masteryModule] = { attempts: 0, points: 0 };
+    moduleBreakdown[masteryModule].attempts++;
+    moduleBreakdown[masteryModule].points += (a.score || 0);
+  }
+  for (const m of Object.keys(moduleBreakdown)) {
+    const r = moduleBreakdown[m];
+    r.accuracy = r.attempts > 0 ? Math.round(r.points / r.attempts * 100) : 0;
+  }
+  // Pass conditions
+  const failReasons = [];
+  if (overallPct < exam.accuracyTarget) failReasons.push({ id: 'accuracy', label: `Accuracy ${overallPct}% / ${exam.accuracyTarget}%` });
+  if (criticalCount > exam.criticalMax) failReasons.push({ id: 'critical', label: `Critical Mistakes ${criticalCount} / ${exam.criticalMax}` });
+  return {
+    passed: failReasons.length === 0,
+    total, overallPct, purePct, mixedPct, criticalCount,
+    pureCount: pureAns.length, mixedCount: mixedAns.length,
+    moduleBreakdown,
+    failReasons,
+    accuracyTarget: exam.accuracyTarget,
+    criticalMax: exam.criticalMax
+  };
+}
+
 // Get the next overall rank above current.
 function getNextOverallRank(currentRank) {
   const idx = INTERNAL_RANKS.indexOf(currentRank);
@@ -6390,38 +6792,67 @@ function masteryStartMission() {
 }
 
 // ============================================================
-// OVERALL EXAM CLAIM v1.8.12
+// OVERALL EXAM v1.9.0 — REAL multi-module certification flow
 // ============================================================
-// Lightweight Overall Exam entry. Full Overall Exam mechanics are deferred
-// to a future release; for now, when a user's Mastery Score crosses an
-// unlock threshold, this flow lets them claim the corresponding Overall
-// Rank with a single confirmation. The claim:
-//   - validates Mastery Score still meets threshold
-//   - sets profile.certifications.overallRank to target
-//   - records profile.recentRankUp so Hero shows RECENTLY PROMOTED
-//   - re-renders Mastery so the Hero/Path reflect the new rank
-// Honest about what it is: shows a "Claim" framing rather than pretending
-// to be a full timed exam.
+// Replaces the v1.8.12-13 preview claim path. The real exam:
+//   1. openOverallExam(targetRank)    -> Exam Brief screen
+//   2. startOverallExam()              -> builds 50/60/70+ hand queue,
+//                                         switches drill mode to 'overall_exam',
+//                                         shows drillScreen
+//   3. handleAnswer()                  -> answers tracked; SRS/XP/dailyStats
+//                                         skipped (overall_exam mode)
+//   4. nextDrillHand()                 -> on last hand, calls
+//                                         showOverallExamResult()
+//   5. showOverallExamResult()         -> evaluates pass/fail; on pass, updates
+//                                         profile.certifications.overallRank +
+//                                         records to overallExamHistory + sets
+//                                         recentRankUp; on fail, records attempt
+//                                         only (NO rank loss)
+//
+// Distinct from Module Boss Test (single-module rank cert) and from Mission
+// (XP only, no rank impact).
+
 function openOverallExam(targetRank) {
   const profile = App.state.profile;
-  const masteryScore = computeMasteryScore(profile.moduleRanks);
-  const threshold = OVERALL_UNLOCK_THRESHOLDS[targetRank];
-  const v = rankCssVars(targetRank);
-  if (!threshold || masteryScore < threshold) {
-    if (typeof showToast === 'function') showToast('Mastery Score below threshold');
+  const exam = getOverallExamForRank(targetRank);
+  if (!exam) {
+    if (typeof showToast === 'function') showToast('No exam defined for ' + rankDisplay(targetRank));
     return;
   }
+  // Pre-flight: gates check
+  const gateCheck = checkOverallExamGates(profile, targetRank);
+  const v = rankCssVars(targetRank);
   const currentRank = profile.certifications.overallRank;
-  // v1.8.13: tightened wording. Gate title is now "Squire Exam Ready" (not
-  // "Claim Squire Rank") to make clear that threshold = exam eligibility, not
-  // automatic certification. The temporary preview behavior is explicitly
-  // labeled with a "PREVIEW" pill so users don't mistake this interim flow
-  // for the final timed/scored Overall Exam.
+  // Render Exam Brief
+  const failuresHtml = gateCheck.failures.length > 0 ? `
+    <div class="overall-exam-gates-fail">
+      <div class="gates-fail-eyebrow">⚠ Gates Not Met</div>
+      ${gateCheck.failures.map(f => `
+        <div class="gates-fail-row">
+          <span class="label">${f.label}</span>
+          <span class="value">${f.actual} <span class="req">/ ${f.required}</span></span>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+  // Module quota distribution preview
+  const quotaRows = Object.entries(exam.moduleQuotas)
+    .filter(([, n]) => n > 0)
+    .map(([mod, n]) => {
+      const z = getModuleZone(mod);
+      return `
+        <div class="overall-exam-quota-row">
+          <span class="quota-glyph" style="color:${z.accent}">${z.glyph}</span>
+          <span class="quota-label">${moduleCleanLabel(mod)}</span>
+          <span class="quota-count">${n}</span>
+        </div>
+      `;
+    }).join('');
   const html = `
-    <div class="overall-exam-claim" style="--rank-color:${v.color};--rank-glow:${v.glow}">
-      <div class="overall-exam-eyebrow">▸ Overall Exam Gate</div>
-      <div class="overall-exam-headline">${rankDisplay(targetRank)} Exam Ready</div>
-      <div class="overall-exam-subline">Your Mastery Score has unlocked the next Overall Rank exam.</div>
+    <div class="overall-exam-brief" style="--rank-color:${v.color};--rank-glow:${v.glow}">
+      <div class="overall-exam-eyebrow">▸ Overall Exam · Rank Certification</div>
+      <div class="overall-exam-headline">${exam.name}</div>
+      <div class="overall-exam-subline">Multi-module test that certifies your next Overall Rank.</div>
 
       <div class="overall-exam-emblem-row">
         <div class="overall-exam-side">
@@ -6435,21 +6866,39 @@ function openOverallExam(targetRank) {
         </div>
       </div>
 
-      <div class="overall-exam-stats">
-        <div class="overall-exam-stat">
-          <div class="label">Mastery Score</div>
-          <div class="value">${masteryScore.toFixed(1)} <span class="sub">/ ${threshold} required</span></div>
+      ${failuresHtml}
+
+      <div class="overall-exam-section">
+        <div class="overall-exam-section-title">Win Conditions</div>
+        <div class="boss-gate-row"><span class="label">Hands</span><span class="value">${exam.handCount}</span></div>
+        <div class="boss-gate-row"><span class="label">Overall Accuracy</span><span class="value">≥ ${exam.accuracyTarget}%</span></div>
+        <div class="boss-gate-row"><span class="label">Critical Mistakes</span><span class="value">≤ ${exam.criticalMax}</span></div>
+      </div>
+
+      <div class="overall-exam-section">
+        <div class="overall-exam-section-title">Sample Distribution (${exam.handCount} hands)</div>
+        <div class="overall-exam-quota-grid">${quotaRows}</div>
+      </div>
+
+      <div class="overall-exam-section">
+        <div class="overall-exam-section-title">Reward</div>
+        <div class="overall-exam-reward-row">
+          <span class="reward-icon">🏆</span>
+          <span class="reward-label">Overall Rank certified</span>
+          <span class="reward-value">${rankDisplay(targetRank)}</span>
         </div>
       </div>
 
-      <div class="overall-exam-preview-pill">PREVIEW BUILD</div>
-      <div class="overall-exam-note">
-        <strong>Heads up:</strong> The full Overall Exam (timed scenario test with pass/fail conditions) is not built yet. This screen is a <strong>temporary preview path</strong> — confirming below will award the rank for testing purposes only. The real exam flow will replace this in a future release.
+      <div class="overall-exam-explainer">
+        <strong>Mission · Boss · Overall Exam:</strong> Missions build XP. Boss Tests certify <em>module</em> ranks. Overall Exams certify your <em>Overall Rank</em>. Failing does NOT lower your rank.
       </div>
 
       <div class="overall-exam-cta-row">
-        <button class="btn-mastery-secondary" onclick="cancelOverallExam()">← Cancel</button>
-        <button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="confirmOverallExam('${targetRank}')">🏆 Award ${rankDisplay(targetRank)} (Preview)</button>
+        <button class="btn-mastery-secondary" onclick="cancelOverallExam()">← Back</button>
+        ${gateCheck.passed
+          ? `<button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="startOverallExam('${targetRank}')">⚔ Start ${exam.name}</button>`
+          : `<button class="btn-mastery-primary exam-cta" disabled style="--exam-color:#6b7280;--exam-glow:rgba(107,114,128,0.3);opacity:0.55;cursor:not-allowed">🔒 Gates Not Met</button>`
+        }
       </div>
     </div>
   `;
@@ -6457,36 +6906,286 @@ function openOverallExam(targetRank) {
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
-function confirmOverallExam(targetRank) {
+function startOverallExam(targetRank) {
   const profile = App.state.profile;
-  const masteryScore = computeMasteryScore(profile.moduleRanks);
-  const threshold = OVERALL_UNLOCK_THRESHOLDS[targetRank];
-  if (!threshold || masteryScore < threshold) {
-    if (typeof showToast === 'function') showToast('Mastery Score no longer meets threshold');
-    renderMastery();
+  const exam = getOverallExamForRank(targetRank);
+  if (!exam) return;
+  // Re-check gates at start time (defensive)
+  const gateCheck = checkOverallExamGates(profile, targetRank);
+  if (!gateCheck.passed) {
+    if (typeof showToast === 'function') showToast('Gates no longer met');
+    openOverallExam(targetRank);
     return;
   }
-  const oldRank = profile.certifications.overallRank;
-  profile.certifications.overallRank = targetRank;
-  profile.certifications.lastCertificationDate = new Date().toISOString();
-  // v1.8.12: route through the existing recentRankUp celebration path so the
-  // Hero shows "RECENTLY PROMOTED" + stronger glow on next render.
-  profile.recentRankUp = {
-    module: 'overall',
-    oldRank,
-    newRank: targetRank,
-    timestamp: Date.now()
-  };
+  const seed = (Date.now() ^ Math.floor(Math.random() * 0xFFFFFFFF)) >>> 0;
+  const queue = buildOverallExamQueue(targetRank, seed);
+  if (queue.length === 0) {
+    if (typeof showToast === 'function') showToast('No scenarios available');
+    return;
+  }
+  const d = App.state.drill;
+  d.overallExam = { targetRank, exam, seed, startedAt: Date.now() };
+  d.mode = 'overall_exam';
+  d.challenge = null;
+  d.mission = null;
+  d.moduleFilter = null;
+  d.queue = queue;
+  d.currentIndex = 0;
+  d.answers = [];
+  d.streak = 0;
+  d.startTime = Date.now();
+  d.phase = 'question';
+  switchTab('drill');
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('challengeSetup').style.display = 'none';
+  document.getElementById('missionBrief').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'block';
+  renderDrillQuestion();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function showOverallExamResult() {
+  const d = App.state.drill;
+  const oe = d.overallExam;
+  if (!oe) { showDrillComplete(); return; }
+  const profile = App.state.profile;
+  const result = evaluateOverallExam(d.answers, oe.targetRank);
+  if (!result) { showDrillComplete(); return; }
+
+  // Persist attempt regardless of pass/fail
   if (!Array.isArray(profile.overallExamHistory)) profile.overallExamHistory = [];
-  profile.overallExamHistory.push({
-    oldRank,
-    newRank: targetRank,
-    masteryScore: masteryScore,
-    date: new Date().toISOString()
-  });
+  const historyEntry = {
+    rankAttempted: oe.targetRank,
+    passed: result.passed,
+    date: new Date().toISOString(),
+    handCount: result.total,
+    overallAccuracy: result.overallPct,
+    pureAccuracy: result.purePct,
+    mixedAwareness: result.mixedPct,
+    criticalMistakes: result.criticalCount,
+    moduleBreakdown: result.moduleBreakdown,
+    seed: oe.seed
+  };
+  profile.overallExamHistory.push(historyEntry);
+
+  // On pass: certify the new Overall Rank
+  let oldRank = null;
+  if (result.passed) {
+    oldRank = profile.certifications.overallRank;
+    profile.certifications.overallRank = oe.targetRank;
+    profile.certifications.lastCertificationDate = new Date().toISOString();
+    profile.recentRankUp = {
+      module: 'overall',
+      oldRank,
+      newRank: oe.targetRank,
+      timestamp: Date.now()
+    };
+  }
+
   App.saveProgress();
-  if (typeof showToast === 'function') showToast('🏆 ' + rankDisplay(targetRank) + ' rank certified!');
-  renderMastery();
+  renderOverallExamResult(oe, result, oldRank);
+}
+
+function renderOverallExamResult(oe, result, oldRank) {
+  const v = rankCssVars(oe.targetRank);
+  const examName = oe.exam.name;
+  if (result.passed) {
+    // ----- VICTORY -----
+    const cells = `
+      <div class="challenge-score-cell ${result.overallPct >= result.accuracyTarget ? 'passed' : 'failed'}">
+        <div class="challenge-score-label">Overall</div>
+        <div class="challenge-score-value">${result.overallPct}%</div>
+        <div class="challenge-score-target">target ${result.accuracyTarget}%</div>
+      </div>
+      <div class="challenge-score-cell passed">
+        <div class="challenge-score-label">Pure</div>
+        <div class="challenge-score-value">${result.purePct}%</div>
+        <div class="challenge-score-target">${result.pureCount} attempts</div>
+      </div>
+      <div class="challenge-score-cell passed">
+        <div class="challenge-score-label">Mixed Awareness</div>
+        <div class="challenge-score-value">${result.mixedPct}%</div>
+        <div class="challenge-score-target">${result.mixedCount} attempts</div>
+      </div>
+      <div class="challenge-score-cell ${result.criticalCount <= result.criticalMax ? 'passed' : 'failed'}">
+        <div class="challenge-score-label">Critical Mistakes</div>
+        <div class="challenge-score-value">${result.criticalCount}</div>
+        <div class="challenge-score-target">cap ${result.criticalMax}</div>
+      </div>
+    `;
+    const moduleRows = Object.entries(result.moduleBreakdown)
+      .filter(([m]) => m !== 'unknown')
+      .map(([m, r]) => {
+        const z = getModuleZone(m);
+        return `
+          <div class="overall-exam-module-row">
+            <span class="m-glyph" style="color:${z.accent}">${z.glyph}</span>
+            <span class="m-label">${moduleCleanLabel(m)}</span>
+            <span class="m-acc">${r.accuracy}%</span>
+            <span class="m-attempts">${r.attempts}h</span>
+          </div>
+        `;
+      }).join('');
+
+    const html = `
+      <div class="boss-victory-card v2 overall-exam-victory" style="--rank-color:${v.color};--rank-glow:${v.glow};--zone-accent:${v.color};--zone-glow:${v.glow}">
+        <div class="boss-victory-burst"></div>
+        <div class="boss-victory-particles">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="boss-victory-stamp xl">★ ${examName.toUpperCase()} CLEARED ★</div>
+        <div class="boss-victory-title">Overall Rank Certified</div>
+        <div class="boss-victory-zone">${rankDisplay(oe.targetRank)} · Overall</div>
+
+        <div class="boss-victory-newrank-pill">⬆ NEW OVERALL RANK</div>
+        <div class="boss-victory-rankup v2">
+          <div class="boss-victory-rankup-side">
+            ${renderRankEmblem(oldRank || 'Unranked')}
+            <div class="rankup-side-label">${rankDisplay(oldRank || 'Unranked')}</div>
+          </div>
+          <div class="boss-victory-rankup-beam"></div>
+          <div class="boss-victory-rankup-side new big">
+            <div class="rank-emblem-newrank-wrap">${renderRankEmblem(oe.targetRank, 'large')}</div>
+            <div class="rankup-side-label new big">${rankDisplay(oe.targetRank)}</div>
+          </div>
+        </div>
+        <div class="boss-victory-rankup-line">OVERALL RANK UP · <strong>${rankDisplay(oldRank || 'Unranked')} → ${rankDisplay(oe.targetRank)}</strong></div>
+
+        <div class="boss-victory-rewards">
+          <div class="boss-victory-rewards-title">▾ Certification Record</div>
+          <div class="boss-victory-reward-row certified">
+            <span class="reward-icon">🏆</span>
+            <span class="reward-label">Overall Rank certified</span>
+            <span class="reward-value">${rankDisplay(oe.targetRank)}</span>
+          </div>
+          <div class="boss-victory-reward-row">
+            <span class="reward-icon">📜</span>
+            <span class="reward-label">Cert date</span>
+            <span class="reward-value">${new Date().toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Performance</div>
+        <div class="challenge-score-grid">${cells}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.6">
+          ${result.pureCount} pure · ${result.mixedCount} mixed · ${result.criticalCount} critical (0%) picks
+        </div>
+      </div>
+
+      ${moduleRows ? `
+      <div class="card">
+        <div class="card-title">Per-Module Breakdown</div>
+        <div class="overall-exam-module-grid">${moduleRows}</div>
+      </div>` : ''}
+
+      <div class="boss-victory-cta-stack">
+        <button class="btn-mastery-secondary" onclick="afterOverallExam('home')">← Back to Home</button>
+        <button class="btn-mastery-secondary" onclick="afterOverallExam('mastery')">▶ Continue Training</button>
+        <button class="btn-mastery-secondary" onclick="afterOverallExam('path')">View Rank Path</button>
+      </div>
+    `;
+    document.getElementById('drillScreen').style.display = 'none';
+    document.getElementById('drillComplete').style.display = 'block';
+    document.getElementById('drillComplete').innerHTML = html;
+  } else {
+    // ----- DEFEAT -----
+    const cells = `
+      <div class="challenge-score-cell ${result.overallPct >= result.accuracyTarget ? 'passed' : 'failed'}">
+        <div class="challenge-score-label">Overall</div>
+        <div class="challenge-score-value">${result.overallPct}%</div>
+        <div class="challenge-score-target">target ${result.accuracyTarget}%</div>
+      </div>
+      <div class="challenge-score-cell passed">
+        <div class="challenge-score-label">Pure</div>
+        <div class="challenge-score-value">${result.purePct}%</div>
+        <div class="challenge-score-target">${result.pureCount} attempts</div>
+      </div>
+      <div class="challenge-score-cell passed">
+        <div class="challenge-score-label">Mixed Awareness</div>
+        <div class="challenge-score-value">${result.mixedPct}%</div>
+        <div class="challenge-score-target">${result.mixedCount} attempts</div>
+      </div>
+      <div class="challenge-score-cell ${result.criticalCount <= result.criticalMax ? 'passed' : 'failed'}">
+        <div class="challenge-score-label">Critical Mistakes</div>
+        <div class="challenge-score-value">${result.criticalCount}</div>
+        <div class="challenge-score-target">cap ${result.criticalMax}</div>
+      </div>
+    `;
+    // Find weakest module from the breakdown to recommend
+    const breakdownEntries = Object.entries(result.moduleBreakdown).filter(([m]) => m !== 'unknown');
+    breakdownEntries.sort((a, b) => (a[1].accuracy || 0) - (b[1].accuracy || 0));
+    const weakestModule = breakdownEntries.length > 0 ? breakdownEntries[0][0] : null;
+    const weakestZone = weakestModule ? getModuleZone(weakestModule) : null;
+    const failReasonsHtml = result.failReasons.map(f => `<div class="exam-fail-reason-row">✗ ${f.label}</div>`).join('');
+
+    const html = `
+      <div class="boss-defeat-card overall-exam-defeat" style="--rank-color:${v.color};--rank-glow:${v.glow}">
+        <div class="boss-defeat-stamp">⚔ ${examName.toUpperCase()} HELD</div>
+        <div class="boss-victory-title">Overall Rank Not Certified</div>
+        <div class="boss-victory-zone">${rankDisplay(oe.targetRank)} target</div>
+        <div class="boss-defeat-no-loss">Your existing Overall Rank is unchanged. No penalty for the attempt.</div>
+        <div class="exam-fail-reasons">
+          <div class="exam-fail-reasons-title">Pass conditions missed:</div>
+          ${failReasonsHtml}
+        </div>
+        ${weakestModule ? `
+        <div class="boss-defeat-recommend" style="--zone-accent:${weakestZone.accent}">
+          <div class="recommend-eyebrow">▸ Recommended Next</div>
+          <div class="recommend-line"><strong>${moduleCleanLabel(weakestModule)} (${weakestZone.zone}).</strong> Lowest module accuracy on this exam (${result.moduleBreakdown[weakestModule].accuracy}%). Run a focused mission to lift it before retry.</div>
+        </div>` : ''}
+      </div>
+
+      <div class="card">
+        <div class="card-title">Performance</div>
+        <div class="challenge-score-grid">${cells}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.6">
+          ${result.pureCount} pure · ${result.mixedCount} mixed · ${result.criticalCount} critical (0%) picks
+        </div>
+      </div>
+
+      <div class="boss-victory-cta-stack">
+        ${weakestModule ? `<button class="btn-mastery-primary" onclick="afterOverallExam('train','${weakestModule}')">▶ Train ${moduleCleanLabel(weakestModule)}</button>` : ''}
+        <button class="btn-mastery-secondary" onclick="afterOverallExam('retry','${oe.targetRank}')">⚔ Retry Exam</button>
+        <button class="btn-mastery-secondary" onclick="afterOverallExam('home')">← Back to Home</button>
+      </div>
+    `;
+    document.getElementById('drillScreen').style.display = 'none';
+    document.getElementById('drillComplete').style.display = 'block';
+    document.getElementById('drillComplete').innerHTML = html;
+  }
+}
+
+function afterOverallExam(action, arg) {
+  const d = App.state.drill;
+  d.overallExam = null;
+  d.mode = 'quick';
+  document.getElementById('drillComplete').style.display = 'none';
+  if (action === 'retry' && arg) {
+    openOverallExam(arg);
+    return;
+  }
+  if (action === 'train' && arg) {
+    enterMissionBrief(arg);
+    return;
+  }
+  if (action === 'path') {
+    switchTab('mastery');
+    setTimeout(() => {
+      const path = document.querySelector('.rank-path');
+      if (path && path.scrollIntoView) path.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+    return;
+  }
+  if (action === 'mastery') {
+    switchTab('mastery');
+    return;
+  }
+  // default: home
+  switchTab('mastery');
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
@@ -7337,8 +8036,10 @@ function applyDrillPreset(moduleId, options) {
   d.moduleFilter = moduleId;
   // v1.8.6: clear any leftover Boss Test state so a fresh Mission isn't
   // mistakenly treated as a challenge (caused stale "Boss Test" badge).
+  // v1.9.0: also clear leftover Overall Exam state.
   d.challenge = null;
-  if (d.mode === 'challenge') d.mode = 'quick';
+  d.overallExam = null;
+  if (d.mode === 'challenge' || d.mode === 'overall_exam') d.mode = 'quick';
   // Auto-select Marginal Focus mode for mixed_decision (high-leverage spots)
   if (moduleId === 'mixed_decision' && !options.preserveMode) {
     d.mode = 'marginal';
@@ -7383,6 +8084,7 @@ function enterMissionBrief(moduleId) {
   d.moduleFilter = moduleId;
   d.mission = getMissionForModule(moduleId);
   d.challenge = null;
+  d.overallExam = null;
   // Default mode for the mission's hand count: pick the smallest mode that
   // can supply the mission's hand count (quick=15, weakness=20, marginal=20,
   // deep=30). For >=25 → deep; for >=20 → marginal (default for mixed_decision)
@@ -7772,7 +8474,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.13</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
