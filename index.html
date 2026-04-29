@@ -2032,6 +2032,99 @@
       color: #f87171;
       padding: 2px 0;
     }
+    /* ============================================================ */
+    /* RETRY LOCK / RECOVERY v1.9.2                                 */
+    /* ============================================================ */
+    .retry-locked-card {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(148,163,184,0.06);
+      border: 1px solid rgba(148,163,184,0.30);
+      text-align: left;
+    }
+    .retry-locked-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .retry-locked-icon {
+      font-size: 14px;
+    }
+    .retry-locked-title {
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+    .retry-locked-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    .retry-locked-paths {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .retry-locked-path {
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .retry-locked-path .path-label {
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+    .retry-locked-path .path-value {
+      font-size: 12px;
+      color: var(--text);
+      margin-top: 2px;
+    }
+    .retry-locked-path .path-value strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .retry-locked-divider {
+      font-size: 10px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+    .retry-ready-card {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(74,222,128,0.10);
+      border: 1px solid rgba(74,222,128,0.45);
+      box-shadow: 0 0 18px rgba(74,222,128,0.20);
+      color: #4ade80;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-align: center;
+      font-weight: 700;
+    }
+    /* Recovery Mission Brief — green-tinted left border to differentiate from regular Mission */
+    .mission-brief-card.recovery-mission::before {
+      background: #4ade80;
+      box-shadow: 0 0 14px #4ade80;
+    }
+    /* Hero "exam-retry-locked" state — neutral gray glow, not exam-color */
+    .mastery-hero.exam-retry-locked {
+      border-color: rgba(148,163,184,0.45);
+      box-shadow:
+        0 0 36px rgba(148,163,184,0.18),
+        inset 0 0 24px rgba(0,0,0,0.35);
+      animation: none;
+    }
     /* v1.9.1: helper text under the primary Recovery Mission CTA */
     .exam-retry-helper {
       font-size: 11px;
@@ -4514,6 +4607,31 @@ function showDrillComplete() {
       objectivesTotal,
       missionPerfect
     };
+
+    // v1.9.2: Recovery Mission completion check
+    // If this was a Recovery Mission AND the user completed all objectives,
+    // increment recoveryCompleted on the latest fail entry. Stash result on
+    // drill state so the result screen can render unlock celebration.
+    if (d.recoveryContext && missionPerfect) {
+      const updatedRetry = recordRecoveryMissionComplete(d.recoveryContext.targetRank);
+      d._recoveryComplete = {
+        targetRank: d.recoveryContext.targetRank,
+        examName: getOverallExamForRank(d.recoveryContext.targetRank).name,
+        recoveryRequired: updatedRetry ? updatedRetry.recoveryRequired : 0,
+        recoveryCompleted: updatedRetry ? updatedRetry.recoveryCompleted : 0,
+        retryUnlocked: updatedRetry ? !updatedRetry.locked : false
+      };
+    } else if (d.recoveryContext && !missionPerfect) {
+      // Recovery attempt didn't meet all objectives — does NOT count toward unlock
+      d._recoveryComplete = {
+        targetRank: d.recoveryContext.targetRank,
+        examName: getOverallExamForRank(d.recoveryContext.targetRank).name,
+        recoveryRequired: 0,
+        recoveryCompleted: 0,
+        retryUnlocked: false,
+        partial: true
+      };
+    }
   }
 
   // v1.2.0 three-state breakdown.
@@ -4657,8 +4775,57 @@ function showDrillComplete() {
     `;
   }
   // Module CTA when preset was active: zone-themed Run Again / Boss Test / Back Home
+  // v1.9.2: Recovery Mission Result gets distinct CTA — exam retry path
   const moduleCtaHtml = (moduleInfo && d.moduleFilter) ? (() => {
     const zone = getModuleZone(d.moduleFilter);
+    const rc = d._recoveryComplete;
+    if (rc) {
+      // Recovery Mission completion CTA
+      const examName = rc.examName;
+      const targetRank = rc.targetRank;
+      if (rc.partial) {
+        // Recovery attempted but objectives missed — count NOT incremented
+        return `
+        <div class="card" style="border-color:rgba(248,113,113,0.35);background:linear-gradient(135deg,rgba(248,113,113,0.06) 0%,var(--surface) 70%)">
+          <div style="font-size:11px;color:#f87171;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:6px">▸ Recovery Did Not Count</div>
+          <div style="font-size:13px;line-height:1.6;margin-bottom:10px">
+            All 3 objectives must be met for a Recovery Mission to count toward unlocking <strong style="color:var(--text)">${examName}</strong> retry. Run again with all objectives passed.
+          </div>
+          <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+            <button class="btn-mastery-secondary" onclick="enterRecoveryMissionBrief('${d.moduleFilter}','${targetRank}')">▶ Try Recovery Again</button>
+            <button class="btn-mastery-secondary" onclick="switchTab('mastery')">← Back to Home</button>
+          </div>
+        </div>`;
+      }
+      if (rc.retryUnlocked) {
+        // Recovery threshold met → retry unlocked
+        return `
+        <div class="card" style="border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,0.10) 0%,var(--surface) 70%);box-shadow:0 0 24px rgba(74,222,128,0.20)">
+          <div style="font-size:11px;color:#4ade80;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px">✨ Exam Retry Ready</div>
+          <div style="font-size:13px;line-height:1.6;margin-bottom:10px">
+            Recovery complete. <strong style="color:var(--text)">${examName}</strong> retry is unlocked.
+          </div>
+          <div style="display:grid;gap:8px">
+            <button class="btn-mastery-primary" onclick="openOverallExam('${targetRank}')">⚔ Retry ${examName}</button>
+            <button class="btn-mastery-secondary" onclick="switchTab('mastery')">← Back to Home</button>
+          </div>
+        </div>`;
+      }
+      // Recovery counted but more needed
+      const remaining = rc.recoveryRequired - rc.recoveryCompleted;
+      return `
+      <div class="card" style="border-color:${zone.accent};background:linear-gradient(135deg,${zone.glow} 0%,var(--surface) 70%)">
+        <div style="font-size:11px;color:${zone.accent};font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:6px">▸ Recovery Progress · ${rc.recoveryCompleted}/${rc.recoveryRequired}</div>
+        <div style="font-size:13px;line-height:1.6;margin-bottom:10px">
+          ${remaining} more Recovery Mission${remaining === 1 ? '' : 's'} unlocks <strong style="color:var(--text)">${examName}</strong> retry. (Or wait for the cooldown timer.)
+        </div>
+        <div style="display:grid;gap:8px">
+          <button class="btn-mastery-primary" onclick="enterRecoveryMissionBrief('${d.moduleFilter}','${targetRank}')">▶ Next Recovery Mission</button>
+          <button class="btn-mastery-secondary" onclick="switchTab('mastery')">← Back to Home</button>
+        </div>
+      </div>`;
+    }
+    // Regular mission CTA (unchanged)
     return `
     <div class="card" style="border-color:${zone.accent};background:linear-gradient(135deg,${zone.glow} 0%,var(--surface) 70%)">
       <div style="font-size:11px;color:${zone.accent};font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:6px">Next Move</div>
@@ -6526,6 +6693,173 @@ function getCooldownTierForRank(targetRank) {
   return 'high'; // Diamond, Master, Grandmaster
 }
 
+// v1.9.2: Soft-cooldown enforcement helper.
+// Walks profile.overallExamHistory backwards looking for the most recent
+// attempt at targetRank. Returns the current retry-lock state for that
+// rank's exam.
+//
+// Rules:
+//   - If the most recent entry for this rank is a PASS  -> not locked
+//   - If the most recent entry is a FAIL:
+//       locked  = (Date.now() < retryLockedUntil) AND (recoveryCompleted < recoveryRequired)
+//       retry unlocks via EITHER path (timer OR recovery)
+//   - If no entry yet for this rank -> not locked
+//
+// Returns { locked, unlocksAt, recoveryRequired, recoveryCompleted,
+//           recoveryRemaining, msRemaining, lastFailEntryIdx, lastFailEntry }
+function getOverallExamRetryState(targetRank) {
+  const profile = App.state.profile;
+  const history = profile.overallExamHistory || [];
+  const empty = {
+    locked: false,
+    unlocksAt: null,
+    recoveryRequired: 0,
+    recoveryCompleted: 0,
+    recoveryRemaining: 0,
+    msRemaining: 0,
+    lastFailEntryIdx: -1,
+    lastFailEntry: null
+  };
+  // Find most recent entry for this rank
+  let lastEntry = null, lastIdx = -1;
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].rankAttempted === targetRank) {
+      lastEntry = history[i];
+      lastIdx = i;
+      break;
+    }
+  }
+  if (!lastEntry) return empty;
+  if (lastEntry.passed) return empty; // most recent attempt passed -> can take again any time
+  // Most recent attempt was a fail
+  const now = Date.now();
+  const lockedUntil = lastEntry.retryLockedUntil || 0;
+  const required = lastEntry.recoveryRequired || 0;
+  const completed = lastEntry.recoveryCompleted || 0;
+  const timerActive = lockedUntil > now;
+  const recoveryActive = required > 0 && completed < required;
+  const locked = timerActive && recoveryActive;
+  return {
+    locked,
+    unlocksAt: lockedUntil,
+    recoveryRequired: required,
+    recoveryCompleted: completed,
+    recoveryRemaining: Math.max(0, required - completed),
+    msRemaining: Math.max(0, lockedUntil - now),
+    lastFailEntryIdx: lastIdx,
+    lastFailEntry: lastEntry
+  };
+}
+
+// v1.9.2: Increment Recovery Mission completion on the most recent failed
+// entry for a target rank. Called from showDrillComplete when a recovery
+// mission completes successfully. Returns the updated retry state so the
+// caller can render an "Exam Retry Ready" celebration if applicable.
+function recordRecoveryMissionComplete(targetRank) {
+  const profile = App.state.profile;
+  const history = profile.overallExamHistory || [];
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].rankAttempted === targetRank && !history[i].passed) {
+      history[i].recoveryCompleted = (history[i].recoveryCompleted || 0) + 1;
+      App.saveProgress();
+      return getOverallExamRetryState(targetRank);
+    }
+  }
+  return null;
+}
+
+// v1.9.2: Format a millisecond duration into "1h 23m" / "14m 32s" / "45s"
+// for cooldown display copy.
+function formatCooldownRemaining(ms) {
+  if (!ms || ms <= 0) return '0s';
+  const totalSec = Math.floor(ms / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${mins}m`;
+  if (mins > 0) return `${mins}m ${secs}s`;
+  return `${secs}s`;
+}
+
+// v1.9.2: Render the "Retry Locked" card showing both unlock paths (cooldown
+// timer + Recovery Mission count). Shared between the Exam Brief and the
+// Failed Exam Result. The cooldown text gets a data attribute so the live
+// ticker (startCooldownTicker) can update it without re-rendering the page.
+function renderRetryLockedCard(targetRank, retryState, isExamBrief) {
+  const exam = getOverallExamForRank(targetRank);
+  const lastFail = retryState.lastFailEntry;
+  const recModule = lastFail ? lastFail.recommendedRecoveryModule : null;
+  const zone = recModule ? getModuleZone(recModule) : null;
+  const recommendName = recModule ? `${zone.zone} Repair` : 'Recovery Mission';
+  const remaining = retryState.recoveryRemaining;
+  const cooldownText = retryState.unlocksAt && retryState.msRemaining > 0
+    ? formatCooldownRemaining(retryState.msRemaining)
+    : 'Now';
+  return `
+    <div class="retry-locked-card">
+      <div class="retry-locked-header">
+        <span class="retry-locked-icon">🔒</span>
+        <span class="retry-locked-title">Retry Locked</span>
+      </div>
+      <div class="retry-locked-sub">${exam.name} retry unlocks via either path below</div>
+      <div class="retry-locked-paths">
+        <div class="retry-locked-path">
+          <div class="path-label">Path 1 · Recovery</div>
+          <div class="path-value">Complete <strong>${remaining}</strong> Recovery Mission${remaining === 1 ? '' : 's'}</div>
+        </div>
+        <div class="retry-locked-divider">or</div>
+        <div class="retry-locked-path">
+          <div class="path-label">Path 2 · Wait</div>
+          <div class="path-value">Retry unlocks in <strong data-retry-cooldown="${targetRank}">${cooldownText}</strong></div>
+        </div>
+      </div>
+      ${recModule && isExamBrief ? `
+        <button class="btn-mastery-primary exam-cta" style="--exam-color:${zone.accent};--exam-glow:${zone.glow};margin-top:10px;width:100%" onclick="enterRecoveryMissionBrief('${recModule}','${targetRank}')">▶ Start Recovery Mission · ${recommendName}</button>
+      ` : ''}
+    </div>
+  `;
+}
+
+// v1.9.2: Live cooldown ticker. Updates any element with [data-retry-cooldown]
+// every second while the cooldown is still active, then auto-stops + re-renders
+// the appropriate view to show "Exam Retry Ready".
+let _cooldownTickerInterval = null;
+function startCooldownTicker(targetRank) {
+  if (_cooldownTickerInterval) clearInterval(_cooldownTickerInterval);
+  const tick = () => {
+    const retry = getOverallExamRetryState(targetRank);
+    const els = document.querySelectorAll(`[data-retry-cooldown="${targetRank}"]`);
+    if (els.length === 0) {
+      clearInterval(_cooldownTickerInterval);
+      _cooldownTickerInterval = null;
+      return;
+    }
+    if (!retry.locked) {
+      // Unlocked — stop ticker and re-render whichever surface is visible
+      clearInterval(_cooldownTickerInterval);
+      _cooldownTickerInterval = null;
+      // If we're currently on the failed exam result, re-render to show ready state
+      if (document.getElementById('drillComplete') && document.getElementById('drillComplete').offsetParent &&
+          document.querySelector('.boss-defeat-card.overall-exam-defeat')) {
+        // Re-render result with current retry state
+        const oe = App.state.drill.overallExam;
+        if (oe) {
+          // Just update the card in-place rather than full re-render
+          const card = document.querySelector('.retry-locked-card');
+          if (card) card.outerHTML = `<div class="retry-ready-card"><span>✨</span> <strong>Exam Retry Ready</strong></div>`;
+        }
+      }
+      return;
+    }
+    const text = formatCooldownRemaining(retry.msRemaining);
+    els.forEach(el => { el.textContent = text; });
+  };
+  tick();
+  _cooldownTickerInterval = setInterval(tick, 1000);
+}
+
 // Verify a profile meets every gate for an exam. Returns
 // { passed, failures: [{ id, label, required, actual }] } so the brief
 // screen can render exactly which gates are still missing.
@@ -6903,8 +7237,9 @@ function openOverallExam(targetRank) {
     if (typeof showToast === 'function') showToast('No exam defined for ' + rankDisplay(targetRank));
     return;
   }
-  // Pre-flight: gates check
+  // Pre-flight: gates check + v1.9.2 retry-lock check
   const gateCheck = checkOverallExamGates(profile, targetRank);
+  const retryState = getOverallExamRetryState(targetRank);
   const v = rankCssVars(targetRank);
   const currentRank = profile.certifications.overallRank;
   // Render Exam Brief
@@ -6977,17 +7312,26 @@ function openOverallExam(targetRank) {
         <strong>Mission · Boss · Overall Exam:</strong> Missions build XP. Boss Tests certify <em>module</em> ranks. Overall Exams certify your <em>Overall Rank</em>. Failing does NOT lower your rank.
       </div>
 
+      ${retryState.locked ? renderRetryLockedCard(targetRank, retryState, true) : ''}
+
       <div class="overall-exam-cta-row">
         <button class="btn-mastery-secondary" onclick="cancelOverallExam()">← Back</button>
-        ${gateCheck.passed
-          ? `<button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="startOverallExam('${targetRank}')">⚔ Start ${exam.name}</button>`
-          : `<button class="btn-mastery-primary exam-cta" disabled style="--exam-color:#6b7280;--exam-glow:rgba(107,114,128,0.3);opacity:0.55;cursor:not-allowed">🔒 Gates Not Met</button>`
+        ${!gateCheck.passed
+          ? `<button class="btn-mastery-primary exam-cta" disabled style="--exam-color:#6b7280;--exam-glow:rgba(107,114,128,0.3);opacity:0.55;cursor:not-allowed">🔒 Gates Not Met</button>`
+          : retryState.locked
+            ? `<button class="btn-mastery-primary exam-cta" disabled style="--exam-color:#6b7280;--exam-glow:rgba(107,114,128,0.3);opacity:0.6;cursor:not-allowed">🔒 Retry Locked</button>`
+            : (retryState.lastFailEntry
+                ? `<button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="startOverallExam('${targetRank}')">⚔ Retry ${exam.name}</button>`
+                : `<button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="startOverallExam('${targetRank}')">⚔ Start ${exam.name}</button>`
+              )
         }
       </div>
     </div>
   `;
   document.getElementById('masteryContent').innerHTML = html;
   document.getElementById('mainContent').scrollTo(0, 0);
+  // v1.9.2: live ticker if retry is locked
+  if (retryState.locked) startCooldownTicker(targetRank);
 }
 
 function startOverallExam(targetRank) {
@@ -7062,16 +7406,21 @@ function showOverallExamResult() {
     breakdownEntries.sort((a, b) => (a[1].accuracy || 0) - (b[1].accuracy || 0));
     if (breakdownEntries.length > 0) recommendedRecoveryModule = breakdownEntries[0][0];
   }
-  // Compute retry-locked-until timestamp from cooldown rules (unused until
-  // enforcement ships; saved on the entry so future versions can read it
-  // without re-deriving).
+  // v1.9.2: Compute retry-locked-until + recoveryRequired from cooldown rules.
+  // Now ENFORCED — Hero CTA / Rank Path / Exam Brief all check getOverallExamRetryState
+  // and adjust their UI accordingly. Retry unlocks via either path expiring.
   let retryLockedUntil = null;
+  let recoveryRequired = 0;
   if (!result.passed && typeof OVERALL_EXAM_COOLDOWN_RULES !== 'undefined') {
     const tier = getCooldownTierForRank(oe.targetRank);
     const cd = OVERALL_EXAM_COOLDOWN_RULES[tier];
     const failKey = consecutiveFails === 1 ? 'fail1' : 'fail2plus';
-    const minutes = (cd && cd[failKey] && cd[failKey].retryAfterMinutes) || 0;
-    if (minutes > 0) retryLockedUntil = Date.now() + minutes * 60 * 1000;
+    const cdRule = cd && cd[failKey];
+    if (cdRule) {
+      const minutes = cdRule.retryAfterMinutes || 0;
+      recoveryRequired = cdRule.recoveryMissions || 0;
+      if (minutes > 0) retryLockedUntil = Date.now() + minutes * 60 * 1000;
+    }
   }
 
   const historyEntry = {
@@ -7085,12 +7434,12 @@ function showOverallExamResult() {
     criticalMistakes: result.criticalCount,
     moduleBreakdown: result.moduleBreakdown,
     seed: oe.seed,
-    // v1.9.1 groundwork (soft cooldown not enforced yet):
+    // v1.9.2: ENFORCED soft cooldown
     consecutiveFails,
     recommendedRecoveryModule,
     retryLockedUntil,
-    recoveryRequired: false,
-    recoveryCompleted: false
+    recoveryRequired,
+    recoveryCompleted: 0
   };
   profile.overallExamHistory.push(historyEntry);
 
@@ -7247,11 +7596,11 @@ function renderOverallExamResult(oe, result, oldRank) {
     const weakestZone = weakestModule ? getModuleZone(weakestModule) : null;
     const failReasonsHtml = result.failReasons.map(f => `<div class="exam-fail-reason-row">✗ ${f.label}</div>`).join('');
 
-    // v1.9.1: stronger Recovery framing — Train Weak Spot is the obvious primary,
-    // Retry Exam is intentionally de-emphasized (still available, but not the
-    // first thing the eye lands on). Coaching copy makes failure feel like
-    // guidance, not punishment.
+    // v1.9.1: stronger Recovery framing.
+    // v1.9.2: Retry now actually locked behind cooldown OR recovery completion.
+    //         Retry Locked card embedded; primary CTA is Recovery Mission.
     const weakestAcc = weakestModule ? result.moduleBreakdown[weakestModule].accuracy : null;
+    const retryState = getOverallExamRetryState(oe.targetRank);
     const html = `
       <div class="boss-defeat-card overall-exam-defeat" style="--rank-color:${v.color};--rank-glow:${v.glow}">
         <div class="boss-defeat-stamp">⚔ ${examName.toUpperCase()} HELD</div>
@@ -7264,9 +7613,10 @@ function renderOverallExamResult(oe, result, oldRank) {
         </div>
         ${weakestModule ? `
         <div class="boss-defeat-recommend" style="--zone-accent:${weakestZone.accent}">
-          <div class="recommend-eyebrow">▸ Recovery Plan · Train Weak Spot</div>
-          <div class="recommend-line"><strong>${moduleCleanLabel(weakestModule)} (${weakestZone.zone}) — ${weakestAcc}% on this exam.</strong> This is your weakest zone. Train it before retrying for a better chance.</div>
+          <div class="recommend-eyebrow">▸ Recovery Plan · Train Weak Zone</div>
+          <div class="recommend-line"><strong>${moduleCleanLabel(weakestModule)} (${weakestZone.zone}) — ${weakestAcc}% on this exam.</strong> This is your weakest zone.</div>
         </div>` : ''}
+        ${retryState.locked ? renderRetryLockedCard(oe.targetRank, retryState, false) : ''}
       </div>
 
       <div class="card">
@@ -7277,23 +7627,27 @@ function renderOverallExamResult(oe, result, oldRank) {
         </div>
       </div>
 
-      <!-- v1.9.1: Train Weak Spot is now the primary CTA; Retry de-emphasized -->
+      <!-- v1.9.2: Recovery Mission is the primary action; Retry is locked behind unlock -->
       <div class="boss-victory-cta-stack">
         ${weakestModule
-          ? `<button class="btn-mastery-primary" onclick="afterOverallExam('train','${weakestModule}')">▶ Recovery Mission · Train ${moduleCleanLabel(weakestModule)}</button>
-             <div class="exam-retry-helper">Lift your ${moduleCleanLabel(weakestModule)} accuracy before another exam attempt.</div>`
+          ? `<button class="btn-mastery-primary" onclick="afterOverallExam('recovery','${weakestModule}','${oe.targetRank}')">▶ Start Recovery Mission · ${getModuleZone(weakestModule).zone} Repair</button>`
           : ''}
-        <button class="btn-mastery-secondary subtle-retry" onclick="afterOverallExam('retry','${oe.targetRank}')">⚔ Retry ${examName} now</button>
+        ${retryState.locked
+          ? `<button class="btn-mastery-secondary subtle-retry" disabled style="opacity:0.55;cursor:not-allowed">🔒 Retry Locked</button>`
+          : `<button class="btn-mastery-secondary" onclick="afterOverallExam('retry','${oe.targetRank}')">⚔ Retry ${examName}</button>`
+        }
         <button class="btn-mastery-secondary" onclick="afterOverallExam('home')">← Back to Home</button>
       </div>
     `;
     document.getElementById('drillScreen').style.display = 'none';
     document.getElementById('drillComplete').style.display = 'block';
     document.getElementById('drillComplete').innerHTML = html;
+    // v1.9.2: live cooldown ticker
+    if (retryState.locked) startCooldownTicker(oe.targetRank);
   }
 }
 
-function afterOverallExam(action, arg) {
+function afterOverallExam(action, arg, arg2) {
   const d = App.state.drill;
   d.overallExam = null;
   d.mode = 'quick';
@@ -7304,6 +7658,11 @@ function afterOverallExam(action, arg) {
   }
   if (action === 'train' && arg) {
     enterMissionBrief(arg);
+    return;
+  }
+  // v1.9.2: Recovery Mission entry — distinct from regular train
+  if (action === 'recovery' && arg && arg2) {
+    enterRecoveryMissionBrief(arg, arg2);
     return;
   }
   if (action === 'path') {
@@ -7385,7 +7744,9 @@ function _renderMasteryImpl() {
   const examUnlocked = !!(nextOverall && masteryScore >= nextThreshold);
   const ptsRemaining = nextOverall ? Math.max(0, nextThreshold - masteryScore) : 0;
   const nextRankVars = nextOverall ? rankCssVars(nextOverall) : null;
-  const heroExtraClass = examUnlocked ? ' exam-unlocked' : '';
+  // v1.9.2: check if retry is currently locked for the next-rank exam
+  const heroRetryState = nextOverall ? getOverallExamRetryState(nextOverall) : { locked: false };
+  const heroExtraClass = examUnlocked ? (heroRetryState.locked ? ' exam-retry-locked' : ' exam-unlocked') : '';
   const progressBarColor = examUnlocked ? nextRankVars.color : null;
   let html = `
     <div class="mastery-hero${promotedClass}${heroExtraClass}" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}${examUnlocked ? ';--exam-color:' + nextRankVars.color + ';--exam-glow:' + nextRankVars.glow : ''}">
@@ -7421,7 +7782,9 @@ function _renderMasteryImpl() {
         </div>
         ${nextOverall
           ? (examUnlocked
-              ? `<div class="hero-exam-unlock-line" style="color:${nextRankVars.color}"><span class="unlock-icon">🏆</span> <strong>${rankDisplay(nextOverall)} EXAM UNLOCKED</strong> · You qualify to certify</div>`
+              ? (heroRetryState.locked
+                  ? `<div class="hero-exam-unlock-line" style="color:#94a3b8;border-color:rgba(148,163,184,0.45)"><span class="unlock-icon">🔒</span> <strong>RETRY LOCKED</strong> · ${heroRetryState.recoveryRemaining > 0 ? heroRetryState.recoveryRemaining + ' Recovery Mission' + (heroRetryState.recoveryRemaining===1?'':'s') + ' OR ' : ''}<span data-retry-cooldown="${nextOverall}">${formatCooldownRemaining(heroRetryState.msRemaining)}</span></div>`
+                  : `<div class="hero-exam-unlock-line" style="color:${nextRankVars.color}"><span class="unlock-icon">${heroRetryState.lastFailEntry ? '✨' : '🏆'}</span> <strong>${rankDisplay(nextOverall)} EXAM ${heroRetryState.lastFailEntry ? 'RETRY READY' : 'UNLOCKED'}</strong> · ${heroRetryState.lastFailEntry ? 'You can retry now' : 'You qualify to certify'}</div>`)
               : `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts <span style="opacity:0.75">(${ptsRemaining.toFixed(1)} pts to go)</span></div>`)
           : `<div style="font-size:11px;color:var(--success);margin-top:8px">🏆 End Boss rank achieved</div>`
         }
@@ -7429,8 +7792,13 @@ function _renderMasteryImpl() {
 
       <div class="hero-cta-row">
         ${examUnlocked
-          ? `<button class="btn-mastery-primary exam-cta" style="--exam-color:${nextRankVars.color};--exam-glow:${nextRankVars.glow}" onclick="openOverallExam('${nextOverall}')">🏆  Take ${rankDisplay(nextOverall)} Exam</button>
-             <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`
+          ? (heroRetryState.locked
+              ? `<button class="btn-mastery-primary exam-cta" disabled style="--exam-color:#6b7280;--exam-glow:rgba(107,114,128,0.3);opacity:0.6;cursor:not-allowed">🔒 Retry Locked</button>
+                 ${heroRetryState.lastFailEntry && heroRetryState.lastFailEntry.recommendedRecoveryModule
+                   ? `<button class="btn-mastery-secondary" onclick="enterRecoveryMissionBrief('${heroRetryState.lastFailEntry.recommendedRecoveryModule}','${nextOverall}')">▶ Recovery Mission</button>`
+                   : `<button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`}`
+              : `<button class="btn-mastery-primary exam-cta" style="--exam-color:${nextRankVars.color};--exam-glow:${nextRankVars.glow}" onclick="openOverallExam('${nextOverall}')">${heroRetryState.lastFailEntry ? '⚔  Retry ' + rankDisplay(nextOverall) + ' Exam' : '🏆  Take ' + rankDisplay(nextOverall) + ' Exam'}</button>
+                 <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`)
           : `<button class="btn-mastery-primary" onclick="masteryStartRecommendedDrill()">▶  Start Today's Mission</button>
              <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`
         }
@@ -7613,10 +7981,18 @@ function _renderMasteryImpl() {
       status = `<span style="color:var(--text-secondary)">🔒 ${ptsAway.toFixed(1)} pts to go</span>`;
       pill = '';
     }
-    // Take Exam CTA only when the rank is the user's next target AND ready AND not already certified
-    const takeExamCta = (isNext && reached && !certified)
-      ? `<button class="exam-step-claim-btn" style="--rank-color:${v.color};--rank-glow:${v.glow}" onclick="openOverallExam('${r}')">Take Exam</button>`
-      : '';
+    // v1.9.2: Take Exam mini-CTA reflects retry lock state.
+    let takeExamCta = '';
+    if (isNext && reached && !certified) {
+      const rps = getOverallExamRetryState(r);
+      if (rps.locked) {
+        takeExamCta = `<button class="exam-step-claim-btn" style="--rank-color:#6b7280;--rank-glow:rgba(107,114,128,0.3);opacity:0.65;cursor:not-allowed" disabled>🔒 Locked</button>`;
+      } else if (rps.lastFailEntry) {
+        takeExamCta = `<button class="exam-step-claim-btn" style="--rank-color:${v.color};--rank-glow:${v.glow}" onclick="openOverallExam('${r}')">Retry</button>`;
+      } else {
+        takeExamCta = `<button class="exam-step-claim-btn" style="--rank-color:${v.color};--rank-glow:${v.glow}" onclick="openOverallExam('${r}')">Take Exam</button>`;
+      }
+    }
     html += `
       <div class="${cls}" style="--rank-color:${v.color};--rank-glow:${v.glow}">
         <div class="exam-step-emblem-wrap">${renderRankEmblem(r, 'small')}</div>
@@ -7667,6 +8043,10 @@ function _renderMasteryImpl() {
   </div>`;
 
   document.getElementById('masteryContent').innerHTML = html;
+  // v1.9.2: if Hero is showing a retry-locked timer, start the live ticker
+  if (heroRetryState && heroRetryState.locked && nextOverall) {
+    startCooldownTicker(nextOverall);
+  }
 }
 
 // ============================================================
@@ -8243,6 +8623,7 @@ function enterMissionBrief(moduleId) {
   d.mission = getMissionForModule(moduleId);
   d.challenge = null;
   d.overallExam = null;
+  d.recoveryContext = null; // v1.9.2: regular missions clear recovery context
   // Default mode for the mission's hand count: pick the smallest mode that
   // can supply the mission's hand count (quick=15, weakness=20, marginal=20,
   // deep=30). For >=25 → deep; for >=20 → marginal (default for mixed_decision)
@@ -8268,6 +8649,36 @@ function enterMissionBrief(moduleId) {
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
+// v1.9.2: Recovery Mission entry. Distinct from regular Mission entry:
+//   - Sets d.recoveryContext = { targetRank, moduleId } so the Brief and
+//     Result screens render with Recovery framing (Repair zone name, "exam
+//     retry unlocked" reward language, distinct CTA wording)
+//   - On successful completion (all objectives met), increments
+//     recoveryCompleted on the latest fail entry for targetRank and
+//     potentially unlocks the exam retry
+function enterRecoveryMissionBrief(moduleId, targetRank) {
+  const d = App.state.drill;
+  d.moduleFilter = moduleId;
+  d.mission = getMissionForModule(moduleId);
+  d.challenge = null;
+  d.overallExam = null;
+  d.recoveryContext = { targetRank, moduleId };
+  // Pick same auto-mode as enterMissionBrief
+  if (moduleId === 'mixed_decision') d.mode = 'marginal';
+  else if (d.mission && d.mission.handCount >= 25) d.mode = 'deep';
+  else if (d.mission && d.mission.handCount > 15) d.mode = 'weakness';
+  else d.mode = 'quick';
+  switchTab('drill');
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  var cs = document.getElementById('challengeSetup');
+  if (cs) cs.style.display = 'none';
+  document.getElementById('missionBrief').style.display = 'block';
+  renderMissionBrief();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
 function renderMissionBrief() {
   const el = document.getElementById('missionBrief');
   if (!el) return;
@@ -8277,6 +8688,10 @@ function renderMissionBrief() {
   const zone = getModuleZone(m.module);
   const moduleInfo = MODULE_DISPLAY_INFO[m.module] || { label: m.module, desc: '' };
   const cleanLabel = moduleCleanLabel(m.module);
+  // v1.9.2: Recovery framing context
+  const isRecovery = !!d.recoveryContext;
+  const recoveryRank = isRecovery ? d.recoveryContext.targetRank : null;
+  const recoveryExam = isRecovery ? getOverallExamForRank(recoveryRank) : null;
 
   // Pool stats for "Focus" section
   let poolSize = 0, handsInPool = 0;
@@ -8303,12 +8718,52 @@ function renderMissionBrief() {
     : d.mode === 'deep' ? 'Deep Study'
     : 'Quick Drill';
 
+  // v1.9.2: Recovery Mission gets distinct framing
+  const briefName = isRecovery ? `${zone.zone} Repair` : m.name;
+  const briefEyebrow = isRecovery ? '▸ Recovery Mission · Exam Retry Path' : '▸ Mission Brief';
+  const briefMeta = isRecovery
+    ? `${cleanLabel} Recovery · Unlock ${recoveryExam ? recoveryExam.name : 'Exam'} retry`
+    : `${cleanLabel} · ${difficultyLine}`;
+  const reasonBlock = isRecovery ? `
+    <div class="mission-brief-section">
+      <div class="mission-brief-section-title">Reason</div>
+      <div class="mission-brief-objective" style="background:rgba(248,113,113,0.04);border-color:rgba(248,113,113,0.18)">
+        <div style="font-size:14px;color:#f87171">⚠</div>
+        <div style="flex:1;font-size:12px;color:var(--text-secondary)">${cleanLabel} was your weakest section in the ${recoveryExam ? recoveryExam.name : 'last exam'}. Lift it before retry.</div>
+      </div>
+    </div>` : '';
+  const rewardBlock = isRecovery ? `
+    <div class="mission-brief-section">
+      <div class="mission-brief-section-title">Reward</div>
+      <div class="mission-brief-reward" style="background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.30);color:#4ade80">
+        <span class="reward-icon">✨</span>
+        <div style="flex:1">
+          <strong>+1 toward Exam Retry Unlock</strong><br>
+          <span style="font-size:11px;opacity:0.85;color:var(--text-secondary)">Plus +${m.maxRewardXP} XP on perfect completion</span>
+        </div>
+      </div>
+    </div>` : `
+    <div class="mission-brief-section">
+      <div class="mission-brief-section-title">Rewards</div>
+      <div class="mission-brief-reward">
+        <span class="reward-icon">★</span>
+        <div style="flex:1">
+          <strong>+${m.maxRewardXP} XP</strong> on perfect mission<br>
+          <span style="font-size:11px;opacity:0.85;color:var(--text-secondary)">+1 XP per hand · +${m.xpPerObjective} per objective met · +${m.xpPerfectBonus} perfect bonus</span>
+        </div>
+      </div>
+    </div>`;
+  const explainerBlock = isRecovery
+    ? `<div class="mission-brief-explainer"><strong>Recovery Mission · Train Weak Zone:</strong> Complete all 3 objectives to count toward your <strong>${recoveryExam ? recoveryExam.name : 'Exam'}</strong> retry unlock. Failed exam does NOT lower your rank.</div>`
+    : `<div class="mission-brief-explainer"><strong>Mission vs Boss Test:</strong> Missions build skill and XP. They do <strong>not</strong> change your official Module Rank. To certify a rank-up, attempt the Boss Test from Mastery Home.</div>`;
+  const ctaText = isRecovery ? '▶ Start Recovery Mission' : '▶ Start Mission';
+
   el.innerHTML = `
-    <div class="mission-brief-card" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+    <div class="mission-brief-card${isRecovery ? ' recovery-mission' : ''}" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
       <div class="mission-brief-scene-banner" style="color:${zone.accent}">${renderZoneSceneSvg(m.module, { width: 320, height: 100 })}</div>
-      <div class="mission-brief-eyebrow">▸ Mission Brief</div>
-      <div class="mission-brief-name">${m.name}</div>
-      <div class="mission-brief-meta">${cleanLabel} · ${difficultyLine}</div>
+      <div class="mission-brief-eyebrow">${briefEyebrow}</div>
+      <div class="mission-brief-name">${briefName}</div>
+      <div class="mission-brief-meta">${briefMeta}</div>
 
       <div class="mission-brief-zone">
         <div class="mission-brief-zone-glyph">${zone.glyph}</div>
@@ -8317,6 +8772,8 @@ function renderMissionBrief() {
           <div class="mission-brief-zone-motto">${zone.motto}</div>
         </div>
       </div>
+
+      ${reasonBlock}
 
       <div class="mission-brief-section">
         <div class="mission-brief-section-title">Objectives</div>
@@ -8333,24 +8790,13 @@ function renderMissionBrief() {
         </div>
       </div>
 
-      <div class="mission-brief-section">
-        <div class="mission-brief-section-title">Rewards</div>
-        <div class="mission-brief-reward">
-          <span class="reward-icon">★</span>
-          <div style="flex:1">
-            <strong>+${m.maxRewardXP} XP</strong> on perfect mission<br>
-            <span style="font-size:11px;opacity:0.85;color:var(--text-secondary)">+1 XP per hand · +${m.xpPerObjective} per objective met · +${m.xpPerfectBonus} perfect bonus</span>
-          </div>
-        </div>
-      </div>
+      ${rewardBlock}
 
-      <div class="mission-brief-explainer">
-        <strong>Mission vs Boss Test:</strong> Missions build skill and XP. They do <strong>not</strong> change your official Module Rank. To certify a rank-up, attempt the Boss Test from Mastery Home.
-      </div>
+      ${explainerBlock}
 
       <div class="mission-brief-cta-row">
         <button class="btn-mastery-secondary" onclick="exitMission()">← Back to Home</button>
-        <button class="btn-mastery-primary" onclick="confirmMissionStart()">▶ Start Mission</button>
+        <button class="btn-mastery-primary" onclick="confirmMissionStart()">${ctaText}</button>
       </div>
     </div>
   `;
@@ -8373,6 +8819,7 @@ function exitMission() {
   d.moduleFilter = null;
   d.mission = null;
   d.challenge = null;
+  d.recoveryContext = null;
   document.getElementById('missionBrief').style.display = 'none';
   document.getElementById('drillSetup').style.display = 'none';
   document.getElementById('drillScreen').style.display = 'none';
@@ -8632,7 +9079,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
