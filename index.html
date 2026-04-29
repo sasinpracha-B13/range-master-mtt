@@ -883,6 +883,197 @@
       cursor: pointer;
     }
     .drill-preset-clear:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* ============================================================ */
+    /* MODULE ZONES v1.8.6  — fantasy-lite themed mission framing    */
+    /* ============================================================ */
+    /* Zone banner used on Practice setup, Mission Result, and module headers.
+       Pattern: thin gradient strip + zone name + motto. Subtle, premium. */
+    .zone-banner {
+      position: relative;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background:
+        radial-gradient(120% 140% at 0% 0%, var(--zone-glow, rgba(96,165,250,0.18)) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(255,255,255,0.04) 0%, var(--surface) 60%);
+      border: 1px solid var(--zone-accent, #60a5fa);
+      box-shadow: 0 0 24px var(--zone-glow, rgba(96,165,250,0.18));
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow: hidden;
+    }
+    .zone-banner::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--zone-accent, #60a5fa);
+      box-shadow: 0 0 14px var(--zone-accent, #60a5fa);
+    }
+    .zone-banner-glyph {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--zone-glow, rgba(96,165,250,0.18));
+      border: 1px solid var(--zone-accent, #60a5fa);
+      font-size: 22px;
+      color: var(--zone-accent, #60a5fa);
+      text-shadow: 0 0 8px var(--zone-accent, #60a5fa);
+    }
+    .zone-banner-info { flex: 1; min-width: 0; }
+    .zone-banner-eyebrow {
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--zone-accent, #60a5fa);
+      font-weight: 700;
+      opacity: 0.9;
+    }
+    .zone-banner-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.3px;
+      margin-top: 2px;
+    }
+    .zone-banner-motto {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 1px;
+      letter-spacing: 0.2px;
+    }
+    .zone-banner-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Active mission header during drill — tighter version of zone-banner */
+    .mission-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--zone-glow, rgba(96,165,250,0.18));
+      color: var(--zone-accent, #60a5fa);
+      border: 1px solid var(--zone-accent, #60a5fa);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px var(--zone-glow, rgba(96,165,250,0.18));
+    }
+    .mission-header-badge .glyph {
+      font-size: 11px;
+      filter: drop-shadow(0 0 3px var(--zone-accent));
+    }
+
+    /* ============================================================ */
+    /* MISSION RESULT v1.8.6 — celebratory but premium               */
+    /* ============================================================ */
+    .mission-result-stamp {
+      position: relative;
+      padding: 22px 18px 18px;
+      border-radius: 14px;
+      text-align: center;
+      background:
+        radial-gradient(80% 100% at 50% 0%, var(--zone-glow, rgba(96,165,250,0.22)) 0%, transparent 70%),
+        linear-gradient(135deg, rgba(255,255,255,0.04) 0%, var(--surface) 70%);
+      border: 1px solid var(--zone-accent, #60a5fa);
+      box-shadow: 0 0 28px var(--zone-glow, rgba(96,165,250,0.20));
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .mission-result-stamp::after {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          transparent 0,
+          transparent 14px,
+          rgba(255,255,255,0.014) 14px,
+          rgba(255,255,255,0.014) 15px
+        );
+    }
+    .mission-result-eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--zone-accent, #60a5fa);
+      font-weight: 700;
+    }
+    .mission-result-zone {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-top: 4px;
+      color: var(--text);
+    }
+    .mission-result-motto {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 2px;
+    }
+    .mission-result-score {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .mission-result-score .pct {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--score-color, #60a5fa);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .mission-result-score .label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .mission-result-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* ============================================================ */
+    /* GAME-FEEDBACK CHIP v1.8.6 — Clean Read / Mix Aware / Punt    */
+    /* ============================================================ */
+    .feedback-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid var(--chip-color, rgba(255,255,255,0.1));
+      background: var(--chip-bg, rgba(255,255,255,0.04));
+      color: var(--chip-color, var(--text));
+      margin-top: 6px;
+    }
+    .feedback-chip.clean    { --chip-color: #4ade80; --chip-bg: rgba(74,222,128,0.10); }
+    .feedback-chip.sharp    { --chip-color: #6ee7b7; --chip-bg: rgba(110,231,183,0.10); }
+    .feedback-chip.mix      { --chip-color: #fbbf24; --chip-bg: rgba(251,191,36,0.10); }
+    .feedback-chip.thin     { --chip-color: #f59e0b; --chip-bg: rgba(245,158,11,0.10); }
+    .feedback-chip.punt     { --chip-color: #f87171; --chip-bg: rgba(248,113,113,0.10); }
+    .feedback-chip.critical { --chip-color: #ef4444; --chip-bg: rgba(239,68,68,0.14); }
+
     .reasoning-box {
       background: rgba(110,231,183,0.05);
       border: 1px solid rgba(110,231,183,0.15);
@@ -2056,10 +2247,17 @@ function renderDrillQuestion() {
   const challengeBadge = (d.mode === 'challenge' && d.challenge)
     ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
     : '';
+  // v1.8.6: zone-themed active mission badge (only when a module mission is active and not in boss test)
+  const missionBadge = (d.moduleFilter && d.mode !== 'challenge')
+    ? (() => {
+        const z = getModuleZone(d.moduleFilter);
+        return `<span class="mission-header-badge" style="--zone-accent:${z.accent};--zone-glow:${z.glow}"><span class="glyph">${z.glyph}</span> ${z.zone}</span>`;
+      })()
+    : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
-      <span class="drill-progress-text">${challengeBadge} Q ${current}/${total}</span>
+      <span class="drill-progress-text">${challengeBadge}${missionBadge} Q ${current}/${total}</span>
       ${streakBadge}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${pct}%"></div></div>
@@ -2306,6 +2504,26 @@ function classifyAnswer(userAction, freqs) {
   return { result, score, userFreq: f, isPure };
 }
 
+// v1.8.6: Game-feel feedback chip — translates clinical pure/mix terminology
+// into game language ("Clean Read", "Sharp Pick", "Critical Punt", etc.).
+// Returns { cls, label } where cls maps to .feedback-chip CSS variants.
+function getFeedbackChip(cls, freqs) {
+  const maxFreq = Math.max(0, ...Object.values(freqs || {}));
+  const isPure = maxFreq >= 0.95;
+  if (cls.result === 'correct') {
+    if (isPure)         return { cls: 'clean', label: '🎯 Clean Read' };
+    if (maxFreq >= 0.7) return { cls: 'sharp', label: '✓ Sharp Pick' };
+    return { cls: 'sharp', label: '✓ Mix Aware' };
+  }
+  if (cls.result === 'partial') {
+    return { cls: 'mix', label: '≈ Acceptable Mix' };
+  }
+  // wrong
+  if (isPure)         return { cls: 'critical', label: '❌ Critical Punt' };
+  if (cls.userFreq < 0.1) return { cls: 'punt', label: '⚠ Off-Range' };
+  return { cls: 'thin', label: '⚠ Thin Line' };
+}
+
 // v1.7.2: Classify a mistake into a leak category. Called only when the
 // user's answer is wrong (or partial — caller decides). Returns null if the
 // answer is correct or the scenario doesn't fit a leak pattern.
@@ -2520,10 +2738,22 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
   const animateCls = cls.result === 'correct' ? 'animate-correct' : cls.result === 'partial' ? 'animate-partial' : 'animate-wrong';
   const eduNote = getEducationalNote(q, userAction, cls);
   const quickMode = d.mode === 'quick';
+  // v1.8.6: game-feel feedback chip + mission header badge
+  const chip = getFeedbackChip(cls, q.freqs);
+  const chipHtml = `<div class="feedback-chip ${chip.cls}">${chip.label}</div>`;
+  const challengeBadgeAns = (d.mode === 'challenge' && d.challenge)
+    ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
+    : '';
+  const missionBadgeAns = (d.moduleFilter && d.mode !== 'challenge')
+    ? (() => {
+        const z = getModuleZone(d.moduleFilter);
+        return `<span class="mission-header-badge" style="--zone-accent:${z.accent};--zone-glow:${z.glow}"><span class="glyph">${z.glyph}</span> ${z.zone}</span>`;
+      })()
+    : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
-      <span class="drill-progress-text">Q ${d.currentIndex+1}/${d.queue.length}</span>
+      <span class="drill-progress-text">${challengeBadgeAns}${missionBadgeAns} Q ${d.currentIndex+1}/${d.queue.length}</span>
       ${d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : ''}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${(d.currentIndex/d.queue.length*100).toFixed(0)}%"></div></div>
@@ -2531,6 +2761,7 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
     <div class="situation-card ${animateCls}">
       <div class="answer-result ${cls.result}">
         ${resultIcon} ${resultText}
+        ${chipHtml}
         ${cls.result !== 'correct' ? `<div style="font-size:14px;font-weight:500;margin-top:4px;color:var(--text-secondary)">GTO pick: <strong style="color:var(--text)">${formatActionLabel(correctAction).toUpperCase()}</strong> · Your pick: <strong style="color:var(--text)">${formatActionLabel(userAction).toUpperCase()}</strong></div>` : ''}
       </div>
 
@@ -2668,7 +2899,7 @@ function showDrillComplete() {
   document.getElementById('drillComplete').style.display = 'block';
   // v1.8.4: build session header — module-aware when preset was active
   const moduleInfo = d.moduleFilter ? MODULE_DISPLAY_INFO[d.moduleFilter] : null;
-  const sessionTitle = moduleInfo ? `${moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim()} Practice Complete` : 'Drill Complete!';
+  const sessionTitle = moduleInfo ? `${moduleCleanLabel(d.moduleFilter)} Mission Complete` : 'Drill Complete!';
   const xpInfo = d._sessionXP || null;
   const xpHtml = xpInfo ? `
     <div class="card" style="background:linear-gradient(135deg,rgba(212,175,55,0.08) 0%,var(--surface) 100%);border-color:rgba(212,175,55,0.3)">
@@ -2686,31 +2917,63 @@ function showDrillComplete() {
       </div>
     </div>
   ` : '';
-  // Module CTA when preset was active: encourage Boss Test or another Practice
-  const moduleCtaHtml = (moduleInfo && d.moduleFilter) ? `
-    <div class="card" style="border-color:rgba(96,165,250,0.2);background:rgba(96,165,250,0.03)">
-      <div style="font-size:11px;color:#60a5fa;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">Next Step</div>
+  // v1.8.6: Mission Result stamp (zone-themed) — replaces generic score-circle when a mission is active
+  let missionStampHtml = '';
+  if (moduleInfo && d.moduleFilter) {
+    const zone = getModuleZone(d.moduleFilter);
+    const verdictText = pct >= 92 ? 'Decisive Victory'
+                       : pct >= 80 ? 'Mission Cleared'
+                       : pct >= 65 ? 'Mission Survived'
+                       : 'Mission Failed';
+    missionStampHtml = `
+      <div class="mission-result-stamp" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow};--score-color:${pctColor}">
+        <div class="mission-result-eyebrow">▸ ${verdictText}</div>
+        <div class="mission-result-zone">${zone.glyph} ${zone.zone}</div>
+        <div class="mission-result-motto">${zone.motto}</div>
+        <div class="mission-result-score">
+          <span class="pct" style="--score-color:${pctColor};color:${pctColor}">${pct}%</span>
+          <span class="label">accuracy · ${totalPoints.toFixed(1)}/${total} pts</span>
+        </div>
+        <div class="mission-result-meta">${elapsed} min · ${d.mode} mode · ${moduleCleanLabel(d.moduleFilter)} Mission</div>
+      </div>
+    `;
+  }
+  // Module CTA when preset was active: zone-themed Run Again / Boss Test / Back Home
+  const moduleCtaHtml = (moduleInfo && d.moduleFilter) ? (() => {
+    const zone = getModuleZone(d.moduleFilter);
+    return `
+    <div class="card" style="border-color:${zone.accent};background:linear-gradient(135deg,${zone.glow} 0%,var(--surface) 70%)">
+      <div style="font-size:11px;color:${zone.accent};font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:6px">Next Move</div>
       <div style="font-size:13px;line-height:1.6;margin-bottom:10px">
-        Practice doesn't change your official rank. Ready to certify?
-        Take the <strong style="color:var(--text)">${moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim()} Boss Test</strong>
-        to attempt rank-up.
+        Missions give XP. They do <strong>not</strong> change your official rank.
+        To certify a rank-up, attempt the <strong style="color:var(--text)">${moduleCleanLabel(d.moduleFilter)} Boss Test</strong>.
       </div>
       <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
-        <button class="btn-mastery-secondary" onclick="masteryTrainModule('${d.moduleFilter}')">▶ Practice Again</button>
-        <button class="btn-mastery-primary" onclick="masteryBossTestModule('${d.moduleFilter}')">🏆 Take Boss Test</button>
+        <button class="btn-mastery-secondary" onclick="masteryTrainModule('${d.moduleFilter}')">▶ Run Again</button>
+        <button class="btn-mastery-primary" onclick="masteryBossTestModule('${d.moduleFilter}')">🏆 Attempt Boss</button>
+      </div>
+      <div style="margin-top:8px">
+        <button class="btn btn-secondary btn-full" onclick="switchTab('mastery')" style="font-size:12px">← Back to Home</button>
       </div>
     </div>
-  ` : '';
+  `;
+  })() : '';
 
-  document.getElementById('drillComplete').innerHTML = `
+  // Generic score-circle header for non-mission drills (custom, marginal, etc.)
+  const genericHeader = (!moduleInfo) ? `
     <div style="text-align:center;padding:16px 0 8px">
       <div class="score-circle" style="border-color:${pctColor}">
         <div class="score-number" style="color:${pctColor}">${pct}%</div>
         <div class="score-label">${totalPoints.toFixed(1)}/${total} pts</div>
       </div>
       <div class="section-title">${sessionTitle}</div>
-      <div class="section-subtitle">${elapsed} min · ${d.mode} mode${moduleInfo ? ' · ' + moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim() : ''}</div>
+      <div class="section-subtitle">${elapsed} min · ${d.mode} mode</div>
     </div>
+  ` : '';
+
+  document.getElementById('drillComplete').innerHTML = `
+    ${missionStampHtml}
+    ${genericHeader}
 
     ${xpHtml}
     ${moduleCtaHtml}
@@ -3679,6 +3942,32 @@ const MODULE_DISPLAY_INFO = {
   mixed_decision: { label: '🧠 Mixed Decision',  icon: '🧠', desc: 'Open RFI deep-stack + complex mixes' }
 };
 
+// v1.8.6: Module Zones — fantasy-lite themed identity for each module so
+// Practice/Boss screens read as "Enter [Zone]" rather than generic drill setup.
+// Each zone has a name, motto, accent color, glow color, and emblem glyph.
+// The accent is used for zone banners, mission headers, and CTA tints.
+// Style is structured-illustrated (clean, premium), NOT cartoonish.
+const MODULE_ZONES = {
+  bb_defense:     { zone: 'Big Blind Fortress',  motto: 'Hold the line.',           accent: '#60a5fa', glow: 'rgba(96,165,250,0.32)',  glyph: '🛡' },
+  open_vs_3bet:   { zone: '3-Bet Labyrinth',     motto: 'Read the maze.',           accent: '#a855f7', glow: 'rgba(168,85,247,0.32)',  glyph: '⚔' },
+  push_fold:      { zone: 'Short Stack Arena',   motto: 'Pressure the fold.',       accent: '#f59e0b', glow: 'rgba(245,158,11,0.32)',  glyph: '⚡' },
+  call_vs_jam:    { zone: 'All-In Gate',         motto: 'Decide at the threshold.', accent: '#fbbf24', glow: 'rgba(251,191,36,0.32)',  glyph: '⛓' },
+  rejam:          { zone: 'Rejam Battlefield',   motto: 'Strike with leverage.',    accent: '#ef4444', glow: 'rgba(239,68,68,0.32)',   glyph: '🔥' },
+  blind_battle:   { zone: 'Blind Duel',          motto: 'Win the small wars.',      accent: '#6ee7b7', glow: 'rgba(110,231,183,0.32)', glyph: '👁' },
+  mixed_decision: { zone: 'Mist Zone',           motto: 'See through the mix.',     accent: '#94a3b8', glow: 'rgba(148,163,184,0.32)', glyph: '✦' }
+};
+
+function getModuleZone(moduleId) {
+  return MODULE_ZONES[moduleId] || { zone: 'Unknown Zone', motto: '', accent: '#94a3b8', glow: 'rgba(148,163,184,0.2)', glyph: '✦' };
+}
+
+// Strip emoji prefix from MODULE_DISPLAY_INFO label, used widely.
+function moduleCleanLabel(moduleId) {
+  const info = MODULE_DISPLAY_INFO[moduleId];
+  if (!info) return moduleId;
+  return info.label.replace(/^[^A-Za-z]+/, '').trim();
+}
+
 // Map v1.7.0 metadata module → v1.8.0 mastery module. Some metadata modules
 // collapse into the same mastery module (e.g. legacy_generic_3bet folds into
 // open_vs_3bet for ranking purposes).
@@ -4019,6 +4308,7 @@ function _renderMasteryImpl() {
   if (bestUpgrade) {
     const cur = bestUpgrade.currentRank;
     const nxt = bestUpgrade.nextRank;
+    const upgradeZone = getModuleZone(bestUpgrade.module);
     html += `<div class="card upgrade-card">
       <div class="mastery-section-title"><span class="accent-bar"></span>Best Next Upgrade</div>
       <div class="upgrade-card-header">
@@ -4027,13 +4317,14 @@ function _renderMasteryImpl() {
         ${renderRankEmblem(nxt, 'small')}
         <div style="flex:1">
           <div style="font-weight:600;font-size:14px">${bestUpgrade.info.label}</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${rankDisplay(cur)} → ${rankDisplay(nxt)}</div>
+          <div style="font-size:11px;color:${upgradeZone.accent};margin-top:2px;font-weight:600">${upgradeZone.glyph} ${upgradeZone.zone}</div>
+          <div style="font-size:10px;color:var(--text-secondary);margin-top:1px">${rankDisplay(cur)} → ${rankDisplay(nxt)}</div>
         </div>
         <div class="upgrade-reward-pill">+${bestUpgrade.pointGain} pts</div>
       </div>
       <div class="upgrade-why">${bestUpgrade.why}</div>
       <div class="hero-cta-row" style="margin-top:0">
-        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Study ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '').trim()}</button>
+        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Enter ${upgradeZone.zone}</button>
         <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${bestUpgrade.module}')">🏆 Rank-Up Boss</button>
       </div>
       <div style="font-size:10px;color:var(--text-secondary);margin-top:8px;line-height:1.5;text-align:center">
@@ -4066,12 +4357,14 @@ function _renderMasteryImpl() {
       `<span style="opacity:0.85">est <strong style="color:${RANK_COLOR[estimated]}">${rankDisplay(estimated)}</strong></span>` :
       (estimated ? `est ${rankDisplay(estimated)}` : 'no drill data');
 
+    const zone = getModuleZone(m);
     html += `
-      <div class="module-card-v2 ${isHighlighted ? 'highlighted' : ''}">
+      <div class="module-card-v2 ${isHighlighted ? 'highlighted' : ''}" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
         <div class="module-card-row1">
           <div>
             <div class="module-card-name">${info.label}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">weight ${weight} · ${info.desc}</div>
+            <div style="font-size:11px;color:${zone.accent};margin-top:2px;font-weight:600;letter-spacing:0.4px">${zone.glyph} ${zone.zone}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:1px">weight ${weight} · ${info.desc}</div>
           </div>
           <div>${officialRankBadge}</div>
         </div>
@@ -4083,7 +4376,7 @@ function _renderMasteryImpl() {
           <div class="module-card-progress-fill" style="width:${fillPct}%;background:${fillColor};opacity:0.85"></div>
         </div>
         <div class="module-card-cta-row">
-          <button class="primary" onclick="masteryTrainModule('${m}')" title="Practice mode: gives XP, doesn't change rank">▶ Study</button>
+          <button class="primary" onclick="masteryTrainModule('${m}')" title="Mission: gives XP, doesn't change rank">▶ Enter Zone</button>
           <button onclick="masteryBossTestModule('${m}')" title="Official rank-up test">🏆 Rank-Up Boss</button>
         </div>
       </div>
@@ -4584,6 +4877,10 @@ function applyDrillPreset(moduleId, options) {
   options = options || {};
   const d = App.state.drill;
   d.moduleFilter = moduleId;
+  // v1.8.6: clear any leftover Boss Test state so a fresh Mission isn't
+  // mistakenly treated as a challenge (caused stale "Boss Test" badge).
+  d.challenge = null;
+  if (d.mode === 'challenge') d.mode = 'quick';
   // Auto-select Marginal Focus mode for mixed_decision (high-leverage spots)
   if (moduleId === 'mixed_decision' && !options.preserveMode) {
     d.mode = 'marginal';
@@ -4636,29 +4933,32 @@ function renderDrillPresetBanner() {
       }
     }
   }
-  const cleanLabel = info.label.replace(/^[^A-Za-z]+/, '').trim();
+  const cleanLabel = moduleCleanLabel(mf);
+  // v1.8.6: zone-themed mission framing
+  const zone = getModuleZone(mf);
+  const modeLabel = App.state.drill.mode === 'marginal' ? 'Marginal Focus' : (App.state.drill.mode.charAt(0).toUpperCase() + App.state.drill.mode.slice(1)) + ' Mode';
 
   banner.style.display = 'block';
   banner.innerHTML = `
-    <div class="drill-preset-banner">
-      <div class="drill-preset-icon">${info.icon}</div>
-      <div class="drill-preset-info">
-        <div class="drill-preset-label">Practice Mode</div>
-        <div class="drill-preset-name">${cleanLabel} Practice</div>
-        <div class="drill-preset-desc">${info.desc}</div>
-        <div class="drill-preset-desc" style="margin-top:4px">Pool: ${poolSize} scenarios · ${handsInPool} unique hands · ${App.state.drill.mode === 'marginal' ? 'Marginal Focus mode' : App.state.drill.mode + ' mode'}</div>
+    <div class="zone-banner" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+      <div class="zone-banner-glyph">${zone.glyph}</div>
+      <div class="zone-banner-info">
+        <div class="zone-banner-eyebrow">▸ Mission · ${cleanLabel}</div>
+        <div class="zone-banner-name">${zone.zone}</div>
+        <div class="zone-banner-motto">${zone.motto}</div>
+        <div class="zone-banner-meta">${poolSize} scenarios · ${handsInPool} hands · ${modeLabel}</div>
       </div>
-      <button class="drill-preset-clear" onclick="clearDrillPreset()">Clear</button>
+      <button class="drill-preset-clear" onclick="clearDrillPreset()" title="Exit zone">Exit</button>
     </div>
-    <div style="padding:10px 12px;border-radius:8px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.15);margin-bottom:14px;font-size:11px;color:var(--text-secondary);line-height:1.6">
-      <strong style="color:#60a5fa">Practice vs Boss Test:</strong>
-      Practice gives XP and study history. It does <strong>not</strong> change your official Module Rank.
+    <div style="padding:10px 12px;border-radius:8px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.15);margin:10px 0 14px;font-size:11px;color:var(--text-secondary);line-height:1.6">
+      <strong style="color:#60a5fa">Mission vs Boss Test:</strong>
+      Missions give XP and study history. They do <strong>not</strong> change your official Module Rank.
       To certify a rank-up, take the <strong>🏆 Boss Test</strong> from the Mastery Home page.
     </div>
   `;
 
-  // Update Start button label so user knows what they're starting
-  if (startBtn) startBtn.textContent = `▶  Start ${cleanLabel} Practice`;
+  // Update Start button label — game-feel "Enter Zone" CTA
+  if (startBtn) startBtn.textContent = `▶  Enter ${zone.zone}`;
 }
 
 // ============================================================
@@ -4856,7 +5156,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.5</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.6</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
