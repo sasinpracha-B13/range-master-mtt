@@ -374,6 +374,341 @@
     .freq-shove { background: var(--gold); }
     .freq-limp { background: #60a5fa; }
     .freq-check { background: #94a3b8; }
+
+    /* ============================================================ */
+    /* MASTERY UI v1.8.1 — RPG-flavored hero/cards/ladder            */
+    /* ============================================================ */
+    .page-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .mastery-hero {
+      position: relative;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1a1d28 0%, #12131A 100%);
+      border: 1px solid rgba(212,175,55,0.2);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .mastery-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, var(--rank-glow, rgba(212,175,55,0.10)) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .mastery-hero > * { position: relative; }
+    .mastery-hero-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .rank-emblem {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--rank-color, #6b7280);
+      background: var(--rank-bg, rgba(107,114,128,0.12));
+      border: 2px solid var(--rank-color, #6b7280);
+      box-shadow: 0 0 24px var(--rank-glow, rgba(107,114,128,0.25));
+      flex-shrink: 0;
+    }
+    .rank-emblem.small {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+      border-width: 1.5px;
+      box-shadow: 0 0 12px var(--rank-glow, rgba(107,114,128,0.2));
+    }
+    .hero-meta { flex: 1; min-width: 0; }
+    .hero-rank-line {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .hero-rank-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 2px;
+      color: var(--rank-color, var(--text));
+      line-height: 1.1;
+    }
+    .hero-rank-internal { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .hero-xp {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .hero-xp-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #d4af37;
+    }
+    .hero-progress-block { margin-top: 6px; }
+    .hero-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .hero-progress-track {
+      height: 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .hero-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37, #fbbf24);
+      border-radius: 6px;
+      transition: width 0.6s ease;
+      box-shadow: 0 0 8px rgba(212,175,55,0.4);
+    }
+    .hero-cta-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-mastery-primary, .btn-mastery-secondary {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      letter-spacing: 0.3px;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-mastery-primary {
+      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+      color: #0f1115;
+      box-shadow: 0 4px 14px rgba(212,175,55,0.25);
+    }
+    .btn-mastery-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,175,55,0.35); }
+    .btn-mastery-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-mastery-secondary:hover { background: rgba(255,255,255,0.09); }
+
+    /* Section title for mastery cards */
+    .mastery-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mastery-section-title .accent-bar {
+      width: 3px; height: 14px;
+      background: #d4af37;
+      border-radius: 2px;
+    }
+    .mastery-card-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    /* Mission list */
+    .mission-list { display: grid; gap: 6px; }
+    .mission-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+    }
+    .mission-item .num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(212,175,55,0.15);
+      color: #d4af37;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .footer-note {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      opacity: 0.7;
+      letter-spacing: 0.2px;
+    }
+
+    /* Best Next Upgrade card */
+    .upgrade-card {
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.06) 0%, var(--surface) 100%);
+      border: 1px solid rgba(212,175,55,0.25);
+    }
+    .upgrade-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .upgrade-rank-arrow {
+      font-size: 20px;
+      color: #d4af37;
+    }
+    .upgrade-reward-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(74,222,128,0.12);
+      border: 1px solid rgba(74,222,128,0.3);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .upgrade-why {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 8px 0 12px;
+      line-height: 1.5;
+    }
+
+    /* Module card v2 */
+    .module-card-v2 {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .module-card-v2.highlighted {
+      border-color: rgba(212,175,55,0.35);
+      background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, var(--surface2) 100%);
+      box-shadow: 0 0 16px rgba(212,175,55,0.06);
+    }
+    .module-card-row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .module-card-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .module-card-row2 {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .module-card-progress {
+      height: 6px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .module-card-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .module-card-cta-row {
+      display: flex;
+      gap: 6px;
+    }
+    .module-card-cta-row button {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+    .module-card-cta-row button.primary {
+      background: rgba(212,175,55,0.12);
+      border-color: rgba(212,175,55,0.3);
+      color: #d4af37;
+    }
+    .module-card-cta-row button:hover { background: rgba(255,255,255,0.08); }
+
+    /* Exam ladder v2 */
+    .exam-ladder { display: grid; gap: 6px; }
+    .exam-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: opacity 0.15s;
+    }
+    .exam-step.next-target {
+      background: linear-gradient(135deg, var(--rank-glow, rgba(212,175,55,0.08)) 0%, var(--surface2) 100%);
+      border-color: var(--rank-color, rgba(212,175,55,0.4));
+      box-shadow: 0 0 18px var(--rank-glow, rgba(212,175,55,0.1));
+    }
+    .exam-step.locked-far { opacity: 0.45; }
+    .exam-step.unlocked {
+      border-color: rgba(74,222,128,0.3);
+      background: rgba(74,222,128,0.04);
+    }
+    .exam-step-info { flex: 1; min-width: 0; }
+    .exam-step-name { font-size: 13px; font-weight: 600; }
+    .exam-step-req { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .exam-step-status {
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Foundation explainer (de-emphasized) */
+    .foundation-card {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(96,165,250,0.04);
+      border: 1px solid rgba(96,165,250,0.15);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+    .foundation-card-title {
+      font-size: 12px;
+      color: #60a5fa;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
     .reasoning-box {
       background: rgba(110,231,183,0.05);
       border: 1px solid rgba(110,231,183,0.15);
@@ -799,8 +1134,8 @@
 <nav class="top-nav" id="topNav">
   <div class="top-nav-inner">
     <div class="top-nav-logo">♠ Range Master MTT</div>
-    <button class="top-nav-tab active" data-tab="drill" onclick="switchTab('drill')">🎯 Drill</button>
-    <button class="top-nav-tab" data-tab="mastery" onclick="switchTab('mastery')">🏆 Mastery</button>
+    <button class="top-nav-tab" data-tab="drill" onclick="switchTab('drill')">🎯 Drill</button>
+    <button class="top-nav-tab active" data-tab="mastery" onclick="switchTab('mastery')">🏆 Home</button>
     <button class="top-nav-tab" data-tab="progress" onclick="switchTab('progress')">📊 Progress</button>
     <button class="top-nav-tab" data-tab="browse" onclick="switchTab('browse')">📚 Browse</button>
     <button class="top-nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
@@ -810,7 +1145,7 @@
 <!-- MAIN CONTENT -->
 <div class="main-content" id="mainContent">
   <!-- DRILL TAB -->
-  <div class="tab-panel active" id="tab-drill">
+  <div class="tab-panel" id="tab-drill">
     <div id="drillSetup" class="container">
       <div class="section-title">🎯 Drill Mode</div>
       <div class="section-subtitle">Choose a mode and customize your session</div>
@@ -931,10 +1266,11 @@
     </div>
   </div>
 
-  <!-- MASTERY TAB (v1.8.0) -->
-  <div class="tab-panel" id="tab-mastery">
+  <!-- MASTERY / HOME TAB (v1.8.1: now default landing) -->
+  <div class="tab-panel active" id="tab-mastery">
     <div class="page-header">
-      <h1>🏆 Mastery</h1>
+      <h1>🏆 Home</h1>
+      <div class="page-subtitle">Preflop Mastery System</div>
     </div>
     <div class="container" style="padding-top:12px" id="masteryContent">
       <!-- Filled by JS via renderMastery() -->
@@ -944,13 +1280,13 @@
 
 <!-- BOTTOM NAV (mobile) -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="bottom-nav-item active" data-tab="drill" onclick="switchTab('drill')">
+  <button class="bottom-nav-item active" data-tab="mastery" onclick="switchTab('mastery')">
+    <span class="icon">🏆</span>
+    <span>Home</span>
+  </button>
+  <button class="bottom-nav-item" data-tab="drill" onclick="switchTab('drill')">
     <span class="icon">🎯</span>
     <span>Drill</span>
-  </button>
-  <button class="bottom-nav-item" data-tab="mastery" onclick="switchTab('mastery')">
-    <span class="icon">🏆</span>
-    <span>Mastery</span>
   </button>
   <button class="bottom-nav-item" data-tab="progress" onclick="switchTab('progress')">
     <span class="icon">📊</span>
@@ -991,7 +1327,7 @@ const POSITION_TOOLTIPS = {
 // ============================================================
 const App = {
   state: {
-    tab: 'drill',
+    tab: 'mastery',
     ranges: null,
     rangesLoaded: false,
     progress: {},
@@ -1065,6 +1401,8 @@ const App = {
     this.renderSettings();
     this.renderProgress();
     this.renderBrowse();
+    // v1.8.1: Mastery is now default landing tab — render on init
+    if (typeof renderMastery === 'function') renderMastery();
   },
 
   async loadRanges() {
@@ -3169,8 +3507,129 @@ function rankBadge(internalRank, opts) {
 }
 
 // ============================================================
-// MASTERY UI (v1.8.0)
+// MASTERY UI (v1.8.1 — UX/UI Polish Pass)
 // ============================================================
+
+// Letter monogram for each rank emblem (kept short and bold).
+const RANK_EMBLEM_GLYPH = {
+  Unranked:    'W',   // Wanderer
+  Bronze:      'S',   // Squire
+  Silver:      'R',   // Ranger
+  Gold:        'K',   // Knight
+  Platinum:    'C',   // Champion
+  Diamond:     'W',   // Warlord
+  Master:      'M',   // Mythic
+  Grandmaster: '★'    // End Boss
+};
+
+// Returns the per-rank CSS color trio used by .rank-emblem and .mastery-hero.
+function rankCssVars(internalRank) {
+  const color = RANK_COLOR[internalRank] || '#6b7280';
+  // Convert hex to rgba for glow with alpha.
+  const hex = color.replace('#','');
+  const r = parseInt(hex.substr(0,2), 16);
+  const g = parseInt(hex.substr(2,2), 16);
+  const b = parseInt(hex.substr(4,2), 16);
+  return {
+    color,
+    bg: `rgba(${r},${g},${b},0.12)`,
+    glow: `rgba(${r},${g},${b},0.30)`
+  };
+}
+
+function renderRankEmblem(internalRank, sizeClass) {
+  const v = rankCssVars(internalRank);
+  const glyph = RANK_EMBLEM_GLYPH[internalRank] || '?';
+  const cls = sizeClass === 'small' ? 'rank-emblem small' : 'rank-emblem';
+  return `<div class="${cls}" style="--rank-color:${v.color};--rank-bg:${v.bg};--rank-glow:${v.glow}">${glyph}</div>`;
+}
+
+// Daily mission rotation: deterministic by date so users see consistent
+// missions throughout a single day. Picks 2 modules in rotation + a review
+// task. Personalized recommendation comes in v1.8.4.
+function generateTodaysMission(moduleAccs) {
+  const today = new Date();
+  const dayKey = today.toISOString().split('T')[0];
+  // Seed = year + month + day
+  const seed = today.getFullYear() * 372 + (today.getMonth() + 1) * 31 + today.getDate();
+  // Rotate modules by importance + variety
+  const allModules = ['bb_defense','open_vs_3bet','push_fold','call_vs_jam','rejam','blind_battle','mixed_decision'];
+  const primary = allModules[seed % allModules.length];
+  const secondary = allModules[(seed + 3) % allModules.length];
+  const labelOf = (m) => MODULE_DISPLAY_INFO[m].label.replace(/^[^A-Za-z]+/, '');
+  return {
+    date: dayKey,
+    items: [
+      { module: primary,   label: `20 hands ${labelOf(primary)}` },
+      { module: secondary, label: `10 hands ${labelOf(secondary)}` },
+      { module: 'review',  label: 'Review 5 missed hands' }
+    ]
+  };
+}
+
+// Rule-based Best Next Upgrade. Picks the module with the highest expected
+// Mastery Point gain on next rank-up, with a readiness boost when the user's
+// existing drill accuracy already estimates them at or above the current
+// rank. Real personalized version (with leak integration) ships in v1.8.4.
+function getBestNextUpgrade(moduleRanks, moduleAccs) {
+  let best = null;
+  for (const m of Object.keys(MODULE_WEIGHTS)) {
+    const currentRank = moduleRanks[m] || 'Unranked';
+    const nextRank = getNextModuleRank(currentRank);
+    if (!nextRank) continue;
+    const pointGain = Math.round((MODULE_WEIGHTS[m] * (RANK_MULTIPLIERS[nextRank] - RANK_MULTIPLIERS[currentRank])) * 10) / 10;
+    const acc = moduleAccs[m];
+    const estimated = (acc && acc.accuracy !== null) ? estimateRankFromAccuracy(acc.accuracy) : 'Unranked';
+    const estIdx = INTERNAL_RANKS.indexOf(estimated);
+    const currentIdx = INTERNAL_RANKS.indexOf(currentRank);
+    // Readiness boost: 1.5x if drill data shows you're already at/past current rank
+    const readinessBoost = (acc.attempts > 10 && estIdx >= currentIdx + 1) ? 1.5 : 1.0;
+    const score = pointGain * readinessBoost;
+    if (!best || score > best.score) {
+      best = { module: m, currentRank, nextRank, pointGain, score, estimated, attempts: acc.attempts, accuracy: acc.accuracy, readyByDrill: readinessBoost > 1 };
+    }
+  }
+  if (!best) return null;
+  // Construct human-readable "why"
+  const info = MODULE_DISPLAY_INFO[best.module];
+  let why;
+  if (best.readyByDrill) {
+    why = `Your drill accuracy (${best.accuracy}%) suggests you're already ${rankDisplay(best.estimated)}-level here. Earning the official rank gives +${best.pointGain} Mastery Points.`;
+  } else if (best.attempts > 0) {
+    why = `Highest expected Mastery Point gain among modules with drill history. Train this module to lift the official rank.`;
+  } else {
+    why = `Highest module weight (${MODULE_WEIGHTS[best.module]}/100). Start here for maximum Mastery Score impact.`;
+  }
+  return { ...best, info, why };
+}
+
+// CTA handlers
+function masteryStartRecommendedDrill() {
+  const upgrade = getBestNextUpgrade(App.state.profile.moduleRanks, getModuleAccuracies());
+  if (upgrade && typeof showToast === 'function') {
+    showToast(`Recommended: ${upgrade.info.label}`);
+  }
+  switchTab('drill');
+}
+function masteryViewPath() {
+  const el = document.getElementById('masteryPathSection');
+  if (el && typeof el.scrollIntoView === 'function') {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+function masteryTrainModule(moduleKey) {
+  const info = MODULE_DISPLAY_INFO[moduleKey];
+  if (info && typeof showToast === 'function') {
+    showToast(`Train: ${info.label}`);
+  }
+  switchTab('drill');
+}
+function masteryStartMission() {
+  if (typeof showToast === 'function') showToast(`Today's mission queued`);
+  switchTab('drill');
+}
+
+// ----- Main render -----
 function renderMastery() {
   const profile = App.state.profile;
   const masteryScore = computeMasteryScore(profile.moduleRanks);
@@ -3179,120 +3638,177 @@ function renderMastery() {
   const nextThreshold = nextOverall ? OVERALL_UNLOCK_THRESHOLDS[nextOverall] : null;
   const xpLevel = xpToLevel(profile.totalXP);
   const moduleAccs = getModuleAccuracies();
+  const todayMission = generateTodaysMission(moduleAccs);
+  const bestUpgrade = getBestNextUpgrade(profile.moduleRanks, moduleAccs);
 
-  // ---------- HOME COMMAND CENTER ----------
-  let homeHtml = `
-    <div class="card" style="background:linear-gradient(135deg,#1a1d28 0%,#12131A 100%);border:1px solid rgba(212,175,55,0.2)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
-        <div>
-          <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px">Overall Rank</div>
-          <div style="font-size:28px;font-weight:700;color:${RANK_COLOR[overallRank]};margin-top:2px">${rankDisplay(overallRank)}</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">internal: ${overallRank}</div>
+  const heroVars = rankCssVars(overallRank);
+  const heroProgressPct = Math.min(100, masteryScore);
+
+  // ---------- HERO RANK CARD ----------
+  let html = `
+    <div class="mastery-hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">
+      <div class="mastery-hero-row">
+        ${renderRankEmblem(overallRank)}
+        <div class="hero-meta">
+          <div class="hero-rank-line">Overall Rank</div>
+          <div class="hero-rank-name">${rankDisplay(overallRank)}</div>
+          <div class="hero-rank-internal">internal: ${overallRank}</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px">XP Level</div>
-          <div style="font-size:28px;font-weight:700;color:#d4af37;margin-top:2px">${xpLevel}</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${profile.totalXP} XP</div>
+        <div class="hero-xp">
+          <div class="hero-rank-line">XP Level</div>
+          <div class="hero-xp-value">${xpLevel}</div>
+          <div class="hero-rank-internal">${profile.totalXP} XP</div>
         </div>
       </div>
 
-      <div style="margin-top:8px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+      <div class="hero-progress-block">
+        <div class="hero-progress-label">
           <span>Mastery Score</span>
           <span><strong style="color:var(--text)">${masteryScore.toFixed(1)}</strong> / 100</span>
         </div>
-        <div style="height:10px;background:var(--surface2);border-radius:5px;overflow:hidden">
-          <div style="height:100%;width:${masteryScore}%;background:linear-gradient(90deg,#d4af37,#fbbf24);border-radius:5px;transition:width 0.6s ease"></div>
-        </div>
-        ${nextOverall ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:6px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts (${(nextThreshold - masteryScore).toFixed(1)} pts needed)</div>` : '<div style="font-size:11px;color:var(--success);margin-top:6px">🏆 End Boss reached</div>'}
+        <div class="hero-progress-track"><div class="hero-progress-fill" style="width:${heroProgressPct}%"></div></div>
+        ${nextOverall
+          ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts <span style="opacity:0.7">(${(nextThreshold - masteryScore).toFixed(1)} pts needed)</span></div>`
+          : `<div style="font-size:11px;color:var(--success);margin-top:8px">🏆 End Boss rank achieved</div>`
+        }
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-title">🎯 Today's Mission</div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6">
-        Daily missions and Best Next Upgrade recommendations come in <strong>v1.8.3</strong>.
-        For now, head to the Drill tab and use Marginal Focus or Weakness Focus to grind your weakest module.
-      </div>
-    </div>
-
-    <div class="card" style="border-color:rgba(96,165,250,0.2);background:rgba(96,165,250,0.03)">
-      <div style="font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px">📋 v1.8.0 Foundation</div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6">
-        Module Ranks all start <strong>Wanderer</strong> (Unranked). Practice Mode does not change ranks.
-        Official ranks unlock via <strong>Challenge Mode</strong> (v1.8.1) and <strong>Overall Exams</strong> (v1.8.2).
-        Your existing drill history shows up below as <em>estimated</em> rank — a preview of where you'll likely land
-        when Challenge Mode arrives.
+      <div class="hero-cta-row">
+        <button class="btn-mastery-primary" onclick="masteryStartRecommendedDrill()">▶  Start Recommended Drill</button>
+        <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>
       </div>
     </div>
   `;
 
-  // ---------- MASTERY PATH (module cards) ----------
-  let modulesHtml = `<div class="card"><div class="card-title">🗺️ Mastery Path</div>
-    <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Each module has its own rank. Mastery Score is weighted by module importance — BB Defense and Open vs 3-Bet count most.</div>
-    <div style="display:grid;gap:10px">`;
+  // ---------- TODAY'S MISSION ----------
+  html += `<div class="card">
+    <div class="mastery-section-title"><span class="accent-bar"></span>Today's Mission</div>
+    <div class="mastery-card-sub">Recommended warm-up. Start with a short session to build today's progress.</div>
+    <div class="mission-list">
+      ${todayMission.items.map((it, i) => `
+        <div class="mission-item">
+          <div class="num">${i + 1}</div>
+          <div>${it.label}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="hero-cta-row" style="margin-top:12px">
+      <button class="btn-mastery-primary" onclick="masteryStartMission()">Start Mission</button>
+    </div>
+    <div class="footer-note">Personalized missions arrive in v1.8.4.</div>
+  </div>`;
 
-  // Sort by weight desc so most important modules surface first
+  // ---------- BEST NEXT UPGRADE ----------
+  if (bestUpgrade) {
+    const cur = bestUpgrade.currentRank;
+    const nxt = bestUpgrade.nextRank;
+    html += `<div class="card upgrade-card">
+      <div class="mastery-section-title"><span class="accent-bar"></span>Best Next Upgrade</div>
+      <div class="upgrade-card-header">
+        ${renderRankEmblem(cur, 'small')}
+        <span class="upgrade-rank-arrow">→</span>
+        ${renderRankEmblem(nxt, 'small')}
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">${bestUpgrade.info.label}</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${rankDisplay(cur)} → ${rankDisplay(nxt)}</div>
+        </div>
+        <div class="upgrade-reward-pill">+${bestUpgrade.pointGain} pts</div>
+      </div>
+      <div class="upgrade-why">${bestUpgrade.why}</div>
+      <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')" style="width:100%">Train ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '')}</button>
+    </div>`;
+  }
+
+  // ---------- MASTERY PATH (module cards) ----------
+  html += `<div class="card" id="masteryPathSection">
+    <div class="mastery-section-title"><span class="accent-bar"></span>Mastery Path</div>
+    <div class="mastery-card-sub">Earn module ranks, build Mastery Score, then clear Overall Exams to climb the ladder. BB Defense and Open vs 3-Bet weigh most.</div>
+    <div style="display:grid;gap:8px">`;
+
   const moduleKeys = Object.keys(MODULE_WEIGHTS).sort((a, b) => MODULE_WEIGHTS[b] - MODULE_WEIGHTS[a]);
+  const highlightedModule = bestUpgrade ? bestUpgrade.module : null;
   for (const m of moduleKeys) {
     const rank = profile.moduleRanks[m] || 'Unranked';
     const weight = MODULE_WEIGHTS[m];
-    const mult = RANK_MULTIPLIERS[rank];
-    const points = Math.round(weight * mult * 10) / 10;
+    const points = Math.round(weight * RANK_MULTIPLIERS[rank] * 10) / 10;
     const info = MODULE_DISPLAY_INFO[m];
     const acc = moduleAccs[m];
-    const estimated = acc.accuracy !== null ? estimateRankFromAccuracy(acc.accuracy) : null;
-    const nextRank = getNextModuleRank(rank);
-    const nextPoints = nextRank ? Math.round(weight * RANK_MULTIPLIERS[nextRank] * 10) / 10 : null;
+    const estimated = (acc.accuracy !== null) ? estimateRankFromAccuracy(acc.accuracy) : null;
+    const fillColor = RANK_COLOR[rank];
+    const isHighlighted = m === highlightedModule;
+    const fillPct = (points / weight * 100).toFixed(1);
 
-    modulesHtml += `
-      <div style="padding:12px 14px;border-radius:10px;background:var(--surface2);border:1px solid rgba(255,255,255,0.05)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">
+    const officialRankBadge = rankBadge(rank);
+    const estimatedHint = (estimated && estimated !== rank) ?
+      `<span style="opacity:0.85">est <strong style="color:${RANK_COLOR[estimated]}">${rankDisplay(estimated)}</strong></span>` :
+      (estimated ? `est ${rankDisplay(estimated)}` : 'no drill data');
+
+    html += `
+      <div class="module-card-v2 ${isHighlighted ? 'highlighted' : ''}">
+        <div class="module-card-row1">
           <div>
-            <div style="font-weight:600;font-size:14px">${info.label}</div>
-            <div style="font-size:11px;color:var(--text-secondary);margin-top:1px">${info.desc} · weight ${weight}</div>
+            <div class="module-card-name">${info.label}</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">weight ${weight} · ${info.desc}</div>
           </div>
-          <div>${rankBadge(rank)}</div>
+          <div>${officialRankBadge}</div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:8px">
-          <div style="color:var(--text-secondary)">Points: <strong style="color:var(--text)">${points}</strong> / ${weight}${nextRank ? ` · next ${rankDisplay(nextRank)} = ${nextPoints}` : ''}</div>
-          ${acc.accuracy !== null ?
-            `<div style="font-size:11px;color:var(--text-secondary)">Drill acc: <strong style="color:var(--text)">${acc.accuracy}%</strong> (${acc.attempts}) · est ${estimated ? rankDisplay(estimated) : '—'}</div>`
-            : '<div style="font-size:11px;color:var(--text-secondary)">No drill history yet</div>'
-          }
+        <div class="module-card-row2">
+          <div>Points <strong style="color:var(--text)">${points}</strong> / ${weight}</div>
+          <div>${acc.accuracy !== null ? `acc ${acc.accuracy}% (${acc.attempts}) · ${estimatedHint}` : 'no drill data'}</div>
         </div>
-        <div style="height:6px;background:var(--surface);border-radius:3px;margin-top:8px;overflow:hidden">
-          <div style="height:100%;width:${(points / weight * 100).toFixed(1)}%;background:${RANK_COLOR[rank]};border-radius:3px;opacity:0.8"></div>
+        <div class="module-card-progress">
+          <div class="module-card-progress-fill" style="width:${fillPct}%;background:${fillColor};opacity:0.85"></div>
+        </div>
+        <div class="module-card-cta-row">
+          <button class="primary" onclick="masteryTrainModule('${m}')">Train</button>
+          <button onclick="masteryViewPath()">Details</button>
         </div>
       </div>
     `;
   }
-  modulesHtml += `</div></div>`;
+  html += `</div></div>`;
 
-  // ---------- OVERALL EXAM LADDER (preview, locked in v1.8.0) ----------
-  let ladderHtml = `<div class="card">
-    <div class="card-title">⚔️ Overall Exam Ladder</div>
-    <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Each exam unlocks at a Mastery Score threshold. Exams launch in <strong>v1.8.2</strong>.</div>
-    <div style="display:grid;gap:6px">`;
-  for (const r of INTERNAL_RANKS.slice(1)) {
+  // ---------- OVERALL EXAM LADDER ----------
+  html += `<div class="card">
+    <div class="mastery-section-title"><span class="accent-bar"></span>Overall Exam Ladder</div>
+    <div class="mastery-card-sub">Each exam unlocks at a Mastery Score threshold. Pass to certify the next Overall Rank.</div>
+    <div class="exam-ladder">`;
+  const futureCutoff = nextOverall ? INTERNAL_RANKS.indexOf(nextOverall) + 2 : null;
+  for (let i = 1; i < INTERNAL_RANKS.length; i++) {
+    const r = INTERNAL_RANKS[i];
     const threshold = OVERALL_UNLOCK_THRESHOLDS[r];
     const reached = masteryScore >= threshold;
-    const isCurrent = r === overallRank;
     const isNext = r === nextOverall;
-    const stateLabel = reached ? '✅ Score reached' : `🔒 Need ${(threshold - masteryScore).toFixed(1)} more pts`;
-    ladderHtml += `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px;background:${isNext ? 'rgba(212,175,55,0.06)' : 'var(--surface2)'};border:1px solid ${isNext ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.05)'};opacity:${reached || isNext ? 1 : 0.55}">
-        <div>
-          ${rankBadge(r)}
-          <span style="font-size:11px;color:var(--text-secondary);margin-left:8px">${rankDisplay(r)} Exam · need ${threshold} pts</span>
+    const isFar = futureCutoff !== null && i > futureCutoff;
+    const v = rankCssVars(r);
+    const cls = ['exam-step',
+      isNext ? 'next-target' : '',
+      reached && !isNext ? 'unlocked' : '',
+      isFar ? 'locked-far' : ''
+    ].filter(Boolean).join(' ');
+    const status = reached
+      ? '<span style="color:var(--success)">✓ Eligible</span>'
+      : `<span style="color:var(--text-secondary)">🔒 ${(threshold - masteryScore).toFixed(1)} pts away</span>`;
+    html += `
+      <div class="${cls}" style="--rank-color:${v.color};--rank-glow:${v.glow}">
+        ${renderRankEmblem(r, 'small')}
+        <div class="exam-step-info">
+          <div class="exam-step-name">${rankDisplay(r)} Exam ${isNext ? '<span style="font-size:10px;color:#d4af37;font-weight:600;letter-spacing:0.6px;margin-left:6px">NEXT TARGET</span>' : ''}</div>
+          <div class="exam-step-req">Threshold: ${threshold} pts · internal ${r}</div>
         </div>
-        <div style="font-size:11px;color:${reached ? 'var(--success)' : 'var(--text-secondary)'}">${stateLabel}</div>
+        <div class="exam-step-status">${status}</div>
       </div>
     `;
   }
-  ladderHtml += `</div></div>`;
+  html += `</div></div>`;
 
-  document.getElementById('masteryContent').innerHTML = homeHtml + modulesHtml + ladderHtml;
+  // ---------- FOUNDATION EXPLAINER (compact, at bottom) ----------
+  html += `<div class="foundation-card">
+    <div class="foundation-card-title">Mastery System Preview</div>
+    <div>Module ranks currently start at Wanderer. Official ranks unlock through Challenge Mode (v1.8.2) and Overall Exams (v1.8.3). Drill history shows up as <em>estimated</em> rank — a preview of where you'll likely land.</div>
+  </div>`;
+
+  document.getElementById('masteryContent').innerHTML = html;
 }
 
 // ============================================================
@@ -3490,7 +4006,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -3639,7 +4155,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.8.0',
+    version: '1.8.1',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
