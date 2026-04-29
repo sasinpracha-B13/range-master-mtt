@@ -1507,22 +1507,24 @@
       left: -200px; top: 0;
       width: 400px; height: 400px;
       transform-origin: 50% 0%;
+      /* v1.9.9: use --rank-accent so End Boss can override obsidian rays
+         to a readable gold without changing the rank-color border. */
       background:
         conic-gradient(from -90deg,
           transparent 0deg,
-          var(--rank-color, rgba(212,175,55,0.18)) 4deg,
+          var(--rank-accent, var(--rank-color, rgba(212,175,55,0.18))) 4deg,
           transparent 8deg,
           transparent 16deg,
-          var(--rank-color, rgba(212,175,55,0.14)) 20deg,
+          var(--rank-accent, var(--rank-color, rgba(212,175,55,0.14))) 20deg,
           transparent 24deg,
           transparent 36deg,
-          var(--rank-color, rgba(212,175,55,0.18)) 40deg,
+          var(--rank-accent, var(--rank-color, rgba(212,175,55,0.18))) 40deg,
           transparent 44deg,
           transparent 56deg,
-          var(--rank-color, rgba(212,175,55,0.12)) 60deg,
+          var(--rank-accent, var(--rank-color, rgba(212,175,55,0.12))) 60deg,
           transparent 64deg,
           transparent 76deg,
-          var(--rank-color, rgba(212,175,55,0.14)) 80deg,
+          var(--rank-accent, var(--rank-color, rgba(212,175,55,0.14))) 80deg,
           transparent 84deg,
           transparent 360deg
         );
@@ -1539,8 +1541,10 @@
       position: absolute;
       width: 4px; height: 4px;
       border-radius: 50%;
-      background: var(--rank-color, #d4af37);
-      box-shadow: 0 0 8px var(--rank-color, #d4af37);
+      /* v1.9.9: --rank-accent lets End Boss particles glow gold inside the
+         obsidian frame (otherwise particles would be invisible black dots). */
+      background: var(--rank-accent, var(--rank-color, #d4af37));
+      box-shadow: 0 0 8px var(--rank-accent, var(--rank-color, #d4af37));
       bottom: 30%;
       animation: particle-rise 4.2s ease-out infinite;
       opacity: 0;
@@ -1567,13 +1571,16 @@
       display: inline-block;
       padding: 6px 16px;
       border-radius: 999px;
-      background: var(--rank-color, #d4af37);
+      /* v1.9.9: --rank-accent so End Boss stamp reads gold-on-obsidian
+         (intimidating + readable) instead of obsidian-on-obsidian (invisible).
+         Other ranks: --rank-accent falls through to --rank-color. */
+      background: var(--rank-accent, var(--rank-color, #d4af37));
       color: #0d1117;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 2.4px;
       text-transform: uppercase;
-      box-shadow: 0 0 24px var(--rank-glow, rgba(212,175,55,0.5));
+      box-shadow: 0 0 24px var(--rank-accent-glow, var(--rank-glow, rgba(212,175,55,0.5)));
       animation: stamp-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
     }
     /* v1.8.10: XL stamp variant for the bigger Boss Cleared moment */
@@ -1582,7 +1589,7 @@
       font-size: 15px;
       letter-spacing: 3px;
       box-shadow:
-        0 0 32px var(--rank-glow, rgba(212,175,55,0.55)),
+        0 0 32px var(--rank-accent-glow, var(--rank-glow, rgba(212,175,55,0.55))),
         inset 0 0 8px rgba(0,0,0,0.2);
       border: 1px solid rgba(255,255,255,0.18);
     }
@@ -1606,18 +1613,20 @@
       padding: 5px 14px;
       border-radius: 999px;
       background: rgba(255,255,255,0.05);
-      color: var(--rank-color, #d4af37);
+      /* v1.9.9: --rank-accent so End Boss pill reads gold-on-obsidian
+         instead of obsidian-on-obsidian (invisible) */
+      color: var(--rank-accent, var(--rank-color, #d4af37));
       font-size: 10px;
       font-weight: 800;
       letter-spacing: 2.2px;
       text-transform: uppercase;
-      border: 1px solid var(--rank-color, rgba(212,175,55,0.5));
-      box-shadow: 0 0 14px var(--rank-glow, rgba(212,175,55,0.3));
+      border: 1px solid var(--rank-accent, var(--rank-color, rgba(212,175,55,0.5)));
+      box-shadow: 0 0 14px var(--rank-accent-glow, var(--rank-glow, rgba(212,175,55,0.3)));
       animation: newrank-glow 2.4s ease-in-out infinite;
     }
     @keyframes newrank-glow {
-      0%, 100% { box-shadow: 0 0 12px var(--rank-glow, rgba(212,175,55,0.3)); }
-      50%      { box-shadow: 0 0 22px var(--rank-glow, rgba(212,175,55,0.55)); }
+      0%, 100% { box-shadow: 0 0 12px var(--rank-accent-glow, var(--rank-glow, rgba(212,175,55,0.3))); }
+      50%      { box-shadow: 0 0 22px var(--rank-accent-glow, var(--rank-glow, rgba(212,175,55,0.55))); }
     }
     /* v1.8.10: bigger rank-up display with shine on new emblem */
     .boss-victory-rankup.v2 { gap: 22px; margin: 16px auto 8px; }
@@ -1704,31 +1713,59 @@
       letter-spacing: 0.8px;
       margin-top: 6px;
     }
-    .rankup-side-label.new { color: var(--rank-color, #d4af37); font-weight: 700; }
+    .rankup-side-label.new { color: var(--rank-accent, var(--rank-color, #d4af37)); font-weight: 700; }
+    /* v1.9.9: replaced the rounded gradient bar + ▶ triangle (which read as
+       a play button on a slider) with a chevron trail over a faint hairline.
+       Reads clearly as "transformation / progression" and works across all
+       rank theme colors without looking interactive. */
     .boss-victory-rankup-beam {
       position: relative;
       flex: 1;
-      max-width: 80px;
-      height: 4px;
+      max-width: 96px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .boss-victory-rankup-beam::before {
+      /* faint hairline for visual continuity between old and new rank */
+      content: '';
+      position: absolute;
+      left: 6px; right: 6px;
+      top: 50%;
+      height: 1px;
       background: linear-gradient(90deg,
-        rgba(255,255,255,0.05) 0%,
-        var(--rank-color, #d4af37) 50%,
-        rgba(255,255,255,0.05) 100%);
-      border-radius: 2px;
-      box-shadow: 0 0 12px var(--rank-color, #d4af37);
-      animation: beam-pulse 1.8s ease-in-out infinite;
+        transparent 0%,
+        var(--rank-accent, var(--rank-color, #d4af37)) 50%,
+        transparent 100%);
+      opacity: 0.40;
+      pointer-events: none;
     }
     .boss-victory-rankup-beam::after {
-      content: '▶';
-      position: absolute;
-      right: -4px; top: 50%; transform: translateY(-50%);
-      color: var(--rank-color, #d4af37);
-      font-size: 14px;
-      filter: drop-shadow(0 0 6px var(--rank-color, #d4af37));
+      /* three forward chevrons signalling progression */
+      content: '› › ›';
+      position: relative;
+      z-index: 1;
+      color: var(--rank-accent, var(--rank-color, #d4af37));
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      line-height: 1;
+      filter: drop-shadow(0 0 5px var(--rank-accent, var(--rank-color, #d4af37)));
+      animation: chev-flow 1.6s ease-in-out infinite;
     }
+    @keyframes chev-flow {
+      0%   { opacity: 0.45; transform: translateX(-2px); }
+      50%  { opacity: 1.00; transform: translateX(2px); }
+      100% { opacity: 0.45; transform: translateX(-2px); }
+    }
+    /* Kept for any legacy callers; no longer referenced by the beam. */
     @keyframes beam-pulse {
-      0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--rank-color, #d4af37); }
-      50%      { opacity: 1;   box-shadow: 0 0 18px var(--rank-color, #d4af37); }
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
     }
     .boss-victory-rankup-line {
       font-size: 11px;
@@ -1737,7 +1774,20 @@
       text-transform: uppercase;
       margin-top: 4px;
     }
-    .boss-victory-rankup-line strong { color: var(--rank-color, #d4af37); }
+    .boss-victory-rankup-line strong { color: var(--rank-accent, var(--rank-color, #d4af37)); }
+    /* v1.9.9: mobile density pass — pull padding/margins in so the
+       Performance section starts becoming visible in the first viewport
+       on phones, without losing the celebratory feel of the stamp/rankup. */
+    @media (max-width: 480px) {
+      .boss-victory-card { padding: 18px 14px 14px; }
+      .boss-victory-stamp.xl { padding: 7px 18px; font-size: 13px; letter-spacing: 2.4px; }
+      .boss-victory-title { font-size: 19px; margin-top: 8px; }
+      .boss-victory-newrank-pill { margin-top: 12px; }
+      .boss-victory-rankup.v2 { gap: 14px; margin: 14px auto 4px; }
+      .boss-victory-rankup-line { margin-top: 2px; }
+      .cert-seal-block { margin-top: 12px; padding: 12px 12px; }
+      .cert-seal-stage { gap: 12px; }
+    }
     .boss-victory-rewards {
       margin: 16px auto 0;
       max-width: 340px;
@@ -8183,6 +8233,14 @@ function showOverallExamResult() {
 function renderOverallExamResult(oe, result, oldRank) {
   const v = rankCssVars(oe.targetRank);
   const examName = oe.exam.name;
+  // v1.9.9: End Boss (Grandmaster) ships an obsidian theme — but obsidian
+  // particles/burst rays/beam chevrons would be invisible against the dark
+  // card. Override --rank-accent to gold for End Boss only, so decorative
+  // glow + accents stay readable while the border/stamp keep the obsidian
+  // identity. All other ranks: --rank-accent falls through to --rank-color.
+  const isEndBoss = oe.targetRank === 'Grandmaster';
+  const rankAccent     = isEndBoss ? '#d4af37' : v.color;
+  const rankAccentGlow = isEndBoss ? 'rgba(212,175,55,0.32)' : v.glow;
   if (result.passed) {
     // ----- VICTORY -----
     const cells = `
@@ -8222,7 +8280,7 @@ function renderOverallExamResult(oe, result, oldRank) {
       }).join('');
 
     const html = `
-      <div class="boss-victory-card v2 overall-exam-victory" style="--rank-color:${v.color};--rank-glow:${v.glow};--zone-accent:${v.color};--zone-glow:${v.glow}">
+      <div class="boss-victory-card v2 overall-exam-victory${isEndBoss ? ' end-boss-theme' : ''}" style="--rank-color:${v.color};--rank-glow:${v.glow};--rank-accent:${rankAccent};--rank-accent-glow:${rankAccentGlow};--zone-accent:${v.color};--zone-glow:${v.glow}">
         <div class="boss-victory-burst"></div>
         <div class="boss-victory-particles">
           <span></span><span></span><span></span><span></span>
@@ -8250,10 +8308,14 @@ function renderOverallExamResult(oe, result, oldRank) {
           variant: 'overall',
           title: 'Overall Rank Certified',
           subline: `${rankDisplay(oe.targetRank)} · ${examName}`,
-          sealSize: 96,
-          accent: v.color,
-          accentBg: v.glow,
-          accentBorder: v.color,
+          // v1.9.9: gold accent for the seal (consistent ceremonial brand) +
+          // subtle rank-haze background tint so each rank still feels distinct
+          // without the seal becoming green-on-green / gold-on-gold / etc.
+          // Slightly smaller seal (96→84) to relieve mobile vertical density.
+          sealSize: 84,
+          accent:       '#d4af37',
+          accentBg:     v.haze,
+          accentBorder: '#d4af37',
           certDate: new Date().toLocaleDateString(),
           certId: 'RM-' + (oe.seed || Date.now()).toString(36).toUpperCase().slice(-6)
         })}
@@ -10037,7 +10099,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.8</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.9</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -10148,7 +10210,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '1.9.8',
+    appVersion: '1.9.9',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
