@@ -2158,6 +2158,46 @@
     }
     .overall-exam-explainer strong { color: #60a5fa; }
     .overall-exam-explainer em { color: var(--text); font-style: normal; font-weight: 700; }
+    /* v2.0.1: Cooldown preview rows on the Exam Brief */
+    .exam-cooldown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+    .exam-cooldown-row:last-of-type { border-bottom: none; }
+    .exam-cooldown-row .label {
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .exam-cooldown-row .value {
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .exam-cooldown-row .or {
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin: 0 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.6px;
+    }
+    .exam-cooldown-foot {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      font-style: italic;
+    }
     /* Gates not met block */
     .overall-exam-gates-fail {
       margin-top: 14px;
@@ -9383,8 +9423,34 @@ function openOverallExam(targetRank) {
         </div>
       </div>
 
+      ${(() => {
+        // v2.0.1: Cooldown preview — surface the soft retry-lock rules
+        // BEFORE the user fails, pulled from OVERALL_EXAM_COOLDOWN_RULES
+        // by tier (early / mid / high). Read-only render of existing data.
+        const tier = getCooldownTierForRank(targetRank);
+        const rules = OVERALL_EXAM_COOLDOWN_RULES[tier];
+        if (!rules) return '';
+        const fmtMin = (m) => {
+          if (m >= 60 && m % 60 === 0) {
+            const h = m / 60;
+            if (h === 24) return '24 hours';
+            if (h === 1)  return '1 hour';
+            return h + ' hours';
+          }
+          return m + ' min';
+        };
+        const f1 = rules.fail1, fN = rules.fail2plus;
+        return `
+      <div class="overall-exam-section">
+        <div class="overall-exam-section-title">If You Fail</div>
+        <div class="exam-cooldown-row"><span class="label">First fail</span><span class="value">${fmtMin(f1.retryAfterMinutes)} <span class="or">OR</span> ${f1.recoveryMissions} Recovery Mission${f1.recoveryMissions === 1 ? '' : 's'}</span></div>
+        <div class="exam-cooldown-row"><span class="label">Repeat fail</span><span class="value">${fmtMin(fN.retryAfterMinutes)} <span class="or">OR</span> ${fN.recoveryMissions} Recovery Missions</span></div>
+        <div class="exam-cooldown-foot">No rank loss. Either path unlocks the retry.</div>
+      </div>`;
+      })()}
+
       <div class="overall-exam-explainer">
-        <strong>Mission · Boss · Overall Exam:</strong> Missions build XP. Boss Tests certify <em>module</em> ranks. Overall Exams certify your <em>Overall Rank</em>. Failing does NOT lower your rank.
+        <strong>Mission · Boss · Overall Exam:</strong> Missions build XP. Boss Tests certify <em>module</em> ranks (no cooldown). Overall Exams certify your <em>Overall Rank</em> with a soft retry lock on fail (clear via timer or Recovery Missions). Failing does NOT lower your rank.
       </div>
 
       ${retryState.locked ? renderRetryLockedCard(targetRank, retryState, true) : ''}
@@ -10267,6 +10333,10 @@ function renderChallengeSetup() {
   if (targetIdx >= 4) modifiers.push('Late-position opens get extra coverage');
   if (cfg.criticalMax !== undefined) modifiers.push(`Critical mistake cap enforced (${cfg.criticalMax}% max)`);
   modifiers.push('No retry penalty — failed attempts do NOT lower your rank');
+  // v2.0.1: spell out the cooldown story so users don't conflate "no rank
+  // penalty" with "no time gate". Module Boss Tests have NEITHER — Overall
+  // Exams have a soft cooldown but no rank loss.
+  modifiers.push('No cooldown — retry immediately if you fail');
 
   const html = `
     <div class="boss-gate-card" style="--rank-color:${targetVars.color};--rank-bg:${targetVars.bg};--rank-glow:${targetVars.glow};--zone-accent:${zone.accent}">
@@ -10295,7 +10365,7 @@ function renderChallengeSetup() {
       </div>
 
       <div class="boss-gate-explainer">
-        <strong>Mission vs Boss Test:</strong> Missions build skill and XP. Boss Tests <strong>certify rank</strong>. Pool: ${pool.length} scenarios · ${poolHandCount} unique hands.
+        <strong>Mission vs Boss Test:</strong> Missions build skill and XP. Boss Tests <strong>certify module rank</strong> with no cooldown — retry as often as you want. Pool: ${pool.length} scenarios · ${poolHandCount} unique hands.
       </div>
 
       <div class="boss-gate-cta-row">
@@ -11353,7 +11423,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -11464,7 +11534,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.0.0',
+    appVersion: '2.0.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
