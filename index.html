@@ -3578,6 +3578,170 @@
     .page-header p { font-size: 14px; color: var(--text-secondary); }
     /* DIVIDER */
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
+    /* SOURCE BREAKDOWN — v1.9.10 (Progress analytics) */
+    .src-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .src-row .src-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .src-row .src-pill {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      font-weight: 800;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+    }
+    .src-row .src-pill.practice { background: rgba(110,231,183,0.12); color: #6ee7b7; }
+    .src-row .src-pill.mission  { background: rgba(212,175,55,0.12); color: #d4af37; }
+    .src-row .src-pill.recovery { background: rgba(96,165,250,0.12); color: #60a5fa; }
+    .src-row .src-pill.boss     { background: rgba(220,38,38,0.12);  color: #f87171; }
+    .src-row .src-pill.exam     { background: rgba(168,85,247,0.12); color: #c084fc; }
+    .src-row .src-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .src-row .src-acc {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      min-width: 44px;
+      text-align: right;
+    }
+    .src-row .src-acc.dim { color: var(--text-secondary); font-weight: 500; }
+    .src-pressure {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(96,165,250,0.06);
+      border: 1px solid rgba(96,165,250,0.20);
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .src-pressure.warn  { background: rgba(251,191,36,0.07); border-color: rgba(251,191,36,0.25); }
+    .src-pressure.crit  { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.30); }
+    .src-pressure-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .src-pressure-num.gap-pos { color: var(--success); }
+    .src-pressure-num.gap-zero { color: var(--text-secondary); }
+    .src-pressure-num.gap-warn { color: var(--warning); }
+    .src-pressure-num.gap-crit { color: var(--danger); }
+    /* MODULE ANALYTICS GRID */
+    .mod-analytics {
+      display: grid;
+      gap: 10px;
+    }
+    .mod-card {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .mod-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .mod-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .mod-card-rank {
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+    .mod-card-rank strong { color: var(--gold); }
+    .mod-card-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      font-size: 12px;
+      padding: 4px 0;
+      border-top: 1px dashed rgba(255,255,255,0.05);
+    }
+    .mod-card-row:first-of-type { border-top: none; }
+    .mod-card-row .mr-pill {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      font-weight: 800;
+      align-self: center;
+      min-width: 56px;
+      text-align: center;
+    }
+    .mod-card-row .mr-pill.practice { background: rgba(110,231,183,0.12); color: #6ee7b7; }
+    .mod-card-row .mr-pill.boss     { background: rgba(220,38,38,0.12);  color: #f87171; }
+    .mod-card-row .mr-pill.exam     { background: rgba(168,85,247,0.12); color: #c084fc; }
+    .mod-card-row .mr-meta { color: var(--text-secondary); align-self: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .mod-card-row .mr-acc { color: var(--text); align-self: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 44px; text-align: right; }
+    .mod-card-row .mr-acc.dim { color: var(--text-secondary); font-weight: 500; }
+    .mod-card-pressure {
+      margin-top: 6px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.03);
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+    }
+    .mod-card-pressure strong { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .mod-card-pressure strong.gap-pos { color: var(--success); }
+    .mod-card-pressure strong.gap-warn { color: var(--warning); }
+    .mod-card-pressure strong.gap-crit { color: var(--danger); }
+    /* OFFICIAL TEST HISTORY */
+    .test-hist-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .test-hist-row .th-status {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800;
+    }
+    .test-hist-row .th-status.pass { background: rgba(74,222,128,0.18); color: var(--success); }
+    .test-hist-row .th-status.fail { background: rgba(248,113,113,0.18); color: var(--danger); }
+    .test-hist-row .th-name { color: var(--text); font-weight: 600; }
+    .test-hist-row .th-name small { color: var(--text-secondary); font-weight: 400; }
+    .test-hist-row .th-acc { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); font-size: 13px; }
+    .test-hist-row .th-date { font-size: 10px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body>
@@ -5152,8 +5316,18 @@ function showDrillComplete() {
 
   // v1.4.0: lightweight session log for Data Export + Marginal Accuracy metric.
   // v1.8.2: challenge mode tracked separately via profile.challengeResults — skip drillSessions log.
+  // v1.9.0: overall_exam tracked separately via profile.overallExamHistory — skip drillSessions log.
   if (d.mode === 'challenge') return;
+  if (d.mode === 'overall_exam') return;
+  // v1.9.10: tag the session with its source so Progress analytics can split
+  // Practice / Mission / Recovery without conflating them. Boss + Exam never
+  // hit this path (returned above); they live in profile.* arrays instead.
+  const source =
+    d.recoveryContext ? 'recovery' :
+    d.mission         ? 'mission'  :
+    'practice';
   logDrillSession({
+    source,
     mode: d.mode,
     handCount: total,
     accuracy: pct,
@@ -5161,6 +5335,7 @@ function showDrillComplete() {
     mixPct,
     pureCorrect, mixCorrect, partial, wrong,
     elapsedMin: elapsed,
+    moduleFilter: d.moduleFilter || null,
     filters: {
       stacks: d.stackFilter.slice(),
       positions: d.posFilter.slice(),
@@ -5551,6 +5726,391 @@ function getDrillSessions() {
 }
 
 // ============================================================
+// SOURCE-AWARE PROGRESS ANALYTICS (v1.9.10)
+// ============================================================
+// Unified analytics layer that includes ALL sources (Practice / Mission /
+// Recovery / Module Boss / Overall Exam) without blindly merging them into
+// one accuracy number. Each source is read from its canonical store:
+//
+//   Practice / Mission / Recovery → drillSessions[] (tagged via .source)
+//   Module Boss                   → profile.challengeResults[]
+//   Overall Exam                  → profile.overallExamHistory[]
+//
+// SRS update behavior is unchanged in this release:
+//   Practice / Mission / Recovery → DO update SRS (history per scenario)
+//   Module Boss / Overall Exam    → do NOT update SRS (intentionally —
+//                                    keeps "official tests" separate from
+//                                    practice history)
+// See audit comment near handleAnswer/updateSRS for the policy.
+
+// Map drillSessions entries (which may pre-date the .source field) into one
+// of: 'practice' | 'mission' | 'recovery'. Old entries default to 'practice'
+// so existing users don't see their history disappear from the breakdown.
+function _drillSessionSource(s) {
+  if (!s) return 'practice';
+  if (s.source === 'mission' || s.source === 'recovery' || s.source === 'practice') return s.source;
+  // Legacy fallback: weakness/marginal/quick/deep all came from drill setup
+  // before missions were tagged, so attribute to practice.
+  return 'practice';
+}
+
+// Source breakdown: hand counts + accuracy per source + pressure gap.
+// Pressure gap = practice accuracy − official-tests accuracy (Boss + Exam
+// weighted by hand count). Negative means pressure hurts performance.
+function getProgressSourceBreakdown() {
+  const sessions = getDrillSessions();
+  const profile  = App.state.profile || {};
+  const bosses   = Array.isArray(profile.challengeResults)   ? profile.challengeResults   : [];
+  const exams    = Array.isArray(profile.overallExamHistory) ? profile.overallExamHistory : [];
+
+  // Helper: accumulate hands + correct from a list of sessions
+  // Each session contributes pureCorrect + mixCorrect + partial as "hits"
+  // (matches the same scoring used by the existing accuracy metric).
+  const aggSessions = (list) => {
+    let hands = 0, hits = 0;
+    for (const s of list) {
+      const h = s.handCount || 0;
+      hands += h;
+      // accuracy is 0..100 and represents (hits / handCount) * 100
+      hits += Math.round((s.accuracy || 0) * h / 100);
+    }
+    return {
+      hands,
+      sessions: list.length,
+      accuracy: hands > 0 ? Math.round((hits / hands) * 100) : null
+    };
+  };
+
+  const practice = aggSessions(sessions.filter(s => _drillSessionSource(s) === 'practice'));
+  const mission  = aggSessions(sessions.filter(s => _drillSessionSource(s) === 'mission'));
+  const recovery = aggSessions(sessions.filter(s => _drillSessionSource(s) === 'recovery'));
+
+  // Boss + Exam: read from profile arrays. Each entry has handCount + an
+  // accuracy field (challengeResults uses scores.overall; overallExamHistory
+  // uses overallAccuracy).
+  let bossHands = 0, bossHits = 0, bossPasses = 0, bossFails = 0;
+  for (const b of bosses) {
+    const h = b.handCount || 0;
+    const acc = (b.scores && typeof b.scores.overall === 'number') ? b.scores.overall : 0;
+    bossHands += h;
+    bossHits += Math.round(acc * h / 100);
+    if (b.passed) bossPasses++; else bossFails++;
+  }
+  let examHands = 0, examHits = 0, examPasses = 0, examFails = 0;
+  for (const e of exams) {
+    const h = e.handCount || 0;
+    const acc = typeof e.overallAccuracy === 'number' ? e.overallAccuracy : 0;
+    examHands += h;
+    examHits += Math.round(acc * h / 100);
+    if (e.passed) examPasses++; else examFails++;
+  }
+  const boss = {
+    hands: bossHands, sessions: bosses.length, passes: bossPasses, fails: bossFails,
+    accuracy: bossHands > 0 ? Math.round((bossHits / bossHands) * 100) : null
+  };
+  const exam = {
+    hands: examHands, sessions: exams.length, passes: examPasses, fails: examFails,
+    accuracy: examHands > 0 ? Math.round((examHits / examHands) * 100) : null
+  };
+
+  // Pressure gap: practice vs official tests (Boss + Exam combined).
+  // Only meaningful when both sides have data — otherwise return null.
+  let pressureGap = null;
+  const officialHands = bossHands + examHands;
+  const officialHits  = bossHits  + examHits;
+  if (practice.accuracy !== null && officialHands > 0) {
+    const officialAcc = Math.round((officialHits / officialHands) * 100);
+    pressureGap = {
+      practice: practice.accuracy,
+      official: officialAcc,
+      gap: practice.accuracy - officialAcc,
+      officialHands
+    };
+  }
+
+  return {
+    practice, mission, recovery, boss, exam,
+    total: { hands: practice.hands + mission.hands + recovery.hands + boss.hands + exam.hands },
+    pressureGap
+  };
+}
+
+// Per-module analytics combining drill history (SRS) with Boss attempts +
+// Overall Exam contribution. Returns one row per module, sorted by activity.
+function getModuleAnalytics() {
+  const profile = App.state.profile || {};
+  const moduleRanks = profile.moduleRanks || {};
+  const bosses = Array.isArray(profile.challengeResults)   ? profile.challengeResults   : [];
+  const exams  = Array.isArray(profile.overallExamHistory) ? profile.overallExamHistory : [];
+  const rankHistory = Array.isArray(profile.moduleRankHistory) ? profile.moduleRankHistory : [];
+
+  // Mastery modules in canonical order
+  const MODULES = ['push_fold','call_vs_jam','bb_defense','blind_battle','rejam','open_vs_3bet','mixed_decision'];
+
+  // Practice accuracy per MASTERY module (e.g. 'push_fold'). The SRS key
+  // encodes the scenario (e.g. '10BB_BTN_RFI_AKs'); we look up the scenario
+  // in App.state.ranges to get its meta.module, then map meta-module →
+  // mastery-module via metaModuleToMastery (e.g. 'push_fold_rfi' → 'push_fold').
+  // Compute inline rather than reusing getLeakReport, since that aggregator
+  // bins by meta-module and won't roll up to mastery modules cleanly.
+  const ranges = App.state.ranges || {};
+  const practiceByModule = {};
+  Object.entries(App.state.progress || {}).forEach(([key, srs]) => {
+    const hist = (srs && srs.history) || [];
+    if (hist.length === 0) return;
+    const parts = key.split('_');
+    if (parts.length < 4) return;
+    const scenKey = parts.slice(0, -1).join('_');
+    const scen = ranges[scenKey];
+    const metaModule = (scen && scen.meta) ? scen.meta.module : null;
+    if (!metaModule) return;
+    const mastery = (typeof metaModuleToMastery === 'function') ? metaModuleToMastery(metaModule) : metaModule;
+    if (!practiceByModule[mastery]) practiceByModule[mastery] = { attempts: 0, points: 0 };
+    hist.forEach(h => {
+      practiceByModule[mastery].attempts++;
+      practiceByModule[mastery].points += (typeof h.score === 'number' ? h.score : (h.correct ? 1 : 0));
+    });
+  });
+
+  return MODULES.map(m => {
+    const officialRank = moduleRanks[m] || 'Unranked';
+    const officialDisplay = (typeof RANK_DISPLAY === 'object' && RANK_DISPLAY[officialRank]) || officialRank;
+    const ps = practiceByModule[m] || null;
+    const practice = ps && ps.attempts > 0
+      ? { hands: ps.attempts, accuracy: Math.round(ps.points / ps.attempts * 100) }
+      : { hands: 0, accuracy: null };
+
+    // Boss attempts on this module
+    const moduleBosses = bosses.filter(b => b.module === m);
+    let bossHands = 0, bossHits = 0, bossPasses = 0, bossFails = 0;
+    for (const b of moduleBosses) {
+      const h = b.handCount || 0;
+      const acc = (b.scores && typeof b.scores.overall === 'number') ? b.scores.overall : 0;
+      bossHands += h;
+      bossHits += Math.round(acc * h / 100);
+      if (b.passed) bossPasses++; else bossFails++;
+    }
+    const bossStats = {
+      hands: bossHands,
+      sessions: moduleBosses.length,
+      passes: bossPasses, fails: bossFails,
+      accuracy: bossHands > 0 ? Math.round((bossHits / bossHands) * 100) : null
+    };
+
+    // Overall Exam contribution: each exam carries moduleBreakdown[m]
+    let examHands = 0, examHits = 0, examAppearances = 0;
+    for (const e of exams) {
+      const mb = e.moduleBreakdown && e.moduleBreakdown[m];
+      if (!mb) continue;
+      const h = mb.handCount || 0;
+      const acc = typeof mb.accuracy === 'number' ? mb.accuracy : 0;
+      examHands += h;
+      examHits += Math.round(acc * h / 100);
+      examAppearances++;
+    }
+    const examStats = {
+      hands: examHands,
+      appearances: examAppearances,
+      accuracy: examHands > 0 ? Math.round((examHits / examHands) * 100) : null
+    };
+
+    // Pressure gap: practice acc minus weighted official-test accuracy
+    // for this module (Boss + Exam-on-this-module). Only when both have data.
+    let pressureGap = null;
+    const officialHands = bossHands + examHands;
+    const officialHits  = bossHits  + examHits;
+    if (practice.accuracy !== null && officialHands > 0) {
+      const officialAcc = Math.round((officialHits / officialHands) * 100);
+      pressureGap = practice.accuracy - officialAcc;
+    }
+
+    // Most recent rank-up event for this module (for context)
+    const lastRankUp = rankHistory.filter(r => r.module === m).slice(-1)[0] || null;
+
+    return {
+      module: m,
+      label: typeof moduleCleanLabel === 'function' ? moduleCleanLabel(m) : m,
+      officialRank,
+      officialDisplay,
+      practice,
+      boss: bossStats,
+      exam: examStats,
+      pressureGap,
+      lastRankUp,
+      // total activity for sorting
+      _activity: practice.hands + bossHands + examHands
+    };
+  }).sort((a, b) => b._activity - a._activity);
+}
+
+// ----- Render helpers for the new Progress cards (v1.9.10) -----
+
+function renderSourceBreakdownCard() {
+  const b = getProgressSourceBreakdown();
+  if (b.total.hands === 0) {
+    return `<div class="empty-state"><p>No drill data yet. Start a Practice session, Mission, or Boss Test to populate this.</p></div>`;
+  }
+  const row = (label, pillCls, data) => {
+    const acc = data.accuracy === null
+      ? '<span class="src-acc dim">—</span>'
+      : `<span class="src-acc">${data.accuracy}%</span>`;
+    const sessionsTxt = data.sessions
+      ? `${data.sessions} session${data.sessions === 1 ? '' : 's'}`
+      : 'no sessions';
+    const handsTxt = `${data.hands} hand${data.hands === 1 ? '' : 's'}`;
+    return `
+      <div class="src-row">
+        <div class="src-label">
+          <span class="src-pill ${pillCls}">${pillCls.toUpperCase()}</span>
+          <span>${label}</span>
+        </div>
+        <span class="src-meta">${sessionsTxt} · ${handsTxt}</span>
+        ${acc}
+      </div>
+    `;
+  };
+  // Pressure gap card
+  let pressureHtml = '';
+  if (b.pressureGap) {
+    const g = b.pressureGap.gap;
+    let cls = 'src-pressure', numCls = 'gap-zero', verdict = 'No pressure effect.';
+    if (g > 0) {
+      // Practice accuracy is HIGHER than official tests = pressure hurts
+      if (g >= 10) { cls += ' crit'; numCls = 'gap-crit'; verdict = 'Pressure significantly drags accuracy. Try more Mission + Boss reps to acclimatize.'; }
+      else if (g >= 5) { cls += ' warn'; numCls = 'gap-warn'; verdict = 'Pressure noticeably drags accuracy.'; }
+      else            { numCls = 'gap-warn'; verdict = 'Pressure slightly drags accuracy.'; }
+    } else if (g < 0) {
+      // Practice acc LOWER than official tests = locks in under pressure
+      numCls = 'gap-pos'; verdict = 'You actually perform better under pressure. Strong execution.';
+    }
+    const sign = g > 0 ? '−' : (g < 0 ? '+' : '');
+    pressureHtml = `
+      <div class="${cls}">
+        <strong>Pressure Gap:</strong>
+        Practice <span class="src-pressure-num">${b.pressureGap.practice}%</span>
+        →
+        Official tests <span class="src-pressure-num">${b.pressureGap.official}%</span>
+        &nbsp;·&nbsp;
+        <span class="src-pressure-num ${numCls}">${sign}${Math.abs(g)}%</span>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${verdict}</div>
+      </div>
+    `;
+  }
+  // Bossiness suffix
+  const bossExtra = b.boss.sessions
+    ? `<span class="src-meta" style="margin-left:6px">${b.boss.passes}✓ / ${b.boss.fails}✗</span>` : '';
+  const examExtra = b.exam.sessions
+    ? `<span class="src-meta" style="margin-left:6px">${b.exam.passes}✓ / ${b.exam.fails}✗</span>` : '';
+  return `
+    ${row('Practice Drill', 'practice', b.practice)}
+    ${row('Daily Mission',  'mission',  b.mission)}
+    ${row('Recovery Mission','recovery', b.recovery)}
+    ${row('Module Boss Test ' + bossExtra, 'boss', b.boss)}
+    ${row('Overall Exam ' + examExtra, 'exam', b.exam)}
+    ${pressureHtml}
+  `;
+}
+
+function renderModuleAnalyticsCard() {
+  const mods = getModuleAnalytics();
+  // Filter to modules that have ANY activity at all (don't render dead rows)
+  const active = mods.filter(m => m._activity > 0);
+  if (active.length === 0) {
+    return `<div class="empty-state"><p>No module activity yet. Run a Mission or Module Boss Test to populate per-module analytics.</p></div>`;
+  }
+  return `<div class="mod-analytics">${active.map(m => {
+    const fmtRow = (pillCls, label, hands, accuracy, extra) => {
+      if (hands === 0) {
+        return `
+          <div class="mod-card-row">
+            <span class="mr-pill ${pillCls}">${pillCls.toUpperCase()}</span>
+            <span class="mr-meta">no data</span>
+            <span class="mr-acc dim">—</span>
+          </div>`;
+      }
+      const accCell = accuracy === null ? '<span class="mr-acc dim">—</span>' : `<span class="mr-acc">${accuracy}%</span>`;
+      const meta = `${hands} hand${hands===1?'':'s'}${extra ? ' · ' + extra : ''}`;
+      return `
+        <div class="mod-card-row">
+          <span class="mr-pill ${pillCls}">${pillCls.toUpperCase()}</span>
+          <span class="mr-meta">${meta}</span>
+          ${accCell}
+        </div>`;
+    };
+    let pressureHtml = '';
+    if (m.pressureGap !== null) {
+      const g = m.pressureGap;
+      const sign = g > 0 ? '−' : (g < 0 ? '+' : '');
+      let numCls = 'gap-pos';
+      if (g >= 10)      numCls = 'gap-crit';
+      else if (g >= 5)  numCls = 'gap-warn';
+      else if (g > 0)   numCls = 'gap-warn';
+      else if (g === 0) numCls = '';
+      pressureHtml = `<div class="mod-card-pressure">Pressure Gap: <strong class="${numCls}">${sign}${Math.abs(g)}%</strong></div>`;
+    }
+    return `
+      <div class="mod-card">
+        <div class="mod-card-head">
+          <div class="mod-card-name">${m.label}</div>
+          <div class="mod-card-rank">Rank: <strong>${m.officialDisplay}</strong></div>
+        </div>
+        ${fmtRow('practice', 'Practice', m.practice.hands, m.practice.accuracy)}
+        ${fmtRow('boss', 'Boss', m.boss.hands, m.boss.accuracy, m.boss.sessions ? (m.boss.passes + '✓ / ' + m.boss.fails + '✗') : null)}
+        ${fmtRow('exam', 'Exam', m.exam.hands, m.exam.accuracy, m.exam.appearances ? (m.exam.appearances + ' exam' + (m.exam.appearances===1?'':'s')) : null)}
+        ${pressureHtml}
+      </div>
+    `;
+  }).join('')}</div>`;
+}
+
+function renderBossHistoryCard() {
+  const profile = App.state.profile || {};
+  const bosses = Array.isArray(profile.challengeResults) ? profile.challengeResults : [];
+  if (bosses.length === 0) {
+    return `<div class="empty-state"><p>No Boss Test attempts yet. Earn module accuracy in Practice, then take a Boss Test from the Mastery tab.</p></div>`;
+  }
+  // Most recent first, top 5
+  const recent = bosses.slice().reverse().slice(0, 5);
+  return recent.map(b => {
+    const acc = (b.scores && typeof b.scores.overall === 'number') ? b.scores.overall : 0;
+    const dateStr = b.date ? b.date.split('T')[0] : '';
+    const moduleLabel = (typeof moduleCleanLabel === 'function' && b.module) ? moduleCleanLabel(b.module) : (b.module || '?');
+    const rankDisp = b.targetRankDisplay || (typeof rankDisplay === 'function' ? rankDisplay(b.targetRank) : b.targetRank) || '';
+    return `
+      <div class="test-hist-row">
+        <div class="th-status ${b.passed ? 'pass' : 'fail'}">${b.passed ? '✓' : '✗'}</div>
+        <div class="th-name">${moduleLabel} <small>· ${rankDisp}</small></div>
+        <div class="th-acc">${acc}%</div>
+        <div class="th-date">${dateStr}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderExamHistoryCard() {
+  const profile = App.state.profile || {};
+  const exams = Array.isArray(profile.overallExamHistory) ? profile.overallExamHistory : [];
+  if (exams.length === 0) {
+    return `<div class="empty-state"><p>No Overall Exam attempts yet. Open one from the Mastery tab when your modules are ready.</p></div>`;
+  }
+  const recent = exams.slice().reverse().slice(0, 5);
+  return recent.map(e => {
+    const acc = typeof e.overallAccuracy === 'number' ? e.overallAccuracy : 0;
+    const dateStr = (e.date || e.certifiedAt || e.attemptedAt || '').split('T')[0];
+    const rankAttempted = e.rankAttempted || e.targetRank || '';
+    const rankDisp = (typeof rankDisplay === 'function' && rankAttempted) ? rankDisplay(rankAttempted) : rankAttempted;
+    return `
+      <div class="test-hist-row">
+        <div class="th-status ${e.passed ? 'pass' : 'fail'}">${e.passed ? '✓' : '✗'}</div>
+        <div class="th-name">${rankDisp} Exam <small>· ${e.handCount || 0} hands</small></div>
+        <div class="th-acc">${acc}%</div>
+        <div class="th-date">${dateStr}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
 // REASONING TEXT
 // ============================================================
 function getReasoningText(q) {
@@ -5671,6 +6231,36 @@ function renderProgress() {
       <div class="card-title">🩸 Leak Report</div>
       <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Categorized mistakes from your drill history (v1.7.2+). Top leak = where you bleed the most EV.</div>
       ${renderLeakReport()}
+    </div>
+
+    <!-- v1.9.10: Source Breakdown — show where your hands are coming from
+         and how each source compares (Practice vs official tests). -->
+    <div class="card">
+      <div class="card-title">📚 By Source</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">All hand sources separately. Practice/Mission/Recovery feed the SRS layer; Boss + Overall Exam are official tests and don't update SRS.</div>
+      ${renderSourceBreakdownCard()}
+    </div>
+
+    <!-- v1.9.10: Per-module analytics — combines Practice (SRS history),
+         Module Boss attempts, and Overall Exam contributions per module. -->
+    <div class="card">
+      <div class="card-title">🧭 Module Analytics</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Each module: practice accuracy vs official-test accuracy + your current rank. Gap shows whether pressure changes performance.</div>
+      ${renderModuleAnalyticsCard()}
+    </div>
+
+    <!-- v1.9.10: Recent Module Boss Tests (last 5) -->
+    <div class="card">
+      <div class="card-title">🏆 Module Boss Tests</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Recent boss attempts. Pass/fail + accuracy + rank attempted.</div>
+      ${renderBossHistoryCard()}
+    </div>
+
+    <!-- v1.9.10: Recent Overall Exams (last 5) -->
+    <div class="card">
+      <div class="card-title">🎓 Overall Exams</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 12px">Recent multi-module certification attempts. Each exam aggregates several modules into one rank evaluation.</div>
+      ${renderExamHistoryCard()}
     </div>
 
     ${due > 0 ? `
@@ -10099,7 +10689,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.9</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.10</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -10210,7 +10800,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '1.9.9',
+    appVersion: '1.9.10',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
