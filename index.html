@@ -3306,6 +3306,73 @@
     .modal-checkbox { display: flex; align-items: center; gap: 10px; margin: 16px 0; cursor: pointer; }
     .modal-checkbox input { width: 18px; height: 18px; accent-color: var(--mint); }
     .modal-checkbox span { font-size: 14px; font-weight: 500; }
+    /* BACKUP / IMPORT MODAL (v1.9.7) */
+    .import-modal-summary {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 12px 0 8px;
+    }
+    .import-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 4px 0;
+      color: var(--text-secondary);
+    }
+    .import-summary-row strong {
+      color: var(--text);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .import-summary-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+    .import-warning {
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      font-size: 12px;
+      color: var(--warning);
+      line-height: 1.5;
+    }
+    .import-modal-warning {
+      background: rgba(248,113,113,0.10);
+      border: 1px solid rgba(248,113,113,0.35);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0 4px;
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .import-modal-warning strong { color: var(--danger); }
+    .backup-card-warning {
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--warning);
+      line-height: 1.55;
+    }
+    .backup-card-warning strong { color: var(--text); }
+    .backup-last-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.3px;
+    }
     /* TOOLTIP */
     .tooltip-wrap { position: relative; display: inline-block; }
     .tooltip-wrap .tooltip {
@@ -3481,7 +3548,8 @@
   <div class="modal-box">
     <div class="modal-title">⚠️ Reset All Progress?</div>
     <div class="modal-text">
-      <p>This will permanently delete all your drill history, SRS data, streaks, and stats. This cannot be undone.</p>
+      <p>This will permanently delete all your drill history, SRS data, profile (rank/XP/exam history), streaks, and stats. This cannot be undone.</p>
+      <p style="color:var(--warning)"><strong>Tip:</strong> Export a backup first if you might want to come back.</p>
     </div>
     <div style="display:flex;gap:10px;margin-top:16px;">
       <button class="btn btn-secondary btn-full" onclick="closeResetModal()">Cancel</button>
@@ -3489,6 +3557,24 @@
     </div>
   </div>
 </div>
+
+<!-- IMPORT BACKUP CONFIRM MODAL (v1.9.7) -->
+<div class="modal-overlay hidden" id="importConfirmModal">
+  <div class="modal-box">
+    <div class="modal-title">⬆ Import Backup?</div>
+    <div class="modal-text">
+      <p>Review the backup contents below. Importing will <strong>replace your current progress</strong> with the data in this file.</p>
+    </div>
+    <div class="import-modal-body"><!-- filled by showImportConfirmModal() --></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-secondary btn-full" onclick="closeImportConfirmModal()">Cancel</button>
+      <button class="btn btn-primary btn-full" onclick="confirmImportBackup()">Restore Backup</button>
+    </div>
+  </div>
+</div>
+
+<!-- HIDDEN FILE INPUT for backup import -->
+<input type="file" id="backupImportFileInput" accept="application/json,.json" style="display:none" onchange="_onBackupImportFileChange(event)">
 
 <!-- HAND POPUP (Browse) -->
 <div class="popup-overlay hidden" id="handPopup">
@@ -9885,9 +9971,34 @@ function renderSettings() {
     </div>
 
     <div class="card">
-      <button class="btn btn-secondary btn-full" style="margin-bottom:10px" onclick="exportProgress()">
-        📤 Export Raw Progress JSON
+      <div class="card-title">💾 Backup &amp; Restore</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 10px;line-height:1.5">
+        Full backup of your progress, ranks, XP, exam history, recovery state, streaks, and settings. Use this before reinstalling the app.
+      </div>
+      <div class="backup-card-warning">
+        <strong>Reinstalling the PWA can wipe local data.</strong> If you uninstall and reinstall to refresh the app icon, your saved progress may be lost. <strong>Export a backup first</strong>, then import it after reinstall.
+      </div>
+      <button class="btn btn-secondary btn-full" style="margin-bottom:8px" onclick="exportBackup()">
+        ⬇ Export Backup (JSON)
       </button>
+      <button class="btn btn-secondary btn-full" onclick="pickAndImportBackup()">
+        ⬆ Import Backup (JSON)
+      </button>
+      <div class="backup-last-meta">${(() => {
+        const ts = localStorage.getItem('rmtt_last_backup');
+        if (!ts) return 'No backup exported yet';
+        try {
+          const d = new Date(ts);
+          return 'Last backup: ' + d.toLocaleString();
+        } catch (e) { return 'Last backup: ' + ts; }
+      })()}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗑️ Reset</div>
+      <div style="font-size:12px;color:var(--text-secondary);margin:-4px 0 10px;line-height:1.5">
+        Wipe all local progress and start fresh. <strong style="color:var(--warning)">Cannot be undone</strong> — export a backup first if you may want to come back.
+      </div>
       <button class="btn btn-danger btn-full" onclick="showResetModal()">
         🗑️ Reset All Progress
       </button>
@@ -9904,7 +10015,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.6</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.7</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -9919,22 +10030,248 @@ function updateSetting(key, value) {
   App.saveProgress();
 }
 
-function exportProgress() {
-  const data = {
-    progress: App.state.progress,
-    settings: App.state.settings,
-    streaks: App.state.streaks,
-    stats: App.state.stats,
-    exportDate: new Date().toISOString()
+// ============================================================
+// BACKUP / RESTORE SYSTEM v1.9.7
+// ============================================================
+// Full-fidelity export/import of all user-owned data so users can safely
+// reinstall the PWA (e.g. after icon swap) without losing rank, exam history,
+// XP, recovery cooldowns, or daily stats.
+//
+// Storage audit (all 7 localStorage keys this app writes):
+//   rmtt_progress    SRS history per scenario_position_action_hand
+//   rmtt_settings    user preferences (dark mode, daily goal, etc.)
+//   rmtt_streaks     current/personal-best streak counters
+//   rmtt_stats       totalHands, totalTime, dailyHistory
+//   rmtt_profile     XP, moduleRanks, certifications.overallRank,
+//                    moduleRankHistory, overallExamHistory (incl. cooldown
+//                    state: consecutiveFails / recoveryRequired /
+//                    recoveryCompleted / retryLockedUntil), challengeResults,
+//                    badges, dailyMission, recentRankUp
+//   drillSessions    last N drill session logs (for AI export + Marginal
+//                    Accuracy metric)
+//   rmtt_disclaimer  one-shot accept flag (NOT included in backup; user
+//                    needs to re-accept on reinstall by design)
+//
+// Backup schema:
+//   {
+//     schema: "rmtt-backup-v1",
+//     appVersion: "1.9.7",
+//     exportDate: "2026-04-29T...",
+//     data: {
+//       progress: {...},
+//       settings: {...},
+//       streaks: {...},
+//       stats: {...},
+//       profile: {...},
+//       drillSessions: [...]
+//     }
+//   }
+
+const BACKUP_SCHEMA_VERSION = 'rmtt-backup-v1';
+
+function buildBackupPayload() {
+  // Read straight from localStorage so what we export reflects what's
+  // actually persisted (not just current in-memory state, which may
+  // have unsaved changes — though saveProgress is called after every
+  // mutation in normal flows).
+  const safeParse = (k, fallback) => {
+    try { const raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  return {
+    schema: BACKUP_SCHEMA_VERSION,
+    appVersion: '1.9.7',
+    exportDate: new Date().toISOString(),
+    data: {
+      progress:      safeParse('rmtt_progress', {}),
+      settings:      safeParse('rmtt_settings', {}),
+      streaks:       safeParse('rmtt_streaks',  {}),
+      stats:         safeParse('rmtt_stats',    {}),
+      profile:       safeParse('rmtt_profile',  {}),
+      drillSessions: safeParse('drillSessions', [])
+    }
+  };
+}
+
+function exportBackup() {
+  // Make sure in-memory state is flushed to localStorage first
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  const payload = buildBackupPayload();
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+  const dateStr = new Date().toISOString().split('T')[0];
   a.href = url;
-  a.download = `range-master-progress-${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `range-master-backup-${dateStr}.json`;
   a.click();
   URL.revokeObjectURL(url);
+  // Record last backup timestamp in localStorage so the UI can show it
+  localStorage.setItem('rmtt_last_backup', payload.exportDate);
+  if (typeof showToast === 'function') showToast('✓ Backup downloaded');
+  if (typeof renderSettings === 'function') renderSettings();
 }
+
+// Validate backup JSON shape. Returns { valid, errors[], warnings[], summary }
+function validateBackup(parsed) {
+  const errors = [];
+  const warnings = [];
+  if (!parsed || typeof parsed !== 'object') {
+    return { valid: false, errors: ['Not a valid JSON object'], warnings, summary: null };
+  }
+  if (!parsed.schema) {
+    warnings.push('Missing schema field — assuming legacy format');
+  } else if (parsed.schema !== BACKUP_SCHEMA_VERSION) {
+    warnings.push('Schema mismatch (' + parsed.schema + ') — will attempt best-effort import');
+  }
+  // Locate the data object (v1 wraps in .data; legacy may be flat)
+  const data = parsed.data || parsed;
+  if (typeof data !== 'object') {
+    errors.push('No data object found');
+    return { valid: false, errors, warnings, summary: null };
+  }
+  // Type-check each known key (all optional individually, but at least one
+  // must be present)
+  const expected = {
+    progress:      'object',
+    settings:      'object',
+    streaks:       'object',
+    stats:         'object',
+    profile:       'object',
+    drillSessions: 'array'
+  };
+  let presentCount = 0;
+  for (const [k, t] of Object.entries(expected)) {
+    if (data[k] === undefined || data[k] === null) continue;
+    presentCount++;
+    if (t === 'array' && !Array.isArray(data[k])) errors.push(`${k} should be array`);
+    else if (t === 'object' && (Array.isArray(data[k]) || typeof data[k] !== 'object')) errors.push(`${k} should be object`);
+  }
+  if (presentCount === 0) errors.push('Backup contains no recognizable data fields');
+  // Build a summary for the confirm dialog
+  const summary = {
+    schema: parsed.schema || 'legacy',
+    appVersion: parsed.appVersion || 'unknown',
+    exportDate: parsed.exportDate || 'unknown',
+    has: {
+      progress:      data.progress      && Object.keys(data.progress).length      || 0,
+      settings:      data.settings      ? 1 : 0,
+      streaks:       data.streaks       ? 1 : 0,
+      stats:         data.stats         ? 1 : 0,
+      profile:       data.profile       ? 1 : 0,
+      drillSessions: data.drillSessions ? data.drillSessions.length : 0
+    },
+    overallRank: (data.profile && data.profile.certifications && data.profile.certifications.overallRank) || 'unknown',
+    totalXP:     (data.profile && data.profile.totalXP) || 0,
+    moduleRanksKnown: data.profile && data.profile.moduleRanks ? Object.keys(data.profile.moduleRanks).length : 0,
+    overallExamHistoryLen: data.profile && Array.isArray(data.profile.overallExamHistory) ? data.profile.overallExamHistory.length : 0,
+    challengeResultsLen:   data.profile && Array.isArray(data.profile.challengeResults) ? data.profile.challengeResults.length : 0
+  };
+  return { valid: errors.length === 0, errors, warnings, summary };
+}
+
+// Stage import: parse the file, validate, surface confirm modal with
+// human-readable summary. Actual write happens in confirmImportBackup.
+function stageImportBackup(fileText) {
+  let parsed;
+  try { parsed = JSON.parse(fileText); }
+  catch (e) {
+    if (typeof showToast === 'function') showToast('✗ Invalid JSON: ' + e.message);
+    return;
+  }
+  const validation = validateBackup(parsed);
+  if (!validation.valid) {
+    if (typeof showToast === 'function') showToast('✗ Backup invalid: ' + validation.errors[0]);
+    return;
+  }
+  // Stash the parsed payload + validation on App so the modal can read it
+  App._stagedBackup = { parsed, validation };
+  showImportConfirmModal(validation);
+}
+
+function showImportConfirmModal(validation) {
+  const modal = document.getElementById('importConfirmModal');
+  if (!modal) return;
+  const s = validation.summary;
+  const warningsHtml = validation.warnings.length > 0
+    ? `<div class="import-warning">⚠ ${validation.warnings.join('; ')}</div>` : '';
+  modal.querySelector('.import-modal-body').innerHTML = `
+    <div class="import-modal-summary">
+      <div class="import-summary-row"><span>Schema</span><strong>${s.schema}</strong></div>
+      <div class="import-summary-row"><span>App version</span><strong>${s.appVersion}</strong></div>
+      <div class="import-summary-row"><span>Exported</span><strong>${s.exportDate.split('T')[0]}</strong></div>
+      <div class="import-summary-divider"></div>
+      <div class="import-summary-row"><span>Overall Rank</span><strong>${s.overallRank}</strong></div>
+      <div class="import-summary-row"><span>Total XP</span><strong>${s.totalXP}</strong></div>
+      <div class="import-summary-row"><span>Module ranks</span><strong>${s.moduleRanksKnown}</strong></div>
+      <div class="import-summary-row"><span>Overall Exam history</span><strong>${s.overallExamHistoryLen}</strong></div>
+      <div class="import-summary-row"><span>Boss Test history</span><strong>${s.challengeResultsLen}</strong></div>
+      <div class="import-summary-row"><span>SRS hand records</span><strong>${s.has.progress}</strong></div>
+      <div class="import-summary-row"><span>Drill sessions logged</span><strong>${s.has.drillSessions}</strong></div>
+    </div>
+    ${warningsHtml}
+    <div class="import-modal-warning">
+      <strong>This will overwrite your current data.</strong> Your current progress, ranks, and history will be replaced by the backup. Consider exporting your current state first.
+    </div>
+  `;
+  modal.classList.remove('hidden');
+}
+
+function closeImportConfirmModal() {
+  const modal = document.getElementById('importConfirmModal');
+  if (modal) modal.classList.add('hidden');
+  App._stagedBackup = null;
+}
+
+function confirmImportBackup() {
+  const staged = App._stagedBackup;
+  if (!staged) { closeImportConfirmModal(); return; }
+  const data = staged.parsed.data || staged.parsed;
+  // Write each field to localStorage (only fields present in backup)
+  const writeIfPresent = (key, val) => {
+    if (val === undefined || val === null) return;
+    localStorage.setItem(key, JSON.stringify(val));
+  };
+  writeIfPresent('rmtt_progress',  data.progress);
+  writeIfPresent('rmtt_settings',  data.settings);
+  writeIfPresent('rmtt_streaks',   data.streaks);
+  writeIfPresent('rmtt_stats',     data.stats);
+  writeIfPresent('rmtt_profile',   data.profile);
+  writeIfPresent('drillSessions',  data.drillSessions);
+  // Reload in-memory state from localStorage so all renders see the new data
+  try { App.loadProgress(); } catch (e) { /* defensive */ }
+  // Re-render whatever's visible
+  if (App.state.tab === 'mastery' && typeof renderMastery === 'function') renderMastery();
+  if (App.state.tab === 'progress' && typeof renderProgress === 'function') renderProgress();
+  if (App.state.tab === 'settings' && typeof renderSettings === 'function') renderSettings();
+  closeImportConfirmModal();
+  if (typeof showToast === 'function') showToast('✓ Backup restored — your data is back');
+}
+
+function pickAndImportBackup() {
+  // Trigger hidden file input
+  const input = document.getElementById('backupImportFileInput');
+  if (input) {
+    input.value = ''; // clear previous selection so re-picking same file fires change
+    input.click();
+  }
+}
+
+// File input change handler (wired in HTML below)
+function _onBackupImportFileChange(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => stageImportBackup(reader.result);
+  reader.onerror = () => { if (typeof showToast === 'function') showToast('✗ Failed to read file'); };
+  reader.readAsText(file);
+}
+
+// ----- Legacy export retained for backward compat -----
+// Original v1.4.0 exportProgress was missing 'profile' (the most important
+// data — overallRank/XP/moduleRanks/exam history). Kept as a thin wrapper
+// that calls exportBackup so any old callers still work + get the full data.
+function exportProgress() { exportBackup(); }
 
 // ============================================================
 // DATA EXPORT FOR EXTERNAL AI ANALYSIS (v1.4.0)
@@ -10134,16 +10471,52 @@ function closeResetModal() {
 }
 
 function confirmReset() {
+  // v1.9.7: full reset must wipe ALL user-owned localStorage keys.
+  // Previously rmtt_profile + drillSessions were left behind, which leaked
+  // rank/XP/exam history and old drill logs across a "reset".
   localStorage.removeItem('rmtt_progress');
   localStorage.removeItem('rmtt_settings');
   localStorage.removeItem('rmtt_streaks');
   localStorage.removeItem('rmtt_stats');
+  localStorage.removeItem('rmtt_profile');
+  localStorage.removeItem('drillSessions');
+  localStorage.removeItem('rmtt_last_backup');
+  // (Intentionally keep rmtt_disclaimer — user already accepted the legal
+  // disclaimer; resetting progress isn't reason to re-prompt.)
   App.state.progress = {};
   App.state.settings = { darkMode: true, dailyGoal: 30, notifications: false, defaultMode: 'quick', positionGrouping: 'grouped' };
   App.state.streaks = { current: 0, daily: 0, personalBest: 0, lastPracticeDate: null };
   App.state.stats = { totalHands: 0, totalTime: 0, dailyHistory: {} };
+  // v1.9.7: also reset profile to defaults (mirrors App.state.profile init shape)
+  App.state.profile = {
+    totalXP: 0,
+    xpLevel: 1,
+    certifications: {
+      overallRank: 'Unranked',
+      masteryScore: 0,
+      lastCertificationDate: null,
+      certificationFreshness: 100
+    },
+    moduleRanks: {
+      push_fold: 'Unranked',
+      call_vs_jam: 'Unranked',
+      bb_defense: 'Unranked',
+      blind_battle: 'Unranked',
+      rejam: 'Unranked',
+      open_vs_3bet: 'Unranked',
+      mixed_decision: 'Unranked'
+    },
+    moduleRankHistory: [],
+    overallExamHistory: [],
+    challengeResults: [],
+    badges: [],
+    dailyMission: { generatedAt: null, missions: [], completed: [] }
+  };
   closeResetModal();
+  // Re-render whatever the user might be looking at so the wipe is visible
   renderSettings();
+  if (typeof renderMastery === 'function') renderMastery();
+  if (typeof renderProgress === 'function') renderProgress();
   showToast('✓ Progress reset');
 }
 
