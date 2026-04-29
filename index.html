@@ -836,6 +836,53 @@
       font-variant-numeric: tabular-nums;
     }
     .challenge-score-target { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
+
+    /* ============================================================ */
+    /* DRILL PRESET BANNER v1.8.3                                   */
+    /* ============================================================ */
+    .drill-preset-banner {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, var(--surface) 100%);
+      border: 1px solid rgba(212,175,55,0.3);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .drill-preset-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .drill-preset-info { flex: 1; min-width: 0; }
+    .drill-preset-label {
+      font-size: 11px;
+      color: #d4af37;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 700;
+    }
+    .drill-preset-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .drill-preset-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+    .drill-preset-clear {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .drill-preset-clear:hover { background: rgba(255,255,255,0.1); color: var(--text); }
     .reasoning-box {
       background: rgba(110,231,183,0.05);
       border: 1px solid rgba(110,231,183,0.15);
@@ -1274,6 +1321,9 @@
   <!-- DRILL TAB -->
   <div class="tab-panel" id="tab-drill">
     <div id="drillSetup" class="container">
+      <!-- v1.8.3: training preset banner (shown when applyDrillPreset has been called) -->
+      <div id="drillPresetBanner" style="display:none"></div>
+
       <div class="section-title">🎯 Drill Mode</div>
       <div class="section-subtitle">Choose a mode and customize your session</div>
 
@@ -1493,7 +1543,14 @@ const App = {
       startTime: null,
       phase: 'setup', // setup | question | answer | complete
       currentQuestion: null,
-      questionStartTime: null
+      questionStartTime: null,
+      // v1.8.3: module preset filter set by Mastery "Train [Module]" CTAs.
+      // When non-null, buildDrillQueue restricts pool to scenarios whose
+      // metadata module maps to this mastery module. Banner shown above
+      // drill setup; user can clear to return to default behavior.
+      moduleFilter: null,
+      // v1.8.2 challenge state (kept for completeness)
+      challenge: null
     },
     // v1.8.0: Mastery Path data model. All optional/safe-defaults so
     // existing users without profile don't break. Module ranks all start
@@ -1533,8 +1590,14 @@ const App = {
     this.renderSettings();
     this.renderProgress();
     this.renderBrowse();
-    // v1.8.1: Mastery is now default landing tab — render on init
-    if (typeof renderMastery === 'function') renderMastery();
+    // v1.8.1: Mastery is now default landing tab — render on init.
+    // v1.8.3 hotfix: function declarations are hoisted, so unconditional call
+    // is safe AND we re-render after loadRanges completes (see loadRanges).
+    renderMastery();
+    // Defensive: scroll to top so first paint shows hero card, not residual
+    // scroll position from a previous session.
+    var mc = document.getElementById('mainContent');
+    if (mc && mc.scrollTo) mc.scrollTo(0, 0);
   },
 
   async loadRanges() {
@@ -1550,6 +1613,9 @@ const App = {
       this.state.rangesLoaded = true;
     }
     this.renderBrowse();
+    // v1.8.3 hotfix: re-render Mastery so estimated ranks + module accuracies
+    // pick up data that wasn't available during the synchronous init() call.
+    if (typeof renderMastery === 'function') renderMastery();
   },
 
   loadProgress() {
@@ -1898,6 +1964,11 @@ function buildDrillQueue(count) {
       // Accept either exact match OR prefix match with trailing underscore.
       const af = d.actionFilter;
       if (action !== af && !action.startsWith(af + '_')) return;
+    }
+    // v1.8.3: module preset filter — restricts pool to scenarios whose
+    // metadata module maps to the chosen mastery module.
+    if (d.moduleFilter) {
+      if (!scenario.meta || metaModuleToMastery(scenario.meta.module) !== d.moduleFilter) return;
     }
 
     Object.entries(scenario.hands || {}).forEach(([hand, freqs]) => {
@@ -3756,10 +3827,11 @@ function getBestNextUpgrade(moduleRanks, moduleAccs) {
 
 // CTA handlers
 function masteryStartRecommendedDrill() {
-  // v1.8.2: route to Boss Test for the recommended module
+  // v1.8.3 hotfix: route to Practice with module preset (was Boss Test in v1.8.2).
+  // Boss Test is now an explicit separate CTA.
   const upgrade = getBestNextUpgrade(App.state.profile.moduleRanks, getModuleAccuracies());
   if (upgrade) {
-    masteryOpenChallengeSetup(upgrade.module);
+    applyDrillPreset(upgrade.module);
   } else {
     switchTab('drill');
   }
@@ -3771,12 +3843,23 @@ function masteryViewPath() {
   }
 }
 function masteryTrainModule(moduleKey) {
-  // v1.8.2: open Module Boss Test setup screen (Challenge Mode)
+  // v1.8.3 hotfix: Practice mode with module preset (was Challenge in v1.8.2).
+  // Boss Test is now a separate explicit CTA on the module card.
+  applyDrillPreset(moduleKey);
+}
+function masteryBossTestModule(moduleKey) {
+  // v1.8.3: explicit Boss Test entry (Challenge Mode)
   masteryOpenChallengeSetup(moduleKey);
 }
 function masteryStartMission() {
-  if (typeof showToast === 'function') showToast(`Today's mission queued`);
-  switchTab('drill');
+  // v1.8.3 hotfix: apply preset for the primary mission module
+  const mission = generateTodaysMission(getModuleAccuracies());
+  const primary = mission.items.find(it => it.module && it.module !== 'review');
+  if (primary) {
+    applyDrillPreset(primary.module);
+  } else {
+    switchTab('drill');
+  }
 }
 
 // ----- Main render -----
@@ -3865,7 +3948,10 @@ function renderMastery() {
         <div class="upgrade-reward-pill">+${bestUpgrade.pointGain} pts</div>
       </div>
       <div class="upgrade-why">${bestUpgrade.why}</div>
-      <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')" style="width:100%">Train ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '')}</button>
+      <div class="hero-cta-row" style="margin-top:0">
+        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Practice ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '').trim()}</button>
+        <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${bestUpgrade.module}')">🏆 Boss Test</button>
+      </div>
     </div>`;
   }
 
@@ -3910,8 +3996,8 @@ function renderMastery() {
           <div class="module-card-progress-fill" style="width:${fillPct}%;background:${fillColor};opacity:0.85"></div>
         </div>
         <div class="module-card-cta-row">
-          <button class="primary" onclick="masteryTrainModule('${m}')">Train</button>
-          <button onclick="masteryViewPath()">Details</button>
+          <button class="primary" onclick="masteryTrainModule('${m}')">▶ Practice</button>
+          <button onclick="masteryBossTestModule('${m}')">🏆 Boss Test</button>
         </div>
       </div>
     `;
@@ -4395,6 +4481,82 @@ function masteryAfterChallenge(action) {
 }
 
 // ============================================================
+// DRILL PRESET SYSTEM (v1.8.3)
+// ============================================================
+// Lets the Mastery tab "Train [Module]" CTAs route the user into the Drill
+// tab pre-filtered to that module's scenario pool. The preset is stored on
+// App.state.drill.moduleFilter and consumed by buildDrillQueue. A banner is
+// shown above the drill setup so users always know they're in a preset.
+//
+// Presets vs Boss Tests:
+//   - Practice preset (this) → Drill tab, no rank impact, free experimentation
+//   - Boss Test (v1.8.2 challenge mode) → official rank-up test with strict
+//     pass/fail, separate flow
+
+function applyDrillPreset(moduleId, options) {
+  options = options || {};
+  const d = App.state.drill;
+  d.moduleFilter = moduleId;
+  // Auto-select Marginal Focus mode for mixed_decision (high-leverage spots)
+  if (moduleId === 'mixed_decision' && !options.preserveMode) {
+    d.mode = 'marginal';
+  } else if (options.mode) {
+    d.mode = options.mode;
+  }
+  // Make sure Drill tab is shown with setup visible (not mid-drill / mid-challenge)
+  switchTab('drill');
+  document.getElementById('drillSetup').style.display = 'block';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  var cs = document.getElementById('challengeSetup');
+  if (cs) cs.style.display = 'none';
+  renderDrillPresetBanner();
+  // Sync mode-card selection visually
+  document.querySelectorAll('.mode-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.mode === d.mode);
+  });
+}
+
+function clearDrillPreset() {
+  App.state.drill.moduleFilter = null;
+  renderDrillPresetBanner();
+  if (typeof showToast === 'function') showToast('Preset cleared');
+}
+
+function renderDrillPresetBanner() {
+  const banner = document.getElementById('drillPresetBanner');
+  if (!banner) return;
+  const mf = App.state.drill.moduleFilter;
+  if (!mf) {
+    banner.style.display = 'none';
+    banner.innerHTML = '';
+    return;
+  }
+  const info = MODULE_DISPLAY_INFO[mf];
+  if (!info) { banner.style.display = 'none'; return; }
+  // Count scenarios in pool for user feedback
+  let poolSize = 0;
+  if (App.state.ranges) {
+    for (const k of Object.keys(App.state.ranges)) {
+      const s = App.state.ranges[k];
+      if (s && s.meta && metaModuleToMastery(s.meta.module) === mf) poolSize++;
+    }
+  }
+  banner.style.display = 'block';
+  banner.innerHTML = `
+    <div class="drill-preset-banner">
+      <div class="drill-preset-icon">${info.icon}</div>
+      <div class="drill-preset-info">
+        <div class="drill-preset-label">Training Preset</div>
+        <div class="drill-preset-name">${info.label}</div>
+        <div class="drill-preset-desc">${info.desc} · ${poolSize} scenarios in pool</div>
+      </div>
+      <button class="drill-preset-clear" onclick="clearDrillPreset()">Clear preset</button>
+    </div>
+  `;
+}
+
+// ============================================================
 // COVERAGE MAP (v1.7.1)
 // ============================================================
 // Aggregates scenario metadata by module and renders a coverage table.
@@ -4589,7 +4751,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.2</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.3</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -4738,7 +4900,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.8.2',
+    version: '1.8.3',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
