@@ -1426,6 +1426,25 @@
       margin-left: 6px;
       vertical-align: middle;
     }
+    /* v1.9.1: certified pill — green check, not rank-color */
+    .exam-step-next-pill.certified-pill {
+      background: rgba(74,222,128,0.18);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.45);
+    }
+    /* v1.9.1: certified row — green tint, no pulse, no glow CTA */
+    .exam-step.certified {
+      background: linear-gradient(90deg, rgba(74,222,128,0.06) 0%, transparent 90%) !important;
+      border-color: rgba(74,222,128,0.20);
+    }
+    .exam-step.certified .exam-step-emblem-wrap {
+      filter: drop-shadow(0 0 4px rgba(74,222,128,0.45));
+    }
+    /* v1.9.1: certified takes priority over next-target glow if both apply (shouldn't, but defensive) */
+    .exam-step.certified.next-target {
+      animation: none;
+    }
+    .exam-step.certified .exam-step-emblem-wrap { animation: none; }
     /* v1.8.12 / 13: mini Take Exam CTA on the Rank Path's READY row.
        v1.8.13: tightened glow so it doesn't overflow the row edge. */
     .exam-step-claim-btn {
@@ -2012,6 +2031,25 @@
       font-size: 12px;
       color: #f87171;
       padding: 2px 0;
+    }
+    /* v1.9.1: helper text under the primary Recovery Mission CTA */
+    .exam-retry-helper {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin: -2px 0 4px;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    /* v1.9.1: de-emphasize the Retry-now CTA so it doesn't compete with Recovery */
+    .boss-victory-cta-stack .btn-mastery-secondary.subtle-retry {
+      background: rgba(255,255,255,0.03);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .boss-victory-cta-stack .btn-mastery-secondary.subtle-retry:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
     }
     .overall-exam-eyebrow {
       font-size: 11px;
@@ -6442,6 +6480,52 @@ function getOverallExamForRank(targetRank) {
   return OVERALL_EXAM_DEFINITIONS[targetRank] || null;
 }
 
+// ============================================================
+// OVERALL EXAM SOFT COOLDOWN v1.9.1 (groundwork — NOT enforced yet)
+// ============================================================
+// Rationale: prevent exam spam after a fail without harshly punishing the user.
+// On fail, retry is allowed after EITHER a time delay OR completing N
+// Recovery Missions on the recommended weakest module.
+//
+// Tier mapping (by target rank):
+//   early  Bronze, Silver       (Squire, Ranger)
+//   mid    Gold,   Platinum     (Knight, Champion)
+//   high   Diamond, Master, Grandmaster  (Warlord, Mythic, End Boss)
+//
+// Each tier has fail1 (first fail this rank) and fail2plus (subsequent
+// consecutive fails). Pass-through bypass uses recoveryMissions count.
+//
+// Reading order for future enforcement:
+//   1. Look up most recent overallExamHistory entry for this rank
+//   2. If passed: no cooldown
+//   3. If failed: read entry.consecutiveFails + entry.retryLockedUntil
+//   4. If retryLockedUntil > Date.now() AND recoveryCompleted < required, block retry
+//   5. Otherwise allow
+//
+// Currently retryLockedUntil is computed and saved but the Take Exam CTA
+// does not enforce it. Enforcement ships in a future release alongside
+// the Recovery Mission completion-tracking flow.
+const OVERALL_EXAM_COOLDOWN_RULES = {
+  early: {
+    fail1:     { retryAfterMinutes: 15,   recoveryMissions: 1 },
+    fail2plus: { retryAfterMinutes: 30,   recoveryMissions: 2 }
+  },
+  mid: {
+    fail1:     { retryAfterMinutes: 30,   recoveryMissions: 1 },
+    fail2plus: { retryAfterMinutes: 120,  recoveryMissions: 2 }
+  },
+  high: {
+    fail1:     { retryAfterMinutes: 240,  recoveryMissions: 2 },
+    fail2plus: { retryAfterMinutes: 1440, recoveryMissions: 3 }
+  }
+};
+
+function getCooldownTierForRank(targetRank) {
+  if (targetRank === 'Bronze' || targetRank === 'Silver') return 'early';
+  if (targetRank === 'Gold' || targetRank === 'Platinum') return 'mid';
+  return 'high'; // Diamond, Master, Grandmaster
+}
+
 // Verify a profile meets every gate for an exam. Returns
 // { passed, failures: [{ id, label, required, actual }] } so the brief
 // screen can render exactly which gates are still missing.
@@ -6955,6 +7039,41 @@ function showOverallExamResult() {
 
   // Persist attempt regardless of pass/fail
   if (!Array.isArray(profile.overallExamHistory)) profile.overallExamHistory = [];
+
+  // v1.9.1: groundwork for soft cooldown / recovery (NOT enforced yet).
+  // Compute consecutiveFails on this rank by scanning prior history entries
+  // backwards until we hit a pass or a different rank. Used by future
+  // OVERALL_EXAM_COOLDOWN_RULES enforcement.
+  let consecutiveFails = 0;
+  if (!result.passed) {
+    consecutiveFails = 1;
+    for (let k = profile.overallExamHistory.length - 1; k >= 0; k--) {
+      const prev = profile.overallExamHistory[k];
+      if (prev.rankAttempted !== oe.targetRank) break;
+      if (prev.passed) break;
+      consecutiveFails++;
+    }
+  }
+  // Identify weakest module from this exam's breakdown — used by both the
+  // result UI and (later) cooldown bypass via "complete N Recovery Missions".
+  let recommendedRecoveryModule = null;
+  if (!result.passed) {
+    const breakdownEntries = Object.entries(result.moduleBreakdown).filter(([m]) => m !== 'unknown');
+    breakdownEntries.sort((a, b) => (a[1].accuracy || 0) - (b[1].accuracy || 0));
+    if (breakdownEntries.length > 0) recommendedRecoveryModule = breakdownEntries[0][0];
+  }
+  // Compute retry-locked-until timestamp from cooldown rules (unused until
+  // enforcement ships; saved on the entry so future versions can read it
+  // without re-deriving).
+  let retryLockedUntil = null;
+  if (!result.passed && typeof OVERALL_EXAM_COOLDOWN_RULES !== 'undefined') {
+    const tier = getCooldownTierForRank(oe.targetRank);
+    const cd = OVERALL_EXAM_COOLDOWN_RULES[tier];
+    const failKey = consecutiveFails === 1 ? 'fail1' : 'fail2plus';
+    const minutes = (cd && cd[failKey] && cd[failKey].retryAfterMinutes) || 0;
+    if (minutes > 0) retryLockedUntil = Date.now() + minutes * 60 * 1000;
+  }
+
   const historyEntry = {
     rankAttempted: oe.targetRank,
     passed: result.passed,
@@ -6965,7 +7084,13 @@ function showOverallExamResult() {
     mixedAwareness: result.mixedPct,
     criticalMistakes: result.criticalCount,
     moduleBreakdown: result.moduleBreakdown,
-    seed: oe.seed
+    seed: oe.seed,
+    // v1.9.1 groundwork (soft cooldown not enforced yet):
+    consecutiveFails,
+    recommendedRecoveryModule,
+    retryLockedUntil,
+    recoveryRequired: false,
+    recoveryCompleted: false
   };
   profile.overallExamHistory.push(historyEntry);
 
@@ -7122,6 +7247,11 @@ function renderOverallExamResult(oe, result, oldRank) {
     const weakestZone = weakestModule ? getModuleZone(weakestModule) : null;
     const failReasonsHtml = result.failReasons.map(f => `<div class="exam-fail-reason-row">✗ ${f.label}</div>`).join('');
 
+    // v1.9.1: stronger Recovery framing — Train Weak Spot is the obvious primary,
+    // Retry Exam is intentionally de-emphasized (still available, but not the
+    // first thing the eye lands on). Coaching copy makes failure feel like
+    // guidance, not punishment.
+    const weakestAcc = weakestModule ? result.moduleBreakdown[weakestModule].accuracy : null;
     const html = `
       <div class="boss-defeat-card overall-exam-defeat" style="--rank-color:${v.color};--rank-glow:${v.glow}">
         <div class="boss-defeat-stamp">⚔ ${examName.toUpperCase()} HELD</div>
@@ -7134,8 +7264,8 @@ function renderOverallExamResult(oe, result, oldRank) {
         </div>
         ${weakestModule ? `
         <div class="boss-defeat-recommend" style="--zone-accent:${weakestZone.accent}">
-          <div class="recommend-eyebrow">▸ Recommended Next</div>
-          <div class="recommend-line"><strong>${moduleCleanLabel(weakestModule)} (${weakestZone.zone}).</strong> Lowest module accuracy on this exam (${result.moduleBreakdown[weakestModule].accuracy}%). Run a focused mission to lift it before retry.</div>
+          <div class="recommend-eyebrow">▸ Recovery Plan · Train Weak Spot</div>
+          <div class="recommend-line"><strong>${moduleCleanLabel(weakestModule)} (${weakestZone.zone}) — ${weakestAcc}% on this exam.</strong> This is your weakest zone. Train it before retrying for a better chance.</div>
         </div>` : ''}
       </div>
 
@@ -7147,9 +7277,13 @@ function renderOverallExamResult(oe, result, oldRank) {
         </div>
       </div>
 
+      <!-- v1.9.1: Train Weak Spot is now the primary CTA; Retry de-emphasized -->
       <div class="boss-victory-cta-stack">
-        ${weakestModule ? `<button class="btn-mastery-primary" onclick="afterOverallExam('train','${weakestModule}')">▶ Train ${moduleCleanLabel(weakestModule)}</button>` : ''}
-        <button class="btn-mastery-secondary" onclick="afterOverallExam('retry','${oe.targetRank}')">⚔ Retry Exam</button>
+        ${weakestModule
+          ? `<button class="btn-mastery-primary" onclick="afterOverallExam('train','${weakestModule}')">▶ Recovery Mission · Train ${moduleCleanLabel(weakestModule)}</button>
+             <div class="exam-retry-helper">Lift your ${moduleCleanLabel(weakestModule)} accuracy before another exam attempt.</div>`
+          : ''}
+        <button class="btn-mastery-secondary subtle-retry" onclick="afterOverallExam('retry','${oe.targetRank}')">⚔ Retry ${examName} now</button>
         <button class="btn-mastery-secondary" onclick="afterOverallExam('home')">← Back to Home</button>
       </div>
     `;
@@ -7436,6 +7570,13 @@ function _renderMasteryImpl() {
     <div class="mastery-section-title"><span class="accent-bar"></span>Rank Path</div>
     <div class="mastery-card-sub">Climb the path. Each rank unlocks at a Mastery Score threshold; pass the exam to certify.</div>
     <div class="rank-path">`;
+  // v1.9.1: explicit state machine for each Rank Path node:
+  //   CERTIFIED — user's overallRank is at or above this rank (already passed)
+  //   READY     — threshold met AND not yet certified AND not the next target (still selectable)
+  //   NEXT      — this is the user's next target (may be ready or still locked)
+  //   LOCKED    — threshold not met AND not the next target
+  // Take Exam CTA only shown for the active next-target ready state, never on certified.
+  const userOverallIdx = INTERNAL_RANKS.indexOf(overallRank);
   const futureCutoff = nextOverall ? INTERNAL_RANKS.indexOf(nextOverall) + 2 : null;
   for (let i = 1; i < INTERNAL_RANKS.length; i++) {
     const r = INTERNAL_RANKS[i];
@@ -7444,26 +7585,43 @@ function _renderMasteryImpl() {
     const isNext = r === nextOverall;
     const isFar = futureCutoff !== null && i > futureCutoff;
     const v = rankCssVars(r);
+    // v1.9.1: certified means the user already holds this rank (or higher)
+    const certified = userOverallIdx >= i;
     const cls = ['exam-step',
+      certified ? 'certified' : '',
       isNext ? 'next-target' : '',
-      reached && !isNext ? 'unlocked' : '',
+      reached && !isNext && !certified ? 'unlocked' : '',
       isFar ? 'locked-far' : '',
       r === 'Grandmaster' ? 'end-boss-step' : ''
     ].filter(Boolean).join(' ');
-    // v1.8.12: positive language only — "READY" when met, positive "X.X pts to go" when not
     const ptsAway = Math.max(0, threshold - masteryScore);
-    const status = reached
-      ? `<span style="color:${v.color};font-weight:700">🏆 READY</span>`
-      : `<span style="color:var(--text-secondary)">🔒 ${ptsAway.toFixed(1)} pts to go</span>`;
-    // v1.8.12: when reached AND it's the next-target rank, the row gets a primary "Take Exam" mini-CTA
-    const takeExamCta = (reached && isNext)
+    // v1.9.1: state-aware status text + pill
+    let status, pill;
+    if (certified) {
+      status = `<span style="color:var(--success);font-weight:700">✓ CERTIFIED</span>`;
+      pill = `<span class="exam-step-next-pill certified-pill">CERTIFIED</span>`;
+    } else if (isNext && reached) {
+      status = `<span style="color:${v.color};font-weight:700">🏆 READY</span>`;
+      pill = `<span class="exam-step-next-pill" style="--rank-color:${v.color}">NEXT · READY</span>`;
+    } else if (isNext) {
+      status = `<span style="color:var(--text-secondary)">🔒 ${ptsAway.toFixed(1)} pts to go</span>`;
+      pill = `<span class="exam-step-next-pill" style="--rank-color:${v.color}">NEXT</span>`;
+    } else if (reached) {
+      status = `<span style="color:${v.color};font-weight:700">🏆 READY</span>`;
+      pill = '';
+    } else {
+      status = `<span style="color:var(--text-secondary)">🔒 ${ptsAway.toFixed(1)} pts to go</span>`;
+      pill = '';
+    }
+    // Take Exam CTA only when the rank is the user's next target AND ready AND not already certified
+    const takeExamCta = (isNext && reached && !certified)
       ? `<button class="exam-step-claim-btn" style="--rank-color:${v.color};--rank-glow:${v.glow}" onclick="openOverallExam('${r}')">Take Exam</button>`
       : '';
     html += `
       <div class="${cls}" style="--rank-color:${v.color};--rank-glow:${v.glow}">
         <div class="exam-step-emblem-wrap">${renderRankEmblem(r, 'small')}</div>
         <div class="exam-step-info">
-          <div class="exam-step-name">${rankDisplay(r)} Exam${isNext ? `<span class="exam-step-next-pill" style="--rank-color:${v.color}">${reached ? 'READY' : 'NEXT'}</span>` : ''}</div>
+          <div class="exam-step-name">${rankDisplay(r)} Exam${pill}</div>
           <div class="exam-step-req">Threshold: ${threshold} pts · internal ${r}</div>
         </div>
         <div class="exam-step-status">${status}${takeExamCta}</div>
@@ -8474,7 +8632,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
