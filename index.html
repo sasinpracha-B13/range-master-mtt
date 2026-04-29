@@ -394,7 +394,7 @@
          L5  foreground content (rank emblem + meta + progress + CTA) */
     .mastery-hero {
       position: relative;
-      padding: 30px 18px 20px;
+      padding: 16px 18px 20px;
       border-radius: 16px;
       background:
         linear-gradient(135deg, #1f2230 0%, #0e1018 100%);
@@ -461,18 +461,18 @@
       height: 280px;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.24;
+      opacity: 0.20;
       color: var(--rank-color, #94a3b8);
       filter: drop-shadow(0 0 22px var(--rank-glow, rgba(0,0,0,0.45)));
       animation: hero-aura-breathe 6s ease-in-out infinite;
     }
     @keyframes hero-aura-breathe {
       0%, 100% {
-        opacity: 0.24;
+        opacity: 0.20;
         filter: drop-shadow(0 0 22px var(--rank-glow, rgba(0,0,0,0.45)));
       }
       50% {
-        opacity: 0.30;
+        opacity: 0.26;
         filter: drop-shadow(0 0 32px var(--rank-glow, rgba(0,0,0,0.45)));
       }
     }
@@ -505,20 +505,102 @@
       80%  { opacity: 0.4; }
       100% { transform: translateY(-90px) translateX(20px); opacity: 0; }
     }
-    /* Hero eyebrow label so the card reads as a character profile, not a stat card */
+    /* v1.8.13: Hero eyebrow + promoted badge are now a top utility row
+       above the rank grid — no more absolute positioning over the emblem. */
+    .hero-utility-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
     .hero-banner-eyebrow {
-      position: absolute;
-      top: 12px;
-      left: 18px;
       font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
       font-weight: 700;
       color: var(--rank-color, #d4af37);
-      opacity: 0.8;
-      z-index: 2;
+      opacity: 0.85;
     }
     .hero-banner-eyebrow::before { content: '◆ '; opacity: 0.7; }
+    /* v1.8.12: Exam Unlocked state — strong rank-color glow + accent border */
+    .mastery-hero.exam-unlocked {
+      border-color: var(--exam-color, #d4af37);
+      box-shadow:
+        0 0 56px var(--exam-glow, rgba(212,175,55,0.40)),
+        inset 0 0 24px rgba(0,0,0,0.35);
+      animation: hero-exam-pulse 3.6s ease-in-out infinite;
+    }
+    @keyframes hero-exam-pulse {
+      0%, 100% { box-shadow: 0 0 40px var(--exam-glow, rgba(212,175,55,0.32)), inset 0 0 24px rgba(0,0,0,0.35); }
+      50%      { box-shadow: 0 0 64px var(--exam-glow, rgba(212,175,55,0.55)), inset 0 0 24px rgba(0,0,0,0.35); }
+    }
+    .hero-exam-unlock-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--exam-color, rgba(212,175,55,0.45));
+      font-size: 12px;
+      letter-spacing: 0.4px;
+    }
+    .hero-exam-unlock-line strong {
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .hero-exam-unlock-line .unlock-icon {
+      font-size: 14px;
+      filter: drop-shadow(0 0 6px var(--exam-color, #d4af37));
+    }
+    .hero-progress-block.completed .hero-progress-fill {
+      animation: progress-bar-shimmer 2.4s ease-in-out infinite;
+    }
+    @keyframes progress-bar-shimmer {
+      0%, 100% { filter: brightness(1); }
+      50%      { filter: brightness(1.25); }
+    }
+    /* v1.8.12: Take Exam CTA — uses next-rank color with breathing glow */
+    .btn-mastery-primary.exam-cta {
+      background: linear-gradient(135deg, var(--exam-color, #d4af37) 0%, color-mix(in srgb, var(--exam-color, #d4af37) 70%, #ffffff) 100%);
+      color: #0d1117;
+      border: 1px solid var(--exam-color, #d4af37);
+      box-shadow:
+        0 4px 14px var(--exam-glow, rgba(212,175,55,0.30)),
+        0 0 24px var(--exam-glow, rgba(212,175,55,0.45));
+      animation: exam-cta-pulse 2.4s ease-in-out infinite;
+      letter-spacing: 0.6px;
+    }
+    .btn-mastery-primary.exam-cta:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 18px var(--exam-glow, rgba(212,175,55,0.45)),
+        0 0 28px var(--exam-glow, rgba(212,175,55,0.55));
+    }
+    @keyframes exam-cta-pulse {
+      0%, 100% { box-shadow: 0 4px 14px var(--exam-glow, rgba(212,175,55,0.30)), 0 0 18px var(--exam-glow, rgba(212,175,55,0.40)); }
+      50%      { box-shadow: 0 6px 18px var(--exam-glow, rgba(212,175,55,0.45)), 0 0 30px var(--exam-glow, rgba(212,175,55,0.62)); }
+    }
+    /* v1.8.12: hero rank chip (replaces "internal: Unranked" plain text) */
+    .hero-rank-chip {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .hero-rank-chip.subtle { font-variant-numeric: tabular-nums; }
+
     /* v1.8.11: post-rank-up state — stronger card glow + promoted badge */
     .mastery-hero.recently-promoted {
       box-shadow:
@@ -530,10 +612,8 @@
       0%, 100% { box-shadow: 0 0 36px var(--rank-glow, rgba(212,175,55,0.18)), inset 0 0 24px rgba(0,0,0,0.35); }
       50%      { box-shadow: 0 0 56px var(--rank-glow, rgba(212,175,55,0.35)), inset 0 0 24px rgba(0,0,0,0.35); }
     }
+    /* v1.8.13: lives inside .hero-utility-row now — no absolute positioning */
     .hero-promoted-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -547,7 +627,6 @@
       letter-spacing: 1.4px;
       text-transform: uppercase;
       box-shadow: 0 0 12px var(--rank-glow, rgba(212,175,55,0.35));
-      z-index: 2;
       animation: hero-promoted-pulse 2.4s ease-in-out infinite;
     }
     .hero-promoted-badge .dot {
@@ -560,13 +639,27 @@
       0%, 100% { box-shadow: 0 0 10px var(--rank-glow, rgba(212,175,55,0.30)); }
       50%      { box-shadow: 0 0 18px var(--rank-glow, rgba(212,175,55,0.55)); }
     }
-    .mastery-hero > *:not(.hero-texture-layer):not(.hero-character-layer):not(.hero-dust-layer) { position: relative; z-index: 1; }
+    .mastery-hero > *:not(.hero-texture-layer):not(.hero-character-layer):not(.hero-dust-layer):not(.hero-readability-scrim) { position: relative; z-index: 1; }
+    /* v1.8.13: scrim above the silhouette so type stays readable on the left. */
+    .hero-readability-scrim {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: linear-gradient(90deg, rgba(13,17,23,0.30) 0%, rgba(13,17,23,0.10) 55%, transparent 100%);
+    }
+    /* v1.8.13: explicit 3-column grid — emblem | rank text | XP. No more
+       flex collapse, no overlap with absolute eyebrow. */
     .mastery-hero-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       margin-bottom: 14px;
     }
+    .mastery-hero-row > .rank-emblem.hero { grid-column: 1; }
+    .mastery-hero-row > .hero-meta { grid-column: 2; min-width: 0; }
+    .mastery-hero-row > .hero-xp { grid-column: 3; }
     /* v1.8.8: rank emblem upgraded into a collectible badge.
        Outer ring (border) + inner stage (radial-gradient bg) + glowing halo. */
     .rank-emblem {
@@ -1268,12 +1361,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 9px 12px 9px 0;
+      padding: 9px 12px 9px 4px;
       border-radius: 10px;
       background: transparent;
       border: 1px solid transparent;
       transition: opacity 0.15s, background 0.15s, border-color 0.15s;
       z-index: 1;
+      overflow: hidden;
     }
     .exam-step .exam-step-emblem-wrap {
       position: relative;
@@ -1287,14 +1381,16 @@
     .exam-step.next-target {
       background: linear-gradient(90deg, var(--rank-glow, rgba(212,175,55,0.10)) 0%, transparent 90%);
       border-color: var(--rank-color, rgba(212,175,55,0.4));
-      box-shadow: 0 0 22px var(--rank-glow, rgba(212,175,55,0.18));
+      box-shadow: inset 0 0 12px var(--rank-glow, rgba(212,175,55,0.10));
     }
+    /* v1.8.13: contained pulse — drop-shadow capped at 7px so glow stays
+       inside the row boundary on mobile. No overflow. */
     .exam-step.next-target .exam-step-emblem-wrap {
       animation: emblem-pulse 2.6s ease-in-out infinite;
     }
     @keyframes emblem-pulse {
-      0%, 100% { filter: drop-shadow(0 0 6px var(--rank-color, transparent)); }
-      50%      { filter: drop-shadow(0 0 14px var(--rank-color, transparent)); }
+      0%, 100% { filter: drop-shadow(0 0 3px var(--rank-color, transparent)); }
+      50%      { filter: drop-shadow(0 0 7px var(--rank-color, transparent)); }
     }
     .exam-step.locked-far { opacity: 0.58; }
     .exam-step.unlocked {
@@ -1329,6 +1425,28 @@
       color: #0d1117;
       margin-left: 6px;
       vertical-align: middle;
+    }
+    /* v1.8.12 / 13: mini Take Exam CTA on the Rank Path's READY row.
+       v1.8.13: tightened glow so it doesn't overflow the row edge. */
+    .exam-step-claim-btn {
+      display: block;
+      margin-top: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--rank-color, #d4af37);
+      color: #0d1117;
+      border: none;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--rank-glow, rgba(212,175,55,0.40));
+      animation: exam-step-claim-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes exam-step-claim-pulse {
+      0%, 100% { box-shadow: 0 0 4px var(--rank-glow, rgba(212,175,55,0.25)); }
+      50%      { box-shadow: 0 0 9px var(--rank-glow, rgba(212,175,55,0.50)); }
     }
 
     /* ============================================================ */
@@ -1729,6 +1847,138 @@
       line-height: 1.6;
     }
     .boss-defeat-recommend .recommend-line strong { color: var(--text); }
+
+    /* ============================================================ */
+    /* OVERALL EXAM CLAIM v1.8.12 — focused rank-up entry            */
+    /* ============================================================ */
+    .overall-exam-claim {
+      position: relative;
+      padding: 22px 18px 18px;
+      border-radius: 16px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, var(--rank-glow, rgba(212,175,55,0.28)) 0%, transparent 60%),
+        linear-gradient(180deg, #1a2030 0%, #0d1117 80%);
+      border: 2px solid var(--rank-color, #d4af37);
+      box-shadow:
+        0 0 48px var(--rank-glow, rgba(212,175,55,0.30)),
+        inset 0 0 24px rgba(0,0,0,0.4);
+      margin: 12px auto;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .overall-exam-eyebrow {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--rank-color, #d4af37);
+      font-weight: 800;
+    }
+    .overall-exam-headline {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-top: 6px;
+      color: var(--text);
+    }
+    .overall-exam-subline {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .overall-exam-emblem-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin: 22px auto 8px;
+    }
+    .overall-exam-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .overall-exam-side-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .overall-exam-side-label.new {
+      color: var(--rank-color, #d4af37);
+      font-weight: 700;
+    }
+    .overall-exam-arrow {
+      font-size: 24px;
+      color: var(--rank-color, #d4af37);
+      filter: drop-shadow(0 0 6px var(--rank-color, #d4af37));
+      animation: exam-arrow-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes exam-arrow-pulse {
+      0%, 100% { opacity: 0.7; }
+      50%      { opacity: 1; }
+    }
+    .overall-exam-stats {
+      margin: 18px auto 0;
+      max-width: 280px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .overall-exam-stat .label {
+      font-size: 10px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+    .overall-exam-stat .value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--rank-color, #d4af37);
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+    .overall-exam-stat .value .sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+    /* v1.8.13: explicit PREVIEW pill so the temporary claim path is honest */
+    .overall-exam-preview-pill {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.45);
+      color: #fbbf24;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+    .overall-exam-note {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(251,191,36,0.04);
+      border: 1px solid rgba(251,191,36,0.20);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      text-align: left;
+    }
+    .overall-exam-note strong { color: #fbbf24; }
+    .overall-exam-cta-row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1.4fr;
+      margin-top: 14px;
+    }
 
     /* ============================================================ */
     /* MISSION CONTRACT CARD v1.8.8 — Today's Mission as a contract  */
@@ -6139,6 +6389,112 @@ function masteryStartMission() {
   }
 }
 
+// ============================================================
+// OVERALL EXAM CLAIM v1.8.12
+// ============================================================
+// Lightweight Overall Exam entry. Full Overall Exam mechanics are deferred
+// to a future release; for now, when a user's Mastery Score crosses an
+// unlock threshold, this flow lets them claim the corresponding Overall
+// Rank with a single confirmation. The claim:
+//   - validates Mastery Score still meets threshold
+//   - sets profile.certifications.overallRank to target
+//   - records profile.recentRankUp so Hero shows RECENTLY PROMOTED
+//   - re-renders Mastery so the Hero/Path reflect the new rank
+// Honest about what it is: shows a "Claim" framing rather than pretending
+// to be a full timed exam.
+function openOverallExam(targetRank) {
+  const profile = App.state.profile;
+  const masteryScore = computeMasteryScore(profile.moduleRanks);
+  const threshold = OVERALL_UNLOCK_THRESHOLDS[targetRank];
+  const v = rankCssVars(targetRank);
+  if (!threshold || masteryScore < threshold) {
+    if (typeof showToast === 'function') showToast('Mastery Score below threshold');
+    return;
+  }
+  const currentRank = profile.certifications.overallRank;
+  // v1.8.13: tightened wording. Gate title is now "Squire Exam Ready" (not
+  // "Claim Squire Rank") to make clear that threshold = exam eligibility, not
+  // automatic certification. The temporary preview behavior is explicitly
+  // labeled with a "PREVIEW" pill so users don't mistake this interim flow
+  // for the final timed/scored Overall Exam.
+  const html = `
+    <div class="overall-exam-claim" style="--rank-color:${v.color};--rank-glow:${v.glow}">
+      <div class="overall-exam-eyebrow">▸ Overall Exam Gate</div>
+      <div class="overall-exam-headline">${rankDisplay(targetRank)} Exam Ready</div>
+      <div class="overall-exam-subline">Your Mastery Score has unlocked the next Overall Rank exam.</div>
+
+      <div class="overall-exam-emblem-row">
+        <div class="overall-exam-side">
+          ${renderRankEmblem(currentRank, 'small')}
+          <div class="overall-exam-side-label">${rankDisplay(currentRank)}</div>
+        </div>
+        <div class="overall-exam-arrow">→</div>
+        <div class="overall-exam-side new">
+          ${renderRankEmblem(targetRank, 'large')}
+          <div class="overall-exam-side-label new">${rankDisplay(targetRank)}</div>
+        </div>
+      </div>
+
+      <div class="overall-exam-stats">
+        <div class="overall-exam-stat">
+          <div class="label">Mastery Score</div>
+          <div class="value">${masteryScore.toFixed(1)} <span class="sub">/ ${threshold} required</span></div>
+        </div>
+      </div>
+
+      <div class="overall-exam-preview-pill">PREVIEW BUILD</div>
+      <div class="overall-exam-note">
+        <strong>Heads up:</strong> The full Overall Exam (timed scenario test with pass/fail conditions) is not built yet. This screen is a <strong>temporary preview path</strong> — confirming below will award the rank for testing purposes only. The real exam flow will replace this in a future release.
+      </div>
+
+      <div class="overall-exam-cta-row">
+        <button class="btn-mastery-secondary" onclick="cancelOverallExam()">← Cancel</button>
+        <button class="btn-mastery-primary exam-cta" style="--exam-color:${v.color};--exam-glow:${v.glow}" onclick="confirmOverallExam('${targetRank}')">🏆 Award ${rankDisplay(targetRank)} (Preview)</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('masteryContent').innerHTML = html;
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function confirmOverallExam(targetRank) {
+  const profile = App.state.profile;
+  const masteryScore = computeMasteryScore(profile.moduleRanks);
+  const threshold = OVERALL_UNLOCK_THRESHOLDS[targetRank];
+  if (!threshold || masteryScore < threshold) {
+    if (typeof showToast === 'function') showToast('Mastery Score no longer meets threshold');
+    renderMastery();
+    return;
+  }
+  const oldRank = profile.certifications.overallRank;
+  profile.certifications.overallRank = targetRank;
+  profile.certifications.lastCertificationDate = new Date().toISOString();
+  // v1.8.12: route through the existing recentRankUp celebration path so the
+  // Hero shows "RECENTLY PROMOTED" + stronger glow on next render.
+  profile.recentRankUp = {
+    module: 'overall',
+    oldRank,
+    newRank: targetRank,
+    timestamp: Date.now()
+  };
+  if (!Array.isArray(profile.overallExamHistory)) profile.overallExamHistory = [];
+  profile.overallExamHistory.push({
+    oldRank,
+    newRank: targetRank,
+    masteryScore: masteryScore,
+    date: new Date().toISOString()
+  });
+  App.saveProgress();
+  if (typeof showToast === 'function') showToast('🏆 ' + rankDisplay(targetRank) + ' rank certified!');
+  renderMastery();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function cancelOverallExam() {
+  renderMastery();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
 // ----- Main render -----
 function renderMastery() {
   // v1.8.4: defensive wrapper — if any sub-renderer throws, show recovery
@@ -6187,42 +6543,64 @@ function _renderMasteryImpl() {
       <span class="dot"></span>RECENTLY PROMOTED · ${moduleCleanLabel(recent.module)} ${rankDisplay(recent.newRank)}
     </div>
   ` : '';
+  // v1.8.12: Promotion / Exam Unlock state.
+  //   examUnlocked  = next-rank exam threshold met (Mastery Score >= threshold)
+  //   ptsRemaining  = always positive (clamped to 0 when met) so we never
+  //                   show "-7.0 pts needed" again
+  //   nextRankVars  = rank-color theme of the unlockable rank (so the Hero
+  //                   glow + CTA pulse match the Squire/Ranger/etc. accent)
+  const examUnlocked = !!(nextOverall && masteryScore >= nextThreshold);
+  const ptsRemaining = nextOverall ? Math.max(0, nextThreshold - masteryScore) : 0;
+  const nextRankVars = nextOverall ? rankCssVars(nextOverall) : null;
+  const heroExtraClass = examUnlocked ? ' exam-unlocked' : '';
+  const progressBarColor = examUnlocked ? nextRankVars.color : null;
   let html = `
-    <div class="mastery-hero${promotedClass}" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}">
+    <div class="mastery-hero${promotedClass}${heroExtraClass}" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}${examUnlocked ? ';--exam-color:' + nextRankVars.color + ';--exam-glow:' + nextRankVars.glow : ''}">
       <div class="hero-texture-layer"></div>
       <div class="hero-character-layer">${renderRankCharacterSvg(overallRank, { width: 280, height: 280, tint: 'currentColor' })}</div>
+      <div class="hero-readability-scrim"></div>
       <div class="hero-dust-layer"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="hero-banner-eyebrow">Rank Profile</div>
-      ${promotedBadge}
+      <div class="hero-utility-row">
+        <div class="hero-banner-eyebrow">Rank Profile</div>
+        ${promotedBadge}
+      </div>
       <div class="mastery-hero-row">
         <div class="rank-emblem hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">${renderRankEmblemSVG(overallRank, 'large')}</div>
         <div class="hero-meta">
           <div class="hero-rank-line">Overall Rank</div>
           <div class="hero-rank-name">${rankDisplay(overallRank)}</div>
-          <div class="hero-rank-internal">internal: ${overallRank}</div>
+          <div class="hero-rank-chip">${overallRank}</div>
         </div>
         <div class="hero-xp">
           <div class="hero-rank-line">XP Level</div>
           <div class="hero-xp-value">${xpLevel}</div>
-          <div class="hero-rank-internal">${profile.totalXP} XP</div>
+          <div class="hero-rank-chip subtle">${profile.totalXP} XP</div>
         </div>
       </div>
 
-      <div class="hero-progress-block">
+      <div class="hero-progress-block${examUnlocked ? ' completed' : ''}">
         <div class="hero-progress-label">
           <span>Mastery Score</span>
           <span><strong style="color:var(--text)">${masteryScore.toFixed(1)}</strong> / 100</span>
         </div>
-        <div class="hero-progress-track"><div class="hero-progress-fill" style="width:${heroProgressPct}%"></div></div>
+        <div class="hero-progress-track">
+          <div class="hero-progress-fill" style="width:${heroProgressPct}%${progressBarColor ? ';background:linear-gradient(90deg,' + progressBarColor + ',#fbbf24);box-shadow:0 0 12px ' + nextRankVars.glow : ''}"></div>
+        </div>
         ${nextOverall
-          ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts <span style="opacity:0.7">(${(nextThreshold - masteryScore).toFixed(1)} pts needed)</span></div>`
+          ? (examUnlocked
+              ? `<div class="hero-exam-unlock-line" style="color:${nextRankVars.color}"><span class="unlock-icon">🏆</span> <strong>${rankDisplay(nextOverall)} EXAM UNLOCKED</strong> · You qualify to certify</div>`
+              : `<div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Next: <strong style="color:${RANK_COLOR[nextOverall]}">${rankDisplay(nextOverall)} Exam</strong> unlocks at ${nextThreshold} pts <span style="opacity:0.75">(${ptsRemaining.toFixed(1)} pts to go)</span></div>`)
           : `<div style="font-size:11px;color:var(--success);margin-top:8px">🏆 End Boss rank achieved</div>`
         }
       </div>
 
       <div class="hero-cta-row">
-        <button class="btn-mastery-primary" onclick="masteryStartRecommendedDrill()">▶  Start Today's Mission</button>
-        <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>
+        ${examUnlocked
+          ? `<button class="btn-mastery-primary exam-cta" style="--exam-color:${nextRankVars.color};--exam-glow:${nextRankVars.glow}" onclick="openOverallExam('${nextOverall}')">🏆  Take ${rankDisplay(nextOverall)} Exam</button>
+             <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`
+          : `<button class="btn-mastery-primary" onclick="masteryStartRecommendedDrill()">▶  Start Today's Mission</button>
+             <button class="btn-mastery-secondary" onclick="masteryViewPath()">View Mastery Path</button>`
+        }
       </div>
     </div>
   `;
@@ -6373,17 +6751,23 @@ function _renderMasteryImpl() {
       isFar ? 'locked-far' : '',
       r === 'Grandmaster' ? 'end-boss-step' : ''
     ].filter(Boolean).join(' ');
+    // v1.8.12: positive language only — "READY" when met, positive "X.X pts to go" when not
+    const ptsAway = Math.max(0, threshold - masteryScore);
     const status = reached
-      ? '<span style="color:var(--success)">✓ Eligible</span>'
-      : `<span style="color:var(--text-secondary)">🔒 ${(threshold - masteryScore).toFixed(1)} pts away</span>`;
+      ? `<span style="color:${v.color};font-weight:700">🏆 READY</span>`
+      : `<span style="color:var(--text-secondary)">🔒 ${ptsAway.toFixed(1)} pts to go</span>`;
+    // v1.8.12: when reached AND it's the next-target rank, the row gets a primary "Take Exam" mini-CTA
+    const takeExamCta = (reached && isNext)
+      ? `<button class="exam-step-claim-btn" style="--rank-color:${v.color};--rank-glow:${v.glow}" onclick="openOverallExam('${r}')">Take Exam</button>`
+      : '';
     html += `
       <div class="${cls}" style="--rank-color:${v.color};--rank-glow:${v.glow}">
         <div class="exam-step-emblem-wrap">${renderRankEmblem(r, 'small')}</div>
         <div class="exam-step-info">
-          <div class="exam-step-name">${rankDisplay(r)} Exam${isNext ? `<span class="exam-step-next-pill" style="--rank-color:${v.color}">NEXT</span>` : ''}</div>
+          <div class="exam-step-name">${rankDisplay(r)} Exam${isNext ? `<span class="exam-step-next-pill" style="--rank-color:${v.color}">${reached ? 'READY' : 'NEXT'}</span>` : ''}</div>
           <div class="exam-step-req">Threshold: ${threshold} pts · internal ${r}</div>
         </div>
-        <div class="exam-step-status">${status}</div>
+        <div class="exam-step-status">${status}${takeExamCta}</div>
       </div>
     `;
   }
@@ -7388,7 +7772,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.11</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.13</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
