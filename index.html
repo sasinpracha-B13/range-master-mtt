@@ -1589,22 +1589,25 @@ const App = {
   },
 
   init() {
-    this.loadProgress();
-    this.loadRanges();
-    this.registerSW();
-    this.checkDisclaimer();
-    this.checkIOSInstall();
-    this.renderSettings();
-    this.renderProgress();
-    this.renderBrowse();
-    // v1.8.1: Mastery is now default landing tab — render on init.
-    // v1.8.3 hotfix: function declarations are hoisted, so unconditional call
-    // is safe AND we re-render after loadRanges completes (see loadRanges).
-    renderMastery();
-    // Defensive: scroll to top so first paint shows hero card, not residual
-    // scroll position from a previous session.
-    var mc = document.getElementById('mainContent');
-    if (mc && mc.scrollTo) mc.scrollTo(0, 0);
+    // v1.8.5 FIX: each step wrapped in try/catch so one failure can't halt
+    // the whole init pipeline (the previous bug: this.renderSettings was
+    // not a method on App — calling it threw and stopped init before
+    // renderMastery, leaving Home blank).
+    var safe = (label, fn) => { try { fn(); } catch(e) { console.error('[init.' + label + ']', e); } };
+    safe('loadProgress',    () => this.loadProgress());
+    safe('loadRanges',      () => this.loadRanges());
+    safe('registerSW',      () => this.registerSW());
+    safe('checkDisclaimer', () => this.checkDisclaimer());
+    safe('checkIOSInstall', () => this.checkIOSInstall());
+    // renderSettings/Progress/Browse are STANDALONE functions, not methods on App.
+    safe('renderSettings',  () => renderSettings());
+    safe('renderProgress',  () => renderProgress());
+    safe('renderBrowse',    () => renderBrowse());
+    safe('renderMastery',   () => renderMastery());
+    safe('scrollTop',       () => {
+      var mc = document.getElementById('mainContent');
+      if (mc && mc.scrollTo) mc.scrollTo(0, 0);
+    });
   },
 
   async loadRanges() {
@@ -1619,10 +1622,11 @@ const App = {
       this.state.ranges = getBuiltinRanges();
       this.state.rangesLoaded = true;
     }
-    this.renderBrowse();
-    // v1.8.3 hotfix: re-render Mastery so estimated ranks + module accuracies
+    // v1.8.5 FIX: renderBrowse is a standalone function, not a method on App.
+    try { renderBrowse(); } catch(e) { console.error('[loadRanges.renderBrowse]', e); }
+    // v1.8.3: re-render Mastery so estimated ranks + module accuracies
     // pick up data that wasn't available during the synchronous init() call.
-    if (typeof renderMastery === 'function') renderMastery();
+    try { if (typeof renderMastery === 'function') renderMastery(); } catch(e) { console.error('[loadRanges.renderMastery]', e); }
   },
 
   loadProgress() {
@@ -4852,7 +4856,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.4</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.5</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -5001,7 +5005,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.8.4',
+    version: '1.8.5',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
