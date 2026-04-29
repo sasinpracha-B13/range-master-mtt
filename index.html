@@ -1237,6 +1237,143 @@
       margin: 8px 0 12px;
       line-height: 1.5;
     }
+    /* v2.0.0: TODAY'S PLAN CARD                                              */
+    .todays-plan-card { padding: 14px; }
+    .plan-primary {
+      padding: 14px 14px 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(110,231,183,0.08) 0%, var(--surface) 100%);
+      border: 1px solid rgba(110,231,183,0.25);
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .plan-primary.plan-primary-recovery {
+      background: linear-gradient(135deg, rgba(96,165,250,0.10) 0%, var(--surface) 100%);
+      border-color: rgba(96,165,250,0.40);
+    }
+    .plan-primary.plan-primary-overall_exam {
+      background: linear-gradient(135deg, rgba(212,175,55,0.10) 0%, var(--surface) 100%);
+      border-color: rgba(212,175,55,0.45);
+    }
+    .plan-primary.plan-primary-module_boss {
+      background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, var(--surface) 100%);
+      border-color: rgba(212,175,55,0.35);
+    }
+    .plan-primary.plan-primary-pressure_gap,
+    .plan-primary.plan-primary-weak_module {
+      background: linear-gradient(135deg, rgba(251,191,36,0.06) 0%, var(--surface) 100%);
+      border-color: rgba(251,191,36,0.30);
+    }
+    .plan-reason-chip {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .plan-reason-chip.plan-reason-recovery     { background: rgba(96,165,250,0.18); color: #60a5fa; }
+    .plan-reason-chip.plan-reason-overall_exam { background: rgba(212,175,55,0.18); color: #d4af37; }
+    .plan-reason-chip.plan-reason-module_boss  { background: rgba(212,175,55,0.14); color: #d4af37; }
+    .plan-reason-chip.plan-reason-pressure_gap { background: rgba(251,191,36,0.16); color: #fbbf24; }
+    .plan-reason-chip.plan-reason-weak_module  { background: rgba(248,113,113,0.16); color: #f87171; }
+    .plan-reason-chip.plan-reason-srs_heavy,
+    .plan-reason-chip.plan-reason-srs_light    { background: rgba(96,165,250,0.16); color: #60a5fa; }
+    .plan-reason-chip.plan-reason-stale_module { background: rgba(168,85,247,0.16); color: #c084fc; }
+    .plan-reason-chip.plan-reason-fresh_module { background: rgba(110,231,183,0.16); color: #6ee7b7; }
+    .plan-primary-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .plan-primary-why {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .plan-required-note {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #f87171;
+      background: rgba(248,113,113,0.10);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .plan-primary .btn-mastery-primary {
+      width: 100%;
+      margin-top: 4px;
+    }
+    /* v2.0.0: alternative recommendations stack */
+    .plan-alts {
+      display: grid;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .plan-alt-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .plan-alt-row:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.14);
+    }
+    .plan-alt-reason {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 999px;
+      align-self: center;
+      min-width: 72px;
+      text-align: center;
+    }
+    .plan-alt-reason.plan-reason-recovery     { background: rgba(96,165,250,0.18); color: #60a5fa; }
+    .plan-alt-reason.plan-reason-overall_exam { background: rgba(212,175,55,0.18); color: #d4af37; }
+    .plan-alt-reason.plan-reason-module_boss  { background: rgba(212,175,55,0.14); color: #d4af37; }
+    .plan-alt-reason.plan-reason-pressure_gap { background: rgba(251,191,36,0.16); color: #fbbf24; }
+    .plan-alt-reason.plan-reason-weak_module  { background: rgba(248,113,113,0.16); color: #f87171; }
+    .plan-alt-reason.plan-reason-srs_heavy,
+    .plan-alt-reason.plan-reason-srs_light    { background: rgba(96,165,250,0.16); color: #60a5fa; }
+    .plan-alt-reason.plan-reason-stale_module { background: rgba(168,85,247,0.16); color: #c084fc; }
+    .plan-alt-reason.plan-reason-fresh_module { background: rgba(110,231,183,0.16); color: #6ee7b7; }
+    .plan-alt-body { min-width: 0; }
+    .plan-alt-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .plan-alt-why {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.45;
+    }
+    .plan-alt-arrow {
+      font-size: 16px;
+      color: var(--text-secondary);
+      align-self: center;
+    }
 
     /* Module card v2 — v1.8.8: now with zone watermark + zone tint background.
        The card feels like a zone tile, not a settings row. */
@@ -5418,6 +5555,11 @@ function showDrillComplete() {
       action: d.actionFilter
     }
   });
+  // v2.0.0: a session just ended with Practice/Mission/Recovery hands — the
+  // dailyPlan computed earlier today may now be stale (weak module just
+  // climbed past 75%, fresh module just got hands, etc.). Invalidate so the
+  // next render rebuilds it.
+  if (typeof invalidateDailyPlan === 'function') invalidateDailyPlan('post_session');
 
   const realMistakes = d.answers.filter(a => a.result === 'wrong');
   const mixReminders = d.answers.filter(a => a.result === 'partial');
@@ -8197,6 +8339,9 @@ function recordRecoveryMissionComplete(targetRank) {
     if (history[i].rankAttempted === targetRank && !history[i].passed) {
       history[i].recoveryCompleted = (history[i].recoveryCompleted || 0) + 1;
       App.saveProgress();
+      // v2.0.0: invalidate dailyPlan so the recovery state machine reflects
+      // the increment immediately on next render.
+      if (typeof invalidateDailyPlan === 'function') invalidateDailyPlan('recovery_complete');
       return getOverallExamRetryState(targetRank);
     }
   }
@@ -8549,74 +8694,568 @@ function renderRankEmblem(internalRank, sizeClass) {
   return `<div class="${cls}" style="--rank-color:${v.color};--rank-bg:${v.bg};--rank-glow:${v.glow}">${svg}</div>`;
 }
 
-// Daily mission rotation: deterministic by date so users see consistent
-// missions throughout a single day. Picks 2 modules in rotation + a review
-// task. Personalized recommendation comes in v1.8.4.
-function generateTodaysMission(moduleAccs) {
-  const today = new Date();
-  const dayKey = today.toISOString().split('T')[0];
-  // Seed = year + month + day
-  const seed = today.getFullYear() * 372 + (today.getMonth() + 1) * 31 + today.getDate();
-  // Rotate modules by importance + variety
-  const allModules = ['bb_defense','open_vs_3bet','push_fold','call_vs_jam','rejam','blind_battle','mixed_decision'];
-  const primary = allModules[seed % allModules.length];
-  const secondary = allModules[(seed + 3) % allModules.length];
-  const labelOf = (m) => MODULE_DISPLAY_INFO[m].label.replace(/^[^A-Za-z]+/, '');
+// ============================================================
+// v2.0.0: PERSONALIZED TODAY'S PLAN + BEST NEXT UPGRADE LOGIC
+// ============================================================
+// Replaces the v1.8.x naive date-rotation generateTodaysMission and the
+// v1.8.4 single-rule getBestNextUpgrade with an analytics-driven planner
+// that uses every source-aware metric we ship: Practice/Mission/Recovery
+// hands (weighted), Boss/Exam history, pressure gap, recovery state,
+// weak spots, SRS due, mastery score gates.
+//
+// Two surfaces:
+//   - Today's Plan          = "what to do in the next 20 minutes, and why"
+//                             primary recommendation + 2-3 alternatives
+//   - Best Next Upgrade     = "highest-ROI rank-up target right now"
+//
+// Recovery state is checked LIVE on every render so an active retry-lock
+// can never be hidden by a cached plan.
+
+const PLAN_THRESHOLDS = {
+  weakModuleAcc: 75,
+  weakModuleMinHands: 10,
+  pressureGapAlert: 5,
+  staleModuleDays: 5,
+  srsHeavy: 20,
+  srsLight: 10,
+  bossReadyMinHands: 25,
+  missionRecoveryMinHandsForBoost: 10,
+  bossFailCooldownDays: 7
+};
+
+const READINESS_SOURCE_WEIGHTS = {
+  practice: 1.0,
+  mission:  1.2,
+  recovery: 1.3
+};
+
+// Per-rank Overall Exam gates. Mastery score is the primary gate; optional
+// per-module rank requirements layered on top. Higher ranks can add more
+// gates later without touching the planner code.
+const OVERALL_EXAM_GATES = {
+  Bronze:      { masteryScore: 25, modules: null },
+  Silver:      { masteryScore: 40, modules: { rank: 'Bronze', count: 2 } },
+  Gold:        { masteryScore: 55, modules: { rank: 'Bronze', specific: ['push_fold','bb_defense','open_vs_3bet'] } },
+  Platinum:    { masteryScore: 70, modules: null },
+  Diamond:     { masteryScore: 82, modules: null },
+  Master:      { masteryScore: 90, modules: null },
+  Grandmaster: { masteryScore: 95, modules: null }
+};
+
+// Recovery state — single source of truth. Walks newest -> oldest exam
+// history looking for a fail with active retry lock + remaining recovery.
+function getRecoveryState() {
+  const profile = App.state.profile;
+  const history = profile.overallExamHistory || [];
+  for (let i = history.length - 1; i >= 0; i--) {
+    const entry = history[i];
+    if (entry.passed) continue;
+    const targetRank = entry.rankAttempted || entry.targetRank;
+    const rs = getOverallExamRetryState(targetRank);
+    if (rs.locked && rs.recoveryRemaining > 0) {
+      return {
+        active: true,
+        targetRank,
+        recommendedRecoveryModule: entry.recommendedRecoveryModule || _planPickWeakestModuleFromExam(entry),
+        recoveryRemaining: rs.recoveryRemaining,
+        retryState: rs
+      };
+    }
+  }
+  return { active: false };
+}
+function _planPickWeakestModuleFromExam(entry) {
+  const mb = entry && entry.moduleBreakdown;
+  if (!mb) return 'push_fold';
+  let worst = null, worstAcc = 999;
+  for (const [m, r] of Object.entries(mb)) {
+    if (typeof r.accuracy === 'number' && r.accuracy < worstAcc) {
+      worstAcc = r.accuracy; worst = m;
+    }
+  }
+  return worst || 'push_fold';
+}
+
+// Overall Exam ready check — implements the Mastery-Score-first gate
+// system per OVERALL_EXAM_GATES. Returns ready=true ONLY when the gates
+// pass AND no active retry lock blocks the rank.
+function getOverallExamReady() {
+  const profile = App.state.profile;
+  const overallRank = profile.certifications.overallRank;
+  const next = getNextOverallRank(overallRank);
+  if (!next) return { ready: false, reason: 'maxed' };
+  const gates = OVERALL_EXAM_GATES[next];
+  if (!gates) return { ready: false, reason: 'no_gates' };
+  const masteryScore = computeMasteryScore(profile.moduleRanks);
+  if (masteryScore < gates.masteryScore) {
+    return { ready: false, nextRank: next, masteryScore, masteryGate: gates.masteryScore, reason: 'mastery_short' };
+  }
+  if (gates.modules) {
+    const targetIdx = INTERNAL_RANKS.indexOf(gates.modules.rank);
+    const moduleRanks = profile.moduleRanks || {};
+    let met;
+    if (gates.modules.specific) {
+      met = gates.modules.specific.every(m =>
+        INTERNAL_RANKS.indexOf(moduleRanks[m] || 'Unranked') >= targetIdx
+      );
+    } else {
+      const ok = Object.values(moduleRanks).filter(r =>
+        INTERNAL_RANKS.indexOf(r) >= targetIdx
+      ).length;
+      met = ok >= gates.modules.count;
+    }
+    if (!met) return { ready: false, nextRank: next, masteryScore, reason: 'modules_short', gates };
+  }
+  const rs = getOverallExamRetryState(next);
+  if (rs.locked) return { ready: false, nextRank: next, masteryScore, reason: 'retry_locked', retryState: rs };
+  return { ready: true, nextRank: next, masteryScore, gates };
+}
+
+// Module readiness — source-weighted hand count + accuracy + estimated rank
+// + last-session timestamp + pressure gap + recent boss-fail timestamp.
+function getModuleReadiness(module) {
+  const sessions = getDrillSessions();
+  const profile = App.state.profile;
+  const ranges = App.state.ranges || {};
+  const now = Date.now();
+  const handsBySource = { practice: 0, mission: 0, recovery: 0 };
+  let lastSessionAt = 0;
+  // drillSessions: only Mission/Recovery have moduleFilter; bare practice doesn't
+  for (const s of sessions) {
+    if (s.moduleFilter !== module) continue;
+    const src = _drillSessionSource(s);
+    if (handsBySource[src] !== undefined) handsBySource[src] += s.handCount || 0;
+    const ts = s.timestamp || 0;
+    if (ts > lastSessionAt) lastSessionAt = ts;
+  }
+  // SRS-derived practice hands (covers bare Practice drills which don't carry moduleFilter)
+  let srsHands = 0;
+  Object.entries(profile.progress || App.state.progress || {}).forEach(([key, srs]) => {
+    const hist = (srs && srs.history) || [];
+    if (hist.length === 0) return;
+    const parts = key.split('_');
+    if (parts.length < 4) return;
+    const scenKey = parts.slice(0, -1).join('_');
+    const scen = ranges[scenKey];
+    const metaModule = (scen && scen.meta) ? scen.meta.module : null;
+    if (!metaModule) return;
+    const mastery = (typeof metaModuleToMastery === 'function') ? metaModuleToMastery(metaModule) : metaModule;
+    if (mastery !== module) return;
+    hist.forEach(h => {
+      srsHands++;
+      const ts = h.timestamp || 0;
+      if (ts > lastSessionAt) lastSessionAt = ts;
+    });
+  });
+  // SRS history is canonical for Practice — use whichever is bigger to avoid double-count
+  if (srsHands > handsBySource.practice) handsBySource.practice = srsHands;
+
+  const analytics = getModuleAnalytics().find(x => x.module === module) || {};
+  const accuracy = analytics.practice && typeof analytics.practice.accuracy === 'number' ? analytics.practice.accuracy : null;
+  const pressureGap = (typeof analytics.pressureGap === 'number') ? analytics.pressureGap : null;
+
+  const weightedHands =
+    handsBySource.practice * READINESS_SOURCE_WEIGHTS.practice +
+    handsBySource.mission  * READINESS_SOURCE_WEIGHTS.mission +
+    handsBySource.recovery * READINESS_SOURCE_WEIGHTS.recovery;
+  const rawHands = handsBySource.practice + handsBySource.mission + handsBySource.recovery;
+
+  // Recent boss fail timestamp (within bossFailCooldownDays)
+  const bosses = (profile.challengeResults || []).filter(b => b.module === module);
+  let recentFailMs = null;
+  for (const b of bosses) {
+    if (b.passed) continue;
+    const t = new Date(b.date || 0).getTime();
+    if (now - t < PLAN_THRESHOLDS.bossFailCooldownDays * 86400000) {
+      if (recentFailMs === null || t > recentFailMs) recentFailMs = t;
+    }
+  }
+
+  const estimated = (accuracy !== null) ? estimateRankFromAccuracy(accuracy) : 'Unranked';
+  const sufficientForBoss = rawHands >= PLAN_THRESHOLDS.bossReadyMinHands && recentFailMs === null;
+
   return {
-    date: dayKey,
-    items: [
-      { module: primary,   label: `20 hands ${labelOf(primary)}` },
-      { module: secondary, label: `10 hands ${labelOf(secondary)}` },
-      { module: 'review',  label: 'Review 5 missed hands' }
-    ]
+    module, handsBySource, rawHands, weightedHands,
+    accuracy, estimatedRank: estimated, lastSessionAt,
+    pressureGap, recentFailMs, sufficientForBoss
   };
 }
 
-// Rule-based Best Next Upgrade. Picks the module with the highest expected
-// Mastery Point gain on next rank-up, with a readiness boost when the user's
-// existing drill accuracy already estimates them at or above the current
-// rank. Real personalized version (with leak integration) ships in v1.8.4.
-function getBestNextUpgrade(moduleRanks, moduleAccs) {
+// Build all candidate recommendations (9 rules) sorted by score desc.
+function buildPlanCandidates() {
+  const candidates = [];
+  const profile = App.state.profile;
+  const allModules = Object.keys(MODULE_WEIGHTS);
+  const now = Date.now();
+
+  // 1. Recovery (forced primary)
+  const recovery = getRecoveryState();
+  if (recovery.active) {
+    candidates.push({
+      kind: 'recovery', reasonType: 'Recovery Gate',
+      module: recovery.recommendedRecoveryModule, rank: recovery.targetRank,
+      title: '🛡 Recovery Mission · ' + moduleCleanLabel(recovery.recommendedRecoveryModule),
+      why: 'Recovery ' + recovery.retryState.recoveryCompleted + '/' + recovery.retryState.recoveryRequired + ' unlocks your ' + rankDisplay(recovery.targetRank) + ' retry. Module: ' + moduleCleanLabel(recovery.recommendedRecoveryModule) + '.',
+      action: { route: 'recovery_brief', module: recovery.recommendedRecoveryModule, rank: recovery.targetRank },
+      score: 1000, forcedPrimary: true
+    });
+  }
+
+  // 2. Overall Exam ready
+  const examReady = getOverallExamReady();
+  if (examReady.ready) {
+    candidates.push({
+      kind: 'overall_exam', reasonType: 'Rank-Up Opportunity',
+      module: null, rank: examReady.nextRank,
+      title: '🎓 ' + rankDisplay(examReady.nextRank) + ' Overall Exam Ready',
+      why: 'Mastery Score ' + examReady.masteryScore.toFixed(1) + ' / ' + examReady.gates.masteryScore + ' threshold met. Take the exam to lock in ' + rankDisplay(examReady.nextRank) + '.',
+      action: { route: 'overall_exam', rank: examReady.nextRank },
+      score: 900
+    });
+  }
+
+  // 3. Module Boss ready
+  for (const m of allModules) {
+    const r = getModuleReadiness(m);
+    const currentRank = profile.moduleRanks[m] || 'Unranked';
+    const nextRank = getNextModuleRank(currentRank);
+    if (!nextRank || !r.sufficientForBoss) continue;
+    const estIdx = INTERNAL_RANKS.indexOf(r.estimatedRank);
+    const nextIdx = INTERNAL_RANKS.indexOf(nextRank);
+    if (estIdx < nextIdx) continue;
+    let scoreAdj = 1.0;
+    if (typeof r.pressureGap === 'number' && r.pressureGap > PLAN_THRESHOLDS.pressureGapAlert) scoreAdj = 0.6;
+    const ptGain = Math.round((MODULE_WEIGHTS[m] * (RANK_MULTIPLIERS[nextRank] - RANK_MULTIPLIERS[currentRank])) * 10) / 10;
+    candidates.push({
+      kind: 'module_boss', reasonType: 'Boss Ready',
+      module: m, rank: nextRank,
+      title: '🏆 ' + moduleCleanLabel(m) + ' Boss · ' + rankDisplay(nextRank),
+      why: 'Practice ' + r.accuracy + '% over ' + r.rawHands + ' hands estimates ' + rankDisplay(r.estimatedRank) + '-level. Certify for +' + ptGain + ' Mastery Pts.',
+      action: { route: 'boss_test', module: m },
+      score: 700 * scoreAdj + ptGain
+    });
+  }
+
+  // 4. Pressure gap > 5%
+  for (const m of allModules) {
+    const r = getModuleReadiness(m);
+    if (typeof r.pressureGap !== 'number') continue;
+    if (r.pressureGap <= PLAN_THRESHOLDS.pressureGapAlert) continue;
+    candidates.push({
+      kind: 'pressure_gap', reasonType: 'Pressure Gap',
+      module: m, rank: null,
+      title: '⚡ Pressure Drill · ' + moduleCleanLabel(m),
+      why: 'Practice ' + r.accuracy + '% but official tests lag by ' + r.pressureGap + '%. Mission reps acclimatize to pressure.',
+      action: { route: 'mission_brief', module: m },
+      score: 600 + r.pressureGap
+    });
+  }
+
+  // 5. Weak module (< 75% with >= 10 hands)
+  for (const m of allModules) {
+    const r = getModuleReadiness(m);
+    if (r.accuracy === null || r.rawHands < PLAN_THRESHOLDS.weakModuleMinHands) continue;
+    if (r.accuracy >= PLAN_THRESHOLDS.weakModuleAcc) continue;
+    candidates.push({
+      kind: 'weak_module', reasonType: 'Weak Spot',
+      module: m, rank: null,
+      title: '🎯 Weak Spot · ' + moduleCleanLabel(m),
+      why: 'Practice ' + r.accuracy + '% over ' + r.rawHands + ' hands. Focused mission lifts the floor.',
+      action: { route: 'mission_brief', module: m },
+      score: 500 + (PLAN_THRESHOLDS.weakModuleAcc - r.accuracy)
+    });
+  }
+
+  // 6. SRS heavy (>= 20 due)
+  const srsDue = Object.values(App.state.progress || {}).filter(s => s.next_review && s.next_review <= now).length;
+  if (srsDue >= PLAN_THRESHOLDS.srsHeavy) {
+    candidates.push({
+      kind: 'srs_heavy', reasonType: 'Due Review',
+      module: null, rank: null,
+      title: '🔔 ' + srsDue + ' hands due for review',
+      why: 'Spaced repetition queue is heavy. Light review now keeps SRS healthy.',
+      action: { route: 'srs_review' },
+      score: 400 + Math.min(100, srsDue)
+    });
+  }
+
+  // 7. Stale module (>= 5 days untouched, has prior data)
+  for (const m of allModules) {
+    const r = getModuleReadiness(m);
+    if (r.rawHands === 0 || !r.lastSessionAt) continue;
+    const daysSince = Math.floor((now - r.lastSessionAt) / 86400000);
+    if (daysSince < PLAN_THRESHOLDS.staleModuleDays) continue;
+    candidates.push({
+      kind: 'stale_module', reasonType: 'Refresher',
+      module: m, rank: null,
+      title: '🔄 Refresher · ' + moduleCleanLabel(m),
+      why: 'Last drilled ' + daysSince + ' days ago. Light refresher keeps the rank fresh.',
+      action: { route: 'mission_brief', module: m },
+      score: 300 + Math.min(50, daysSince)
+    });
+  }
+
+  // 8. SRS light (10-19 due)
+  if (srsDue >= PLAN_THRESHOLDS.srsLight && srsDue < PLAN_THRESHOLDS.srsHeavy) {
+    candidates.push({
+      kind: 'srs_light', reasonType: 'Due Review',
+      module: null, rank: null,
+      title: '🔔 ' + srsDue + ' hands due for review',
+      why: srsDue + ' SRS items overdue — a quick review session keeps the loop tight.',
+      action: { route: 'srs_review' },
+      score: 200 + srsDue
+    });
+  }
+
+  // 9. Fresh module (< 10 hands of practice)
+  const freshSorted = allModules
+    .map(m => ({ m, r: getModuleReadiness(m), w: MODULE_WEIGHTS[m] }))
+    .filter(x => x.r.rawHands < PLAN_THRESHOLDS.weakModuleMinHands)
+    .sort((a, b) => b.w - a.w);
+  if (freshSorted.length > 0) {
+    const top = freshSorted[0];
+    candidates.push({
+      kind: 'fresh_module', reasonType: 'Fresh Baseline',
+      module: top.m, rank: null,
+      title: '🆕 Explore · ' + moduleCleanLabel(top.m),
+      why: 'Only ' + top.r.rawHands + ' hand' + (top.r.rawHands === 1 ? '' : 's') + ' so far on this module. Build a baseline (weight ' + top.w + '/100).',
+      action: { route: 'mission_brief', module: top.m },
+      score: 100 + top.w
+    });
+  }
+
+  candidates.sort((a, b) => {
+    if (a.forcedPrimary && !b.forcedPrimary) return -1;
+    if (!a.forcedPrimary && b.forcedPrimary) return 1;
+    return b.score - a.score;
+  });
+  return candidates;
+}
+
+// Build the final Today's Plan: primary + 2-3 alternatives, deduplicated
+// per (module + kind) so we don't recommend the same thing twice.
+function buildTodaysPlan() {
+  const all = buildPlanCandidates();
+  if (all.length === 0) return { primary: null, alternatives: [] };
+  const primary = all[0];
+  const alternatives = [];
+  const seen = new Set([(primary.module || '__nomod__') + '|' + primary.kind]);
+  for (const c of all.slice(1)) {
+    const key = (c.module || '__nomod__') + '|' + c.kind;
+    if (seen.has(key)) continue;
+    // Also dedupe by module so we don't recommend Push/Fold three times
+    const moduleKey = c.module ? 'm:' + c.module : null;
+    if (moduleKey && seen.has(moduleKey)) continue;
+    seen.add(key);
+    if (moduleKey) seen.add(moduleKey);
+    alternatives.push(c);
+    if (alternatives.length >= 3) break;
+  }
+  return { primary, alternatives, generatedAt: new Date().toISOString() };
+}
+
+// Cache invalidation (called from hooks: post-session, post-boss, post-exam,
+// post-recovery, manual). Recovery state is checked LIVE on every render so
+// an active retry-lock can never be hidden by a cached plan.
+function invalidateDailyPlan(reason) {
+  const profile = App.state.profile;
+  if (profile.dailyPlan) {
+    profile.dailyPlan.invalidated = reason || 'manual';
+    profile.dailyPlan.generatedAt = null;
+    try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  }
+}
+
+// Get cached plan or regenerate. Cache key is the date string; recovery
+// state always overrides the cache.
+function getOrBuildTodaysPlan() {
+  const profile = App.state.profile;
+  if (!profile.dailyPlan) profile.dailyPlan = { generatedAt: null, primary: null, alternatives: [] };
+  const today = new Date().toISOString().split('T')[0];
+  const recovery = getRecoveryState();
+  let useCache = false;
+  if (profile.dailyPlan.generatedAt) {
+    const genDate = profile.dailyPlan.generatedAt.split('T')[0];
+    if (genDate === today && !profile.dailyPlan.invalidated) useCache = true;
+  }
+  // Recovery state must override cached primary
+  if (useCache && recovery.active && profile.dailyPlan.primary && profile.dailyPlan.primary.kind !== 'recovery') useCache = false;
+  if (useCache && !recovery.active && profile.dailyPlan.primary && profile.dailyPlan.primary.kind === 'recovery') useCache = false;
+  if (useCache) return profile.dailyPlan;
+  const fresh = buildTodaysPlan();
+  profile.dailyPlan = { ...fresh, invalidated: null };
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  return profile.dailyPlan;
+}
+
+// Plan action dispatcher. Routes the action.route to the appropriate flow.
+// Used by Today's Plan card primary CTA + alternatives row clicks.
+window._planActions = window._planActions || {};
+window._planActionId = window._planActionId || 0;
+function _registerPlanAction(action) {
+  const id = '_p' + (window._planActionId++);
+  window._planActions[id] = action;
+  return id;
+}
+function executePlanActionById(id) {
+  const a = window._planActions[id];
+  if (!a) { console.warn('[plan] no action for id', id); return; }
+  switch (a.route) {
+    case 'recovery_brief': enterRecoveryMissionBrief(a.module, a.rank); return;
+    case 'mission_brief':  enterMissionBrief(a.module); return;
+    case 'boss_test':      masteryBossTestModule(a.module); return;
+    case 'overall_exam':   openOverallExam(a.rank); return;
+    case 'srs_review':     startSRSSession(); return;
+    default: console.warn('[plan] unknown route', a.route);
+  }
+}
+
+// v2.0.0: Best Next Upgrade — source-weighted readiness + pressure penalty
+// + boss-fail-cooldown. Replaces the v1.8.4 single-rule version.
+function getBestNextUpgradeV2() {
   let best = null;
   for (const m of Object.keys(MODULE_WEIGHTS)) {
-    const currentRank = moduleRanks[m] || 'Unranked';
+    const currentRank = App.state.profile.moduleRanks[m] || 'Unranked';
     const nextRank = getNextModuleRank(currentRank);
     if (!nextRank) continue;
+    const r = getModuleReadiness(m);
     const pointGain = Math.round((MODULE_WEIGHTS[m] * (RANK_MULTIPLIERS[nextRank] - RANK_MULTIPLIERS[currentRank])) * 10) / 10;
-    const acc = moduleAccs[m];
-    const estimated = (acc && acc.accuracy !== null) ? estimateRankFromAccuracy(acc.accuracy) : 'Unranked';
-    const estIdx = INTERNAL_RANKS.indexOf(estimated);
-    const currentIdx = INTERNAL_RANKS.indexOf(currentRank);
-    // Readiness boost: 1.5x if drill data shows you're already at/past current rank
-    const readinessBoost = (acc.attempts > 10 && estIdx >= currentIdx + 1) ? 1.5 : 1.0;
-    const score = pointGain * readinessBoost;
+
+    let readinessBoost = 1.0;
+    if (r.rawHands >= PLAN_THRESHOLDS.bossReadyMinHands && r.accuracy !== null) {
+      const estIdx = INTERNAL_RANKS.indexOf(r.estimatedRank);
+      const currentIdx = INTERNAL_RANKS.indexOf(currentRank);
+      if (estIdx >= currentIdx + 1) {
+        readinessBoost = 1.5;
+        const officialReadiness = r.handsBySource.mission + r.handsBySource.recovery;
+        if (officialReadiness >= PLAN_THRESHOLDS.missionRecoveryMinHandsForBoost) {
+          readinessBoost = 1.7;
+        }
+      }
+    }
+    if (typeof r.pressureGap === 'number' && r.pressureGap > PLAN_THRESHOLDS.pressureGapAlert) {
+      readinessBoost *= 0.7;
+    }
+    let cooldownPenalty = 1.0;
+    if (r.recentFailMs) cooldownPenalty = 0.5;
+
+    const score = pointGain * readinessBoost * cooldownPenalty;
     if (!best || score > best.score) {
-      best = { module: m, currentRank, nextRank, pointGain, score, estimated, attempts: acc.attempts, accuracy: acc.accuracy, readyByDrill: readinessBoost > 1 };
+      best = {
+        module: m, currentRank, nextRank,
+        pointGain, score, estimated: r.estimatedRank,
+        attempts: r.rawHands, accuracy: r.accuracy,
+        readyByDrill: readinessBoost > 1.0 && cooldownPenalty === 1.0,
+        pressureGap: r.pressureGap,
+        recentFailMs: r.recentFailMs,
+        readinessBoost, cooldownPenalty,
+        handsBySource: r.handsBySource
+      };
     }
   }
   if (!best) return null;
-  // Construct human-readable "why"
   const info = MODULE_DISPLAY_INFO[best.module];
   let why;
-  if (best.readyByDrill) {
-    why = `Your drill accuracy (${best.accuracy}%) suggests you're already ${rankDisplay(best.estimated)}-level here. Earning the official rank gives +${best.pointGain} Mastery Points.`;
+  if (best.recentFailMs) {
+    const days = Math.floor((Date.now() - best.recentFailMs) / 86400000);
+    why = 'Recent Boss attempt was ' + days + ' day' + (days === 1 ? '' : 's') + ' ago — practice + Mission to close the gap before retrying.';
+  } else if (typeof best.pressureGap === 'number' && best.pressureGap > PLAN_THRESHOLDS.pressureGapAlert) {
+    why = 'Drill ' + best.accuracy + '% but pressure gap ' + best.pressureGap + '% — close the gap before Boss.';
+  } else if (best.readyByDrill) {
+    why = 'Drill ' + best.accuracy + '% over ' + best.attempts + ' hands suggests ' + rankDisplay(best.estimated) + '-level. Certify on Boss for +' + best.pointGain + ' Mastery Pts.';
   } else if (best.attempts > 0) {
-    why = `Highest expected Mastery Point gain among modules with drill history. Train this module to lift the official rank.`;
+    why = 'Highest expected Mastery Point gain among modules with drill history. Keep training to close in.';
   } else {
-    why = `Highest module weight (${MODULE_WEIGHTS[best.module]}/100). Start here for maximum Mastery Score impact.`;
+    why = 'Highest module weight (' + MODULE_WEIGHTS[best.module] + '/100). Start here for max Mastery Score impact.';
   }
   return { ...best, info, why };
 }
 
+// Legacy alias so any straggler caller keeps working without signature changes.
+function getBestNextUpgrade() { return getBestNextUpgradeV2(); }
+
+// Render helper: Today's Plan card.
+function renderTodaysPlanCard() {
+  const plan = getOrBuildTodaysPlan();
+  if (!plan.primary) {
+    return `<div class="card"><div class="empty-state"><p>Run any drill to seed today's plan.</p></div></div>`;
+  }
+  const p = plan.primary;
+  const alts = plan.alternatives || [];
+  const primaryActionId = _registerPlanAction(p.action);
+  const reasonChip = p.reasonType ? `<span class="plan-reason-chip plan-reason-${p.kind}">${p.reasonType}</span>` : '';
+  const recoveryNote = p.kind === 'recovery'
+    ? `<div class="plan-required-note">Required to unlock retry</div>` : '';
+  let altsHtml = '';
+  if (alts.length > 0) {
+    altsHtml = '<div class="plan-alts">' + alts.map(a => {
+      const id = _registerPlanAction(a.action);
+      return `
+        <div class="plan-alt-row" onclick="executePlanActionById('${id}')" role="button" tabindex="0">
+          <span class="plan-alt-reason plan-reason-${a.kind}">${a.reasonType}</span>
+          <div class="plan-alt-body">
+            <div class="plan-alt-title">${a.title}</div>
+            <div class="plan-alt-why">${a.why}</div>
+          </div>
+          <span class="plan-alt-arrow">→</span>
+        </div>`;
+    }).join('') + '</div>';
+  }
+  return `
+    <div class="card todays-plan-card">
+      <div class="mastery-section-title"><span class="accent-bar"></span>Today's Plan</div>
+      <div class="plan-primary plan-primary-${p.kind}">
+        ${reasonChip}
+        <div class="plan-primary-title">${p.title}</div>
+        <div class="plan-primary-why">${p.why}</div>
+        ${recoveryNote}
+        <button class="btn-mastery-primary" onclick="executePlanActionById('${primaryActionId}')">▶ Start</button>
+      </div>
+      ${altsHtml}
+    </div>
+  `;
+}
+
+// Render helper: Best Next Upgrade card v2.
+function renderBestNextUpgradeCardV2() {
+  const upgrade = getBestNextUpgradeV2();
+  if (!upgrade) return '';
+  const cur = upgrade.currentRank, nxt = upgrade.nextRank;
+  const upgradeZone = getModuleZone(upgrade.module);
+  return `<div class="card upgrade-card">
+    <div class="mastery-section-title"><span class="accent-bar"></span>Best Next Upgrade</div>
+    <div class="upgrade-card-header">
+      ${renderRankEmblem(cur, 'small')}
+      <span class="upgrade-rank-arrow">→</span>
+      ${renderRankEmblem(nxt, 'small')}
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${upgrade.info.label}</div>
+        <div style="font-size:11px;color:${upgradeZone.accent};margin-top:2px;font-weight:600">${upgradeZone.glyph} ${upgradeZone.zone}</div>
+        <div style="font-size:10px;color:var(--text-secondary);margin-top:1px">${rankDisplay(cur)} → ${rankDisplay(nxt)}</div>
+      </div>
+      <div class="upgrade-reward-pill">+${upgrade.pointGain} pts</div>
+    </div>
+    <div class="upgrade-why">${upgrade.why}</div>
+    <div class="hero-cta-row" style="margin-top:0">
+      <button class="btn-mastery-primary" onclick="masteryTrainModule('${upgrade.module}')">▶ Enter ${upgradeZone.zone}</button>
+      <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${upgrade.module}')">🏆 Rank-Up Boss</button>
+    </div>
+  </div>`;
+}
+
 // CTA handlers
 function masteryStartRecommendedDrill() {
-  // v1.8.7: route to Mission Brief instead of straight to drill setup.
-  const upgrade = getBestNextUpgrade(App.state.profile.moduleRanks, getModuleAccuracies());
-  if (upgrade) {
-    enterMissionBrief(upgrade.module);
-  } else {
-    switchTab('drill');
+  // v2.0.0: prefer the Today's Plan primary action (recovery-aware), fall
+  // back to Best Next Upgrade module if no plan, then to Drill tab.
+  const plan = getOrBuildTodaysPlan();
+  if (plan && plan.primary && plan.primary.action) {
+    const id = _registerPlanAction(plan.primary.action);
+    executePlanActionById(id);
+    return;
   }
+  const upgrade = getBestNextUpgradeV2();
+  if (upgrade) { enterMissionBrief(upgrade.module); return; }
+  switchTab('drill');
 }
 function masteryViewPath() {
   const el = document.getElementById('masteryPathSection');
@@ -8634,11 +9273,12 @@ function masteryBossTestModule(moduleKey) {
   masteryOpenChallengeSetup(moduleKey);
 }
 function masteryStartMission() {
-  // v1.8.7: apply mission brief for the primary Today's Mission module
-  const mission = generateTodaysMission(getModuleAccuracies());
-  const primary = mission.items.find(it => it.module && it.module !== 'review');
-  if (primary) {
-    enterMissionBrief(primary.module);
+  // v2.0.0: route to today's plan primary action (replaces v1.8.7 naive
+  // generateTodaysMission rotation).
+  const plan = getOrBuildTodaysPlan();
+  if (plan && plan.primary && plan.primary.action) {
+    const id = _registerPlanAction(plan.primary.action);
+    executePlanActionById(id);
   } else {
     switchTab('drill');
   }
@@ -8893,6 +9533,9 @@ function showOverallExamResult() {
   }
 
   App.saveProgress();
+  // v2.0.0: dailyPlan must rebuild — exam state (pass/fail, lock, recovery
+  // counters, masteryScore) just changed.
+  if (typeof invalidateDailyPlan === 'function') invalidateDailyPlan('post_overall_exam');
   renderOverallExamResult(oe, result, oldRank);
 }
 
@@ -9160,8 +9803,10 @@ function _renderMasteryImpl() {
   const nextThreshold = nextOverall ? OVERALL_UNLOCK_THRESHOLDS[nextOverall] : null;
   const xpLevel = xpToLevel(profile.totalXP);
   const moduleAccs = getModuleAccuracies();
-  const todayMission = generateTodaysMission(moduleAccs);
-  const bestUpgrade = getBestNextUpgrade(profile.moduleRanks, moduleAccs);
+  // v2.0.0: bestUpgrade is still computed here so the Mastery Path card can
+  // highlight the recommended module. Today's Plan + Best Next Upgrade cards
+  // call their own helpers (renderTodaysPlanCard / renderBestNextUpgradeCardV2).
+  const bestUpgrade = getBestNextUpgradeV2();
 
   const heroVars = rankCssVars(overallRank);
   const heroProgressPct = Math.min(100, masteryScore);
@@ -9251,73 +9896,13 @@ function _renderMasteryImpl() {
     </div>
   `;
 
-  // ---------- TODAY'S MISSION (v1.8.8: rebuilt as mission contract) ----------
-  // Surfaces the primary module's mission as a contract card with zone identity,
-  // objective summary, reward preview, and prominent Start Mission CTA.
-  const primaryMissionItem = todayMission.items.find(it => it.module && it.module !== 'review');
-  if (primaryMissionItem) {
-    const primaryModule = primaryMissionItem.module;
-    const primaryZone = getModuleZone(primaryModule);
-    const primaryMissionDef = getMissionForModule(primaryModule);
-    const reviewItem = todayMission.items.find(it => it.module === 'review');
-    html += `
-    <div class="mission-contract-card" style="--zone-accent:${primaryZone.accent};--zone-glow:${primaryZone.glow}">
-      <div class="mission-contract-header">
-        <div class="mission-contract-eyebrow">▸ Today's Mission</div>
-        <div class="mission-contract-zone-badge"><span class="glyph">${primaryZone.glyph}</span> ${primaryZone.zone}</div>
-      </div>
-      <div class="mission-contract-title">${primaryMissionDef ? primaryMissionDef.name : moduleCleanLabel(primaryModule) + ' Warm-Up'}</div>
-      <div class="mission-contract-motto">${primaryZone.motto}</div>
-      <div class="mission-contract-section">
-        <div class="mission-contract-section-title">Objective</div>
-        <div class="mission-contract-row"><span class="dot"></span>Clear ${primaryMissionDef ? primaryMissionDef.handCount : 20} ${moduleCleanLabel(primaryModule)} hands</div>
-        ${reviewItem ? `<div class="mission-contract-row"><span class="dot"></span>${reviewItem.label}</div>` : ''}
-      </div>
-      <div class="mission-contract-section">
-        <div class="mission-contract-section-title">Reward</div>
-        <div class="mission-contract-reward">
-          <span class="star">★</span>
-          <div>
-            <div><strong>+${primaryMissionDef ? primaryMissionDef.maxRewardXP : 30} XP</strong> on perfect mission</div>
-            <div class="sub">+ ${moduleCleanLabel(primaryModule)} progress</div>
-          </div>
-        </div>
-      </div>
-      <div class="hero-cta-row" style="margin-top:12px">
-        <button class="btn-mastery-primary" onclick="masteryStartMission()">▶ Start Mission</button>
-      </div>
-      <div class="footer-note">Personalized missions are coming soon. Today's mission uses your current study path.</div>
-    </div>`;
-  }
-
-  // ---------- BEST NEXT UPGRADE ----------
-  if (bestUpgrade) {
-    const cur = bestUpgrade.currentRank;
-    const nxt = bestUpgrade.nextRank;
-    const upgradeZone = getModuleZone(bestUpgrade.module);
-    html += `<div class="card upgrade-card">
-      <div class="mastery-section-title"><span class="accent-bar"></span>Best Next Upgrade</div>
-      <div class="upgrade-card-header">
-        ${renderRankEmblem(cur, 'small')}
-        <span class="upgrade-rank-arrow">→</span>
-        ${renderRankEmblem(nxt, 'small')}
-        <div style="flex:1">
-          <div style="font-weight:600;font-size:14px">${bestUpgrade.info.label}</div>
-          <div style="font-size:11px;color:${upgradeZone.accent};margin-top:2px;font-weight:600">${upgradeZone.glyph} ${upgradeZone.zone}</div>
-          <div style="font-size:10px;color:var(--text-secondary);margin-top:1px">${rankDisplay(cur)} → ${rankDisplay(nxt)}</div>
-        </div>
-        <div class="upgrade-reward-pill">+${bestUpgrade.pointGain} pts</div>
-      </div>
-      <div class="upgrade-why">${bestUpgrade.why}</div>
-      <div class="hero-cta-row" style="margin-top:0">
-        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Enter ${upgradeZone.zone}</button>
-        <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${bestUpgrade.module}')">🏆 Rank-Up Boss</button>
-      </div>
-      <div style="font-size:10px;color:var(--text-secondary);margin-top:8px;line-height:1.5;text-align:center">
-        Study = warm up + XP · Boss = official rank certification
-      </div>
-    </div>`;
-  }
+  // ---------- v2.0.0: Today's Plan + Best Next Upgrade ----------
+  // Today's Plan = "what to do in the next 20 minutes, and why" (8 rules,
+  //                source-aware, recovery-forced when active)
+  // Best Next Upgrade = highest-ROI rank-up target (source-weighted +
+  //                pressure-aware + boss-fail cooldown)
+  html += renderTodaysPlanCard();
+  html += renderBestNextUpgradeCardV2();
 
   // ---------- MASTERY PATH (module cards) ----------
   html += `<div class="card" id="masteryPathSection">
@@ -9812,6 +10397,9 @@ function showChallengeResult() {
   }
 
   App.saveProgress();
+  // v2.0.0: dailyPlan must rebuild — Boss result changed module rank /
+  // Mastery Score / boss-fail cooldown state.
+  if (typeof invalidateDailyPlan === 'function') invalidateDailyPlan('post_boss_test');
   renderChallengeResultScreen(ch, result, rankUp);
 }
 
@@ -10765,7 +11353,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.11</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -10876,7 +11464,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '1.9.11',
+    appVersion: '2.0.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
