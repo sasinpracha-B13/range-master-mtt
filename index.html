@@ -4877,10 +4877,14 @@ function classifyAnswer(userAction, freqs) {
 //   correct + dominant   -> "Sharp Pick"
 //   correct + true mix   -> "Mix Aware"
 //   partial mix          -> "Acceptable Mix"  (secondary line in range)
-//   wrong + pure         -> "Critical Punt"   (no GTO support)
+//   wrong + pure + trash -> "Critical Punt"   (genuinely no GTO support)  [v1.9.11]
+//   wrong + pure + playable -> "Wrong — Outside Range"                    [v1.9.11]
 //   wrong + low freq     -> "Thin Line"       (low-frequency choice)
-// Returns { cls, label } where cls maps to .feedback-chip CSS variants.
-function getFeedbackChip(cls, freqs) {
+//
+// v1.9.11 NOTE: signature now takes `hand` directly (NOT injected through
+// `freqs` object) so the severity guard can read hand class without
+// polluting frequency state.
+function getFeedbackChip(cls, freqs, hand) {
   const maxFreq = Math.max(0, ...Object.values(freqs || {}));
   const isPure = maxFreq >= 0.95;
   if (cls.result === 'correct') {
@@ -4892,8 +4896,78 @@ function getFeedbackChip(cls, freqs) {
     return { cls: 'mix', label: '≈ Acceptable Mix' };
   }
   // wrong
-  if (isPure) return { cls: 'critical', label: '❌ Critical Punt' };
+  if (isPure) {
+    if (isCriticalPuntEligible(hand)) {
+      return { cls: 'critical', label: '❌ Critical Punt' };
+    }
+    // Playable hand outside the GTO range — wrong, but not a punt
+    return { cls: 'thin', label: '⚠ Wrong — Outside Range' };
+  }
   return { cls: 'thin', label: '⚠ Thin Line' };
+}
+
+// v1.9.11: Critical Punt severity guard.
+// Returns TRUE only when the hand has no playability — i.e. calling/raising
+// it when GTO says fold is a genuine punt (no equity, no blocker, no implied
+// odds). Returns FALSE for any reasonable defending candidate so the UI can
+// distinguish "outside range" from "actual trash punt".
+//
+// Playable (NOT critical-punt-eligible):
+//   - All pairs (22+)
+//   - All suited Ax (A2s+)
+//   - All suited broadway (any two cards both T+ and suited)
+//   - All suited connectors / one-gappers (54s+, 64s+, 75s+, 86s+, ...)
+//   - All offsuit broadway (any two cards both T+, e.g. JTo, KQo, ATo)
+//
+// Critical-punt-eligible (TRUE):
+//   - Trash offsuit (72o, 83o, J3o, etc.)
+//   - Disconnected suited trash (72s, 83s, 92s, ...)
+//   - Offsuit Ax with non-broadway kicker (A9o-A2o)
+//   - Anything else not on the playable list
+function isCriticalPuntEligible(hand) {
+  if (!hand || typeof hand !== 'string' || hand.length < 2) return false;
+  // Pairs (e.g. "AA", "22") always have showdown value -> never critical
+  if (hand.length === 2 && hand[0] === hand[1]) return false;
+  if (hand.length < 3) return true; // malformed; default to eligible (rare)
+
+  const r1 = hand[0];
+  const r2 = hand[1];
+  const suited = hand[2] === 's';
+  const offsuit = hand[2] === 'o';
+
+  // Suited rules
+  if (suited) {
+    // Suited Ax (any A2s+) is playable
+    if (r1 === 'A' || r2 === 'A') return false;
+    // Suited broadway (both T+) is playable
+    if ('KQJT'.includes(r1) && 'KQJT9'.includes(r2)) return false;
+    // Suited connectors / one-gappers / two-gappers from 54s+ are playable
+    const idx = (c) => '23456789TJQKA'.indexOf(c);
+    const i1 = idx(r1), i2 = idx(r2);
+    const lo = Math.min(i1, i2), hi = Math.max(i1, i2);
+    const gap = hi - lo;
+    // 54s, 65s, 76s, ... and one-gappers like 64s, 75s, 86s -> playable
+    // Threshold: low card index >= 2 (i.e. >= '4') and gap <= 2.
+    //   54s: lo=2 gap=1 -> playable
+    //   64s: lo=2 gap=2 -> playable
+    //   53s: lo=1 gap=2 -> critical (too weak)
+    //   43s: lo=1 gap=1 -> critical (too weak)
+    if (gap <= 2 && lo >= 2) return false;
+    // K9s, Q9s, J9s — suited Tx-and-up with 9 still has playability
+    if ('KQJ'.includes(r1) && r2 === '9') return false;
+    if ('KQJ'.includes(r2) && r1 === '9') return false;
+    return true; // disconnected suited trash like 72s, 83s, K2s, Q2s etc
+  }
+
+  // Offsuit rules
+  if (offsuit) {
+    // Offsuit broadway (both T+) is playable: ATo, KTo, QTo, JTo, AJo, etc.
+    if ('AKQJT'.includes(r1) && 'AKQJT'.includes(r2)) return false;
+    // Everything else offsuit is critical-punt-eligible (A9o, K9o, 72o, etc.)
+    return true;
+  }
+
+  return true;
 }
 
 // v1.7.2: Classify a mistake into a leak category. Called only when the
@@ -5115,7 +5189,9 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
   const eduNote = getEducationalNote(q, userAction, cls);
   const quickMode = d.mode === 'quick';
   // v1.8.6: game-feel feedback chip + mission header badge
-  const chip = getFeedbackChip(cls, q.freqs);
+  // v1.9.11: pass q.hand directly so the Critical Punt severity guard can
+  // inspect hand class without polluting freqs.
+  const chip = getFeedbackChip(cls, q.freqs, q.hand);
   const chipHtml = `<div class="feedback-chip ${chip.cls}">${chip.label}</div>`;
   const challengeBadgeAns = (d.mode === 'challenge' && d.challenge)
     ? `<span class="challenge-header-badge" style="--rank-color:${rankCssVars(d.challenge.targetRank).color};--rank-bg:${rankCssVars(d.challenge.targetRank).bg}">🏆 ${rankDisplay(d.challenge.targetRank)} Boss Test</span>`
@@ -10689,7 +10765,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.10</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.11</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -10800,7 +10876,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '1.9.10',
+    appVersion: '1.9.11',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
