@@ -1399,7 +1399,7 @@
         <button class="chip" data-action="vs_limp" onclick="toggleActionFilter('vs_limp')">Face Limp</button>
       </div>
 
-      <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="startDrill()">Start Drill →</button>
+      <button id="startDrillBtn" class="btn btn-primary btn-full" style="margin-top:8px" onclick="startDrill()">Start Drill →</button>
     </div>
 
     <div id="drillScreen" class="container" style="display:none">
@@ -1455,7 +1455,14 @@
       <div class="page-subtitle">Preflop Mastery System</div>
     </div>
     <div class="container" style="padding-top:12px" id="masteryContent">
-      <!-- Filled by JS via renderMastery() -->
+      <!-- v1.8.4: inline loading state — visible BEFORE JS runs.
+           renderMastery() replaces this on first paint. If JS fails or
+           is delayed, user still sees something instead of blank. -->
+      <div id="masteryInitialState" style="padding:40px 20px;text-align:center;color:var(--text-secondary)">
+        <div style="font-size:32px;margin-bottom:12px">🏆</div>
+        <div style="font-size:14px">Loading Mastery Path…</div>
+        <div style="font-size:11px;margin-top:6px;opacity:0.7">If this stays for more than a few seconds, hard-refresh the app.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2576,6 +2583,21 @@ function showDrillComplete() {
   const elapsed = Math.round((Date.now() - d.startTime) / 1000 / 60 * 10) / 10;
   const total = d.answers.length;
 
+  // v1.8.4: Award XP for Practice sessions (NOT challenge — challenge tracked separately).
+  // Formula: 1 XP per hand + 5 XP completion bonus + 10 XP if accuracy >= 80%.
+  // Practice mode never reduces rank. XP is purely additive.
+  if (d.mode !== 'challenge' && total > 0) {
+    const accPct = total > 0 ? Math.round(d.answers.reduce((s,a) => s + (a.score||0), 0) / total * 100) : 0;
+    const xpFromHands = total;
+    const xpCompletion = 5;
+    const xpAccuracyBonus = accPct >= 80 ? 10 : 0;
+    const xpGained = xpFromHands + xpCompletion + xpAccuracyBonus;
+    App.state.profile.totalXP = (App.state.profile.totalXP || 0) + xpGained;
+    App.state.profile.xpLevel = xpToLevel(App.state.profile.totalXP);
+    // Stash on drill state so result screen can show it
+    d._sessionXP = { gained: xpGained, fromHands: xpFromHands, completion: xpCompletion, accuracyBonus: xpAccuracyBonus };
+  }
+
   // v1.2.0 three-state breakdown.
   const pureCorrect = d.answers.filter(a => a.result === 'correct' && a.isPure).length;
   const mixCorrect  = d.answers.filter(a => a.result === 'correct' && !a.isPure).length;
@@ -2640,15 +2662,54 @@ function showDrillComplete() {
 
   document.getElementById('drillScreen').style.display = 'none';
   document.getElementById('drillComplete').style.display = 'block';
+  // v1.8.4: build session header — module-aware when preset was active
+  const moduleInfo = d.moduleFilter ? MODULE_DISPLAY_INFO[d.moduleFilter] : null;
+  const sessionTitle = moduleInfo ? `${moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim()} Practice Complete` : 'Drill Complete!';
+  const xpInfo = d._sessionXP || null;
+  const xpHtml = xpInfo ? `
+    <div class="card" style="background:linear-gradient(135deg,rgba(212,175,55,0.08) 0%,var(--surface) 100%);border-color:rgba(212,175,55,0.3)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px">XP Gained</div>
+          <div style="font-size:22px;font-weight:700;color:#d4af37">+${xpInfo.gained} XP</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${xpInfo.fromHands} hands · +${xpInfo.completion} completion${xpInfo.accuracyBonus ? ' · +' + xpInfo.accuracyBonus + ' accuracy bonus' : ''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text-secondary)">XP Level</div>
+          <div style="font-size:22px;font-weight:700;color:#d4af37">${App.state.profile.xpLevel}</div>
+          <div style="font-size:11px;color:var(--text-secondary)">${App.state.profile.totalXP} total</div>
+        </div>
+      </div>
+    </div>
+  ` : '';
+  // Module CTA when preset was active: encourage Boss Test or another Practice
+  const moduleCtaHtml = (moduleInfo && d.moduleFilter) ? `
+    <div class="card" style="border-color:rgba(96,165,250,0.2);background:rgba(96,165,250,0.03)">
+      <div style="font-size:11px;color:#60a5fa;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">Next Step</div>
+      <div style="font-size:13px;line-height:1.6;margin-bottom:10px">
+        Practice doesn't change your official rank. Ready to certify?
+        Take the <strong style="color:var(--text)">${moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim()} Boss Test</strong>
+        to attempt rank-up.
+      </div>
+      <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+        <button class="btn-mastery-secondary" onclick="masteryTrainModule('${d.moduleFilter}')">▶ Practice Again</button>
+        <button class="btn-mastery-primary" onclick="masteryBossTestModule('${d.moduleFilter}')">🏆 Take Boss Test</button>
+      </div>
+    </div>
+  ` : '';
+
   document.getElementById('drillComplete').innerHTML = `
     <div style="text-align:center;padding:16px 0 8px">
       <div class="score-circle" style="border-color:${pctColor}">
         <div class="score-number" style="color:${pctColor}">${pct}%</div>
         <div class="score-label">${totalPoints.toFixed(1)}/${total} pts</div>
       </div>
-      <div class="section-title">Drill Complete!</div>
-      <div class="section-subtitle">${elapsed} min · ${d.mode} mode</div>
+      <div class="section-title">${sessionTitle}</div>
+      <div class="section-subtitle">${elapsed} min · ${d.mode} mode${moduleInfo ? ' · ' + moduleInfo.label.replace(/^[^A-Za-z]+/, '').trim() : ''}</div>
     </div>
+
+    ${xpHtml}
+    ${moduleCtaHtml}
 
     <div class="card">
       <div class="card-title">📊 Breakdown</div>
@@ -3864,6 +3925,25 @@ function masteryStartMission() {
 
 // ----- Main render -----
 function renderMastery() {
+  // v1.8.4: defensive wrapper — if any sub-renderer throws, show recovery
+  // state instead of leaving the tab blank.
+  try {
+    return _renderMasteryImpl();
+  } catch (e) {
+    console.error('[Mastery] render error:', e);
+    var el = document.getElementById('masteryContent');
+    if (el) {
+      el.innerHTML = `
+        <div style="padding:30px 20px;text-align:center;color:var(--text-secondary)">
+          <div style="font-size:32px;margin-bottom:8px">⚠️</div>
+          <div style="font-size:14px;color:var(--text)">Mastery couldn't render. Hard-refresh the app.</div>
+          <div style="font-size:11px;margin-top:6px;opacity:0.7">Error: ${(e && e.message) || e}</div>
+        </div>
+      `;
+    }
+  }
+}
+function _renderMasteryImpl() {
   const profile = App.state.profile;
   const masteryScore = computeMasteryScore(profile.moduleRanks);
   const overallRank = profile.certifications.overallRank;
@@ -3949,8 +4029,11 @@ function renderMastery() {
       </div>
       <div class="upgrade-why">${bestUpgrade.why}</div>
       <div class="hero-cta-row" style="margin-top:0">
-        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Practice ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '').trim()}</button>
-        <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${bestUpgrade.module}')">🏆 Boss Test</button>
+        <button class="btn-mastery-primary" onclick="masteryTrainModule('${bestUpgrade.module}')">▶ Study ${bestUpgrade.info.label.replace(/^[^A-Za-z]+/, '').trim()}</button>
+        <button class="btn-mastery-secondary" onclick="masteryBossTestModule('${bestUpgrade.module}')">🏆 Rank-Up Boss</button>
+      </div>
+      <div style="font-size:10px;color:var(--text-secondary);margin-top:8px;line-height:1.5;text-align:center">
+        Study = warm up + XP · Boss = official rank certification
       </div>
     </div>`;
   }
@@ -3996,8 +4079,8 @@ function renderMastery() {
           <div class="module-card-progress-fill" style="width:${fillPct}%;background:${fillColor};opacity:0.85"></div>
         </div>
         <div class="module-card-cta-row">
-          <button class="primary" onclick="masteryTrainModule('${m}')">▶ Practice</button>
-          <button onclick="masteryBossTestModule('${m}')">🏆 Boss Test</button>
+          <button class="primary" onclick="masteryTrainModule('${m}')" title="Practice mode: gives XP, doesn't change rank">▶ Study</button>
+          <button onclick="masteryBossTestModule('${m}')" title="Official rank-up test">🏆 Rank-Up Boss</button>
         </div>
       </div>
     `;
@@ -4525,35 +4608,53 @@ function clearDrillPreset() {
 
 function renderDrillPresetBanner() {
   const banner = document.getElementById('drillPresetBanner');
+  const startBtn = document.getElementById('startDrillBtn');
   if (!banner) return;
   const mf = App.state.drill.moduleFilter;
   if (!mf) {
+    // No preset — restore generic banner state and Start button label
     banner.style.display = 'none';
     banner.innerHTML = '';
+    if (startBtn) startBtn.textContent = 'Start Drill →';
     return;
   }
   const info = MODULE_DISPLAY_INFO[mf];
   if (!info) { banner.style.display = 'none'; return; }
-  // Count scenarios in pool for user feedback
-  let poolSize = 0;
+
+  // Count scenarios + hands in pool for user feedback
+  let poolSize = 0, handsInPool = 0;
   if (App.state.ranges) {
     for (const k of Object.keys(App.state.ranges)) {
       const s = App.state.ranges[k];
-      if (s && s.meta && metaModuleToMastery(s.meta.module) === mf) poolSize++;
+      if (s && s.meta && metaModuleToMastery(s.meta.module) === mf) {
+        poolSize++;
+        if (s.hands) handsInPool += Object.keys(s.hands).length;
+      }
     }
   }
+  const cleanLabel = info.label.replace(/^[^A-Za-z]+/, '').trim();
+
   banner.style.display = 'block';
   banner.innerHTML = `
     <div class="drill-preset-banner">
       <div class="drill-preset-icon">${info.icon}</div>
       <div class="drill-preset-info">
-        <div class="drill-preset-label">Training Preset</div>
-        <div class="drill-preset-name">${info.label}</div>
-        <div class="drill-preset-desc">${info.desc} · ${poolSize} scenarios in pool</div>
+        <div class="drill-preset-label">Practice Mode</div>
+        <div class="drill-preset-name">${cleanLabel} Practice</div>
+        <div class="drill-preset-desc">${info.desc}</div>
+        <div class="drill-preset-desc" style="margin-top:4px">Pool: ${poolSize} scenarios · ${handsInPool} unique hands · ${App.state.drill.mode === 'marginal' ? 'Marginal Focus mode' : App.state.drill.mode + ' mode'}</div>
       </div>
-      <button class="drill-preset-clear" onclick="clearDrillPreset()">Clear preset</button>
+      <button class="drill-preset-clear" onclick="clearDrillPreset()">Clear</button>
+    </div>
+    <div style="padding:10px 12px;border-radius:8px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.15);margin-bottom:14px;font-size:11px;color:var(--text-secondary);line-height:1.6">
+      <strong style="color:#60a5fa">Practice vs Boss Test:</strong>
+      Practice gives XP and study history. It does <strong>not</strong> change your official Module Rank.
+      To certify a rank-up, take the <strong>🏆 Boss Test</strong> from the Mastery Home page.
     </div>
   `;
+
+  // Update Start button label so user knows what they're starting
+  if (startBtn) startBtn.textContent = `▶  Start ${cleanLabel} Practice`;
 }
 
 // ============================================================
@@ -4751,7 +4852,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.3</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.4</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -4900,7 +5001,7 @@ function generateExportData() {
     .sort((a, b) => a.accuracy - b.accuracy);
 
   return {
-    version: '1.8.3',
+    version: '1.8.4',
     exportDate: new Date().toISOString(),
     summary,
     scenarioBreakdown,
@@ -5011,6 +5112,16 @@ function showUpdateBanner(worker) {
 // INIT
 // ============================================================
 App.init();
+
+// v1.8.4: belt-and-suspenders — if init() ran before DOM finished parsing
+// (rare but possible on slow devices), re-render Mastery once DOM is ready.
+// Also re-render after a brief tick to catch any layout-pending issues.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMastery === 'function') renderMastery();
+  });
+}
+setTimeout(() => { if (typeof renderMastery === 'function') renderMastery(); }, 50);
 </script>
 
 <!-- PWA Update Banner -->
