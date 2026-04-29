@@ -3354,6 +3354,23 @@
       line-height: 1.55;
     }
     .import-modal-warning strong { color: var(--danger); }
+    /* v1.9.8: 3-action modal layout — stacked vertically so longer action
+       labels stay readable on both desktop (480px modal cap) and mobile. */
+    .import-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    /* v1.9.8: privacy note under the Backup buttons — calm, practical tone */
+    .backup-privacy-note {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.45;
+      font-style: italic;
+    }
     .backup-card-warning {
       background: rgba(251,191,36,0.10);
       border: 1px solid rgba(251,191,36,0.35);
@@ -3558,7 +3575,7 @@
   </div>
 </div>
 
-<!-- IMPORT BACKUP CONFIRM MODAL (v1.9.7) -->
+<!-- IMPORT BACKUP CONFIRM MODAL (v1.9.7 + v1.9.8 safety action) -->
 <div class="modal-overlay hidden" id="importConfirmModal">
   <div class="modal-box">
     <div class="modal-title">⬆ Import Backup?</div>
@@ -3566,9 +3583,11 @@
       <p>Review the backup contents below. Importing will <strong>replace your current progress</strong> with the data in this file.</p>
     </div>
     <div class="import-modal-body"><!-- filled by showImportConfirmModal() --></div>
-    <div style="display:flex;gap:10px;margin-top:16px;">
+    <div class="import-modal-actions">
+      <!-- Safest path first: snapshot current state before overwriting -->
+      <button class="btn btn-primary btn-full" onclick="exportThenConfirmImport()">⬇ Export Current First, Then Restore</button>
+      <button class="btn btn-secondary btn-full" onclick="confirmImportBackup()">Restore Backup</button>
       <button class="btn btn-secondary btn-full" onclick="closeImportConfirmModal()">Cancel</button>
-      <button class="btn btn-primary btn-full" onclick="confirmImportBackup()">Restore Backup</button>
     </div>
   </div>
 </div>
@@ -9984,6 +10003,9 @@ function renderSettings() {
       <button class="btn btn-secondary btn-full" onclick="pickAndImportBackup()">
         ⬆ Import Backup (JSON)
       </button>
+      <div class="backup-privacy-note">
+        Backup files contain your local training progress. Keep them private.
+      </div>
       <div class="backup-last-meta">${(() => {
         const ts = localStorage.getItem('rmtt_last_backup');
         if (!ts) return 'No backup exported yet';
@@ -10015,7 +10037,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.7</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.8</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -10069,6 +10091,52 @@ function updateSetting(key, value) {
 
 const BACKUP_SCHEMA_VERSION = 'rmtt-backup-v1';
 
+// v1.9.8: Map internal rank → user-facing display name → URL-safe slug
+// for use in backup filenames. Brand-aligned (Bronze→squire, Gold→knight,
+// Grandmaster→end-boss) so users see filenames matching what they see in
+// the UI, not the internal tier enum.
+function rankSlugForFilename(profile) {
+  const internal = profile && profile.certifications && profile.certifications.overallRank;
+  // No profile or unknown rank → safe self-documenting fallback
+  if (!internal || !RANK_DISPLAY[internal]) return 'unranked';
+  // Display name → lowercase → spaces become hyphens → strip anything else
+  return RANK_DISPLAY[internal]
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '');
+}
+
+// v1.9.8: Schema migration scaffold. Right now there is only one schema
+// (rmtt-backup-v1), so this is essentially a passthrough — but it gives us
+// a single, well-defined hook to evolve the backup format later without
+// breaking older exports. Future: add `case 'rmtt-backup-v2': ...` etc.
+//
+// Returns { migrated: payload | null, error: string | null }.
+//   - migrated payload (with schema upgraded to current) on success
+//   - error string when the schema is recognized as unsupported
+//   - permissive passthrough when schema is missing (legacy/unknown raw
+//     dumps); validateBackup will still warn the user
+function migrateBackupPayload(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return { migrated: null, error: 'Not a valid backup object' };
+  }
+  // No schema field — likely a legacy/raw export. Pass through; validator
+  // surfaces a warning and best-effort imports anything it recognizes.
+  if (!payload.schema) {
+    return { migrated: payload, error: null };
+  }
+  switch (payload.schema) {
+    case BACKUP_SCHEMA_VERSION:
+      // Already current — no transform needed.
+      return { migrated: payload, error: null };
+    // Future:
+    //   case 'rmtt-backup-v2':
+    //     return { migrated: upgradeV2toV3(payload), error: null };
+    default:
+      return { migrated: null, error: 'Unknown backup schema: ' + payload.schema };
+  }
+}
+
 function buildBackupPayload() {
   // Read straight from localStorage so what we export reflects what's
   // actually persisted (not just current in-memory state, which may
@@ -10080,7 +10148,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '1.9.7',
+    appVersion: '1.9.8',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -10101,9 +10169,18 @@ function exportBackup() {
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const dateStr = new Date().toISOString().split('T')[0];
+  // v1.9.8: rich filename — rmtt-backup-YYYY-MM-DD-HHMM-<rankslug>.json
+  // Date+time lets users sort multiple backups; rank slug gives a quick
+  // visual cue of which checkpoint a file represents.
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mn = String(d.getMinutes()).padStart(2, '0');
+  const slug = rankSlugForFilename(App.state.profile);
   a.href = url;
-  a.download = `range-master-backup-${dateStr}.json`;
+  a.download = `rmtt-backup-${yyyy}-${mm}-${dd}-${hh}${mn}-${slug}.json`;
   a.click();
   URL.revokeObjectURL(url);
   // Record last backup timestamp in localStorage so the UI can show it
@@ -10112,13 +10189,22 @@ function exportBackup() {
   if (typeof renderSettings === 'function') renderSettings();
 }
 
-// Validate backup JSON shape. Returns { valid, errors[], warnings[], summary }
-function validateBackup(parsed) {
+// Validate backup JSON shape. Returns { valid, errors[], warnings[], summary }.
+// v1.9.8: now runs migrateBackupPayload() first so unknown schemas fail
+// cleanly and any future schema upgrades happen before type checks.
+function validateBackup(parsedRaw) {
   const errors = [];
   const warnings = [];
-  if (!parsed || typeof parsed !== 'object') {
+  if (!parsedRaw || typeof parsedRaw !== 'object') {
     return { valid: false, errors: ['Not a valid JSON object'], warnings, summary: null };
   }
+  // Step 1: try to migrate to current schema
+  const migration = migrateBackupPayload(parsedRaw);
+  if (migration.error) {
+    return { valid: false, errors: [migration.error], warnings, summary: null };
+  }
+  const parsed = migration.migrated;
+  // Step 2: schema warnings (legacy / mismatch)
   if (!parsed.schema) {
     warnings.push('Missing schema field — assuming legacy format');
   } else if (parsed.schema !== BACKUP_SCHEMA_VERSION) {
@@ -10246,6 +10332,32 @@ function confirmImportBackup() {
   if (App.state.tab === 'settings' && typeof renderSettings === 'function') renderSettings();
   closeImportConfirmModal();
   if (typeof showToast === 'function') showToast('✓ Backup restored — your data is back');
+}
+
+// v1.9.8: Pre-import safety export. Snapshot current state to disk first,
+// THEN proceed with the staged restore. Prevents accidental overwrite loss
+// when a user is about to import a backup but hasn't saved their current
+// progress. The export reads from the live (pre-import) localStorage, so
+// the snapshot reflects exactly what's about to be replaced.
+function exportThenConfirmImport() {
+  // Guard against the race where the user clicks this without a staged
+  // backup (e.g. modal kept open after some error). Bail out cleanly.
+  if (!App._stagedBackup) { closeImportConfirmModal(); return; }
+  // Step 1: snapshot current state. exportBackup() triggers a download and
+  // updates rmtt_last_backup. We do NOT await the download dialog — the
+  // browser handles that asynchronously and the user can save the file
+  // wherever they like. Restore proceeds immediately after the download
+  // anchor is clicked, which is fine because the JSON blob is already
+  // generated by then.
+  try { exportBackup(); } catch (e) {
+    // If the snapshot fails for any reason, abort the restore so the user
+    // doesn't lose data they thought they were protecting.
+    if (typeof showToast === 'function') showToast('✗ Could not snapshot current state — restore aborted');
+    return;
+  }
+  // Step 2: proceed with the original restore path (writes localStorage,
+  // reloads state, closes modal, fires success toast).
+  confirmImportBackup();
 }
 
 function pickAndImportBackup() {
