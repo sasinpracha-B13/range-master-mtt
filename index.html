@@ -2366,6 +2366,164 @@
       margin-top: 1px;
     }
 
+    /* ============================================================ */
+    /* LOGO SYSTEM PREVIEW v1.9.3                                   */
+    /* ============================================================ */
+    .logo-wordmark { display: inline-block; line-height: 1; }
+    .logo-wordmark .wm-line {
+      font-family: 'Inter', 'HK Grotesk', 'Manrope', system-ui, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #d4af37;
+      text-transform: uppercase;
+    }
+    .logo-wordmark-small .wm-line { font-size: 12px; }
+    .logo-wordmark-medium .wm-line { font-size: 18px; }
+    .logo-wordmark-large .wm-line { font-size: 28px; }
+    .logo-wordmark .wm-pill {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #d4af37;
+      color: #0d1117;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .logo-wordmark-small .wm-pill { font-size: 8px; }
+    .logo-wordmark-medium .wm-pill { font-size: 9px; }
+    .logo-wordmark-large .wm-pill { font-size: 11px; padding: 3px 10px; }
+
+    .logo-lab {
+      margin-top: 12px;
+      display: grid;
+      gap: 12px;
+    }
+    .logo-lab-section {
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .logo-lab-section-title {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .logo-lab-section-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .logo-lab-row {
+      display: flex;
+      gap: 18px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      padding: 14px 8px;
+      border-radius: 8px;
+    }
+    .logo-lab-row.dark-bg { background: #0d1117; }
+    .logo-lab-row.neutral-bg { background: #2a2d36; }
+    .logo-lab-cell {
+      text-align: center;
+    }
+    .logo-lab-cell-caption {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
+    .logo-lab-note {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .logo-topnav-mock {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: linear-gradient(180deg, #1a1d28 0%, #12131a 100%);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .logo-cert-mock {
+      position: relative;
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #1a2030 0%, #0d1117 80%);
+      border: 2px solid #d4af37;
+      box-shadow: 0 0 28px rgba(212,175,55,0.20);
+      text-align: center;
+      overflow: hidden;
+    }
+    .logo-cert-mock-stamp {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+    }
+    .logo-cert-mock .cert-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #d4af37;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .logo-cert-mock .cert-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .logo-hero-watermark-mock {
+      position: relative;
+      padding: 24px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1f2230 0%, #0e1018 100%);
+      border: 1px solid rgba(212,175,55,0.4);
+      overflow: hidden;
+      min-height: 120px;
+    }
+    .logo-hero-watermark-mock-seal {
+      position: absolute;
+      right: -14px; bottom: -14px;
+      opacity: 0.14;
+      filter: drop-shadow(0 0 14px rgba(212,175,55,0.4));
+    }
+    .logo-hero-watermark-mock-text {
+      position: relative;
+      z-index: 1;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .logo-hero-watermark-mock-text strong {
+      color: #d4af37;
+      display: block;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .logo-family-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-around;
+      padding: 16px 8px;
+      background: #0d1117;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+    .logo-family-row .rank-emblem { width: 48px; height: 48px; }
+    .logo-family-row .rank-emblem .rank-emblem-svg { width: 28px; height: 28px; }
+
     /* Foundation explainer (de-emphasized) */
     .foundation-card {
       padding: 12px 14px;
@@ -6532,6 +6690,173 @@ function renderZoneSceneSvg(moduleId, opts) {
   return `<svg class="zone-scene-svg" viewBox="0 0 240 120" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" style="color:${tint}">${body}</svg>`;
 }
 
+// ============================================================
+// LOGO SYSTEM v1.9.3 — Mock Components
+// ============================================================
+// Three brand marks built as inline SVG, all sharing the same DNA:
+// stylized spade + ascending chevron + dark navy + gold palette.
+//
+//   A2 — Framed Spade Path           (App Icon candidate)
+//   B2 — Merged Spade-Arrow Crest    (Full Logo / brand lockup)
+//   C  — Octagonal Mastery Emblem    (Certification Seal)
+//
+// MOCK only — production favicon/PWA/apple-touch-icon assets remain
+// untouched. These render inside the in-app Logo System Preview lab
+// (Settings tab) for review before any production swap.
+
+// ----- A2: Framed Spade Path (app icon) -----
+function renderLogoA2(size) {
+  size = size || 180;
+  // viewBox 0 0 1024 1024 keeps the design scalable to any iOS/Android icon size
+  return `<svg class="logo-a2" viewBox="0 0 1024 1024" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="a2-bg-${size}" cx="30%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="#1f2230"/>
+        <stop offset="75%" stop-color="#0d1117"/>
+      </radialGradient>
+      <linearGradient id="a2-spade-${size}" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="60%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#b8902a"/>
+      </linearGradient>
+    </defs>
+    <!-- L1: rounded-square background -->
+    <rect x="0" y="0" width="1024" height="1024" rx="184" fill="url(#a2-bg-${size})"/>
+    <!-- L2: subtle inner gold border (engraved badge feel) -->
+    <rect x="60" y="60" width="904" height="904" rx="145" fill="none" stroke="#d4af37" stroke-width="4" opacity="0.55"/>
+    <!-- L3: stylized spade body (no stem) -->
+    <path d="M512 200
+             Q340 360 340 540
+             Q340 640 420 660
+             Q470 660 510 620
+             L510 700
+             L514 700
+             L514 620
+             Q554 660 604 660
+             Q684 660 684 540
+             Q684 360 512 200 Z"
+          fill="url(#a2-spade-${size})"
+          filter="drop-shadow(0 8px 24px rgba(212,175,55,0.25))"/>
+    <!-- L4: rising chevron entering the spade base -->
+    <polygon points="448,920 512,720 576,920" fill="#fbbf24"
+             filter="drop-shadow(0 0 12px rgba(251,191,36,0.6))"/>
+    <!-- L5: optional micro highlight on spade for premium metal feel -->
+    <ellipse cx="430" cy="360" rx="22" ry="14" fill="#ffffff" opacity="0.18"/>
+  </svg>`;
+}
+
+// ----- B2: Merged Spade-Arrow Crest (full logo) -----
+function renderLogoB2(opts) {
+  opts = opts || {};
+  const w = opts.width || 200;
+  const h = opts.height || 240;
+  const showStar = opts.showStar !== false;
+  return `<svg class="logo-b2" viewBox="0 0 200 240" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="b2-shield-${w}" cx="30%" cy="20%" r="100%">
+        <stop offset="0%" stop-color="#1a1d28"/>
+        <stop offset="80%" stop-color="#0d1117"/>
+      </radialGradient>
+      <linearGradient id="b2-mark-${w}" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="55%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#b8902a"/>
+      </linearGradient>
+    </defs>
+    ${showStar ? `<!-- Star above shield -->
+    <polygon points="100,2 103,12 113,12 105,18 108,28 100,22 92,28 95,18 87,12 97,12"
+             fill="#fbbf24"
+             filter="drop-shadow(0 0 4px #fbbf24)"/>` : ''}
+    <!-- Shield outline (modernized — straight shoulders, gentle bottom point) -->
+    <path d="M40 30 L160 30 L160 130 Q160 180 100 200 Q40 180 40 130 Z"
+          fill="url(#b2-shield-${w})"
+          stroke="#d4af37"
+          stroke-width="2.2"
+          filter="drop-shadow(0 0 8px rgba(212,175,55,0.30))"/>
+    <!-- Merged spade-arrow: ONE continuous custom path
+         - top of spade: classic 3-lobe upper curl with sharp tip
+         - lower body flows into a chevron pointing UP (the arrow)
+         - drawn as one continuous fill — no internal seams -->
+    <path d="M100 50
+             Q60 90 60 122
+             Q60 145 80 150
+             Q92 150 100 142
+             L100 165
+             L82 178
+             L100 158
+             L118 178
+             L100 165
+             L100 142
+             Q108 150 120 150
+             Q140 145 140 122
+             Q140 90 100 50 Z"
+          fill="url(#b2-mark-${w})"
+          filter="drop-shadow(0 0 6px rgba(212,175,55,0.45))"/>
+    <!-- Inner brightening highlight on the merged mark -->
+    <ellipse cx="86" cy="88" rx="6" ry="4" fill="#ffffff" opacity="0.20"/>
+  </svg>`;
+}
+
+// ----- C: Octagonal Mastery Emblem (certification seal) -----
+function renderLogoC(size) {
+  size = size || 200;
+  // viewBox 0 0 200 200; ticks + engraved frame
+  return `<svg class="logo-c" viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="c-field-${size}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#a17207"/>
+      </linearGradient>
+      <mask id="c-cutout-${size}">
+        <rect x="0" y="0" width="200" height="200" fill="white"/>
+        <!-- Spade silhouette cut out from the gold field -->
+        <path d="M100 60 Q72 88 72 116 Q72 134 88 138 Q98 138 105 130 L105 152 L95 152 L95 130 Q102 138 112 138 Q128 134 128 116 Q128 88 100 60 Z"
+              fill="black"/>
+      </mask>
+    </defs>
+    <!-- Outer octagon background (dark) -->
+    <polygon points="50,20 150,20 180,50 180,150 150,180 50,180 20,150 20,50"
+             fill="#0d1117"
+             stroke="#d4af37"
+             stroke-width="1.5"/>
+    <!-- Engraved inner ring (5px inside outer) -->
+    <polygon points="56,28 144,28 172,56 172,144 144,172 56,172 28,144 28,56"
+             fill="none"
+             stroke="#d4af37"
+             stroke-width="1"
+             opacity="0.50"/>
+    <!-- Gold field with spade carved out -->
+    <g mask="url(#c-cutout-${size})">
+      <polygon points="60,32 140,32 168,60 168,140 140,168 60,168 32,140 32,60"
+               fill="url(#c-field-${size})"/>
+    </g>
+    <!-- Chevron rising inside the spade cutout -->
+    <polygon points="88,148 100,118 112,148" fill="#fbbf24"
+             filter="drop-shadow(0 0 6px rgba(251,191,36,0.7))"/>
+    <!-- 8 tick marks at octagon corners (cardinal points slightly bigger) -->
+    <circle cx="100" cy="20" r="2.5" fill="#d4af37"/>
+    <circle cx="100" cy="180" r="2.5" fill="#d4af37"/>
+    <circle cx="20" cy="100" r="2.5" fill="#d4af37"/>
+    <circle cx="180" cy="100" r="2.5" fill="#d4af37"/>
+    <circle cx="50" cy="20" r="1.6" fill="#d4af37" opacity="0.7"/>
+    <circle cx="150" cy="20" r="1.6" fill="#d4af37" opacity="0.7"/>
+    <circle cx="50" cy="180" r="1.6" fill="#d4af37" opacity="0.7"/>
+    <circle cx="150" cy="180" r="1.6" fill="#d4af37" opacity="0.7"/>
+  </svg>`;
+}
+
+// ----- Wordmark -----
+function renderWordmark(opts) {
+  opts = opts || {};
+  const showPill = opts.showPill !== false;
+  const align = opts.align || 'center';
+  const sizeClass = opts.size || 'medium';
+  return `<div class="logo-wordmark logo-wordmark-${sizeClass}" style="text-align:${align}">
+    <div class="wm-line">RANGE&nbsp;MASTER</div>
+    ${showPill ? `<div class="wm-pill">MTT</div>` : ''}
+  </div>`;
+}
+
 // Map v1.7.0 metadata module → v1.8.0 mastery module. Some metadata modules
 // collapse into the same mastery module (e.g. legacy_generic_3bet folds into
 // open_vs_3bet for ranking purposes).
@@ -8977,6 +9302,162 @@ function filterBrowseByModule(module) {
 }
 
 // ============================================================
+// LOGO SYSTEM PREVIEW v1.9.3
+// ============================================================
+// In-app review surface for the proposed Logo System. Lives in Settings.
+// Production icons are NOT swapped — this is for visual decision-making
+// before any apple-touch-icon / favicon / manifest replacement.
+function renderLogoSystemPreview() {
+  return `
+    <div class="logo-lab">
+
+      <!-- A. App Icon Preview -->
+      <div class="logo-lab-section">
+        <div class="logo-lab-section-title">A · App Icon Preview (A2 — Framed Spade Path)</div>
+        <div class="logo-lab-section-sub">Rounded-square frame · dark navy bg · subtle gold inner border · spade with stem replaced by rising chevron. Verify readability across icon sizes.</div>
+        <div class="logo-lab-row dark-bg">
+          <div class="logo-lab-cell">
+            ${renderLogoA2(32)}
+            <div class="logo-lab-cell-caption">32px (favicon)</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoA2(64)}
+            <div class="logo-lab-cell-caption">64px (apple-touch)</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoA2(120)}
+            <div class="logo-lab-cell-caption">120px (home screen)</div>
+          </div>
+        </div>
+        <div class="logo-lab-row neutral-bg" style="margin-top:8px">
+          <div class="logo-lab-cell">
+            ${renderLogoA2(64)}
+            <div class="logo-lab-cell-caption">on neutral bg</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoA2(120)}
+            <div class="logo-lab-cell-caption">on neutral bg</div>
+          </div>
+        </div>
+        <div class="logo-lab-note">Holds at 32px? Rounded-square presence + spade-with-chevron silhouette should both read.</div>
+      </div>
+
+      <!-- B. Top Nav Preview -->
+      <div class="logo-lab-section">
+        <div class="logo-lab-section-title">B · Top Nav Preview (A2 + wordmark)</div>
+        <div class="logo-lab-section-sub">Compact mark next to RANGE MASTER + MTT pill. Mobile width.</div>
+        <div class="logo-topnav-mock">
+          ${renderLogoA2(36)}
+          ${renderWordmark({ size: 'small', align: 'left' })}
+        </div>
+        <div class="logo-topnav-mock" style="margin-top:6px">
+          ${renderLogoA2(44)}
+          ${renderWordmark({ size: 'medium', align: 'left' })}
+        </div>
+      </div>
+
+      <!-- C. Full Logo Preview -->
+      <div class="logo-lab-section">
+        <div class="logo-lab-section-title">C · Full Brand Logo (B2 — Merged Spade-Arrow Crest)</div>
+        <div class="logo-lab-section-sub">Modern shield with merged spade-arrow custom symbol + small star. Used for splash, About card, install prompt.</div>
+        <div class="logo-lab-row dark-bg" style="justify-content:center">
+          <div class="logo-lab-cell">
+            ${renderLogoB2({ width: 140, height: 168 })}
+            <div class="logo-lab-cell-caption">Symbol only (vertical lockup top)</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoB2({ width: 140, height: 168 })}
+            <div style="margin-top:8px">${renderWordmark({ size: 'medium' })}</div>
+            <div class="logo-lab-cell-caption" style="margin-top:8px">Vertical lockup w/ wordmark</div>
+          </div>
+        </div>
+        <div class="logo-lab-row dark-bg" style="margin-top:8px;justify-content:center;align-items:center">
+          ${renderLogoB2({ width: 90, height: 108 })}
+          <div style="margin-left:14px">${renderWordmark({ size: 'large', align: 'left' })}</div>
+        </div>
+        <div class="logo-lab-cell-caption" style="text-align:center;margin-top:4px">Horizontal lockup</div>
+      </div>
+
+      <!-- D. Certification Seal Preview -->
+      <div class="logo-lab-section">
+        <div class="logo-lab-section-title">D · Certification Seal (C — Octagonal Mastery Emblem)</div>
+        <div class="logo-lab-section-sub">Octagonal frame · spade carved as negative space · 8 rank tick marks · used for Boss Cleared / Overall Exam Cleared / Hero watermark.</div>
+        <div class="logo-lab-row dark-bg" style="justify-content:space-around">
+          <div class="logo-lab-cell">
+            ${renderLogoC(80)}
+            <div class="logo-lab-cell-caption">80px standalone</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoC(140)}
+            <div class="logo-lab-cell-caption">140px (cert size)</div>
+          </div>
+        </div>
+
+        <!-- Stamped on Overall Exam Cleared -->
+        <div class="logo-cert-mock" style="margin-top:10px">
+          <div class="cert-title">★ Squire Exam Cleared ★</div>
+          <div class="cert-sub">Overall Rank Certified · Wanderer → Squire</div>
+          <div class="logo-cert-mock-stamp">${renderLogoC(64)}</div>
+        </div>
+        <div class="logo-lab-cell-caption" style="text-align:center;margin-top:6px">C as wax seal on Overall Exam Cleared card</div>
+
+        <!-- Stamped on Boss Cleared -->
+        <div class="logo-cert-mock" style="margin-top:10px;border-color:#cd7f32;box-shadow:0 0 28px rgba(205,127,50,0.20)">
+          <div class="cert-title" style="color:#cd7f32">★ Big Blind Boss Defeated ★</div>
+          <div class="cert-sub">Bronze certified · BB Defense</div>
+          <div class="logo-cert-mock-stamp">${renderLogoC(64)}</div>
+        </div>
+        <div class="logo-lab-cell-caption" style="text-align:center;margin-top:6px">C as wax seal on Boss Cleared card</div>
+
+        <!-- Hero watermark -->
+        <div class="logo-hero-watermark-mock" style="margin-top:10px">
+          <div class="logo-hero-watermark-mock-seal">${renderLogoC(160)}</div>
+          <div class="logo-hero-watermark-mock-text">
+            <strong>Wanderer</strong>
+            Mastery Score · 0.0 / 100
+          </div>
+        </div>
+        <div class="logo-lab-cell-caption" style="text-align:center;margin-top:6px">C as Hero card watermark (14% opacity)</div>
+      </div>
+
+      <!-- E. Family Comparison -->
+      <div class="logo-lab-section">
+        <div class="logo-lab-section-title">E · Family Comparison · Brand vs Rank Emblems</div>
+        <div class="logo-lab-section-sub">All three brand marks should sit in the same SVG style family as the existing 8 rank emblems (compass / shield / sword / laurel / etc.).</div>
+        <div class="logo-family-row">
+          <div class="logo-lab-cell">
+            ${renderLogoA2(48)}
+            <div class="logo-lab-cell-caption">A2 icon</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoB2({ width: 48, height: 56 })}
+            <div class="logo-lab-cell-caption">B2 logo</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderLogoC(48)}
+            <div class="logo-lab-cell-caption">C seal</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderRankEmblem('Bronze', 'small')}
+            <div class="logo-lab-cell-caption">Squire</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderRankEmblem('Platinum', 'small')}
+            <div class="logo-lab-cell-caption">Champion</div>
+          </div>
+          <div class="logo-lab-cell">
+            ${renderRankEmblem('Grandmaster', 'small')}
+            <div class="logo-lab-cell-caption">End Boss</div>
+          </div>
+        </div>
+        <div class="logo-lab-note">Family check: do they share enough DNA (gold-on-navy palette + same SVG style language) to feel like one identity?</div>
+      </div>
+
+    </div>
+  `;
+}
+
+// ============================================================
 // SETTINGS TAB
 // ============================================================
 function renderSettings() {
@@ -9077,9 +9558,17 @@ function renderSettings() {
     </div>
 
     <div class="card">
+      <div class="card-title">🎨 Logo System Preview</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin:-4px 0 8px;line-height:1.5">
+        Mock preview of the proposed brand identity system (A2 app icon · B2 full logo · C cert seal · wordmark). Production icons are NOT swapped — this is for review only.
+      </div>
+      ${renderLogoSystemPreview()}
+    </div>
+
+    <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.2</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.9.3</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
