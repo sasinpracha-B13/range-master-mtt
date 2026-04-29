@@ -2060,6 +2060,211 @@
     .boss-defeat-recommend .recommend-line strong { color: var(--text); }
 
     /* ============================================================ */
+    /* MISTAKE REVIEW v2.0.3 — Boss/Exam result post-game coaching   */
+    /* ============================================================ */
+    .mistake-review-card {
+      margin: 14px 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, var(--surface) 100%);
+      border: 1px solid rgba(212,175,55,0.20);
+    }
+    .mr-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .mr-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.4px;
+    }
+    .mr-count-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(248,113,113,0.14);
+      color: #f87171;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+    .mr-subline {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .mr-subline.high-impact {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .mr-clean-state {
+      padding: 18px 12px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--success);
+      font-weight: 600;
+    }
+    .mr-pattern-summary {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .mr-pattern-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 3px 0;
+    }
+    .mr-pattern-row .pattern-label {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .mr-pattern-row .pattern-count {
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 11px;
+    }
+    .mr-toggle-btn {
+      display: block;
+      width: 100%;
+      padding: 9px;
+      margin-top: 4px;
+      border-radius: 8px;
+      background: rgba(212,175,55,0.08);
+      color: #d4af37;
+      border: 1px solid rgba(212,175,55,0.30);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .mr-toggle-btn:hover {
+      background: rgba(212,175,55,0.14);
+      border-color: rgba(212,175,55,0.50);
+    }
+    .mr-card-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .miss-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .miss-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .miss-card-hand {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .miss-card-pattern-pill {
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      font-weight: 800;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+    }
+    .miss-card-pattern-pill.pure_defend  { background: rgba(248,113,113,0.16); color: #f87171; }
+    .miss-card-pattern-pill.outside_range { background: rgba(248,113,113,0.16); color: #f87171; }
+    .miss-card-pattern-pill.critical_punt { background: rgba(220,38,38,0.18); color: #f87171; }
+    .miss-card-pattern-pill.mix_aware    { background: rgba(251,191,36,0.16); color: #fbbf24; }
+    .miss-card-pattern-pill.mix_marginal { background: rgba(251,191,36,0.10); color: #fbbf24; }
+    .miss-card-answer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    .miss-card-answer .you {
+      color: var(--text-secondary);
+    }
+    .miss-card-answer .you strong {
+      color: var(--danger);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .miss-card-answer .gto {
+      color: var(--text-secondary);
+      text-align: right;
+    }
+    .miss-card-answer .gto strong {
+      color: var(--success);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .miss-card-context {
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .miss-card-note {
+      font-size: 11px;
+      color: var(--text);
+      line-height: 1.45;
+      padding-top: 5px;
+      border-top: 1px dashed rgba(255,255,255,0.06);
+    }
+    .mr-show-all-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 7px;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px dashed rgba(255,255,255,0.14);
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+    .mr-show-all-btn:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .mr-drill-cta {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--mint) 0%, #5dd9a7 100%);
+      color: #0a0e14;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .mr-drill-cta:hover {
+      filter: brightness(1.08);
+    }
+
+    /* ============================================================ */
     /* OVERALL EXAM v1.9.0 — Brief + Session badge + Pass/Fail       */
     /* ============================================================ */
     .overall-exam-brief, .overall-exam-claim {
@@ -5145,6 +5350,391 @@ function isCriticalPuntEligible(hand) {
   }
 
   return true;
+}
+
+// ============================================================
+// MISTAKE REVIEW v2.0.3 — Boss/Exam result post-game coaching
+// ============================================================
+// Surfaces the user's wrong answers from a Boss/Exam session in a
+// learnable form (top-5 priority sort + pattern summary + drill CTA).
+// Render-only / read-only on d.answers — no schema changes.
+//
+// IMPORTANT POLICY:
+//   - Boss/Exam results themselves do NOT update SRS (preserved).
+//   - "Drill These Misses" enters Drill/Practice mode which DOES update
+//     SRS (existing policy). The MR card just surfaces what to drill.
+
+// Classify a single wrong/partial answer into a pattern bucket.
+//   pure_defend   = pure GTO action was non-fold but user folded (missed defending)
+//   outside_range = pure GTO action was fold but user defended (over-defended)
+//   critical_punt = subset of outside_range where hand class is genuinely trash
+//   mix_aware     = wrong on a mixed (non-pure) spot
+//   mix_marginal  = partial result on a mixed spot
+function classifyMissPattern(answer) {
+  if (!answer) return 'mix_aware';
+  const result = answer.result;
+  if (result === 'correct') return null;
+  if (result === 'partial') return 'mix_marginal';
+  const isPure = !!answer.isPure;
+  if (!isPure) return 'mix_aware';
+
+  const correct = answer.correctAction;
+  const userAct = answer.userAction;
+
+  // User over-defended: GTO said fold, user did something else
+  if (correct === 'fold' && userAct && userAct !== 'fold' && userAct !== 'check') {
+    if (answer.q && isCriticalPuntEligible(answer.q.hand)) return 'critical_punt';
+    return 'outside_range';
+  }
+  // User missed defending: GTO said non-fold, user folded
+  if (userAct === 'fold' && correct && correct !== 'fold') {
+    return 'pure_defend';
+  }
+  // Both sides non-fold but mismatched (e.g. GTO=call, user=3bet) — still a defend miss
+  return 'pure_defend';
+}
+
+// Classify a hand into a coarse class for the pattern summary.
+// (Reuses the same logic style as isCriticalPuntEligible but returns
+// a label instead of boolean.)
+function classifyHandBucket(hand) {
+  if (!hand || typeof hand !== 'string' || hand.length < 2) return 'unknown';
+  if (hand.length === 2 && hand[0] === hand[1]) return 'pair';
+  if (hand.length < 3) return 'unknown';
+  const r1 = hand[0], r2 = hand[1];
+  const suited = hand[2] === 's';
+  const offsuit = hand[2] === 'o';
+  if (suited) {
+    if (r1 === 'A' || r2 === 'A') return 'suited_ax';
+    if ('KQJT'.includes(r1) && 'KQJT9'.includes(r2)) return 'suited_broadway';
+    if ('KQJ'.includes(r1) && r2 === '9') return 'suited_broadway';
+    const idx = (c) => '23456789TJQKA'.indexOf(c);
+    const i1 = idx(r1), i2 = idx(r2);
+    const lo = Math.min(i1, i2), hi = Math.max(i1, i2);
+    if ((hi - lo) <= 2 && lo >= 2) return 'suited_connector';
+    return 'low_suited';
+  }
+  if (offsuit) {
+    if ('AKQJT'.includes(r1) && 'AKQJT'.includes(r2)) return 'offsuit_broadway';
+    if (r1 === 'A' || r2 === 'A') return 'offsuit_ax_low';
+    return 'trash';
+  }
+  return 'unknown';
+}
+
+// Pattern label + display name for UI
+const MISS_PATTERN_LABELS = {
+  pure_defend:   'Pure Defend',
+  outside_range: 'Outside Range',
+  critical_punt: 'Critical Punt',
+  mix_aware:     'Mix Aware',
+  mix_marginal:  'Marginal Mix'
+};
+const HAND_BUCKET_LABELS = {
+  pair:             'Pair miss',
+  suited_ax:        'Suited Ax miss',
+  suited_broadway:  'Suited broadway miss',
+  suited_connector: 'Suited connector miss',
+  offsuit_broadway: 'Offsuit broadway miss',
+  offsuit_ax_low:   'Offsuit Ax miss',
+  low_suited:       'Low suited miss',
+  trash:            'Trash hand miss'
+};
+
+// Score each wrong answer for prioritization. Higher = surfaced first.
+// Per approved spec:
+//   Pure 100% miss               base 100
+//   User played 0%-freq action   +50
+//   High-EV hand class           +30
+//   Critical mistake category    +20
+//   Mix awareness miss           base 30
+function prioritizeMisses(answers) {
+  const misses = (answers || []).filter(a => a && (a.result === 'wrong' || a.result === 'partial'));
+  const HIGH_EV_CLASSES = new Set(['pair','suited_ax','suited_broadway','offsuit_broadway']);
+  const scored = misses.map(a => {
+    let score = 0;
+    const isPure = !!a.isPure;
+    if (isPure) score += 100;
+    if ((a.userFreq || 0) < 0.05 && a.result === 'wrong') score += 50;
+    const hand = a.q && a.q.hand;
+    const bucket = hand ? classifyHandBucket(hand) : 'unknown';
+    if (HIGH_EV_CLASSES.has(bucket)) score += 30;
+    if (a.mistakeCategory) score += 20;
+    if (a.result === 'partial') score = Math.max(score, 30);
+    if (!isPure && a.result === 'wrong') score = Math.max(score, 30);
+    return Object.assign({}, a, {
+      _priority: score,
+      _pattern: classifyMissPattern(a),
+      _bucket: bucket
+    });
+  });
+  scored.sort((x, y) => y._priority - x._priority);
+  return scored;
+}
+
+// Aggregate pattern counts across the prioritized misses for the summary.
+function buildMissPatternsSummary(misses) {
+  const patternCounts = {};
+  const bucketCounts = {};
+  for (const m of misses) {
+    const p = m._pattern;
+    patternCounts[p] = (patternCounts[p] || 0) + 1;
+    if (m._bucket && m._bucket !== 'unknown') {
+      bucketCounts[m._bucket] = (bucketCounts[m._bucket] || 0) + 1;
+    }
+  }
+  // Combine into ordered top-3 list
+  const out = [];
+  // Pattern-level (more specific) — Pure Defend / Critical Punt / Outside Range first
+  const PATTERN_ORDER = ['critical_punt','pure_defend','outside_range','mix_marginal','mix_aware'];
+  for (const p of PATTERN_ORDER) {
+    if (patternCounts[p]) {
+      out.push({ key: p, label: MISS_PATTERN_LABELS[p] + ' miss' + (patternCounts[p]===1?'':'es'), count: patternCounts[p] });
+    }
+  }
+  // Hand-bucket (broader) — append top 2 bucket entries that aren't already mentioned
+  const bucketSorted = Object.entries(bucketCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2);
+  for (const [bucket, count] of bucketSorted) {
+    out.push({ key: bucket, label: HAND_BUCKET_LABELS[bucket] || bucket, count });
+  }
+  return out.slice(0, 4);
+}
+
+// Generate the educational note ("why" line) for a single miss card.
+// Principle-based, NOT a chart dump.
+function _missCardNote(miss) {
+  const hand = miss.q && miss.q.hand;
+  const isPure = !!miss.isPure;
+  const userFreq = miss.userFreq || 0;
+  const correct = miss.correctAction;
+  const pattern = miss._pattern;
+  if (pattern === 'critical_punt') {
+    return 'Trash hand — pure fold. No playability, no blocker.';
+  }
+  if (pattern === 'outside_range') {
+    return 'Outside any GTO branch — this hand never plays here at this stack/position.';
+  }
+  if (pattern === 'pure_defend') {
+    if (correct === 'call')      return 'Pure defend at this stack/position — call every time.';
+    if (correct === 'fold')      return 'Pure fold here — even with the kicker / suit, the GTO line is fold.';
+    if (correct === 'threebet')  return 'Pure 3-bet at this stack/position — value or polarized squeeze.';
+    if (correct === 'shove')     return 'Pure shove — strong enough to lock in fold equity.';
+    return 'Pure GTO line — ' + (correct || 'best action') + ' every time at this stack/position.';
+  }
+  if (pattern === 'mix_marginal') {
+    return 'Marginal spot — either branch is in range. Low EV cost, but worth seeing the mix.';
+  }
+  // mix_aware (wrong on a mixed spot but not partial — picked a low-frequency or non-best line)
+  return 'Mixed spot — multiple branches valid, but you picked the low-frequency line.';
+}
+
+// Format the GTO answer line for display (e.g. "call 100%" or "call 60% / fold 40%")
+function _formatGtoLine(freqs) {
+  if (!freqs) return '?';
+  const order = ['fold','call','check','limp','raise','threebet','fourbet','shove'];
+  const parts = [];
+  for (const a of order) {
+    const v = freqs[a];
+    if (typeof v === 'number' && v > 0) {
+      parts.push(a + ' ' + Math.round(v * 100) + '%');
+    }
+  }
+  return parts.join(' / ') || '?';
+}
+
+// Pretty-format the user's chosen action
+function _formatUserAction(action) {
+  if (!action) return '?';
+  return action.replace(/_/g, '-');
+}
+
+// Format the spot context (e.g. "40BB · BB vs HJ raise")
+function _formatSpotContext(q) {
+  if (!q) return '';
+  const stack = q.stack ? q.stack + 'BB' : '';
+  const pos = q.pos || '';
+  const action = q.action || '';
+  const actionPretty = action.replace(/^vs_raise_/, 'vs ').replace(/_/g, ' ').toUpperCase();
+  return [stack, pos, actionPretty].filter(Boolean).join(' · ');
+}
+
+// Top-level render. Returns HTML for the Mistake Review section.
+//   answers : d.answers from the session
+//   opts    : { source: 'boss' | 'exam', cardId?: string }
+let _mrCardCounter = 0;
+window._mistakeReviewState = window._mistakeReviewState || {};
+function renderMistakeReviewCard(answers, opts) {
+  opts = opts || {};
+  const cardId = opts.cardId || ('mr_' + (_mrCardCounter++));
+  const prioritized = prioritizeMisses(answers);
+  const missCount = prioritized.length;
+  // Empty state — clean run
+  if (missCount === 0) {
+    return `
+      <div class="mistake-review-card">
+        <div class="mr-clean-state">✨ Clean run — no mistakes to review.</div>
+      </div>
+    `;
+  }
+  // Persistence in window state for toggle/expand
+  const state = window._mistakeReviewState[cardId] || { expanded: false, showAll: false };
+  window._mistakeReviewState[cardId] = state;
+  // Stash the missed answers for "Drill These Misses" lookup
+  window._mistakeReviewState[cardId].misses = prioritized;
+
+  const TOP_N = 5;
+  const pureMissCount = prioritized.filter(m => m._pattern === 'pure_defend' || m._pattern === 'critical_punt' || m._pattern === 'outside_range').length;
+  const headerCopy = (pureMissCount >= 3 && opts.source === 'boss')
+    ? `<strong>${pureMissCount} pure-defense misses</strong> are blocking your Boss clear.`
+    : `You missed ${missCount} hand${missCount===1?'':'s'}. Top fixes shown below.`;
+
+  // Pattern summary
+  const patternRows = buildMissPatternsSummary(prioritized);
+  const summaryHtml = patternRows.length > 0
+    ? `<div class="mr-pattern-summary">${patternRows.map(r => `
+        <div class="mr-pattern-row">
+          <span class="pattern-label">${r.label}</span>
+          <span class="pattern-count">${r.count}</span>
+        </div>
+      `).join('')}</div>`
+    : '';
+
+  // Card list
+  const visibleMisses = state.expanded
+    ? (state.showAll ? prioritized : prioritized.slice(0, TOP_N))
+    : [];
+  const cardsHtml = visibleMisses.map(miss => {
+    const hand = (miss.q && miss.q.hand) || '?';
+    const pattern = miss._pattern;
+    const patternLabel = MISS_PATTERN_LABELS[pattern] || pattern;
+    const userAct = _formatUserAction(miss.userAction);
+    const gtoLine = _formatGtoLine(miss.q && miss.q.freqs);
+    const spotCtx = _formatSpotContext(miss.q);
+    const note = _missCardNote(miss);
+    return `
+      <div class="miss-card">
+        <div class="miss-card-head">
+          <span class="miss-card-hand">${hand}</span>
+          <span class="miss-card-pattern-pill ${pattern}">${patternLabel}</span>
+        </div>
+        <div class="miss-card-context">${spotCtx}</div>
+        <div class="miss-card-answer">
+          <div class="you">You: <strong>${userAct}</strong></div>
+          <div class="gto">GTO: <strong>${gtoLine}</strong></div>
+        </div>
+        <div class="miss-card-note">${note}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Toggle button copy
+  const toggleCopy = state.expanded
+    ? `▾ Hide misses`
+    : `▸ Show ${Math.min(TOP_N, missCount)} most important mistake${Math.min(TOP_N, missCount)===1?'':'s'}`;
+
+  // Show-all button (only if expanded AND there are more than TOP_N)
+  const showAllHtml = (state.expanded && !state.showAll && missCount > TOP_N)
+    ? `<button class="mr-show-all-btn" onclick="showAllMisses('${cardId}')">Show all ${missCount} mistakes</button>`
+    : '';
+
+  return `
+    <div class="mistake-review-card" id="${cardId}">
+      <div class="mr-header">
+        <span class="mr-title">🎯 Review Your Misses</span>
+        <span class="mr-count-badge">${missCount}</span>
+      </div>
+      <div class="mr-subline ${pureMissCount >= 3 && opts.source === 'boss' ? 'high-impact' : ''}">${headerCopy}</div>
+      ${summaryHtml}
+      <button class="mr-toggle-btn" onclick="toggleMistakeReview('${cardId}')">${toggleCopy}</button>
+      ${state.expanded ? `<div class="mr-card-list">${cardsHtml}</div>${showAllHtml}` : ''}
+      <button class="mr-drill-cta" onclick="drillSpecificMisses('${cardId}')">▶ Drill These Misses (${missCount})</button>
+    </div>
+  `;
+}
+
+// Toggle expanded state and re-render the card in place
+function toggleMistakeReview(cardId) {
+  const state = window._mistakeReviewState && window._mistakeReviewState[cardId];
+  if (!state) return;
+  state.expanded = !state.expanded;
+  if (!state.expanded) state.showAll = false;
+  const el = document.getElementById(cardId);
+  if (el) {
+    // Re-render this specific card by replacing its outerHTML with fresh markup.
+    // We pass the cached misses through a synthetic answers array so the helper
+    // can re-prioritize identically.
+    const html = renderMistakeReviewCard(state.misses, {
+      source: state.source || 'boss',
+      cardId
+    });
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html.trim();
+    el.replaceWith(wrapper.firstChild);
+  }
+}
+
+// Show all misses (beyond top 5)
+function showAllMisses(cardId) {
+  const state = window._mistakeReviewState && window._mistakeReviewState[cardId];
+  if (!state) return;
+  state.showAll = true;
+  const el = document.getElementById(cardId);
+  if (el) {
+    const html = renderMistakeReviewCard(state.misses, {
+      source: state.source || 'boss',
+      cardId
+    });
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html.trim();
+    el.replaceWith(wrapper.firstChild);
+  }
+}
+
+// Build a custom drill queue from the missed answers and route to drill mode.
+// Reuses the existing drill flow — Drill/Practice updates SRS normally,
+// which is the desired behavior (retraining a missed hand DOES feed SRS).
+// The Boss/Exam result that surfaced these misses still does NOT update SRS.
+function drillSpecificMisses(cardId) {
+  const state = window._mistakeReviewState && window._mistakeReviewState[cardId];
+  if (!state || !state.misses || state.misses.length === 0) {
+    if (typeof showToast === 'function') showToast('No misses to drill');
+    return;
+  }
+  // Clone the question objects from the misses into a fresh queue (so SRS
+  // history attaches to the SAME scenario_position_action_hand keys via
+  // getSRSKey, just like a normal weakness drill).
+  const queue = state.misses
+    .map(m => m.q)
+    .filter(q => q && q.hand && typeof q.stack !== 'undefined' && q.pos && q.action);
+  if (queue.length === 0) {
+    if (typeof showToast === 'function') showToast('Misses do not have full scenario data — try again from a fresh session');
+    return;
+  }
+  const d = App.state.drill;
+  d.mode = 'weakness';
+  d.queue = queue;
+  d.currentIndex = 0;
+  d.answers = [];
+  d.startedAt = Date.now();
+  d.streak = 0;
+  // Clear any active mission/challenge/exam context
+  d.mission = null;
+  d.challenge = null;
+  d.overallExam = null;
+  d.recoveryContext = null;
+  d.moduleFilter = null;
+  // Hide the result screen and switch to drill
+  const dc = document.getElementById('drillComplete');
+  if (dc) dc.style.display = 'none';
+  switchTab('drill');
+  // Show drill screen + render first question
+  const ds = document.getElementById('drillScreen');
+  if (ds) ds.style.display = 'block';
+  const setup = document.getElementById('drillSetup');
+  if (setup) setup.style.display = 'none';
+  if (typeof renderDrillQuestion === 'function') renderDrillQuestion();
 }
 
 // v1.7.2: Classify a mistake into a leak category. Called only when the
@@ -9710,6 +10300,8 @@ function renderOverallExamResult(oe, result, oldRank) {
         <div class="overall-exam-module-grid">${moduleRows}</div>
       </div>` : ''}
 
+      ${renderMistakeReviewCard(App.state.drill.answers, { source: 'exam', cardId: 'mr_exam_pass' })}
+
       <div class="boss-victory-cta-stack">
         <button class="btn-mastery-secondary" onclick="afterOverallExam('home')">← Back to Home</button>
         <button class="btn-mastery-secondary" onclick="afterOverallExam('mastery')">▶ Continue Training</button>
@@ -9780,6 +10372,8 @@ function renderOverallExamResult(oe, result, oldRank) {
           ${result.pureCount} pure · ${result.mixedCount} mixed · ${result.criticalCount} critical (0%) picks
         </div>
       </div>
+
+      ${renderMistakeReviewCard(App.state.drill.answers, { source: 'exam', cardId: 'mr_exam_fail' })}
 
       <!-- v1.9.2: Recovery Mission is the primary action; Retry is locked behind unlock -->
       <div class="boss-victory-cta-stack">
@@ -10584,6 +11178,8 @@ function renderChallengeResultScreen(ch, result, rankUp) {
         </div>
       </div>
 
+      ${renderMistakeReviewCard(App.state.drill.answers, { source: 'boss', cardId: 'mr_boss_pass' })}
+
       <!-- v1.8.10: 3-CTA hierarchy -->
       <div class="boss-victory-cta-stack">
         ${nextTarget ? `<button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">⚔ Try ${rankDisplay(nextTarget)} Boss</button>` : `<button class="btn-mastery-primary" onclick="masteryAfterChallenge('retry')">⚔ Replay Boss</button>`}
@@ -10630,6 +11226,8 @@ function renderChallengeResultScreen(ch, result, rankUp) {
           ${result.pureCount} pure attempts · ${result.mixedCount} mixed attempts · ${result.criticalCount} critical (0%) picks
         </div>
       </div>
+
+      ${renderMistakeReviewCard(App.state.drill.answers, { source: 'boss', cardId: 'mr_boss_fail' })}
 
       <!-- v1.8.11: 3-CTA hierarchy on Boss Failed -->
       <div class="boss-victory-cta-stack">
@@ -11423,7 +12021,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.2</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.3</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -11534,7 +12132,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.0.2',
+    appVersion: '2.0.3',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
