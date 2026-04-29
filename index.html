@@ -390,18 +390,37 @@
       padding: 18px;
       border-radius: 14px;
       background: linear-gradient(135deg, #1a1d28 0%, #12131A 100%);
-      border: 1px solid rgba(212,175,55,0.2);
+      border: 1px solid var(--rank-color, rgba(212,175,55,0.2));
       overflow: hidden;
       margin-bottom: 12px;
+      box-shadow: 0 0 28px var(--rank-glow, rgba(212,175,55,0.10));
     }
+    /* v1.8.7: rank-themed background overlay — radial glow + faint sigil pattern */
     .mastery-hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 20% 0%, var(--rank-glow, rgba(212,175,55,0.10)) 0%, transparent 60%);
+      background:
+        radial-gradient(circle at 20% 0%, var(--rank-glow, rgba(212,175,55,0.10)) 0%, transparent 55%),
+        radial-gradient(circle at 90% 100%, var(--rank-haze, rgba(212,175,55,0.06)) 0%, transparent 50%);
       pointer-events: none;
     }
-    .mastery-hero > * { position: relative; }
+    /* v1.8.7: faint embossed crest sigil in the right side of the hero card.
+       Uses an inline SVG repeated as a background, low opacity for subtlety. */
+    .mastery-hero::after {
+      content: '';
+      position: absolute;
+      right: -12px; top: 50%; transform: translateY(-50%);
+      width: 180px; height: 180px;
+      background: var(--rank-sigil-bg, none);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.07;
+      pointer-events: none;
+      filter: blur(0.4px);
+    }
+    .mastery-hero > * { position: relative; z-index: 1; }
     .mastery-hero-row {
       display: flex;
       align-items: center;
@@ -423,6 +442,7 @@
       border: 2px solid var(--rank-color, #6b7280);
       box-shadow: 0 0 24px var(--rank-glow, rgba(107,114,128,0.25));
       flex-shrink: 0;
+      overflow: hidden;
     }
     .rank-emblem.small {
       width: 36px;
@@ -430,6 +450,332 @@
       font-size: 14px;
       border-width: 1.5px;
       box-shadow: 0 0 12px var(--rank-glow, rgba(107,114,128,0.2));
+    }
+    .rank-emblem.large {
+      width: 88px;
+      height: 88px;
+      border-width: 2.5px;
+      box-shadow: 0 0 36px var(--rank-glow, rgba(107,114,128,0.32));
+    }
+    .rank-emblem .rank-emblem-svg { display: block; }
+    .rank-emblem .rank-emblem-svg.rank-emblem-small  { width: 22px; height: 22px; }
+    .rank-emblem .rank-emblem-svg.rank-emblem-medium { width: 38px; height: 38px; }
+    .rank-emblem .rank-emblem-svg.rank-emblem-large  { width: 56px; height: 56px; }
+
+    /* ============================================================ */
+    /* MISSION BRIEF v1.8.7 — pre-mission contract screen            */
+    /* ============================================================ */
+    .mission-brief-card {
+      position: relative;
+      border-radius: 14px;
+      padding: 18px 16px 16px;
+      margin-bottom: 12px;
+      background:
+        radial-gradient(120% 120% at 0% 0%, var(--zone-glow, rgba(96,165,250,0.18)) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(255,255,255,0.04) 0%, var(--surface) 60%);
+      border: 1px solid var(--zone-accent, #60a5fa);
+      box-shadow: 0 0 32px var(--zone-glow, rgba(96,165,250,0.20));
+      overflow: hidden;
+    }
+    .mission-brief-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--zone-accent, #60a5fa);
+      box-shadow: 0 0 14px var(--zone-accent, #60a5fa);
+    }
+    .mission-brief-eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--zone-accent, #60a5fa);
+      font-weight: 700;
+    }
+    .mission-brief-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-top: 2px;
+      color: var(--text);
+    }
+    .mission-brief-zone {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .mission-brief-zone-glyph {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--zone-glow, rgba(96,165,250,0.18));
+      border: 1px solid var(--zone-accent, #60a5fa);
+      font-size: 18px;
+      color: var(--zone-accent, #60a5fa);
+      flex-shrink: 0;
+    }
+    .mission-brief-zone-info { flex: 1; min-width: 0; }
+    .mission-brief-zone-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .mission-brief-zone-motto { font-size: 11px; color: var(--text-secondary); font-style: italic; margin-top: 1px; }
+    .mission-brief-section {
+      margin-top: 14px;
+    }
+    .mission-brief-section-title {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .mission-brief-objective {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .mission-brief-objective .checkbox {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .mission-brief-reward {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.25);
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #d4af37;
+    }
+    .mission-brief-reward .reward-icon { font-size: 16px; }
+    .mission-brief-cta-row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 14px;
+    }
+    .mission-brief-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .mission-brief-explainer {
+      margin-top: 10px;
+      padding: 8px 11px;
+      border-radius: 8px;
+      background: rgba(96,165,250,0.04);
+      border: 1px solid rgba(96,165,250,0.13);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .mission-brief-explainer strong { color: #60a5fa; }
+
+    /* ============================================================ */
+    /* BOSS GATE v1.8.7 — official rank-up entry                     */
+    /* ============================================================ */
+    .boss-gate-card {
+      position: relative;
+      border-radius: 14px;
+      padding: 22px 18px 16px;
+      margin-bottom: 12px;
+      background:
+        radial-gradient(140% 100% at 50% 0%, var(--rank-glow, rgba(212,175,55,0.20)) 0%, transparent 65%),
+        linear-gradient(135deg, rgba(255,255,255,0.04) 0%, var(--surface) 70%);
+      border: 2px solid var(--rank-color, #d4af37);
+      box-shadow:
+        0 0 36px var(--rank-glow, rgba(212,175,55,0.20)),
+        inset 0 0 32px rgba(0,0,0,0.3);
+      overflow: hidden;
+      text-align: center;
+    }
+    .boss-gate-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          transparent 0,
+          transparent 18px,
+          rgba(255,255,255,0.012) 18px,
+          rgba(255,255,255,0.012) 19px
+        );
+      pointer-events: none;
+    }
+    .boss-gate-card > * { position: relative; z-index: 1; }
+    .boss-gate-eyebrow {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--rank-color, #d4af37);
+      font-weight: 700;
+    }
+    .boss-gate-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+      color: var(--text);
+    }
+    .boss-gate-zone {
+      font-size: 12px;
+      color: var(--zone-accent, var(--text-secondary));
+      font-weight: 600;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+    .boss-gate-crest {
+      margin: 14px auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .boss-gate-target {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .boss-gate-target strong { color: var(--rank-color, var(--text)); }
+    .boss-gate-section {
+      text-align: left;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .boss-gate-section-title {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .boss-gate-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed rgba(255,255,255,0.04);
+    }
+    .boss-gate-row:last-child { border-bottom: none; }
+    .boss-gate-row .label { color: var(--text-secondary); }
+    .boss-gate-row .value { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .boss-gate-modifiers {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+    }
+    .boss-gate-modifiers li {
+      padding: 4px 0;
+      color: var(--text-secondary);
+    }
+    .boss-gate-modifiers li::before {
+      content: '◆';
+      margin-right: 6px;
+      color: var(--rank-color, #d4af37);
+    }
+    .boss-gate-explainer {
+      margin-top: 10px;
+      padding: 8px 11px;
+      border-radius: 8px;
+      background: rgba(212,175,55,0.04);
+      border: 1px solid rgba(212,175,55,0.15);
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .boss-gate-explainer strong { color: var(--rank-color, #d4af37); }
+    .boss-gate-cta-row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 14px;
+    }
+
+    /* ============================================================ */
+    /* MISSION OBJECTIVE STRIP v1.8.7 — live during mission session  */
+    /* ============================================================ */
+    .mission-objective-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background:
+        linear-gradient(135deg, var(--zone-glow, rgba(96,165,250,0.06)) 0%, var(--surface) 90%);
+      border: 1px solid var(--zone-accent, #60a5fa);
+      margin: 8px 0 12px;
+      font-size: 11px;
+    }
+    .mission-objective-cell {
+      text-align: center;
+    }
+    .mission-objective-cell .label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .mission-objective-cell .value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+    .mission-objective-cell .value.passing { color: #4ade80; }
+    .mission-objective-cell .value.failing { color: #f87171; }
+    .mission-objective-cell .value.warning { color: #fbbf24; }
+
+    /* Mission Result objective checklist (extends mission-result-stamp) */
+    .mission-objective-checklist {
+      margin-top: 12px;
+      display: grid;
+      gap: 6px;
+    }
+    .mission-objective-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+    }
+    .mission-objective-row.passed { border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.05); }
+    .mission-objective-row.failed { border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.05); }
+    .mission-objective-row .check {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+    .mission-objective-row.passed .check { color: #4ade80; }
+    .mission-objective-row.failed .check { color: #f87171; }
+    .mission-objective-row .label { flex: 1; color: var(--text); }
+    .mission-objective-row .actual {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
     }
     .hero-meta { flex: 1; min-width: 0; }
     .hero-rank-line {
@@ -1605,6 +1951,11 @@
     <div id="challengeSetup" class="container" style="display:none">
       <!-- Filled by JS via renderChallengeSetup() -->
     </div>
+
+    <!-- v1.8.7 Mission Brief (shown when user enters a Zone from Mastery) -->
+    <div id="missionBrief" class="container" style="display:none">
+      <!-- Filled by JS via renderMissionBrief() -->
+    </div>
   </div>
 
   <!-- PROGRESS TAB -->
@@ -1748,7 +2099,12 @@ const App = {
       // drill setup; user can clear to return to default behavior.
       moduleFilter: null,
       // v1.8.2 challenge state (kept for completeness)
-      challenge: null
+      challenge: null,
+      // v1.8.7: active mission instance (built by getMissionForModule when
+      // user enters a Zone via Mastery). Holds objective targets + reward
+      // calc context. Cleared when user exits mission or starts a Direct
+      // Drill from the bottom nav.
+      mission: null
     },
     // v1.8.0: Mastery Path data model. All optional/safe-defaults so
     // existing users without profile don't break. Module ranks all start
@@ -2048,6 +2404,22 @@ function switchTab(tab) {
   if (tab === 'browse') renderBrowse();
   if (tab === 'settings') renderSettings();
   if (tab === 'mastery') renderMastery();
+  // v1.8.7: when user opens Drill tab fresh (no sub-view visible), show the
+  // generic Direct Drill setup. If they're mid-mission / mid-brief / mid-boss,
+  // leave the current sub-view alone.
+  if (tab === 'drill') {
+    var setup = document.getElementById('drillSetup');
+    var screen = document.getElementById('drillScreen');
+    var complete = document.getElementById('drillComplete');
+    var challenge = document.getElementById('challengeSetup');
+    var brief = document.getElementById('missionBrief');
+    var anyVisible = [setup, screen, complete, challenge, brief].some(el => el && el.style.display && el.style.display !== 'none');
+    if (!anyVisible && setup) {
+      setup.style.display = 'block';
+      // No mission active → make sure preset banner reflects current state
+      if (typeof renderDrillPresetBanner === 'function') renderDrillPresetBanner();
+    }
+  }
   document.getElementById('mainContent').scrollTo(0, 0);
 }
 
@@ -2254,6 +2626,8 @@ function renderDrillQuestion() {
         return `<span class="mission-header-badge" style="--zone-accent:${z.accent};--zone-glow:${z.glow}"><span class="glyph">${z.glyph}</span> ${z.zone}</span>`;
       })()
     : '';
+  // v1.8.7: live mission objective strip — only when a mission instance exists
+  const missionStrip = (d.mission && d.mode !== 'challenge') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
 
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
@@ -2261,6 +2635,7 @@ function renderDrillQuestion() {
       ${streakBadge}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${pct}%"></div></div>
+    ${missionStrip}
 
     <div class="situation-card animate-slide" id="handCard">
       <div class="card-title">📊 Situation</div>
@@ -2504,14 +2879,20 @@ function classifyAnswer(userAction, freqs) {
   return { result, score, userFreq: f, isPure };
 }
 
-// v1.8.6: Game-feel feedback chip — translates clinical pure/mix terminology
-// into game language ("Clean Read", "Sharp Pick", "Critical Punt", etc.).
+// v1.8.7: Game-feel feedback chip — translates clinical pure/mix terminology
+// into educational game language. Per user spec:
+//   correct + pure       -> "Pure Line Locked"
+//   correct + dominant   -> "Sharp Pick"
+//   correct + true mix   -> "Mix Aware"
+//   partial mix          -> "Acceptable Mix"  (secondary line in range)
+//   wrong + pure         -> "Critical Punt"   (no GTO support)
+//   wrong + low freq     -> "Thin Line"       (low-frequency choice)
 // Returns { cls, label } where cls maps to .feedback-chip CSS variants.
 function getFeedbackChip(cls, freqs) {
   const maxFreq = Math.max(0, ...Object.values(freqs || {}));
   const isPure = maxFreq >= 0.95;
   if (cls.result === 'correct') {
-    if (isPure)         return { cls: 'clean', label: '🎯 Clean Read' };
+    if (isPure)         return { cls: 'clean', label: '🎯 Pure Line Locked' };
     if (maxFreq >= 0.7) return { cls: 'sharp', label: '✓ Sharp Pick' };
     return { cls: 'sharp', label: '✓ Mix Aware' };
   }
@@ -2519,8 +2900,7 @@ function getFeedbackChip(cls, freqs) {
     return { cls: 'mix', label: '≈ Acceptable Mix' };
   }
   // wrong
-  if (isPure)         return { cls: 'critical', label: '❌ Critical Punt' };
-  if (cls.userFreq < 0.1) return { cls: 'punt', label: '⚠ Off-Range' };
+  if (isPure) return { cls: 'critical', label: '❌ Critical Punt' };
   return { cls: 'thin', label: '⚠ Thin Line' };
 }
 
@@ -2751,12 +3131,16 @@ function renderAnswerScreen(userAction, correctAction, cls, q) {
       })()
     : '';
 
+  // v1.8.7: live mission objective strip on answer screen
+  const missionStripAns = (d.mission && d.mode !== 'challenge') ? renderMissionObjectiveStrip(d.mission, d.answers) : '';
+
   document.getElementById('drillScreen').innerHTML = `
     <div class="drill-header">
       <span class="drill-progress-text">${challengeBadgeAns}${missionBadgeAns} Q ${d.currentIndex+1}/${d.queue.length}</span>
       ${d.streak >= 5 ? `<span class="streak-badge">🔥 ${d.streak} in a row!</span>` : ''}
     </div>
     <div class="drill-progress-bar"><div class="drill-progress-fill" style="width:${(d.currentIndex/d.queue.length*100).toFixed(0)}%"></div></div>
+    ${missionStripAns}
 
     <div class="situation-card ${animateCls}">
       <div class="answer-result ${cls.result}">
@@ -2818,19 +3202,47 @@ function showDrillComplete() {
   const elapsed = Math.round((Date.now() - d.startTime) / 1000 / 60 * 10) / 10;
   const total = d.answers.length;
 
-  // v1.8.4: Award XP for Practice sessions (NOT challenge — challenge tracked separately).
-  // Formula: 1 XP per hand + 5 XP completion bonus + 10 XP if accuracy >= 80%.
-  // Practice mode never reduces rank. XP is purely additive.
+  // v1.8.7: Award XP for Practice / Mission sessions (NOT challenge — challenge tracked separately).
+  // Mission XP = 1 XP/hand + per-objective bonuses + perfect bonus.
+  // Direct Drill (no mission) XP = 1 XP/hand + 5 completion + 10 accuracy bonus (legacy v1.8.4).
   if (d.mode !== 'challenge' && total > 0) {
     const accPct = total > 0 ? Math.round(d.answers.reduce((s,a) => s + (a.score||0), 0) / total * 100) : 0;
     const xpFromHands = total;
-    const xpCompletion = 5;
-    const xpAccuracyBonus = accPct >= 80 ? 10 : 0;
-    const xpGained = xpFromHands + xpCompletion + xpAccuracyBonus;
+    let xpObjectiveBonus = 0;
+    let xpPerfectBonus = 0;
+    let xpCompletion = 0;
+    let xpAccuracyBonus = 0;
+    let objectivesPassed = 0;
+    let objectivesTotal = 0;
+    let missionPerfect = false;
+    if (d.mission) {
+      // Mission XP scheme
+      const objectives = evaluateMissionObjectives(d.mission, d.answers);
+      objectivesTotal = objectives.length;
+      objectivesPassed = objectives.filter(o => o.passed).length;
+      missionPerfect = objectivesPassed === objectivesTotal;
+      xpObjectiveBonus = objectivesPassed * d.mission.xpPerObjective;
+      xpPerfectBonus = missionPerfect ? d.mission.xpPerfectBonus : 0;
+    } else {
+      // Direct Drill legacy XP scheme
+      xpCompletion = 5;
+      xpAccuracyBonus = accPct >= 80 ? 10 : 0;
+    }
+    const xpGained = xpFromHands + xpCompletion + xpAccuracyBonus + xpObjectiveBonus + xpPerfectBonus;
     App.state.profile.totalXP = (App.state.profile.totalXP || 0) + xpGained;
     App.state.profile.xpLevel = xpToLevel(App.state.profile.totalXP);
     // Stash on drill state so result screen can show it
-    d._sessionXP = { gained: xpGained, fromHands: xpFromHands, completion: xpCompletion, accuracyBonus: xpAccuracyBonus };
+    d._sessionXP = {
+      gained: xpGained,
+      fromHands: xpFromHands,
+      completion: xpCompletion,
+      accuracyBonus: xpAccuracyBonus,
+      objectiveBonus: xpObjectiveBonus,
+      perfectBonus: xpPerfectBonus,
+      objectivesPassed,
+      objectivesTotal,
+      missionPerfect
+    };
   }
 
   // v1.2.0 three-state breakdown.
@@ -2901,13 +3313,20 @@ function showDrillComplete() {
   const moduleInfo = d.moduleFilter ? MODULE_DISPLAY_INFO[d.moduleFilter] : null;
   const sessionTitle = moduleInfo ? `${moduleCleanLabel(d.moduleFilter)} Mission Complete` : 'Drill Complete!';
   const xpInfo = d._sessionXP || null;
-  const xpHtml = xpInfo ? `
+  // v1.8.7: XP block — mission scheme shows objective bonus + perfect bonus.
+  const xpHtml = xpInfo ? (() => {
+    const breakdown = [`${xpInfo.fromHands} hands`];
+    if (xpInfo.objectiveBonus) breakdown.push(`+${xpInfo.objectiveBonus} objectives (${xpInfo.objectivesPassed}/${xpInfo.objectivesTotal})`);
+    if (xpInfo.perfectBonus) breakdown.push(`+${xpInfo.perfectBonus} perfect bonus`);
+    if (xpInfo.completion) breakdown.push(`+${xpInfo.completion} completion`);
+    if (xpInfo.accuracyBonus) breakdown.push(`+${xpInfo.accuracyBonus} accuracy bonus`);
+    return `
     <div class="card" style="background:linear-gradient(135deg,rgba(212,175,55,0.08) 0%,var(--surface) 100%);border-color:rgba(212,175,55,0.3)">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
         <div>
           <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px">XP Gained</div>
           <div style="font-size:22px;font-weight:700;color:#d4af37">+${xpInfo.gained} XP</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${xpInfo.fromHands} hands · +${xpInfo.completion} completion${xpInfo.accuracyBonus ? ' · +' + xpInfo.accuracyBonus + ' accuracy bonus' : ''}</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${breakdown.join(' · ')}</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:var(--text-secondary)">XP Level</div>
@@ -2916,15 +3335,31 @@ function showDrillComplete() {
         </div>
       </div>
     </div>
-  ` : '';
-  // v1.8.6: Mission Result stamp (zone-themed) — replaces generic score-circle when a mission is active
+  `;
+  })() : '';
+  // v1.8.6: Mission Result stamp (zone-themed) — replaces generic score-circle when a mission is active.
+  // v1.8.7: verdict now driven by mission objective pass count (not raw accuracy).
   let missionStampHtml = '';
+  let objectiveChecklistHtml = '';
   if (moduleInfo && d.moduleFilter) {
     const zone = getModuleZone(d.moduleFilter);
-    const verdictText = pct >= 92 ? 'Decisive Victory'
-                       : pct >= 80 ? 'Mission Cleared'
-                       : pct >= 65 ? 'Mission Survived'
-                       : 'Mission Failed';
+    let verdictText;
+    let objectivesPassedCount = 0;
+    let objectives = [];
+    if (d.mission) {
+      objectives = evaluateMissionObjectives(d.mission, d.answers);
+      objectivesPassedCount = objectives.filter(o => o.passed).length;
+      verdictText = objectivesPassedCount === 3 ? 'Mission Complete'
+                  : objectivesPassedCount === 2 ? 'Mission Survived'
+                  : objectivesPassedCount === 1 ? 'Mission Partial'
+                  : 'Mission Failed';
+    } else {
+      // Backward compat: no mission instance → use accuracy-based verdict
+      verdictText = pct >= 92 ? 'Decisive Victory'
+                  : pct >= 80 ? 'Mission Cleared'
+                  : pct >= 65 ? 'Mission Survived'
+                  : 'Mission Failed';
+    }
     missionStampHtml = `
       <div class="mission-result-stamp" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow};--score-color:${pctColor}">
         <div class="mission-result-eyebrow">▸ ${verdictText}</div>
@@ -2934,7 +3369,18 @@ function showDrillComplete() {
           <span class="pct" style="--score-color:${pctColor};color:${pctColor}">${pct}%</span>
           <span class="label">accuracy · ${totalPoints.toFixed(1)}/${total} pts</span>
         </div>
-        <div class="mission-result-meta">${elapsed} min · ${d.mode} mode · ${moduleCleanLabel(d.moduleFilter)} Mission</div>
+        <div class="mission-result-meta">${elapsed} min · ${d.mode} mode · ${d.mission ? d.mission.name : moduleCleanLabel(d.moduleFilter) + ' Mission'}</div>
+        ${objectives.length > 0 ? `
+          <div class="mission-objective-checklist">
+            ${objectives.map(o => `
+              <div class="mission-objective-row ${o.passed ? 'passed' : 'failed'}">
+                <span class="check">${o.passed ? '✓' : '✗'}</span>
+                <span class="label">${o.label}</span>
+                <span class="actual">${o.actual}${o.id === 'accuracy' ? '%' : ''}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
       </div>
     `;
   }
@@ -3968,6 +4414,195 @@ function moduleCleanLabel(moduleId) {
   return info.label.replace(/^[^A-Za-z]+/, '').trim();
 }
 
+// v1.8.7: Mission System — each module has a default Study Mission with
+// objectives (hand count, accuracy target, critical-mistake max) and an
+// XP reward bonus (per-objective + perfect-completion). Practice still
+// awards 1 XP per hand on top of mission rewards.
+const MISSION_DEFINITIONS = {
+  bb_defense:     { name: 'BB Defense Warm-Up',      handCount: 25, accuracyTarget: 85, criticalMax: 2, xpPerObjective: 10, xpPerfectBonus: 10 },
+  open_vs_3bet:   { name: '3-Bet Defense Run',       handCount: 25, accuracyTarget: 85, criticalMax: 2, xpPerObjective: 10, xpPerfectBonus: 10 },
+  push_fold:      { name: 'Short Stack Sprint',      handCount: 20, accuracyTarget: 88, criticalMax: 1, xpPerObjective: 10, xpPerfectBonus: 10 },
+  call_vs_jam:    { name: 'Call vs Jam Drill',       handCount: 20, accuracyTarget: 88, criticalMax: 1, xpPerObjective: 10, xpPerfectBonus: 10 },
+  rejam:          { name: 'Rejam Pressure',          handCount: 20, accuracyTarget: 85, criticalMax: 2, xpPerObjective: 10, xpPerfectBonus: 10 },
+  blind_battle:   { name: 'Blind Battle Skirmish',   handCount: 20, accuracyTarget: 82, criticalMax: 2, xpPerObjective: 10, xpPerfectBonus: 10 },
+  mixed_decision: { name: 'Mist Zone Trek',          handCount: 20, accuracyTarget: 75, criticalMax: 3, xpPerObjective: 10, xpPerfectBonus: 10 }
+};
+
+function getMissionForModule(moduleId) {
+  const def = MISSION_DEFINITIONS[moduleId];
+  if (!def) return null;
+  return {
+    module: moduleId,
+    name: def.name,
+    zone: getModuleZone(moduleId).zone,
+    handCount: def.handCount,
+    accuracyTarget: def.accuracyTarget,
+    criticalMax: def.criticalMax,
+    xpPerObjective: def.xpPerObjective,
+    xpPerfectBonus: def.xpPerfectBonus,
+    // Computed potential reward (3 objectives + perfect bonus)
+    maxRewardXP: def.xpPerObjective * 3 + def.xpPerfectBonus
+  };
+}
+
+// v1.8.7: Tally critical mistakes (wrong picks on a "pure" hand where one
+// action dominates >=95%). Used by mission objectives + result screen.
+function countCriticalMistakes(answers) {
+  if (!answers) return 0;
+  let n = 0;
+  for (const a of answers) {
+    if (a.result === 'wrong' && a.isPure) n++;
+  }
+  return n;
+}
+
+// v1.8.7: Evaluate mission objectives against drill answers. Returns an
+// array of { id, label, target, actual, passed }.
+function evaluateMissionObjectives(mission, answers) {
+  if (!mission || !answers) return [];
+  const total = answers.length;
+  const correct = answers.filter(a => a.result === 'correct').length;
+  const partial = answers.filter(a => a.result === 'partial').length;
+  // Accuracy = (correct + 0.5*partial) / total — matches drill score weighting.
+  const points = correct + 0.5 * partial;
+  const accuracy = total > 0 ? Math.round((points / total) * 100) : 0;
+  const critical = countCriticalMistakes(answers);
+  return [
+    { id: 'hands',    label: `Complete ${mission.handCount} hands`,            target: mission.handCount,    actual: total,    passed: total >= mission.handCount },
+    { id: 'accuracy', label: `Accuracy >= ${mission.accuracyTarget}%`,         target: mission.accuracyTarget, actual: accuracy, passed: accuracy >= mission.accuracyTarget },
+    { id: 'critical', label: `Critical mistakes <= ${mission.criticalMax}`,    target: mission.criticalMax,  actual: critical, passed: critical <= mission.criticalMax }
+  ];
+}
+
+// v1.8.7: Live objective strip rendered above the situation card during a
+// mission session. Three cells: hands progress · running accuracy · critical
+// counter. Each cell color-coded green (passing target) / yellow (warning) /
+// red (failing).
+function renderMissionObjectiveStrip(mission, answers) {
+  if (!mission) return '';
+  const total = answers.length;
+  const correct = answers.filter(a => a.result === 'correct').length;
+  const partial = answers.filter(a => a.result === 'partial').length;
+  const points = correct + 0.5 * partial;
+  const accuracy = total > 0 ? Math.round((points / total) * 100) : null;
+  const critical = countCriticalMistakes(answers);
+
+  // Cell tone: passing green / warning yellow / failing red. accuracy null
+  // (no hands answered yet) is neutral.
+  const handsCls = total >= mission.handCount ? 'passing' : '';
+  const accCls = accuracy === null ? '' : (accuracy >= mission.accuracyTarget ? 'passing' : (accuracy >= mission.accuracyTarget - 8 ? 'warning' : 'failing'));
+  const critCls = critical > mission.criticalMax ? 'failing' : (critical === mission.criticalMax ? 'warning' : 'passing');
+  const zone = getModuleZone(mission.module);
+
+  return `
+    <div class="mission-objective-strip" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+      <div class="mission-objective-cell">
+        <div class="label">Hands</div>
+        <div class="value ${handsCls}">${total}/${mission.handCount}</div>
+      </div>
+      <div class="mission-objective-cell">
+        <div class="label">Accuracy</div>
+        <div class="value ${accCls}">${accuracy === null ? '—' : accuracy + '%'} <span style="opacity:0.6;font-size:10px">/${mission.accuracyTarget}%</span></div>
+      </div>
+      <div class="mission-objective-cell">
+        <div class="label">Critical</div>
+        <div class="value ${critCls}">${critical}<span style="opacity:0.6;font-size:10px">/${mission.criticalMax}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+// v1.8.7: Boss display name — derived from zone (e.g. Big Blind Boss).
+// Uses zone name minus generic suffix (Fortress/Arena/Gate/Battlefield/etc.)
+// so we get "Big Blind Boss" / "Short Stack Boss" etc.
+function getBossName(moduleId) {
+  const zone = getModuleZone(moduleId);
+  // Strip the suffix word (last word) and append "Boss"
+  const words = zone.zone.split(' ');
+  const stem = words.length > 1 ? words.slice(0, -1).join(' ') : zone.zone;
+  return `${stem} Boss`;
+}
+
+// v1.8.7: Rank Visual Identity — motif keyword + accent for each rank, used
+// by renderRankEmblemSVG and rank-hero background overlays.
+const RANK_VISUAL_KIT = {
+  Unranked:    { motif: 'compass', accent: '#94a3b8', tint: 'rgba(148,163,184,0.10)', haze: 'rgba(148,163,184,0.06)' },
+  Bronze:      { motif: 'shield',  accent: '#cd7f32', tint: 'rgba(205,127,50,0.10)',  haze: 'rgba(205,127,50,0.07)'  },
+  Silver:      { motif: 'arrow',   accent: '#34d399', tint: 'rgba(52,211,153,0.10)',  haze: 'rgba(52,211,153,0.07)'  },
+  Gold:        { motif: 'sword',   accent: '#60a5fa', tint: 'rgba(96,165,250,0.10)',  haze: 'rgba(96,165,250,0.07)'  },
+  Platinum:    { motif: 'laurel',  accent: '#facc15', tint: 'rgba(250,204,21,0.10)',  haze: 'rgba(250,204,21,0.07)'  },
+  Diamond:     { motif: 'crest',   accent: '#ef4444', tint: 'rgba(239,68,68,0.10)',   haze: 'rgba(239,68,68,0.07)'   },
+  Master:      { motif: 'sigil',   accent: '#a855f7', tint: 'rgba(168,85,247,0.10)',  haze: 'rgba(168,85,247,0.07)'  },
+  Grandmaster: { motif: 'crown',   accent: '#facc15', tint: 'rgba(250,204,21,0.12)',  haze: 'rgba(0,0,0,0.20)'       }
+};
+
+function getRankVisualKit(rank) {
+  return RANK_VISUAL_KIT[rank] || RANK_VISUAL_KIT.Unranked;
+}
+
+// v1.8.7: Build SVG-based rank emblem. Each rank gets a distinct shape
+// in the rank's accent color. Designed to be recognizable at small sizes
+// (badges, exam ladder) and scaled up for hero/result screens.
+function renderRankEmblemSVG(rank, size) {
+  size = size || 'medium';
+  const kit = getRankVisualKit(rank);
+  const dim = size === 'small' ? 28 : size === 'large' ? 64 : 44;
+  const stroke = size === 'small' ? 1.5 : size === 'large' ? 2.5 : 2;
+  const motif = kit.motif;
+  const acc = kit.accent;
+  // SVG body per motif. All centered in viewBox 0 0 64 64.
+  let inner = '';
+  switch (motif) {
+    case 'compass':
+      inner = `<circle cx="32" cy="32" r="22" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <polygon points="32,16 36,32 32,48 28,32" fill="${acc}"/>
+               <circle cx="32" cy="32" r="3" fill="#0d1117" stroke="${acc}" stroke-width="1"/>`;
+      break;
+    case 'shield':
+      inner = `<path d="M32 12 L48 18 L48 34 Q48 46 32 52 Q16 46 16 34 L16 18 Z" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <path d="M32 22 L32 42" stroke="${acc}" stroke-width="${stroke}"/>`;
+      break;
+    case 'arrow':
+      inner = `<path d="M32 10 L48 32 L40 32 L40 52 L24 52 L24 32 L16 32 Z" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <circle cx="32" cy="22" r="2.5" fill="${acc}"/>`;
+      break;
+    case 'sword':
+      inner = `<path d="M32 12 L32 44" stroke="${acc}" stroke-width="${stroke + 1}"/>
+               <path d="M22 36 L42 36" stroke="${acc}" stroke-width="${stroke}"/>
+               <circle cx="32" cy="50" r="3" fill="${acc}"/>
+               <path d="M16 32 L48 32" fill="none" stroke="${acc}" stroke-width="${stroke}" opacity="0.4"/>`;
+      break;
+    case 'laurel':
+      inner = `<path d="M32 12 L36 16 L40 22 L42 30 L40 38 L36 44 L32 48" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <path d="M32 12 L28 16 L24 22 L22 30 L24 38 L28 44 L32 48" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <circle cx="32" cy="30" r="6" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <text x="32" y="35" text-anchor="middle" font-size="10" font-weight="700" fill="${acc}">★</text>`;
+      break;
+    case 'crest':
+      inner = `<polygon points="32,10 50,22 48,42 32,54 16,42 14,22" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <polygon points="32,22 38,28 38,38 32,44 26,38 26,28" fill="${acc}" opacity="0.25"/>
+               <polygon points="32,22 38,28 38,38 32,44 26,38 26,28" fill="none" stroke="${acc}" stroke-width="${stroke}"/>`;
+      break;
+    case 'sigil':
+      inner = `<polygon points="32,10 52,22 52,42 32,54 12,42 12,22" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <polygon points="32,18 44,26 44,38 32,46 20,38 20,26" fill="none" stroke="${acc}" stroke-width="${stroke - 0.5}"/>
+               <circle cx="32" cy="32" r="4" fill="${acc}"/>
+               <line x1="32" y1="10" x2="32" y2="18" stroke="${acc}" stroke-width="${stroke - 0.5}"/>
+               <line x1="32" y1="46" x2="32" y2="54" stroke="${acc}" stroke-width="${stroke - 0.5}"/>`;
+      break;
+    case 'crown':
+      inner = `<path d="M14 40 L18 22 L26 32 L32 16 L38 32 L46 22 L50 40 Z" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <rect x="14" y="40" width="36" height="6" fill="none" stroke="${acc}" stroke-width="${stroke}"/>
+               <circle cx="18" cy="22" r="2" fill="${acc}"/>
+               <circle cx="32" cy="16" r="2.5" fill="${acc}"/>
+               <circle cx="46" cy="22" r="2" fill="${acc}"/>`;
+      break;
+    default:
+      inner = `<circle cx="32" cy="32" r="20" fill="none" stroke="${acc}" stroke-width="${stroke}"/>`;
+  }
+  return `<svg class="rank-emblem-svg rank-emblem-${size}" viewBox="0 0 64 64" width="${dim}" height="${dim}" style="filter: drop-shadow(0 0 6px ${acc}66);">${inner}</svg>`;
+}
+
 // Map v1.7.0 metadata module → v1.8.0 mastery module. Some metadata modules
 // collapse into the same mastery module (e.g. legacy_generic_3bet folds into
 // open_vs_3bet for ranking purposes).
@@ -4099,6 +4734,8 @@ const RANK_EMBLEM_GLYPH = {
 };
 
 // Returns the per-rank CSS color trio used by .rank-emblem and .mastery-hero.
+// v1.8.7: also returns haze (softer, secondary glow) and sigilBg (data URI SVG
+// of the rank's motif crest, used as a subtle background overlay on hero card).
 function rankCssVars(internalRank) {
   const color = RANK_COLOR[internalRank] || '#6b7280';
   // Convert hex to rgba for glow with alpha.
@@ -4106,18 +4743,35 @@ function rankCssVars(internalRank) {
   const r = parseInt(hex.substr(0,2), 16);
   const g = parseInt(hex.substr(2,2), 16);
   const b = parseInt(hex.substr(4,2), 16);
+  // Build inline SVG sigil for hero background. Strips outer <svg>...</svg> from
+  // renderRankEmblemSVG and wraps in a fresh SVG sized for background-image use.
+  let sigilUri = '';
+  try {
+    const inner = renderRankEmblemSVG(internalRank, 'large');
+    // Encode for url() use
+    const encoded = encodeURIComponent(inner.replace(/<svg[^>]*>/, '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="180" height="180">'));
+    sigilUri = `url("data:image/svg+xml,${encoded}")`;
+  } catch (e) { sigilUri = 'none'; }
   return {
     color,
     bg: `rgba(${r},${g},${b},0.12)`,
-    glow: `rgba(${r},${g},${b},0.30)`
+    glow: `rgba(${r},${g},${b},0.30)`,
+    haze: `rgba(${r},${g},${b},0.08)`,
+    sigilBg: sigilUri
   };
 }
 
 function renderRankEmblem(internalRank, sizeClass) {
+  // v1.8.7: SVG-based crest replaces text glyph. Keeps the existing
+  // .rank-emblem CSS shell (color vars + glow) but inner content is a
+  // rank-distinct crest (compass / shield / arrow / sword / laurel / crest /
+  // sigil / crown). Falls back to text glyph if SVG render fails.
   const v = rankCssVars(internalRank);
-  const glyph = RANK_EMBLEM_GLYPH[internalRank] || '?';
-  const cls = sizeClass === 'small' ? 'rank-emblem small' : 'rank-emblem';
-  return `<div class="${cls}" style="--rank-color:${v.color};--rank-bg:${v.bg};--rank-glow:${v.glow}">${glyph}</div>`;
+  const cls = sizeClass === 'small' ? 'rank-emblem small' : sizeClass === 'large' ? 'rank-emblem large' : 'rank-emblem';
+  let svg;
+  try { svg = renderRankEmblemSVG(internalRank, sizeClass); }
+  catch (e) { svg = RANK_EMBLEM_GLYPH[internalRank] || '?'; }
+  return `<div class="${cls}" style="--rank-color:${v.color};--rank-bg:${v.bg};--rank-glow:${v.glow}">${svg}</div>`;
 }
 
 // Daily mission rotation: deterministic by date so users see consistent
@@ -4181,11 +4835,10 @@ function getBestNextUpgrade(moduleRanks, moduleAccs) {
 
 // CTA handlers
 function masteryStartRecommendedDrill() {
-  // v1.8.3 hotfix: route to Practice with module preset (was Boss Test in v1.8.2).
-  // Boss Test is now an explicit separate CTA.
+  // v1.8.7: route to Mission Brief instead of straight to drill setup.
   const upgrade = getBestNextUpgrade(App.state.profile.moduleRanks, getModuleAccuracies());
   if (upgrade) {
-    applyDrillPreset(upgrade.module);
+    enterMissionBrief(upgrade.module);
   } else {
     switchTab('drill');
   }
@@ -4197,20 +4850,20 @@ function masteryViewPath() {
   }
 }
 function masteryTrainModule(moduleKey) {
-  // v1.8.3 hotfix: Practice mode with module preset (was Challenge in v1.8.2).
-  // Boss Test is now a separate explicit CTA on the module card.
-  applyDrillPreset(moduleKey);
+  // v1.8.7: route to Mission Brief screen (not directly to drill setup).
+  // The brief shows objectives/rewards and a Start Mission CTA.
+  enterMissionBrief(moduleKey);
 }
 function masteryBossTestModule(moduleKey) {
   // v1.8.3: explicit Boss Test entry (Challenge Mode)
   masteryOpenChallengeSetup(moduleKey);
 }
 function masteryStartMission() {
-  // v1.8.3 hotfix: apply preset for the primary mission module
+  // v1.8.7: apply mission brief for the primary Today's Mission module
   const mission = generateTodaysMission(getModuleAccuracies());
   const primary = mission.items.find(it => it.module && it.module !== 'review');
   if (primary) {
-    applyDrillPreset(primary.module);
+    enterMissionBrief(primary.module);
   } else {
     switchTab('drill');
   }
@@ -4252,7 +4905,7 @@ function _renderMasteryImpl() {
 
   // ---------- HERO RANK CARD ----------
   let html = `
-    <div class="mastery-hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">
+    <div class="mastery-hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow};--rank-haze:${heroVars.haze};--rank-sigil-bg:${heroVars.sigilBg}">
       <div class="mastery-hero-row">
         ${renderRankEmblem(overallRank)}
         <div class="hero-meta">
@@ -4624,58 +5277,62 @@ function renderChallengeSetup() {
   const cfg = CHALLENGE_THRESHOLDS[targetRank];
   const info = MODULE_DISPLAY_INFO[ch.module];
   const targetVars = rankCssVars(targetRank);
+  const zone = getModuleZone(ch.module);
+  const bossName = getBossName(ch.module);
 
   const pool = getModuleScenarios(ch.module);
   const poolHandCount = pool.reduce((sum, item) => sum + Object.keys(item.scenario.hands).length, 0);
 
-  const reqRow = (label, value, target) => `
-    <div class="challenge-req">
-      <span class="challenge-req-label">${label}</span>
-      <span class="challenge-req-value">${value}${target ? ` <span style="color:var(--text-secondary);font-weight:400;font-size:11px">(${target})</span>` : ''}</span>
+  // Boss-gate "row" helper
+  const reqRow = (label, value) => `
+    <div class="boss-gate-row">
+      <span class="label">${label}</span>
+      <span class="value">${value}</span>
     </div>
   `;
 
+  // Difficulty-aware modifiers: higher rank gets stricter copy.
+  const targetIdx = INTERNAL_RANKS.indexOf(targetRank);
+  const modifiers = ['Deterministic per-attempt sampling (fresh random seed each run)'];
+  if (targetIdx >= 3) modifiers.push('Marginal hands and mixed-frequency spots heavily weighted');
+  if (targetIdx >= 4) modifiers.push('Late-position opens get extra coverage');
+  if (cfg.criticalMax !== undefined) modifiers.push(`Critical mistake cap enforced (${cfg.criticalMax}% max)`);
+  modifiers.push('No retry penalty — failed attempts do NOT lower your rank');
+
   const html = `
-    <div class="challenge-banner" style="--rank-color:${targetVars.color};--rank-bg:${targetVars.bg};--rank-glow:${targetVars.glow}">
-      <div class="challenge-banner-title">Module Boss Test</div>
-      <div class="challenge-banner-name">${info.label}</div>
-      <div class="challenge-rank-flow">
-        ${renderRankEmblem(currentRank, 'small')}
-        <span class="challenge-arrow">→</span>
-        ${renderRankEmblem(targetRank, 'small')}
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">${rankDisplay(currentRank)} → ${rankDisplay(targetRank)}</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">Current → Target</div>
-        </div>
-      </div>
-    </div>
+    <div class="boss-gate-card" style="--rank-color:${targetVars.color};--rank-bg:${targetVars.bg};--rank-glow:${targetVars.glow};--zone-accent:${zone.accent}">
+      <div class="boss-gate-eyebrow">▸ Boss Gate</div>
+      <div class="boss-gate-title">${bossName}</div>
+      <div class="boss-gate-zone">${zone.glyph} ${zone.zone}</div>
 
-    <div class="card">
-      <div class="mastery-section-title"><span class="accent-bar"></span>Pass Conditions</div>
-      <div class="mastery-card-sub">All thresholds must be met. One miss = fail. No partial rank-up.</div>
-      <div class="challenge-req-list">
-        ${reqRow('Hands', cfg.hands, '')}
-        ${reqRow('Overall accuracy', '≥ ' + cfg.overall + '%', '')}
-        ${cfg.pure ? reqRow('Pure-hand accuracy', '≥ ' + cfg.pure + '%', '') : ''}
-        ${cfg.mixed ? reqRow('Mixed awareness', '≥ ' + cfg.mixed + '%', '') : ''}
-        ${cfg.criticalMax !== undefined ? reqRow('Critical mistakes (0% picks)', '≤ ' + cfg.criticalMax + '%', '') : ''}
-      </div>
-    </div>
+      <div class="boss-gate-crest">${renderRankEmblem(targetRank, 'large')}</div>
+      <div class="boss-gate-target">Target Rank: <strong>${rankDisplay(targetRank)}</strong> <span style="opacity:0.6">(internal ${targetRank})</span></div>
+      <div class="boss-gate-target" style="margin-top:2px">From: <strong>${rankDisplay(currentRank)}</strong></div>
 
-    <div class="card">
-      <div class="mastery-section-title"><span class="accent-bar"></span>Test Setup</div>
-      <div class="mastery-card-sub">
-        Hands sampled deterministically from the ${info.label.replace(/^[^A-Za-z]+/, '').trim()} scenario pool
-        (${pool.length} scenarios · ${poolHandCount} unique hands). Each attempt uses a fresh random seed.
+      <div class="boss-gate-section">
+        <div class="boss-gate-section-title">Win Conditions</div>
+        ${reqRow('Hands', cfg.hands)}
+        ${reqRow('Overall accuracy', '≥ ' + cfg.overall + '%')}
+        ${cfg.pure ? reqRow('Pure accuracy', '≥ ' + cfg.pure + '%') : ''}
+        ${cfg.mixed ? reqRow('Mixed awareness', '≥ ' + cfg.mixed + '%') : ''}
+        ${cfg.criticalMax !== undefined ? reqRow('Critical mistakes', '≤ ' + cfg.criticalMax + '%') : ''}
       </div>
-      <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;background:rgba(248,113,113,0.04);border:1px solid rgba(248,113,113,0.15);padding:10px 12px;border-radius:8px;margin-top:8px">
-        <strong style="color:var(--text)">⚠️ Important:</strong> Failing this test does NOT lower your rank. Your existing Practice drill history is unaffected.
-      </div>
-    </div>
 
-    <div class="hero-cta-row">
-      <button class="btn-mastery-primary" onclick="masteryStartChallenge()" style="flex:1.5">▶  Start Boss Test</button>
-      <button class="btn-mastery-secondary" onclick="masteryCancelChallenge()" style="flex:1">Back to Home</button>
+      <div class="boss-gate-section">
+        <div class="boss-gate-section-title">Boss Modifiers</div>
+        <ul class="boss-gate-modifiers">
+          ${modifiers.map(m => `<li>${m}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="boss-gate-explainer">
+        <strong>Mission vs Boss Test:</strong> Missions build skill and XP. Boss Tests <strong>certify rank</strong>. Pool: ${pool.length} scenarios · ${poolHandCount} unique hands.
+      </div>
+
+      <div class="boss-gate-cta-row">
+        <button class="btn-mastery-secondary" onclick="masteryCancelChallenge()">← Back to Home</button>
+        <button class="btn-mastery-primary" onclick="masteryStartChallenge()">⚔ Attempt Boss</button>
+      </div>
     </div>
   `;
 
@@ -4894,6 +5551,8 @@ function applyDrillPreset(moduleId, options) {
   document.getElementById('drillComplete').style.display = 'none';
   var cs = document.getElementById('challengeSetup');
   if (cs) cs.style.display = 'none';
+  var mb = document.getElementById('missionBrief');
+  if (mb) mb.style.display = 'none';
   renderDrillPresetBanner();
   // Sync mode-card selection visually
   document.querySelectorAll('.mode-card').forEach(c => {
@@ -4903,8 +5562,163 @@ function applyDrillPreset(moduleId, options) {
 
 function clearDrillPreset() {
   App.state.drill.moduleFilter = null;
+  App.state.drill.mission = null;
   renderDrillPresetBanner();
   if (typeof showToast === 'function') showToast('Preset cleared');
+}
+
+// ============================================================
+// MISSION BRIEF v1.8.7
+// ============================================================
+// New mission flow: Mastery → Mission Brief → Mission Session → Mission Result.
+// Replaces the v1.8.6 direct "preset banner on drill setup" entry. The Drill
+// tab is reused as the host for the brief screen. Direct Drill (free practice)
+// still works when user clicks the bottom-nav Drill button while no mission
+// is active.
+
+function enterMissionBrief(moduleId) {
+  const d = App.state.drill;
+  // Set up mission state
+  d.moduleFilter = moduleId;
+  d.mission = getMissionForModule(moduleId);
+  d.challenge = null;
+  // Default mode for the mission's hand count: pick the smallest mode that
+  // can supply the mission's hand count (quick=15, weakness=20, marginal=20,
+  // deep=30). For >=25 → deep; for >=20 → marginal (default for mixed_decision)
+  // or weakness; for <=15 → quick.
+  if (moduleId === 'mixed_decision') {
+    d.mode = 'marginal';
+  } else if (d.mission && d.mission.handCount >= 25) {
+    d.mode = 'deep';
+  } else if (d.mission && d.mission.handCount > 15) {
+    d.mode = 'weakness';
+  } else {
+    d.mode = 'quick';
+  }
+  // Show Mission Brief; hide other Drill-tab views
+  switchTab('drill');
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  var cs = document.getElementById('challengeSetup');
+  if (cs) cs.style.display = 'none';
+  document.getElementById('missionBrief').style.display = 'block';
+  renderMissionBrief();
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+
+function renderMissionBrief() {
+  const el = document.getElementById('missionBrief');
+  if (!el) return;
+  const d = App.state.drill;
+  const m = d.mission;
+  if (!m) { el.style.display = 'none'; return; }
+  const zone = getModuleZone(m.module);
+  const moduleInfo = MODULE_DISPLAY_INFO[m.module] || { label: m.module, desc: '' };
+  const cleanLabel = moduleCleanLabel(m.module);
+
+  // Pool stats for "Focus" section
+  let poolSize = 0, handsInPool = 0;
+  if (App.state.ranges) {
+    for (const k of Object.keys(App.state.ranges)) {
+      const s = App.state.ranges[k];
+      if (s && s.meta && metaModuleToMastery(s.meta.module) === m.module) {
+        poolSize++;
+        if (s.hands) handsInPool += Object.keys(s.hands).length;
+      }
+    }
+  }
+
+  // Difficulty hint = current rank in this module
+  const currentRank = (App.state.profile && App.state.profile.moduleRanks && App.state.profile.moduleRanks[m.module]) || 'Unranked';
+  const nextRank = getNextModuleRank(currentRank);
+  const difficultyLine = currentRank === 'Unranked'
+    ? `Difficulty: ${rankDisplay(nextRank || 'Bronze')} target (you are unranked)`
+    : `Difficulty: ${rankDisplay(currentRank)} maintenance · next ${rankDisplay(nextRank || currentRank)}`;
+
+  // Mode label
+  const modeLabel = d.mode === 'marginal' ? 'Marginal Focus'
+    : d.mode === 'weakness' ? 'Weakness Focus'
+    : d.mode === 'deep' ? 'Deep Study'
+    : 'Quick Drill';
+
+  el.innerHTML = `
+    <div class="mission-brief-card" style="--zone-accent:${zone.accent};--zone-glow:${zone.glow}">
+      <div class="mission-brief-eyebrow">▸ Mission Brief</div>
+      <div class="mission-brief-name">${m.name}</div>
+      <div class="mission-brief-meta">${cleanLabel} · ${difficultyLine}</div>
+
+      <div class="mission-brief-zone">
+        <div class="mission-brief-zone-glyph">${zone.glyph}</div>
+        <div class="mission-brief-zone-info">
+          <div class="mission-brief-zone-name">${zone.zone}</div>
+          <div class="mission-brief-zone-motto">${zone.motto}</div>
+        </div>
+      </div>
+
+      <div class="mission-brief-section">
+        <div class="mission-brief-section-title">Objectives</div>
+        <div class="mission-brief-objective"><div class="checkbox"></div>Complete <strong>${m.handCount}</strong> hands</div>
+        <div class="mission-brief-objective"><div class="checkbox"></div>Accuracy <strong>≥ ${m.accuracyTarget}%</strong></div>
+        <div class="mission-brief-objective"><div class="checkbox"></div>Critical mistakes <strong>≤ ${m.criticalMax}</strong></div>
+      </div>
+
+      <div class="mission-brief-section">
+        <div class="mission-brief-section-title">Focus</div>
+        <div class="mission-brief-objective" style="background:rgba(255,255,255,0.02)">
+          <div style="font-size:14px;color:${zone.accent}">${zone.glyph}</div>
+          <div style="flex:1;font-size:12px;color:var(--text-secondary)">${moduleInfo.desc}<br><span style="opacity:0.7">${poolSize} scenarios · ${handsInPool} unique hands · ${modeLabel}</span></div>
+        </div>
+      </div>
+
+      <div class="mission-brief-section">
+        <div class="mission-brief-section-title">Rewards</div>
+        <div class="mission-brief-reward">
+          <span class="reward-icon">★</span>
+          <div style="flex:1">
+            <strong>+${m.maxRewardXP} XP</strong> on perfect mission<br>
+            <span style="font-size:11px;opacity:0.85;color:var(--text-secondary)">+1 XP per hand · +${m.xpPerObjective} per objective met · +${m.xpPerfectBonus} perfect bonus</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-brief-explainer">
+        <strong>Mission vs Boss Test:</strong> Missions build skill and XP. They do <strong>not</strong> change your official Module Rank. To certify a rank-up, attempt the Boss Test from Mastery Home.
+      </div>
+
+      <div class="mission-brief-cta-row">
+        <button class="btn-mastery-secondary" onclick="exitMission()">← Back to Home</button>
+        <button class="btn-mastery-primary" onclick="confirmMissionStart()">▶ Start Mission</button>
+      </div>
+    </div>
+  `;
+}
+
+function confirmMissionStart() {
+  const d = App.state.drill;
+  if (!d.mission) return;
+  // Hide brief, show drillScreen via startDrill flow
+  document.getElementById('missionBrief').style.display = 'none';
+  // Sync mode-card selection visually so if user goes back to setup it matches
+  document.querySelectorAll('.mode-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.mode === d.mode);
+  });
+  startDrill();
+}
+
+function exitMission() {
+  const d = App.state.drill;
+  d.moduleFilter = null;
+  d.mission = null;
+  d.challenge = null;
+  document.getElementById('missionBrief').style.display = 'none';
+  document.getElementById('drillSetup').style.display = 'none';
+  document.getElementById('drillScreen').style.display = 'none';
+  document.getElementById('drillComplete').style.display = 'none';
+  var cs = document.getElementById('challengeSetup');
+  if (cs) cs.style.display = 'none';
+  switchTab('mastery');
+  document.getElementById('mainContent').scrollTo(0, 0);
 }
 
 function renderDrillPresetBanner() {
@@ -5156,7 +5970,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.6</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v1.8.7</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
