@@ -2116,6 +2116,21 @@
       background: rgba(255,255,255,0.02);
       border: 1px solid rgba(255,255,255,0.04);
     }
+    /* v2.0.4: split summary sections (Mistake Type + Hand Class) */
+    .mr-summary-section + .mr-summary-section {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255,255,255,0.06);
+    }
+    .mr-summary-heading {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      padding-left: 2px;
+    }
     .mr-pattern-row {
       display: flex;
       justify-content: space-between;
@@ -5422,24 +5437,57 @@ function classifyHandBucket(hand) {
   return 'unknown';
 }
 
-// Pattern label + display name for UI
+// Pattern label + display name for UI (static fallback labels)
 const MISS_PATTERN_LABELS = {
-  pure_defend:   'Pure Defend',
+  pure_defend:   'Pure Defend',  // overridden per-card via _purePatternDisplay
   outside_range: 'Outside Range',
   critical_punt: 'Critical Punt',
   mix_aware:     'Mix Aware',
   mix_marginal:  'Marginal Mix'
 };
 const HAND_BUCKET_LABELS = {
-  pair:             'Pair miss',
-  suited_ax:        'Suited Ax miss',
-  suited_broadway:  'Suited broadway miss',
-  suited_connector: 'Suited connector miss',
-  offsuit_broadway: 'Offsuit broadway miss',
-  offsuit_ax_low:   'Offsuit Ax miss',
-  low_suited:       'Low suited miss',
-  trash:            'Trash hand miss'
+  pair:             'Pair',
+  suited_ax:        'Suited Ax',
+  suited_broadway:  'Suited broadway',
+  suited_connector: 'Suited connector',
+  offsuit_broadway: 'Offsuit broadway',
+  offsuit_ax_low:   'Offsuit Ax',
+  low_suited:       'Low suited',
+  trash:            'Trash hand'
 };
+
+// v2.0.4: Action-aware pure-action label + principle note resolution.
+// The `pure_defend` pattern aggregates several poker situations that need
+// different precise labels: vs_shove call (Pure Call), vs_raise call (Pure
+// Defend), pure shove (Pure Jam), pure 3-bet (Pure 3-Bet), pure 4-bet, and
+// pure fold. Cards show the precise sub-label; summary aggregates under
+// the parent "Pure call/defend miss".
+function _purePatternDisplay(answer) {
+  const correct = (answer && answer.correctAction) || '';
+  const action  = (answer && answer.q && answer.q.action) || '';
+  if (correct === 'shove') {
+    return { pill: 'Pure Jam', note: 'Pure jam — strong enough to lock in fold equity.' };
+  }
+  if (correct === 'threebet') {
+    return { pill: 'Pure 3-Bet', note: 'Pure 3-bet at this stack/position — value or polarized squeeze.' };
+  }
+  if (correct === 'fourbet') {
+    return { pill: 'Pure 4-Bet', note: 'Pure 4-bet at this stack/position — value or polarized.' };
+  }
+  if (correct === 'call') {
+    if (/vs_shove/i.test(action)) {
+      return { pill: 'Pure Call', note: 'Pure call vs shove at this stack/position — call every time.' };
+    }
+    if (/vs_raise/i.test(action)) {
+      return { pill: 'Pure Defend', note: 'Pure defend at this stack/position — call every time.' };
+    }
+    return { pill: 'Pure Call', note: 'Pure call at this stack/position — call every time.' };
+  }
+  if (correct === 'fold') {
+    return { pill: 'Pure Fold', note: 'Pure fold here — even with the kicker / suit, the GTO line is fold.' };
+  }
+  return { pill: 'Pure', note: 'Pure GTO line — ' + (correct || 'best action') + ' every time at this stack/position.' };
+}
 
 // Score each wrong answer for prioritization. Higher = surfaced first.
 // Per approved spec:
@@ -5472,7 +5520,17 @@ function prioritizeMisses(answers) {
   return scored;
 }
 
-// Aggregate pattern counts across the prioritized misses for the summary.
+// Aggregate pattern counts across the prioritized misses.
+// v2.0.4: returns TWO distinct sections:
+//   mistakeType : mutually exclusive, sums to total miss count
+//   handClass   : re-counts by hand class (may not sum to total),
+//                 only buckets with count >= 2 included (suppresses
+//                 singleton noise). Section omitted entirely if no
+//                 bucket reaches >= 2.
+//
+// Parent label "Pure call/defend miss(es)" collapses the action-aware
+// sub-labels (Pure Call / Pure Defend / Pure Jam / Pure 3-Bet / etc.)
+// so the summary stays concise. Cards below show precise sub-labels.
 function buildMissPatternsSummary(misses) {
   const patternCounts = {};
   const bucketCounts = {};
@@ -5483,32 +5541,44 @@ function buildMissPatternsSummary(misses) {
       bucketCounts[m._bucket] = (bucketCounts[m._bucket] || 0) + 1;
     }
   }
-  // Combine into ordered top-3 list
-  const out = [];
-  // Pattern-level (more specific) — Pure Defend / Critical Punt / Outside Range first
+  // Mistake Type (mutually exclusive) — preserve display order
   const PATTERN_ORDER = ['critical_punt','pure_defend','outside_range','mix_marginal','mix_aware'];
+  const PARENT_LABELS = {
+    critical_punt: 'Critical Punt',
+    pure_defend:   'Pure call/defend',
+    outside_range: 'Outside Range',
+    mix_marginal:  'Marginal Mix',
+    mix_aware:     'Mix Aware'
+  };
+  const mistakeType = [];
   for (const p of PATTERN_ORDER) {
     if (patternCounts[p]) {
-      out.push({ key: p, label: MISS_PATTERN_LABELS[p] + ' miss' + (patternCounts[p]===1?'':'es'), count: patternCounts[p] });
+      const c = patternCounts[p];
+      mistakeType.push({
+        key: p,
+        label: PARENT_LABELS[p] + ' miss' + (c === 1 ? '' : 'es'),
+        count: c
+      });
     }
   }
-  // Hand-bucket (broader) — append top 2 bucket entries that aren't already mentioned
-  const bucketSorted = Object.entries(bucketCounts)
+  // Hand Class (re-count) — only buckets with count >= 2
+  const handClass = Object.entries(bucketCounts)
+    .filter(([, count]) => count >= 2)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 2);
-  for (const [bucket, count] of bucketSorted) {
-    out.push({ key: bucket, label: HAND_BUCKET_LABELS[bucket] || bucket, count });
-  }
-  return out.slice(0, 4);
+    .map(([bucket, count]) => ({
+      key: bucket,
+      label: HAND_BUCKET_LABELS[bucket] || bucket,
+      count
+    }));
+  return { mistakeType, handClass };
 }
 
 // Generate the educational note ("why" line) for a single miss card.
 // Principle-based, NOT a chart dump.
+// v2.0.4: pure_defend delegates to _purePatternDisplay so the note matches
+// the action-aware pill (Pure Call / Pure Defend / Pure Jam / Pure 3-Bet
+// / Pure 4-Bet / Pure Fold).
 function _missCardNote(miss) {
-  const hand = miss.q && miss.q.hand;
-  const isPure = !!miss.isPure;
-  const userFreq = miss.userFreq || 0;
-  const correct = miss.correctAction;
   const pattern = miss._pattern;
   if (pattern === 'critical_punt') {
     return 'Trash hand — pure fold. No playability, no blocker.';
@@ -5517,16 +5587,12 @@ function _missCardNote(miss) {
     return 'Outside any GTO branch — this hand never plays here at this stack/position.';
   }
   if (pattern === 'pure_defend') {
-    if (correct === 'call')      return 'Pure defend at this stack/position — call every time.';
-    if (correct === 'fold')      return 'Pure fold here — even with the kicker / suit, the GTO line is fold.';
-    if (correct === 'threebet')  return 'Pure 3-bet at this stack/position — value or polarized squeeze.';
-    if (correct === 'shove')     return 'Pure shove — strong enough to lock in fold equity.';
-    return 'Pure GTO line — ' + (correct || 'best action') + ' every time at this stack/position.';
+    return _purePatternDisplay(miss).note;
   }
   if (pattern === 'mix_marginal') {
     return 'Marginal spot — either branch is in range. Low EV cost, but worth seeing the mix.';
   }
-  // mix_aware (wrong on a mixed spot but not partial — picked a low-frequency or non-best line)
+  // mix_aware (wrong on a mixed spot — picked a low-frequency or non-best line)
   return 'Mixed spot — multiple branches valid, but you picked the low-frequency line.';
 }
 
@@ -5590,15 +5656,29 @@ function renderMistakeReviewCard(answers, opts) {
     ? `<strong>${pureMissCount} pure-defense misses</strong> are blocking your Boss clear.`
     : `You missed ${missCount} hand${missCount===1?'':'s'}. Top fixes shown below.`;
 
-  // Pattern summary
-  const patternRows = buildMissPatternsSummary(prioritized);
-  const summaryHtml = patternRows.length > 0
-    ? `<div class="mr-pattern-summary">${patternRows.map(r => `
-        <div class="mr-pattern-row">
-          <span class="pattern-label">${r.label}</span>
-          <span class="pattern-count">${r.count}</span>
-        </div>
-      `).join('')}</div>`
+  // v2.0.4: pattern summary now split into Mistake Type (mutually
+  // exclusive) + Hand Class (re-count) sections. Hand Class section
+  // omitted when no bucket reaches count >= 2 (suppresses singletons).
+  const summary = buildMissPatternsSummary(prioritized);
+  const renderSummarySection = (heading, rows) => {
+    if (!rows || rows.length === 0) return '';
+    return `
+      <div class="mr-summary-section">
+        <div class="mr-summary-heading">${heading}</div>
+        ${rows.map(r => `
+          <div class="mr-pattern-row">
+            <span class="pattern-label">${r.label}</span>
+            <span class="pattern-count">${r.count}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  };
+  const summaryHtml = (summary.mistakeType.length > 0 || summary.handClass.length > 0)
+    ? `<div class="mr-pattern-summary">
+        ${renderSummarySection('Mistake Type', summary.mistakeType)}
+        ${renderSummarySection('Hand Class', summary.handClass)}
+      </div>`
     : '';
 
   // Card list
@@ -5608,7 +5688,10 @@ function renderMistakeReviewCard(answers, opts) {
   const cardsHtml = visibleMisses.map(miss => {
     const hand = (miss.q && miss.q.hand) || '?';
     const pattern = miss._pattern;
-    const patternLabel = MISS_PATTERN_LABELS[pattern] || pattern;
+    // v2.0.4: action-aware pill label for pure_defend; static lookup for the rest.
+    const patternLabel = (pattern === 'pure_defend')
+      ? _purePatternDisplay(miss).pill
+      : (MISS_PATTERN_LABELS[pattern] || pattern);
     const userAct = _formatUserAction(miss.userAction);
     const gtoLine = _formatGtoLine(miss.q && miss.q.freqs);
     const spotCtx = _formatSpotContext(miss.q);
@@ -11075,22 +11158,27 @@ function renderChallengeResultScreen(ch, result, rankUp) {
   const bossName = getBossName(ch.module);
   const t = result.thresholds;
 
-  const cell = (label, value, suffix, threshold, comparator) => {
+  // v2.0.4: comparator-aware target display.
+  //   For >= metrics (Overall / Pure / Mixed Awareness): "target ≥ X%"
+  //   For <= metrics (Critical Mistake Rate):            "target ≤ X%"
+  // Avoids the misleading "target 100%" reading on max-style thresholds.
+  const cell = (label, value, suffix, threshold, comparator, comparatorSym) => {
     const passed = comparator(value, threshold);
+    const sym = comparatorSym || '';
     return `
       <div class="challenge-score-cell ${passed ? 'passed' : 'failed'}">
         <div class="challenge-score-label">${label}</div>
         <div class="challenge-score-value">${value}${suffix}</div>
-        <div class="challenge-score-target">${passed ? '✓' : '✗'} target ${threshold}${suffix}</div>
+        <div class="challenge-score-target">${passed ? '✓' : '✗'} target ${sym} ${threshold}${suffix}</div>
       </div>
     `;
   };
 
   const cells = [
-    cell('Overall', result.overallPct, '%', t.overall, (a, b) => a >= b),
-    cell('Pure', result.purePct, '%', t.pure, (a, b) => a >= b),
-    cell('Mixed Awareness', result.mixedPct, '%', t.mixed, (a, b) => a >= b),
-    cell('Critical Mistakes', result.criticalPct, '%', t.criticalMax, (a, b) => a <= b)
+    cell('Overall',              result.overallPct,  '%', t.overall,     (a, b) => a >= b, '≥'),
+    cell('Pure',                 result.purePct,     '%', t.pure,        (a, b) => a >= b, '≥'),
+    cell('Mixed Awareness',      result.mixedPct,    '%', t.mixed,       (a, b) => a >= b, '≥'),
+    cell('Critical Mistake Rate', result.criticalPct,'%', t.criticalMax, (a, b) => a <= b, '≤')
   ].join('');
 
   // Identify the failing reason for fail mode
@@ -12021,7 +12109,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.3</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.4</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -12132,7 +12220,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.0.3',
+    appVersion: '2.0.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
