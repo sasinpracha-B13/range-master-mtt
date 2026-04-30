@@ -4336,40 +4336,115 @@
     }
     /* ============================================================ */
     /* PROFILE PLACEMENT & IDENTITY IA v2.2.1                       */
+    /* Chip affordance polish v2.2.2 — button-like + first-time pulse */
     /* ============================================================ */
-    /* Home Profile Chip — sits in hero-utility-row top-right */
+    /* Home Profile Chip — sits in hero-utility-row top-right.
+       Reads as a tappable destination, not decoration: stronger gold
+       gradient, raised shadow, dedicated "Profile" label, chevron, and a
+       one-time pulse cue that stops permanently after the first open. */
     .home-profile-chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 4px 10px 4px 12px;
-      background: rgba(212,175,55,0.10);
+      gap: 6px;
+      padding: 7px 12px 7px 12px;
+      min-height: 32px;
+      max-width: 100%;
+      background: linear-gradient(135deg, rgba(212,175,55,0.20), rgba(212,175,55,0.10));
       color: var(--text);
-      border: 1px solid rgba(212,175,55,0.32);
+      border: 1px solid rgba(212,175,55,0.50);
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
       font-family: inherit;
       margin-left: auto;
-      flex-shrink: 0;
-      box-shadow: 0 0 12px rgba(212,175,55,0.10);
+      flex-shrink: 1;
+      box-shadow:
+        0 2px 8px rgba(212,175,55,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
     }
     .home-profile-chip:hover {
-      background: rgba(212,175,55,0.18);
-      border-color: rgba(212,175,55,0.55);
+      background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(212,175,55,0.16));
+      border-color: rgba(212,175,55,0.70);
+      box-shadow:
+        0 3px 12px rgba(212,175,55,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.08);
     }
     .home-profile-chip:active { transform: scale(0.97); }
-    .home-profile-chip .hpc-name { color: var(--text); }
-    .home-profile-chip .hpc-divider { color: var(--text-secondary); opacity: 0.7; }
-    .home-profile-chip .hpc-rank { color: #d4af37; }
-    .home-profile-chip .hpc-arrow {
-      color: var(--text-secondary);
-      font-size: 13px;
-      margin-left: 1px;
+    .home-profile-chip:focus-visible {
+      outline: 2px solid rgba(212,175,55,0.70);
+      outline-offset: 2px;
+    }
+    .home-profile-chip .hpc-icon {
+      color: #d4af37;
+      font-size: 12px;
       line-height: 1;
+      flex-shrink: 0;
+      text-shadow: 0 0 6px rgba(212,175,55,0.40);
+    }
+    .home-profile-chip .hpc-name {
+      color: var(--text);
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    .home-profile-chip .hpc-divider {
+      color: var(--text-secondary);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+    .home-profile-chip .hpc-rank {
+      color: #d4af37;
+      flex-shrink: 0;
+    }
+    .home-profile-chip .hpc-label {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding-left: 6px;
+      margin-left: 2px;
+      border-left: 1px solid rgba(212,175,55,0.28);
+      flex-shrink: 0;
+    }
+    .home-profile-chip .hpc-arrow {
+      color: #d4af37;
+      font-size: 14px;
+      margin-left: -2px;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: transform 0.18s ease;
+    }
+    .home-profile-chip:hover .hpc-arrow { transform: translateX(2px); }
+    /* Tighter at very narrow widths so the chip never wraps the row */
+    @media (max-width: 380px) {
+      .home-profile-chip { padding: 7px 10px; gap: 5px; font-size: 12px; }
+      .home-profile-chip .hpc-name { max-width: 76px; }
+      .home-profile-chip .hpc-label { font-size: 10px; padding-left: 5px; }
+    }
+    /* One-time pulse — applied via .pulse class until the user opens
+       Profile for the first time. After first open the flag flips and the
+       class is gone forever (until reset). Subtle gold glow ring; no layout
+       shift, no infinite distraction beyond the first session. */
+    @keyframes hpcPulse {
+      0%   { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 0 rgba(212,175,55,0.45); }
+      60%  { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 8px rgba(212,175,55,0.00); }
+      100% { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 0 rgba(212,175,55,0.00); }
+    }
+    .home-profile-chip.pulse {
+      animation: hpcPulse 2.4s ease-out infinite;
+    }
+    .home-profile-chip.pulse:hover { animation: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .home-profile-chip.pulse { animation: none; }
     }
     /* Profile Overlay — full-screen mobile, slide-up + fade in */
     .profile-overlay {
@@ -5111,6 +5186,10 @@ const App = {
       trainerId: null,           // "RM-XXXXXX" generated on first session
       callsign: 'Trainer',       // user-editable, default 'Trainer'
       firstSessionDate: null,    // ISO date, set once on first session
+      // v2.2.2: one-time pulse flag for Home Profile chip. False until the
+      // user opens the Trainer Profile overlay for the first time, then set
+      // to true permanently (until reset). Backup-safe (additive).
+      hasOpenedTrainerProfile: false,
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
       records: {},               // v2.4.0 — Personal Records ATH
@@ -10432,12 +10511,20 @@ function renderHomeProfileChip() {
   const secondary = overallRank === 'Unranked'
     ? 'Lv ' + (profile.xpLevel || 1)
     : (typeof rankDisplay === 'function' ? rankDisplay(overallRank) : overallRank);
+  // v2.2.2: pulse class added until user opens Profile for the first time.
+  // ✦ glyph chosen over ⚔ because ⚔ is already used for Boss Tests in this
+  // app and would create semantic confusion. ✦ is already established as the
+  // identity marker in TRAINER DOSSIER + HONOR ROLL eyebrows.
+  const pulseCls = profile.hasOpenedTrainerProfile ? '' : ' pulse';
   return '' +
-    '<button class="home-profile-chip" onclick="openTrainerProfile()" aria-label="Open Trainer Profile">' +
+    '<button class="home-profile-chip' + pulseCls + '" onclick="openTrainerProfile()" ' +
+      'aria-label="Open Trainer Profile">' +
+      '<span class="hpc-icon" aria-hidden="true">✦</span>' +
       '<span class="hpc-name">' + _trainerEscapeHtml(callsign) + '</span>' +
-      '<span class="hpc-divider">·</span>' +
+      '<span class="hpc-divider" aria-hidden="true">·</span>' +
       '<span class="hpc-rank">' + secondary + '</span>' +
-      '<span class="hpc-arrow">›</span>' +
+      '<span class="hpc-label">Profile</span>' +
+      '<span class="hpc-arrow" aria-hidden="true">›</span>' +
     '</button>';
 }
 
@@ -10466,6 +10553,17 @@ function openTrainerProfile(scrollTo) {
   overlay.classList.remove('hidden');
   // Lock background scroll on body
   document.body.classList.add('profile-overlay-open');
+  // v2.2.2: first-open hook — flip the one-time pulse flag so the Home chip
+  // stops pulsing permanently (until reset). Re-render the Mastery (Home) tab
+  // so the chip immediately drops its .pulse class. Wrapped in try/catch so
+  // a render failure can never block the overlay opening.
+  try {
+    if (App.state && App.state.profile && !App.state.profile.hasOpenedTrainerProfile) {
+      App.state.profile.hasOpenedTrainerProfile = true;
+      try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+      if (typeof renderMastery === 'function') renderMastery();
+    }
+  } catch (e) { console.warn('[openTrainerProfile] pulse-flag set failed', e); }
   // Optional: scroll to honor-roll section
   if (scrollTo === 'honor-roll') {
     setTimeout(function () {
@@ -13304,7 +13402,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13415,7 +13513,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.1',
+    appVersion: '2.2.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -13877,6 +13975,9 @@ function confirmReset() {
     trainerId: null,
     callsign: 'Trainer',
     firstSessionDate: null,
+    // v2.2.2: reset wipes the one-time profile-chip pulse flag so a brand-new
+    // identity gets the same first-time pulse cue as a fresh install.
+    hasOpenedTrainerProfile: false,
     records: {},
     styleTags: [],
     focusArc: null,
