@@ -4182,6 +4182,158 @@
       font-style: italic;
       line-height: 1.4;
     }
+    /* v2.2.0: clickable Latest Cert slot */
+    .trainer-dossier-slot.clickable {
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .trainer-dossier-slot.clickable:hover {
+      background: rgba(212,175,55,0.08);
+      border-color: rgba(212,175,55,0.40);
+    }
+    .trainer-dossier-slot.clickable:active { transform: scale(0.99); }
+    .trainer-dossier-slot .slot-chevron {
+      float: right;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 400;
+    }
+    /* ============================================================ */
+    /* HONOR ROLL / TROPHY CASE v2.2.0                              */
+    /* ============================================================ */
+    .honor-roll-card .hr-count {
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.4px;
+    }
+    .honor-roll-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin: -4px 0 12px;
+      line-height: 1.5;
+    }
+    .honor-roll-empty {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding: 8px 0;
+    }
+    .honor-roll-empty strong { color: var(--text); }
+    .honor-roll-list {
+      display: grid;
+      gap: 8px;
+    }
+    .honor-roll-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(212,175,55,0.04);
+      border: 1px solid rgba(212,175,55,0.18);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .honor-roll-row:hover {
+      background: rgba(212,175,55,0.10);
+      border-color: rgba(212,175,55,0.45);
+    }
+    .honor-roll-row:active { transform: scale(0.99); }
+    .hr-emblem { flex-shrink: 0; }
+    .hr-body {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .hr-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      line-height: 1.3;
+    }
+    .hr-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 3px;
+      letter-spacing: 0.2px;
+    }
+    .hr-cert-id {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: #d4af37;
+      letter-spacing: 0.6px;
+      margin-top: 4px;
+      padding: 1px 6px;
+      background: rgba(212,175,55,0.10);
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 3px;
+    }
+    .hr-chevron {
+      color: var(--text-secondary);
+      font-size: 18px;
+      font-weight: 400;
+    }
+    /* ============================================================ */
+    /* CERT SEAL VIEWER MODAL v2.2.0                                */
+    /* ============================================================ */
+    .cert-seal-viewer-box {
+      max-width: 420px;
+      padding: 28px 18px 18px;
+      position: relative;
+    }
+    .cert-seal-viewer-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cert-seal-viewer-close:hover {
+      background: rgba(248,113,113,0.10);
+      color: var(--danger);
+    }
+    .cert-seal-viewer-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .cs-stat {
+      text-align: center;
+    }
+    .cs-stat-label {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .cs-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+    }
     /* SOURCE BREAKDOWN — v1.9.10 (Progress analytics) */
     .src-row {
       display: grid;
@@ -4412,6 +4564,17 @@
 
 <!-- HIDDEN FILE INPUT for backup import -->
 <input type="file" id="backupImportFileInput" accept="application/json,.json" style="display:none" onchange="_onBackupImportFileChange(event)">
+
+<!-- CERT SEAL VIEWER MODAL (v2.2.0 — Honor Roll re-celebrate moment) -->
+<div class="modal-overlay hidden" id="certSealViewerModal">
+  <div class="modal-box cert-seal-viewer-box">
+    <button class="cert-seal-viewer-close" onclick="closeCertSealViewer()" aria-label="Close">✕</button>
+    <div class="cert-seal-viewer-body"><!-- filled by openCertSealViewer() --></div>
+    <div style="margin-top:14px;text-align:center">
+      <button class="btn btn-secondary" onclick="closeCertSealViewer()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- CALLSIGN EDITOR MODAL (v2.1.0) -->
 <div class="modal-overlay hidden" id="callsignEditorModal">
@@ -9694,11 +9857,19 @@ function _trainerIdentitySentence(profile) {
   return overallDisplay + ' · Apex reached';
 }
 
-// Render one "What Defines Me" slot with data-locked aspirational copy
-function _trainerDossierSlot(icon, title, value, lockedHint) {
+// Render one "What Defines Me" slot with data-locked aspirational copy.
+// v2.2.0: optional onclick makes a slot clickable (used for Latest Cert
+// slot to open the Honor Roll cert seal viewer).
+function _trainerDossierSlot(icon, title, value, lockedHint, onclick) {
   if (value) {
-    return '<div class="trainer-dossier-slot">' +
-      '<div class="slot-title">' + icon + ' ' + title + '</div>' +
+    const clickable = !!onclick;
+    const attrs = clickable
+      ? ' onclick="' + onclick + '" role="button" tabindex="0"'
+      : '';
+    const cls = 'trainer-dossier-slot' + (clickable ? ' clickable' : '');
+    const arrow = clickable ? '<span class="slot-chevron">›</span>' : '';
+    return '<div class="' + cls + '"' + attrs + '>' +
+      '<div class="slot-title">' + icon + ' ' + title + arrow + '</div>' +
       '<div class="slot-value">' + value + '</div>' +
     '</div>';
   }
@@ -9779,27 +9950,18 @@ function renderTrainerCard() {
     ? 'Strong all-around — no clear focus arc yet'
     : 'Build 50+ hands of practice to discover your Focus Arc';
 
-  // Latest Cert: most recent from moduleRankHistory + passed overallExamHistory
-  const allCerts = [];
-  (profile.moduleRankHistory || []).forEach(function (c) {
-    allCerts.push({
-      type: 'module',
-      module: c.module,
-      rank: c.newRank,
-      date: c.date || c.awardedAt,
-      certId: c.testId ? ('RM-' + Number(c.testId).toString(36).toUpperCase().slice(-6)) : null
-    });
-  });
-  (profile.overallExamHistory || []).filter(function (e) { return e.passed; }).forEach(function (e) {
-    allCerts.push({
-      type: 'overall',
-      rank: e.rankAttempted || e.targetRank,
-      date: e.date || e.certifiedAt,
-      certId: e.seed ? ('RM-' + Number(e.seed).toString(36).toUpperCase().slice(-6)) : null
-    });
-  });
-  allCerts.sort(function (a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
-  const latestCertText = allCerts.length > 0 ? _formatLatestCert(allCerts[0]) : null;
+  // Latest Cert: v2.2.0 unifies with Honor Roll source (getHonorRoll) so
+  // Trainer Card and Honor Roll always agree. getHonorRoll reads
+  // challengeResults (passed) + overallExamHistory (passed) — richer than
+  // moduleRankHistory (which omits scores) and consistent with the cert
+  // viewer modal that openCertSealViewer pops up.
+  const honorRollAll = (typeof getHonorRoll === 'function') ? getHonorRoll() : [];
+  const latestCert = honorRollAll[0] || null;
+  const latestCertText = latestCert
+    ? (latestCert.kind === 'overall'
+        ? rankDisplay(latestCert.rank) + ' Overall Exam · ' + (latestCert.date ? new Date(latestCert.date).toLocaleDateString() : '—') + (latestCert.certId ? ' · ' + latestCert.certId : '')
+        : latestCert.moduleLabel + ' ' + latestCert.rankDisplay + ' · ' + (latestCert.date ? new Date(latestCert.date).toLocaleDateString() : '—'))
+    : null;
   const certLockedHint = 'Clear your first Boss Test to unlock Honor Roll';
 
   return '' +
@@ -9838,9 +10000,156 @@ function renderTrainerCard() {
         '<div class="trainer-dossier-section-title">What Defines Me</div>' +
         _trainerDossierSlot('🏅', 'Signature Strength', signatureStrength, sigLockedHint) +
         _trainerDossierSlot('🎯', 'Current Focus',     currentFocus,      focusLockedHint) +
-        _trainerDossierSlot('🏆', 'Latest Cert',       latestCertText,    certLockedHint) +
+        // v2.2.0: Latest Cert slot clickable when populated → opens Honor Roll cert viewer
+        _trainerDossierSlot('🏆', 'Latest Cert',       latestCertText,    certLockedHint,
+          latestCertText ? 'openCertSealViewer(0)' : null) +
       '</div>' +
     '</div>';
+}
+
+// ============================================================
+// HONOR ROLL / TROPHY CASE v2.2.0
+// ============================================================
+// Past certifications preserved permanently. Reads existing data
+// (profile.challengeResults filtered to passed + profile.overallExamHistory
+// filtered to passed) — no schema changes. Tap any row → re-render the
+// ceremonial cert seal in a modal so the moment can be re-lived.
+
+// Build unified cert list, newest-first.
+function getHonorRoll() {
+  const profile = App.state.profile || {};
+  const certs = [];
+  (profile.challengeResults || []).forEach(function (c) {
+    if (!c.passed) return;
+    certs.push({
+      kind: 'boss',
+      module: c.module,
+      moduleLabel: (typeof moduleCleanLabel === 'function' && c.module) ? moduleCleanLabel(c.module) : (c.module || '?'),
+      rank: c.targetRank,
+      rankDisplay: c.targetRankDisplay || (typeof rankDisplay === 'function' ? rankDisplay(c.targetRank) : c.targetRank),
+      date: c.date || null,
+      handCount: c.handCount || 0,
+      score: (c.scores && typeof c.scores.overall === 'number') ? c.scores.overall : 0,
+      pure:  (c.scores && typeof c.scores.pure    === 'number') ? c.scores.pure  : null,
+      mixed: (c.scores && typeof c.scores.mixed   === 'number') ? c.scores.mixed : null,
+      certId: c.seed ? ('RM-' + Number(c.seed).toString(36).toUpperCase().slice(-6)) : null
+    });
+  });
+  (profile.overallExamHistory || []).forEach(function (e) {
+    if (!e.passed) return;
+    certs.push({
+      kind: 'overall',
+      module: null,
+      moduleLabel: null,
+      rank: e.rankAttempted || e.targetRank,
+      rankDisplay: typeof rankDisplay === 'function' ? rankDisplay(e.rankAttempted || e.targetRank) : (e.rankAttempted || e.targetRank),
+      date: e.date || e.certifiedAt || null,
+      handCount: e.handCount || 0,
+      score: typeof e.overallAccuracy === 'number' ? e.overallAccuracy : 0,
+      pure:  typeof e.pureAccuracy === 'number' ? e.pureAccuracy : null,
+      mixed: typeof e.mixedAwareness === 'number' ? e.mixedAwareness : null,
+      certId: e.seed ? ('RM-' + Number(e.seed).toString(36).toUpperCase().slice(-6)) : null
+    });
+  });
+  certs.sort(function (a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+  return certs;
+}
+
+// Render one Honor Roll row.
+function renderHonorRollRow(cert, idx) {
+  const dateStr = cert.date ? new Date(cert.date).toLocaleDateString() : '—';
+  const titleText = cert.kind === 'overall'
+    ? cert.rankDisplay + ' Overall Exam'
+    : cert.moduleLabel + ' Boss · ' + cert.rankDisplay;
+  const certIdStr = cert.certId ? '<span class="hr-cert-id">' + cert.certId + '</span>' : '';
+  return '' +
+    '<div class="honor-roll-row" onclick="openCertSealViewer(' + idx + ')" role="button" tabindex="0">' +
+      '<div class="hr-emblem">' + renderRankEmblem(cert.rank, 'small') + '</div>' +
+      '<div class="hr-body">' +
+        '<div class="hr-title">' + titleText + '</div>' +
+        '<div class="hr-meta">' + dateStr + ' · ' + cert.score + '% · ' + cert.handCount + ' hands</div>' +
+        certIdStr +
+      '</div>' +
+      '<span class="hr-chevron">›</span>' +
+    '</div>';
+}
+
+// Render the Honor Roll card. Empty state when no certs yet.
+function renderHonorRollCard() {
+  const certs = getHonorRoll();
+  // Cache for click handler so it can resolve idx → cert without recomputing
+  window._honorRollCache = certs;
+  if (certs.length === 0) {
+    return '' +
+      '<div class="card">' +
+        '<div class="card-title">✦ Honor Roll</div>' +
+        '<div class="honor-roll-empty">' +
+          'No certifications yet. Clear your first <strong>Module Boss Test</strong> or <strong>Overall Exam</strong> to start your honor roll. Each cert is preserved permanently here.' +
+        '</div>' +
+      '</div>';
+  }
+  return '' +
+    '<div class="card honor-roll-card">' +
+      '<div class="card-title">✦ Honor Roll <span class="hr-count">· ' + certs.length + '</span></div>' +
+      '<div class="honor-roll-sub">Tap any certification to re-live that moment.</div>' +
+      '<div class="honor-roll-list">' +
+        certs.map(function (c, i) { return renderHonorRollRow(c, i); }).join('') +
+      '</div>' +
+    '</div>';
+}
+
+// Open the cert seal viewer modal for a specific cert (by Honor Roll index).
+// Lazy-populates _honorRollCache if missing (so Trainer Card "Latest Cert"
+// click works even before Honor Roll card has rendered).
+function openCertSealViewer(idx) {
+  let certs = window._honorRollCache;
+  if (!certs || certs.length === 0) {
+    certs = getHonorRoll();
+    window._honorRollCache = certs;
+  }
+  const cert = certs[idx];
+  if (!cert) return;
+  const modal = document.getElementById('certSealViewerModal');
+  if (!modal) return;
+  const v = (typeof rankCssVars === 'function') ? rankCssVars(cert.rank) : { color: '#d4af37', glow: 'rgba(212,175,55,0.30)', haze: 'rgba(212,175,55,0.10)' };
+  const isOverall = cert.kind === 'overall';
+  const sub = isOverall
+    ? cert.rankDisplay + ' · Overall Exam'
+    : cert.moduleLabel + ' · ' + cert.rankDisplay;
+  const dateStr = cert.date ? new Date(cert.date).toLocaleDateString() : '—';
+
+  const sealHtml = (typeof renderCertificationSealBlock === 'function')
+    ? renderCertificationSealBlock({
+        variant: isOverall ? 'overall' : 'module',
+        title: isOverall ? 'Overall Rank Certified' : 'Module Rank Certified',
+        subline: sub,
+        sealSize: 96,
+        accent: '#d4af37',
+        accentBg: v.haze,
+        accentBorder: '#d4af37',
+        certDate: dateStr,
+        certId: cert.certId || '—'
+      })
+    : '<div style="text-align:center;padding:20px">' + cert.rankDisplay + ' Certified</div>';
+
+  const statRow = function (label, val, suffix) {
+    if (val === null || typeof val === 'undefined') return '';
+    return '<div class="cs-stat"><span class="cs-stat-label">' + label + '</span><strong class="cs-stat-value">' + val + (suffix || '') + '</strong></div>';
+  };
+  const statsHtml = '<div class="cert-seal-viewer-stats">' +
+    statRow('Hands', cert.handCount, '') +
+    statRow('Overall', cert.score, '%') +
+    statRow('Pure', cert.pure, '%') +
+    statRow('Mixed', cert.mixed, '%') +
+  '</div>';
+
+  modal.querySelector('.cert-seal-viewer-body').innerHTML = sealHtml + statsHtml;
+  modal.classList.remove('hidden');
+}
+
+function closeCertSealViewer() {
+  const modal = document.getElementById('certSealViewerModal');
+  if (modal) modal.classList.add('hidden');
 }
 
 function rankBadge(internalRank, opts) {
@@ -12480,6 +12789,7 @@ function renderSettings() {
   const s = App.state.settings;
   document.getElementById('settingsContent').innerHTML = `
     ${renderTrainerCard()}
+    ${renderHonorRollCard()}
 
     <div class="card">
       <div class="settings-row">
@@ -12614,7 +12924,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.1.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -12725,7 +13035,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.1.0',
+    appVersion: '2.2.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
