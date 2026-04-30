@@ -5973,6 +5973,12 @@ const App = {
     // not a method on App — calling it threw and stopped init before
     // renderMastery, leaving Home blank).
     var safe = (label, fn) => { try { fn(); } catch(e) { console.error('[init.' + label + ']', e); } };
+    // v2.4.1: suppress Personal-Best toasts during boot (loadProgress +
+    // ensureRecordsBackfill iterate through historical data and would
+    // otherwise spam toasts on every reload). Cleared after backfill so
+    // real-time user actions can fire toasts normally.
+    window._recordsToastSuppressed = true;
+    window._recordsBrokenQueue = [];
     safe('loadProgress',    () => this.loadProgress());
     safe('loadRanges',      () => this.loadRanges());
     safe('registerSW',      () => this.registerSW());
@@ -5984,6 +5990,11 @@ const App = {
     // v2.4.0: backfill Personal Records ATH cache from currently-retained
     // data on first load (and idempotent on subsequent loads).
     safe('ensureRecordsBackfill', () => ensureRecordsBackfill());
+    // v2.4.1: boot complete — release toast suppression. Drain anything that
+    // might have leaked into the queue (defensive, should be empty) without
+    // showing it.
+    window._recordsBrokenQueue = [];
+    window._recordsToastSuppressed = false;
     // renderSettings/Progress/Browse are STANDALONE functions, not methods on App.
     safe('renderSettings',  () => renderSettings());
     safe('renderProgress',  () => renderProgress());
@@ -8105,6 +8116,10 @@ function logDrillSession(entry) {
     // requires >=30 hands per spec, enforced inside the helper). Wrapped so a
     // promote failure can never break the session log itself.
     try { if (typeof _recordPromoteSession === 'function') _recordPromoteSession(sessionRecord, true); }
+    catch (e) { /* non-fatal */ }
+    // v2.4.1: drain Personal-Best toast queue. Suppressed during boot/import
+    // by _recordsToastSuppressed; this fires only on real-time session logs.
+    try { if (typeof showPersonalBestToasts === 'function') showPersonalBestToasts(); }
     catch (e) { /* non-fatal */ }
   } catch (e) {
     console.warn('logDrillSession failed:', e);
@@ -10926,6 +10941,12 @@ function ensureRecordsBackfill() {
 // updated. Used by all three ATH write sites + backfill.
 // `key` is the records sub-key; `nextValue` is the metric being compared;
 // `payloadFn` builds the new entry object (only called if promotion happens).
+//
+// v2.4.1: when a promotion succeeds AND the boot/import-time suppression
+// flag is off, the (key, oldValue, newValue, payload) tuple is appended to
+// window._recordsBrokenQueue so showPersonalBestToasts() can later drain it
+// and surface a celebration toast. The boolean return contract is unchanged
+// (existing callers continue to work).
 function _recordPromote(key, nextValue, payloadFn) {
   if (typeof nextValue !== 'number' || !isFinite(nextValue)) return false;
   const profile = App.state.profile;
@@ -10943,7 +10964,20 @@ function _recordPromote(key, nextValue, payloadFn) {
     : 'accuracy';
   const curValue = cur ? (cur[cmpField] || 0) : 0;
   if (nextValue <= curValue) return false;
-  profile.records[key] = payloadFn();
+  const newPayload = payloadFn();
+  profile.records[key] = newPayload;
+  // v2.4.1: side-channel toast queue. Suppressed during boot
+  // (_recordsToastSuppressed=true) so backfill / app-load / backup-import
+  // never spam celebrations.
+  if (!window._recordsToastSuppressed) {
+    if (!Array.isArray(window._recordsBrokenQueue)) window._recordsBrokenQueue = [];
+    window._recordsBrokenQueue.push({
+      key: key,
+      oldValue: curValue,
+      newValue: nextValue,
+      payload: newPayload
+    });
+  }
   return true;
 }
 
@@ -11001,6 +11035,68 @@ function _recordPromoteMastery() {
   return _recordPromote('masteryScoreATH', curMs, function () {
     return { value: curMs, date: new Date().toISOString(), rank: curRank };
   });
+}
+
+// ============================================================
+// PERSONAL BEST CELEBRATION TOASTS v2.4.1
+// ============================================================
+// Drains window._recordsBrokenQueue (filled by _recordPromote when a true
+// ATH promotion happens during a real-time user action) and surfaces the
+// highest-priority break as a single celebration toast.
+//
+// Priority (matches spec):
+//   1. masteryScoreATH        — biggest emotional moment
+//   2. bestSessionAccuracyATH — quality milestone
+//   3. longestSessionATH      — endurance milestone
+//
+// Top-1-only by design: the existing showToast pattern is single-line and
+// auto-dismisses; stacking 2 adds noise without much value. Future v2.4.2+
+// can extend if user feedback wants it.
+//
+// Empty queue is a no-op. Always clears the queue after drain so a second
+// call can't replay the same toast.
+const _PB_TOAST_PRIORITY = {
+  masteryScoreATH:        1,
+  bestSessionAccuracyATH: 2,
+  longestSessionATH:      3
+};
+
+function _formatPersonalBestToast(entry) {
+  if (!entry) return null;
+  const k = entry.key;
+  const oldV = entry.oldValue;
+  const newV = entry.newValue;
+  if (k === 'masteryScoreATH') {
+    // Mastery is a 1-decimal score; show "old → new" so the gain reads at a glance.
+    const fmt = function (v) { return (Math.round(v * 10) / 10).toString(); };
+    if (oldV > 0) return '🏆 New Personal Best · Mastery ' + fmt(oldV) + ' → ' + fmt(newV);
+    return '🏆 New Personal Best · Mastery ' + fmt(newV);
+  }
+  if (k === 'bestSessionAccuracyATH') {
+    return '⭐ New Personal Best · Best Session ' + Math.round(newV) + '%';
+  }
+  if (k === 'longestSessionATH') {
+    return '💪 New Personal Best · Longest Session ' + Math.round(newV) + ' hands';
+  }
+  return null;
+}
+
+function showPersonalBestToasts() {
+  // Defensive: never fire while suppressed (boot/import). Drain the queue
+  // anyway so a future un-suppress doesn't replay stale events.
+  const queue = Array.isArray(window._recordsBrokenQueue) ? window._recordsBrokenQueue.slice() : [];
+  window._recordsBrokenQueue = [];
+  if (window._recordsToastSuppressed) return;
+  if (queue.length === 0) return;
+  // Sort by priority asc (1 = highest), pick the top 1.
+  queue.sort(function (a, b) {
+    return (_PB_TOAST_PRIORITY[a.key] || 99) - (_PB_TOAST_PRIORITY[b.key] || 99);
+  });
+  const top = queue[0];
+  const msg = _formatPersonalBestToast(top);
+  if (msg && typeof showToast === 'function') {
+    try { showToast(msg); } catch (e) { /* non-fatal */ }
+  }
 }
 
 // ============================================================
@@ -13340,6 +13436,8 @@ function showOverallExamResult() {
     // *rank context* does — refresh the cached entry so the ATH carries the
     // new rank label even if the value itself was already at ATH.
     try { if (typeof _recordPromoteMastery === 'function') _recordPromoteMastery(); } catch (e) {}
+    // v2.4.1: drain PB toast queue alongside the Overall victory result.
+    try { if (typeof showPersonalBestToasts === 'function') showPersonalBestToasts(); } catch (e) {}
   }
 
   App.saveProgress();
@@ -14215,6 +14313,10 @@ function showChallengeResult() {
     // v2.4.0: promote masteryScoreATH if the new mastery score beats the
     // cached ATH (monotonic; never overwrites with lower value).
     try { if (typeof _recordPromoteMastery === 'function') _recordPromoteMastery(); } catch (e) {}
+    // v2.4.1: drain PB toast queue (the promote above may have pushed a
+    // mastery break into the queue; this surfaces it as a single celebration
+    // toast that lands alongside the victory result screen).
+    try { if (typeof showPersonalBestToasts === 'function') showPersonalBestToasts(); } catch (e) {}
     rankUp = { oldRank, newRank: ch.targetRank };
     // v1.8.11: track most-recent rank-up so Home Hero can show
     // "RECENTLY PROMOTED" badge + stronger aura for ~24h after.
@@ -15194,7 +15296,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.4.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.4.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -15305,7 +15407,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.4.0',
+    appVersion: '2.4.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -15469,30 +15571,45 @@ function closeImportConfirmModal() {
 function confirmImportBackup() {
   const staged = App._stagedBackup;
   if (!staged) { closeImportConfirmModal(); return; }
-  const data = staged.parsed.data || staged.parsed;
-  // Write each field to localStorage (only fields present in backup)
-  const writeIfPresent = (key, val) => {
-    if (val === undefined || val === null) return;
-    localStorage.setItem(key, JSON.stringify(val));
-  };
-  writeIfPresent('rmtt_progress',  data.progress);
-  writeIfPresent('rmtt_settings',  data.settings);
-  writeIfPresent('rmtt_streaks',   data.streaks);
-  writeIfPresent('rmtt_stats',     data.stats);
-  writeIfPresent('rmtt_profile',   data.profile);
-  writeIfPresent('drillSessions',  data.drillSessions);
-  // Reload in-memory state from localStorage so all renders see the new data
-  try { App.loadProgress(); } catch (e) { /* defensive */ }
-  // v2.1.0: ensure Trainer Identity exists after restore. If imported backup
-  // is from v2.0.x or earlier, profile won't have trainerId — generate one
-  // now so the Trainer Card renders correctly post-import.
-  if (typeof ensureTrainerIdentity === 'function') ensureTrainerIdentity();
-  // Re-render whatever's visible
-  if (App.state.tab === 'mastery' && typeof renderMastery === 'function') renderMastery();
-  if (App.state.tab === 'progress' && typeof renderProgress === 'function') renderProgress();
-  if (App.state.tab === 'settings' && typeof renderSettings === 'function') renderSettings();
-  closeImportConfirmModal();
-  if (typeof showToast === 'function') showToast('✓ Backup restored — your data is back');
+  // v2.4.1: defensive — suppress Personal-Best toast queue while restore is
+  // in progress. Backup import currently bypasses _recordPromote() (direct
+  // localStorage writes), but if a future change routes restored values
+  // through the promote helpers the suppression flag still keeps celebration
+  // toasts from spamming on a "your old records are back" import. Restored
+  // unconditionally in finally so a throw can never leave the app in
+  // permanent-suppress state.
+  const prevSuppress = window._recordsToastSuppressed;
+  window._recordsToastSuppressed = true;
+  try {
+    const data = staged.parsed.data || staged.parsed;
+    // Write each field to localStorage (only fields present in backup)
+    const writeIfPresent = (key, val) => {
+      if (val === undefined || val === null) return;
+      localStorage.setItem(key, JSON.stringify(val));
+    };
+    writeIfPresent('rmtt_progress',  data.progress);
+    writeIfPresent('rmtt_settings',  data.settings);
+    writeIfPresent('rmtt_streaks',   data.streaks);
+    writeIfPresent('rmtt_stats',     data.stats);
+    writeIfPresent('rmtt_profile',   data.profile);
+    writeIfPresent('drillSessions',  data.drillSessions);
+    // Reload in-memory state from localStorage so all renders see the new data
+    try { App.loadProgress(); } catch (e) { /* defensive */ }
+    // v2.1.0: ensure Trainer Identity exists after restore. If imported backup
+    // is from v2.0.x or earlier, profile won't have trainerId — generate one
+    // now so the Trainer Card renders correctly post-import.
+    if (typeof ensureTrainerIdentity === 'function') ensureTrainerIdentity();
+    // Re-render whatever's visible
+    if (App.state.tab === 'mastery' && typeof renderMastery === 'function') renderMastery();
+    if (App.state.tab === 'progress' && typeof renderProgress === 'function') renderProgress();
+    if (App.state.tab === 'settings' && typeof renderSettings === 'function') renderSettings();
+    closeImportConfirmModal();
+    if (typeof showToast === 'function') showToast('✓ Backup restored — your data is back');
+  } finally {
+    // v2.4.1: drain any leaked queue silently, then restore prior state.
+    window._recordsBrokenQueue = [];
+    window._recordsToastSuppressed = prevSuppress;
+  }
 }
 
 // v1.9.8: Pre-import safety export. Snapshot current state to disk first,
