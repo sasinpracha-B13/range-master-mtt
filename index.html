@@ -5941,7 +5941,17 @@ const App = {
     streaks: {
       current: 0,
       daily: 0,
+      // v2.5.1 BUGFIX: personalBest now strictly means "highest DAILY training
+      // streak" (consecutive days trained). Pre-v2.5.1 this field was wrongly
+      // reused as the in-drill consecutive-correct-answer high — see
+      // bestAnswerStreak below for the correctly-named in-drill counter.
+      // The boot migration (migrateStreakSemantics) detects corrupted legacy
+      // values and rehomes them.
       personalBest: 0,
+      // v2.5.1: highest in-drill consecutive correct-answer streak. Persists
+      // the existing "👑 New personal best!" toast behavior with correct
+      // semantics. Additive — backup-safe.
+      bestAnswerStreak: 0,
       lastPracticeDate: null
     },
     stats: {
@@ -6058,6 +6068,10 @@ const App = {
     // v2.1.0: ensure Trainer Identity exists (sets trainerId + firstSessionDate
     // on first session; idempotent on subsequent loads).
     safe('ensureTrainerIdentity', () => ensureTrainerIdentity());
+    // v2.5.1: streak semantics bugfix migration — repairs pre-v2.5.1 profiles
+    // where personalBest was wrongly written from in-drill answer streaks.
+    // Idempotent; safe to run on every boot.
+    safe('migrateStreakSemantics', () => migrateStreakSemantics());
     // v2.4.0: backfill Personal Records ATH cache from currently-retained
     // data on first load (and idempotent on subsequent loads).
     safe('ensureRecordsBackfill', () => ensureRecordsBackfill());
@@ -7454,8 +7468,11 @@ function handleAnswer(userAction) {
 
   if (cls.result === 'correct') {
     d.streak++;
-    if (d.streak > App.state.streaks.personalBest) {
-      App.state.streaks.personalBest = d.streak;
+    // v2.5.1 BUGFIX: in-drill consecutive-correct-answer streak goes into
+    // streaks.bestAnswerStreak (not streaks.personalBest, which means DAILY
+    // training streak). Toast preserved with the same trigger semantics.
+    if (d.streak > (App.state.streaks.bestAnswerStreak || 0)) {
+      App.state.streaks.bestAnswerStreak = d.streak;
       showToast('👑 New personal best!');
     } else if (d.streak === 10) {
       showToast('🎯 10 perfect answers!');
@@ -8164,6 +8181,13 @@ function updateDailyStats(score) {
       App.state.streaks.daily = 1;
     }
     App.state.streaks.lastPracticeDate = today;
+  }
+  // v2.5.1 BUGFIX: maintain personalBest as the highest DAILY training
+  // streak ever achieved. Promote-only — never decrements. Pre-v2.5.1 this
+  // field was incorrectly written from in-drill answer streaks; the boot
+  // migration rehomed those to bestAnswerStreak.
+  if ((App.state.streaks.daily || 0) > (App.state.streaks.personalBest || 0)) {
+    App.state.streaks.personalBest = App.state.streaks.daily;
   }
   App.saveProgress();
 }
@@ -10962,6 +10986,103 @@ function ensureTrainerIdentity() {
 // All ATH writes are PROMOTE-ONLY: never decrement, never overwrite a higher
 // value with a lower one. _recordPromote() centralizes the comparison.
 
+// ============================================================
+// STREAK SEMANTICS BUGFIX MIGRATION v2.5.1
+// ============================================================
+// Pre-v2.5.1 the in-drill consecutive-correct-answer streak was being written
+// into streaks.personalBest (which the Records page + Daily Grinder Style
+// Tag interpret as DAILY training streak). This produced absurd values like
+// "Best streak: 65 days" for users with only 4 active days.
+//
+// Fix:
+//   - streaks.personalBest    → "highest DAILY training streak"
+//   - streaks.bestAnswerStreak → "highest in-drill consecutive correct answers"
+// The migration below rehomes corrupted legacy values without losing them:
+//   the old personalBest (which was actually the in-drill ATH) → bestAnswerStreak,
+//   the new personalBest is recomputed by scanning dailyHistory for the
+//   longest run of consecutive day-keys.
+
+// Compute the longest consecutive YYYY-MM-DD run in a dailyHistory keyset.
+// Returns 0 if no dates / malformed input. Used by the migration to derive
+// a true historical daily-streak ATH from existing data.
+function computeLongestDailyStreakFromHistory(dailyHistory) {
+  if (!dailyHistory || typeof dailyHistory !== 'object') return 0;
+  const keys = Object.keys(dailyHistory)
+    .filter(function (k) { return /^\d{4}-\d{2}-\d{2}$/.test(k); })
+    .sort();
+  if (keys.length === 0) return 0;
+  // Convert to UTC-midnight ms once for efficient day-diff comparison.
+  const dayMs = 86400000;
+  let longest = 1;
+  let current = 1;
+  let prevTs = new Date(keys[0] + 'T12:00:00Z').getTime();
+  for (let i = 1; i < keys.length; i++) {
+    const ts = new Date(keys[i] + 'T12:00:00Z').getTime();
+    if (!isFinite(ts)) continue;
+    const diffDays = Math.round((ts - prevTs) / dayMs);
+    if (diffDays === 1) {
+      current++;
+      if (current > longest) longest = current;
+    } else if (diffDays === 0) {
+      // duplicate key (shouldn't happen but be safe) — treat as same day
+    } else {
+      current = 1;
+    }
+    prevTs = ts;
+  }
+  return longest;
+}
+
+// Idempotent boot migration. Detects pre-v2.5.1 corrupted streaks state and
+// repairs it. Safe to run multiple times.
+//
+// Detection rule:
+//   bestAnswerStreak missing/0  AND  personalBest > 0
+//   ⇒ legacy install where personalBest holds the in-drill ATH.
+//   Move it to bestAnswerStreak, then recompute personalBest from history.
+//
+// Subsequent boots see bestAnswerStreak > 0 and skip the rehome step. The
+// "personalBest = max(personalBest, recomputedDailyATH, daily)" reconcile
+// is also safe to repeat: it only ever raises the value, never lowers.
+function migrateStreakSemantics() {
+  const s = App.state.streaks;
+  if (!s) return;
+  // Defensive: ensure both fields exist.
+  if (typeof s.bestAnswerStreak !== 'number') s.bestAnswerStreak = 0;
+  if (typeof s.personalBest !== 'number') s.personalBest = 0;
+  if (typeof s.daily !== 'number') s.daily = 0;
+
+  const dh = (App.state.stats && App.state.stats.dailyHistory) || {};
+  const recomputedDailyATH = computeLongestDailyStreakFromHistory(dh);
+  // Sanity ceiling: a legacy personalBest > recomputed daily ATH AND
+  // > current daily streak strongly suggests the value is the in-drill
+  // ATH (because daily streak can't exceed the count of consecutive day
+  // keys we have). This is the corruption signature we rehome.
+  const looksCorrupted = s.bestAnswerStreak === 0
+    && s.personalBest > 0
+    && s.personalBest > Math.max(recomputedDailyATH, s.daily);
+  let mutated = false;
+  if (looksCorrupted) {
+    // Preserve the old in-drill ATH — don't lose user data
+    s.bestAnswerStreak = s.personalBest;
+    // Reset personalBest to the true daily ATH
+    s.personalBest = Math.max(recomputedDailyATH, s.daily || 0);
+    mutated = true;
+  } else {
+    // Even on fresh installs / already-migrated profiles, reconcile
+    // personalBest with the floor of (recomputedDailyATH, daily). This is
+    // promote-only and idempotent.
+    const floor = Math.max(recomputedDailyATH, s.daily || 0);
+    if (floor > s.personalBest) {
+      s.personalBest = floor;
+      mutated = true;
+    }
+  }
+  if (mutated) {
+    try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  }
+}
+
 // Backfill from currently-retained data on first load (and idempotent on
 // subsequent loads — only writes if a key is null OR the derived value beats
 // the cached one). Existing users with rich history get the best ATH that's
@@ -12006,9 +12127,15 @@ function getPersonalRecords() {
     daysToFirstRankUp = Math.max(0, Math.floor((new Date(sortedMrh[0].date).getTime() - new Date(firstSession).getTime()) / 86400000));
   }
 
+  // v2.5.1: "Best streak" renamed to "Best daily streak" to disambiguate
+  // from the new "Best answer streak" row (in-drill consecutive correct
+  // answers). Pre-v2.5.1 the two were silently sharing personalBest, which
+  // made daily-streak readouts wrong for users with long in-drill streaks.
+  const bestAnswerStreak = (streaks.bestAnswerStreak || 0);
   const streakList = [
-    { id: 'streak_ath',          label: 'Best streak',           value: streaks.personalBest || null,    valueSuffix: streaks.personalBest ? ' day' + (streaks.personalBest === 1 ? '' : 's') : '', meta: streaks.personalBest ? '🔥 Personal best' : 'Train daily to start a streak.' },
-    { id: 'current_streak',      label: 'Current streak',        value: streaks.daily || null,            valueSuffix: streaks.daily ? ' day' + (streaks.daily === 1 ? '' : 's') : '', meta: streaks.daily ? '🔥 Active' : 'Train today to start a new streak.' },
+    { id: 'streak_ath',          label: 'Best daily streak',     value: streaks.personalBest || null,    valueSuffix: streaks.personalBest ? ' day' + (streaks.personalBest === 1 ? '' : 's') : '', meta: streaks.personalBest ? '🔥 Personal best · consecutive days trained' : 'Train daily to start a streak.' },
+    { id: 'current_streak',      label: 'Current daily streak',  value: streaks.daily || null,            valueSuffix: streaks.daily ? ' day' + (streaks.daily === 1 ? '' : 's') : '', meta: streaks.daily ? '🔥 Active' : 'Train today to start a new streak.' },
+    { id: 'best_answer_streak',  label: 'Best answer streak',    value: bestAnswerStreak || null,         valueSuffix: bestAnswerStreak ? ' in a row' : '', meta: bestAnswerStreak ? 'Most consecutive correct answers in one drill' : 'Build a streak of correct answers in a drill to set this record.' },
     { id: 'days_to_first_cert',  label: 'Days · first cert',     value: daysToFirstCert,                 valueSuffix: daysToFirstCert != null ? ' day' + (daysToFirstCert === 1 ? '' : 's') : '', meta: daysToFirstCert != null ? 'From first drill' : 'Pass a Boss/Overall to record this.' },
     { id: 'days_to_first_rankup',label: 'Days · first rank-up',  value: daysToFirstRankUp,               valueSuffix: daysToFirstRankUp != null ? ' day' + (daysToFirstRankUp === 1 ? '' : 's') : '', meta: daysToFirstRankUp != null ? 'From first drill' : 'Earn a module rank to record this.' }
   ];
@@ -15665,7 +15792,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.5.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.5.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -15776,7 +15903,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.5.0',
+    appVersion: '2.5.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -16244,7 +16371,7 @@ function confirmReset() {
   // disclaimer; resetting progress isn't reason to re-prompt.)
   App.state.progress = {};
   App.state.settings = { darkMode: true, dailyGoal: 30, notifications: false, defaultMode: 'quick', positionGrouping: 'grouped' };
-  App.state.streaks = { current: 0, daily: 0, personalBest: 0, lastPracticeDate: null };
+  App.state.streaks = { current: 0, daily: 0, personalBest: 0, bestAnswerStreak: 0, lastPracticeDate: null };
   App.state.stats = { totalHands: 0, totalTime: 0, dailyHistory: {} };
   // v1.9.7: also reset profile to defaults (mirrors App.state.profile init shape)
   // v2.1.0: trainerId / callsign / firstSessionDate wiped here — reset =
