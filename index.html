@@ -4334,6 +4334,219 @@
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
     }
+    /* ============================================================ */
+    /* PROFILE PLACEMENT & IDENTITY IA v2.2.1                       */
+    /* ============================================================ */
+    /* Home Profile Chip — sits in hero-utility-row top-right */
+    .home-profile-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px 4px 12px;
+      background: rgba(212,175,55,0.10);
+      color: var(--text);
+      border: 1px solid rgba(212,175,55,0.32);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+      font-family: inherit;
+      margin-left: auto;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(212,175,55,0.10);
+    }
+    .home-profile-chip:hover {
+      background: rgba(212,175,55,0.18);
+      border-color: rgba(212,175,55,0.55);
+    }
+    .home-profile-chip:active { transform: scale(0.97); }
+    .home-profile-chip .hpc-name { color: var(--text); }
+    .home-profile-chip .hpc-divider { color: var(--text-secondary); opacity: 0.7; }
+    .home-profile-chip .hpc-rank { color: #d4af37; }
+    .home-profile-chip .hpc-arrow {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-left: 1px;
+      line-height: 1;
+    }
+    /* Profile Overlay — full-screen mobile, slide-up + fade in */
+    .profile-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .profile-overlay.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      display: flex !important;
+    }
+    body.profile-overlay-open { overflow: hidden; }
+    .profile-overlay-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .profile-overlay-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      flex: 1;
+      text-align: center;
+    }
+    .profile-overlay-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .profile-overlay-close:hover {
+      background: rgba(248,113,113,0.10);
+      color: var(--danger);
+      border-color: rgba(248,113,113,0.30);
+    }
+    .profile-overlay-spacer {
+      width: 32px;
+      flex-shrink: 0;
+    }
+    .profile-overlay-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px calc(90px + env(safe-area-inset-bottom, 0px)) 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    /* Identity Settings card — compact replacement for the v2.1.0+v2.2.0
+       full Trainer Dossier + Honor Roll dump in Settings. */
+    .identity-settings-card .card-title { color: #d4af37; }
+    .identity-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .identity-row:last-of-type { border-bottom: none; }
+    .identity-row-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      min-width: 92px;
+    }
+    .identity-row-value {
+      color: var(--text);
+      font-weight: 600;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .identity-row-value.mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #d4af37;
+      letter-spacing: 0.4px;
+    }
+    .identity-row-edit {
+      background: rgba(212,175,55,0.08);
+      color: #d4af37;
+      border: 1px solid rgba(212,175,55,0.30);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 0.4px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .identity-row-edit:hover {
+      background: rgba(212,175,55,0.16);
+      border-color: rgba(212,175,55,0.50);
+    }
+    .identity-shortcut-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px 12px;
+      background: rgba(212,175,55,0.10);
+      color: #d4af37;
+      border: 1px solid rgba(212,175,55,0.32);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .identity-shortcut-btn:hover {
+      background: rgba(212,175,55,0.18);
+      border-color: rgba(212,175,55,0.55);
+    }
+    .identity-shortcut-btn.alt {
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .identity-shortcut-btn.alt:hover {
+      background: rgba(212,175,55,0.08);
+      color: #d4af37;
+      border-color: rgba(212,175,55,0.32);
+    }
+    /* Honor Roll show-all button (preview → full inline expand) */
+    .honor-roll-show-all-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.02);
+      color: var(--text-secondary);
+      border: 1px dashed rgba(255,255,255,0.14);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .honor-roll-show-all-btn:hover {
+      color: #d4af37;
+      border-color: rgba(212,175,55,0.45);
+      background: rgba(212,175,55,0.04);
+    }
     /* SOURCE BREAKDOWN — v1.9.10 (Progress analytics) */
     .src-row {
       display: grid;
@@ -4564,6 +4777,18 @@
 
 <!-- HIDDEN FILE INPUT for backup import -->
 <input type="file" id="backupImportFileInput" accept="application/json,.json" style="display:none" onchange="_onBackupImportFileChange(event)">
+
+<!-- TRAINER PROFILE OVERLAY (v2.2.1 — IA correction) -->
+<div class="profile-overlay hidden" id="profileOverlay" role="dialog" aria-labelledby="profileOverlayTitle">
+  <div class="profile-overlay-header">
+    <button class="profile-overlay-close" onclick="closeTrainerProfile()" aria-label="Close Trainer Profile">✕</button>
+    <div class="profile-overlay-title" id="profileOverlayTitle">Trainer Profile</div>
+    <div class="profile-overlay-spacer" aria-hidden="true"></div>
+  </div>
+  <div class="profile-overlay-body" id="profileOverlayBody">
+    <!-- filled by openTrainerProfile() -->
+  </div>
+</div>
 
 <!-- CERT SEAL VIEWER MODAL (v2.2.0 — Honor Roll re-celebrate moment) -->
 <div class="modal-overlay hidden" id="certSealViewerModal">
@@ -9827,7 +10052,20 @@ function saveCallsign() {
   try { App.saveProgress(); } catch (e) { /* non-fatal */ }
   closeCallsignEditor();
   if (typeof showToast === 'function') showToast('✓ Callsign updated · ' + clean);
+  // v2.2.1: callsign appears in 3 surfaces — refresh all so they stay in sync
+  //   Settings → Identity Settings card row
+  //   Mastery → Home Profile Chip (in hero-utility-row)
+  //   Profile overlay → Trainer Dossier callsign + Honor Roll subtitle
   if (typeof renderSettings === 'function') renderSettings();
+  if (typeof renderMastery === 'function') renderMastery();
+  // If Profile overlay is currently open, refresh its body too
+  const overlay = document.getElementById('profileOverlay');
+  if (overlay && !overlay.classList.contains('hidden')) {
+    const body = document.getElementById('profileOverlayBody');
+    if (body && typeof renderTrainerProfileBody === 'function') {
+      body.innerHTML = renderTrainerProfileBody();
+    }
+  }
 }
 
 // Tiny HTML escape for callsign render
@@ -10075,7 +10313,18 @@ function renderHonorRollRow(cert, idx) {
 }
 
 // Render the Honor Roll card. Empty state when no certs yet.
-function renderHonorRollCard() {
+// v2.2.1: opts.mode = 'full' (default) | 'preview' (top N + 'Show all' button)
+//         opts.limit = preview row count (default 3)
+//         opts.subline = override subtitle copy (Profile context can use
+//                        archive-flavor copy instead of generic "tap to relive")
+//         opts.emptyCopy = override empty-state copy
+function renderHonorRollCard(opts) {
+  opts = opts || {};
+  const mode = opts.mode || 'full';
+  const limit = mode === 'preview' ? (opts.limit || 3) : Infinity;
+  const subline = opts.subline || 'Tap any certification to re-live that moment.';
+  const emptyCopy = opts.emptyCopy || 'No certifications yet. Clear your first <strong>Module Boss Test</strong> or <strong>Overall Exam</strong> to start your honor roll. Each cert is preserved permanently here.';
+
   const certs = getHonorRoll();
   // Cache for click handler so it can resolve idx → cert without recomputing
   window._honorRollCache = certs;
@@ -10083,18 +10332,22 @@ function renderHonorRollCard() {
     return '' +
       '<div class="card">' +
         '<div class="card-title">✦ Honor Roll</div>' +
-        '<div class="honor-roll-empty">' +
-          'No certifications yet. Clear your first <strong>Module Boss Test</strong> or <strong>Overall Exam</strong> to start your honor roll. Each cert is preserved permanently here.' +
-        '</div>' +
+        '<div class="honor-roll-empty">' + emptyCopy + '</div>' +
       '</div>';
   }
+  const visible = certs.slice(0, limit);
+  const hasMore = mode === 'preview' && certs.length > visible.length;
+  const showAllBtn = hasMore
+    ? '<button class="honor-roll-show-all-btn" onclick="showAllHonorRoll()">Show all ' + certs.length + ' certifications →</button>'
+    : '';
   return '' +
     '<div class="card honor-roll-card">' +
       '<div class="card-title">✦ Honor Roll <span class="hr-count">· ' + certs.length + '</span></div>' +
-      '<div class="honor-roll-sub">Tap any certification to re-live that moment.</div>' +
+      '<div class="honor-roll-sub">' + subline + '</div>' +
       '<div class="honor-roll-list">' +
-        certs.map(function (c, i) { return renderHonorRollRow(c, i); }).join('') +
+        visible.map(function (c, i) { return renderHonorRollRow(c, i); }).join('') +
       '</div>' +
+      showAllBtn +
     '</div>';
 }
 
@@ -10150,6 +10403,133 @@ function openCertSealViewer(idx) {
 function closeCertSealViewer() {
   const modal = document.getElementById('certSealViewerModal');
   if (modal) modal.classList.add('hidden');
+}
+
+// ============================================================
+// PROFILE PLACEMENT & IDENTITY IA v2.2.1
+// ============================================================
+// IA correction: Trainer Dossier + Honor Roll are identity artifacts,
+// not configuration. Move them out of Settings into a dedicated
+// Profile overlay. Settings becomes config-only with a compact
+// Identity card containing shortcuts back into the overlay.
+//
+// Mental model:
+//   Home     = identity entry point (chip) + today's training action
+//   Profile  = full identity, achievements, history (overlay)
+//   Settings = app configuration only
+
+// Module-level state for Honor Roll preview/expanded toggle inside Profile
+window._profileHonorRollExpanded = false;
+
+// Render the compact identity chip placed inside the Hero card's
+// hero-utility-row (top-right). Avoids pushing Today's Plan down.
+// Trainer ID is intentionally NOT the primary label per IA spec.
+function renderHomeProfileChip() {
+  const profile = App.state.profile || {};
+  const callsign = profile.callsign || 'Trainer';
+  const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  // Secondary label: rank name when ranked, "Lv N" when still Wanderer
+  const secondary = overallRank === 'Unranked'
+    ? 'Lv ' + (profile.xpLevel || 1)
+    : (typeof rankDisplay === 'function' ? rankDisplay(overallRank) : overallRank);
+  return '' +
+    '<button class="home-profile-chip" onclick="openTrainerProfile()" aria-label="Open Trainer Profile">' +
+      '<span class="hpc-name">' + _trainerEscapeHtml(callsign) + '</span>' +
+      '<span class="hpc-divider">·</span>' +
+      '<span class="hpc-rank">' + secondary + '</span>' +
+      '<span class="hpc-arrow">›</span>' +
+    '</button>';
+}
+
+// Build the Profile overlay body (Trainer Dossier + Honor Roll preview).
+// Re-runs on Show All toggle to expand Honor Roll inline.
+function renderTrainerProfileBody() {
+  const expanded = !!window._profileHonorRollExpanded;
+  return '' +
+    renderTrainerCard() +
+    renderHonorRollCard({
+      mode: expanded ? 'full' : 'preview',
+      limit: 3,
+      subline: expanded
+        ? 'All your certified milestones, preserved forever. Tap any record to re-live it.'
+        : 'Your latest certified milestones, preserved forever. Tap any record to re-live it.'
+    });
+}
+
+// Open Profile overlay. Optionally scroll to a section after open.
+function openTrainerProfile(scrollTo) {
+  const overlay = document.getElementById('profileOverlay');
+  if (!overlay) return;
+  // Reset Honor Roll to preview mode every time profile opens
+  window._profileHonorRollExpanded = false;
+  document.getElementById('profileOverlayBody').innerHTML = renderTrainerProfileBody();
+  overlay.classList.remove('hidden');
+  // Lock background scroll on body
+  document.body.classList.add('profile-overlay-open');
+  // Optional: scroll to honor-roll section
+  if (scrollTo === 'honor-roll') {
+    setTimeout(function () {
+      const target = overlay.querySelector('.honor-roll-card');
+      if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 280);
+  } else {
+    // Reset scroll to top for first-open
+    const body = document.getElementById('profileOverlayBody');
+    if (body) body.scrollTop = 0;
+  }
+}
+
+function closeTrainerProfile() {
+  const overlay = document.getElementById('profileOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  document.body.classList.remove('profile-overlay-open');
+  // Reset Honor Roll expand state when closing — fresh open = fresh preview
+  window._profileHonorRollExpanded = false;
+}
+
+// Inline expand: Honor Roll preview → full list, re-render in place.
+function showAllHonorRoll() {
+  window._profileHonorRollExpanded = true;
+  const body = document.getElementById('profileOverlayBody');
+  if (!body) return;
+  body.innerHTML = renderTrainerProfileBody();
+  // Scroll Honor Roll into view so user sees the expansion
+  setTimeout(function () {
+    const target = body.querySelector('.honor-roll-card');
+    if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 30);
+}
+
+// Compact Settings replacement card. Replaces v2.1.0 + v2.2.0 dossier+honor
+// roll dump in Settings with a configuration-flavored row stack.
+function renderIdentitySettingsCard() {
+  const profile = App.state.profile || {};
+  const certs = (typeof getHonorRoll === 'function') ? getHonorRoll() : [];
+  const certCount = certs.length;
+  const memberSince = profile.firstSessionDate ? new Date(profile.firstSessionDate).toLocaleDateString() : '—';
+  const honorRollBtn = certCount > 0
+    ? '<button class="identity-shortcut-btn alt" onclick="openTrainerProfile(\'honor-roll\')">🏆 Honor Roll · ' + certCount + ' certification' + (certCount === 1 ? '' : 's') + ' →</button>'
+    : '';
+  return '' +
+    '<div class="card identity-settings-card">' +
+      '<div class="card-title">✦ Identity</div>' +
+      '<div class="identity-row">' +
+        '<span class="identity-row-label">Callsign</span>' +
+        '<span class="identity-row-value">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</span>' +
+        '<button class="identity-row-edit" onclick="openCallsignEditor()">Edit</button>' +
+      '</div>' +
+      '<div class="identity-row">' +
+        '<span class="identity-row-label">Trainer ID</span>' +
+        '<span class="identity-row-value mono">' + (profile.trainerId || '—') + '</span>' +
+      '</div>' +
+      '<div class="identity-row">' +
+        '<span class="identity-row-label">Member since</span>' +
+        '<span class="identity-row-value mono">' + memberSince + '</span>' +
+      '</div>' +
+      '<button class="identity-shortcut-btn" onclick="openTrainerProfile()">▶ View Trainer Profile</button>' +
+      honorRollBtn +
+    '</div>';
 }
 
 function rankBadge(internalRank, opts) {
@@ -11402,6 +11782,7 @@ function _renderMasteryImpl() {
       <div class="hero-utility-row">
         <div class="hero-banner-eyebrow">Rank Profile${overallRank !== 'Unranked' ? ' · ' + renderCertSealMini(14) + ' CERTIFIED' : ''}</div>
         ${promotedBadge}
+        ${renderHomeProfileChip()}
       </div>
       <div class="mastery-hero-row">
         <div class="rank-emblem hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">${renderRankEmblemSVG(overallRank, 'large')}</div>
@@ -12788,8 +13169,7 @@ function renderLogoSystemPreview() {
 function renderSettings() {
   const s = App.state.settings;
   document.getElementById('settingsContent').innerHTML = `
-    ${renderTrainerCard()}
-    ${renderHonorRollCard()}
+    ${renderIdentitySettingsCard()}
 
     <div class="card">
       <div class="settings-row">
@@ -12924,7 +13304,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13035,7 +13415,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.0',
+    appVersion: '2.2.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
