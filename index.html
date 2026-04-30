@@ -4751,6 +4751,204 @@
       letter-spacing: 0.2px;
     }
     /* ============================================================ */
+    /* PERSONAL RECORDS v2.4.0                                      */
+    /* Compact 2x2 preview card in Profile + dedicated full-screen   */
+    /* overlay opened via "View all".                                */
+    /* ============================================================ */
+    .records-preview-card .card-title { color: #d4af37; }
+    .records-preview-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .records-view-all-btn {
+      background: none;
+      border: 1px dashed rgba(212,175,55,0.40);
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .records-view-all-btn:hover {
+      border-color: rgba(212,175,55,0.85);
+      color: #d4af37;
+      background: rgba(212,175,55,0.06);
+    }
+    .records-view-all-btn:focus-visible {
+      outline: 2px solid rgba(212,175,55,0.55);
+      outline-offset: 2px;
+    }
+    .records-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .records-grid-cell {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      min-height: 78px;
+    }
+    .records-grid-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .records-grid-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      margin-top: 4px;
+      line-height: 1.1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .records-grid-meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.2px;
+      margin-top: 4px;
+      line-height: 1.35;
+      opacity: 0.75;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .record-value-empty {
+      color: var(--text-secondary);
+      opacity: 0.45;
+      font-weight: 700;
+    }
+    /* Records overlay — reuses .profile-overlay structure for layout
+       parity (slide-in, scrollable body, body-scroll lock). */
+    .records-card-frame {
+      position: relative;
+      padding: 18px 16px 18px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(212,175,55,0.08) 0%, transparent 60%),
+        linear-gradient(180deg, #161d2a 0%, var(--surface) 100%);
+      border: 1px solid rgba(212,175,55,0.22);
+      border-radius: 14px;
+      box-shadow:
+        0 0 32px rgba(212,175,55,0.05),
+        inset 0 0 18px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .records-card-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(212,175,55,0.012) 0px,
+        rgba(212,175,55,0.012) 2px,
+        transparent 2px,
+        transparent 8px
+      );
+      opacity: 0.6;
+    }
+    .records-overlay-close { z-index: 3; }
+    .records-overlay-eyebrow {
+      position: relative;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2.6px;
+      color: #d4af37;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      text-align: center;
+      opacity: 0.85;
+    }
+    .records-overlay-sub {
+      position: relative;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      letter-spacing: 0.2px;
+    }
+    .records-section {
+      position: relative;
+      margin-top: 18px;
+    }
+    .records-section:first-of-type { margin-top: 8px; }
+    .records-section-title {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding-left: 2px;
+      opacity: 0.7;
+      border-bottom: 1px dashed rgba(212,175,55,0.16);
+      padding-bottom: 6px;
+    }
+    .records-section-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .records-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      column-gap: 10px;
+      row-gap: 2px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .records-row.empty { opacity: 0.78; }
+    .records-row-label {
+      grid-column: 1;
+      grid-row: 1;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.1px;
+    }
+    .records-row-value {
+      grid-column: 2;
+      grid-row: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: #d4af37;
+      letter-spacing: 0.3px;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .records-row.empty .records-row-value { color: var(--text-secondary); }
+    .records-row-meta {
+      grid-column: 1 / span 2;
+      grid-row: 2;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      letter-spacing: 0.1px;
+      opacity: 0.75;
+      line-height: 1.35;
+    }
+    /* ============================================================ */
     /* HOME HEADER PROFILE/AVATAR BUTTON v2.2.3                     */
     /* (replaces the v2.2.2 in-hero chip — moved out to page-header */
     /*  top-right where users expect a profile/avatar control)       */
@@ -5366,6 +5564,15 @@
   </div>
 </div>
 
+<!-- v2.4.0: PERSONAL RECORDS OVERLAY (full-screen ATH page) -->
+<div class="profile-overlay hidden" id="recordsOverlay" role="dialog" aria-label="Personal Records">
+  <!-- Reuses .profile-overlay layout (full-screen mobile, scroll body, etc.).
+       Close button lives inside the records card frame at top-right. -->
+  <div class="profile-overlay-body" id="recordsOverlayBody">
+    <!-- filled by openRecordsOverlay() -->
+  </div>
+</div>
+
 <!-- CERT SEAL VIEWER MODAL (v2.2.0 — Honor Roll re-celebrate moment) -->
 <div class="modal-overlay hidden" id="certSealViewerModal">
   <div class="modal-box cert-seal-viewer-box">
@@ -5720,7 +5927,19 @@ const App = {
       avatarId: null,
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
-      records: {},               // v2.4.0 — Personal Records ATH
+      // v2.4.0: Personal Records ATH cache. Three keys, populated lazily
+      // by promote-on-write hooks (in showChallengeResult, overallExamHistory
+      // push, and drillSessions push) and by ensureRecordsBackfill() on
+      // first load. Each entry: { value, date, ...context }.
+      // Most "records" are derived live from challengeResults / dailyHistory
+      // / overallExamHistory at render time; this cache only holds the three
+      // values that are NOT safely derivable: masteryScore (current-only),
+      // longestSession + bestSessionAccuracy (drillSessions rotates at 500).
+      records: {
+        masteryScoreATH:        null,  // { value, date, rank }
+        longestSessionATH:      null,  // { handCount, date, source, mode, accuracy }
+        bestSessionAccuracyATH: null   // { accuracy, hands, date, source }
+      },
       styleTags: [],             // v2.5.0 — Auto-detected style tags
       focusArc: null,            // v2.6.0 — Current Training Arc
       totalXP: 0,
@@ -5762,6 +5981,9 @@ const App = {
     // v2.1.0: ensure Trainer Identity exists (sets trainerId + firstSessionDate
     // on first session; idempotent on subsequent loads).
     safe('ensureTrainerIdentity', () => ensureTrainerIdentity());
+    // v2.4.0: backfill Personal Records ATH cache from currently-retained
+    // data on first load (and idempotent on subsequent loads).
+    safe('ensureRecordsBackfill', () => ensureRecordsBackfill());
     // renderSettings/Progress/Browse are STANDALONE functions, not methods on App.
     safe('renderSettings',  () => renderSettings());
     safe('renderProgress',  () => renderProgress());
@@ -7875,9 +8097,15 @@ function logDrillSession(entry) {
     let sessions = [];
     const raw = localStorage.getItem(key);
     if (raw) { try { sessions = JSON.parse(raw) || []; } catch (e) { sessions = []; } }
-    sessions.push(Object.assign({ timestamp: Date.now(), date: new Date().toISOString().split('T')[0] }, entry));
+    const sessionRecord = Object.assign({ timestamp: Date.now(), date: new Date().toISOString().split('T')[0] }, entry);
+    sessions.push(sessionRecord);
     if (sessions.length > 500) sessions = sessions.slice(-500);
     localStorage.setItem(key, JSON.stringify(sessions));
+    // v2.4.0: promote longestSessionATH + bestSessionAccuracyATH (the latter
+    // requires >=30 hands per spec, enforced inside the helper). Wrapped so a
+    // promote failure can never break the session log itself.
+    try { if (typeof _recordPromoteSession === 'function') _recordPromoteSession(sessionRecord, true); }
+    catch (e) { /* non-fatal */ }
   } catch (e) {
     console.warn('logDrillSession failed:', e);
   }
@@ -10629,6 +10857,153 @@ function ensureTrainerIdentity() {
 }
 
 // ============================================================
+// PERSONAL RECORDS / ATH CACHE v2.4.0
+// ============================================================
+// Three keys live in profile.records (reserved-but-empty slot since v2.1.0):
+//   masteryScoreATH        - { value, date, rank }
+//   longestSessionATH      - { handCount, date, source, mode, accuracy }
+//   bestSessionAccuracyATH - { accuracy, hands, date, source }
+//
+// Why these three (and only these three): every other "record" is derivable
+// directly from challengeResults / overallExamHistory / dailyHistory / streaks
+// at render time. These three are the only values that cannot be safely
+// reconstructed:
+//   - masteryScore is current-only (no historical series); cache so a future
+//     demotion path cannot lower the ATH.
+//   - drillSessions[] rotates at 500 entries (line ~7879), so longest-session
+//     and best-session-accuracy must be cached or they vanish.
+//
+// All ATH writes are PROMOTE-ONLY: never decrement, never overwrite a higher
+// value with a lower one. _recordPromote() centralizes the comparison.
+
+// Backfill from currently-retained data on first load (and idempotent on
+// subsequent loads — only writes if a key is null OR the derived value beats
+// the cached one). Existing users with rich history get the best ATH that's
+// still derivable; brand-new users get nulls (rendered as encouraging dashes).
+function ensureRecordsBackfill() {
+  const profile = App.state.profile;
+  if (!profile) return;
+  if (!profile.records || typeof profile.records !== 'object') {
+    profile.records = { masteryScoreATH: null, longestSessionATH: null, bestSessionAccuracyATH: null };
+  }
+  let mutated = false;
+
+  // 1) masteryScoreATH — seed with current masteryScore (the floor; we have
+  //    no historical series, so the present value is the best ATH we know).
+  const curMs = (profile.certifications && profile.certifications.masteryScore) || 0;
+  const curRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  if (curMs > 0 && (!profile.records.masteryScoreATH || curMs > (profile.records.masteryScoreATH.value || 0))) {
+    profile.records.masteryScoreATH = {
+      value: curMs,
+      date: (profile.certifications && profile.certifications.lastCertificationDate) || new Date().toISOString(),
+      rank: curRank
+    };
+    mutated = true;
+  }
+
+  // 2) + 3) longestSession + bestSessionAccuracy — scan currently-retained
+  //         drillSessions (oldest entries may have been pruned, but we capture
+  //         what's left so going forward the cache is accurate).
+  let sessions = [];
+  try { sessions = JSON.parse(localStorage.getItem('drillSessions') || '[]'); } catch (e) {}
+  if (Array.isArray(sessions) && sessions.length > 0) {
+    sessions.forEach(function (s) {
+      _recordPromoteSession(s, false);
+    });
+    // _recordPromoteSession marks _recordsMutated when it writes
+    if (window._recordsMutated) {
+      mutated = true;
+      window._recordsMutated = false;
+    }
+  }
+
+  if (mutated) {
+    try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  }
+}
+
+// Centralized "promote if higher" helper. Returns true if the cache was
+// updated. Used by all three ATH write sites + backfill.
+// `key` is the records sub-key; `nextValue` is the metric being compared;
+// `payloadFn` builds the new entry object (only called if promotion happens).
+function _recordPromote(key, nextValue, payloadFn) {
+  if (typeof nextValue !== 'number' || !isFinite(nextValue)) return false;
+  const profile = App.state.profile;
+  if (!profile) return false;
+  if (!profile.records || typeof profile.records !== 'object') {
+    profile.records = { masteryScoreATH: null, longestSessionATH: null, bestSessionAccuracyATH: null };
+  }
+  const cur = profile.records[key];
+  // For the metric, the comparison field is consistent per key:
+  //   masteryScoreATH        - .value
+  //   longestSessionATH      - .handCount
+  //   bestSessionAccuracyATH - .accuracy
+  const cmpField = (key === 'masteryScoreATH') ? 'value'
+    : (key === 'longestSessionATH') ? 'handCount'
+    : 'accuracy';
+  const curValue = cur ? (cur[cmpField] || 0) : 0;
+  if (nextValue <= curValue) return false;
+  profile.records[key] = payloadFn();
+  return true;
+}
+
+// Drill-session promote helper — used by both the live drillSessions.push hook
+// AND by ensureRecordsBackfill (which iterates retained sessions). The flag
+// `persist` controls whether to call App.saveProgress here (live hook = false
+// because the caller saves; backfill = false because backfill saves once at
+// the end). Sets window._recordsMutated when a write happened.
+function _recordPromoteSession(session, persist) {
+  if (!session || typeof session !== 'object') return;
+  const hands = Number(session.handCount) || 0;
+  // Longest session — accept any hand count (1+).
+  if (hands > 0) {
+    if (_recordPromote('longestSessionATH', hands, function () {
+      return {
+        handCount: hands,
+        date: session.timestamp ? new Date(session.timestamp).toISOString() : (session.date ? new Date(session.date + 'T12:00:00').toISOString() : new Date().toISOString()),
+        source: session.source || 'practice',
+        mode: session.mode || null,
+        accuracy: typeof session.accuracy === 'number' ? session.accuracy : null
+      };
+    })) {
+      window._recordsMutated = true;
+    }
+  }
+  // Best session accuracy — REQUIRE >=30 hands (per spec: avoid 1-hand 100%).
+  const acc = (typeof session.accuracy === 'number') ? session.accuracy : null;
+  if (acc !== null && hands >= 30) {
+    if (_recordPromote('bestSessionAccuracyATH', acc, function () {
+      return {
+        accuracy: acc,
+        hands: hands,
+        date: session.timestamp ? new Date(session.timestamp).toISOString() : (session.date ? new Date(session.date + 'T12:00:00').toISOString() : new Date().toISOString()),
+        source: session.source || 'practice'
+      };
+    })) {
+      window._recordsMutated = true;
+    }
+  }
+  if (persist && window._recordsMutated) {
+    try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+    window._recordsMutated = false;
+  }
+}
+
+// Mastery-score promote helper — called from showChallengeResult and from
+// the overallExamHistory.push block. Reads current masteryScore + rank fresh
+// each call (after the upstream recompute) so the cache reflects the new
+// value. Returns true if cache was updated.
+function _recordPromoteMastery() {
+  const profile = App.state.profile;
+  if (!profile) return false;
+  const curMs = (profile.certifications && profile.certifications.masteryScore) || 0;
+  const curRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  return _recordPromote('masteryScoreATH', curMs, function () {
+    return { value: curMs, date: new Date().toISOString(), rank: curRank };
+  });
+}
+
+// ============================================================
 // AVATAR PRESETS v2.2.3
 // ============================================================
 // 12 single-color SVG glyphs. Drawn inline (no asset loading), tinted
@@ -11316,6 +11691,173 @@ function getJourneyEvents() {
   return events;
 }
 
+// ============================================================
+// PERSONAL RECORDS AGGREGATOR v2.4.0
+// ============================================================
+// Pure read function. Combines:
+//   - Cached ATHs from profile.records (only 3 keys: mastery, longestSession,
+//     bestSessionAccuracy)
+//   - Live derivations from challengeResults / overallExamHistory /
+//     dailyHistory / streaks / stats / profile
+//
+// Returns 5 grouped categories. Each record entry has the same shape so the
+// renderer can stay simple:
+//   { id, label, value, valueSuffix, meta, rank?, source? }
+// `value` is null when there is no data yet (renders as a clean dash + an
+// encouraging empty hint).
+function getPersonalRecords() {
+  const profile = App.state.profile || {};
+  const stats   = App.state.stats   || {};
+  const streaks = App.state.streaks || {};
+  const dh      = stats.dailyHistory || {};
+  const cr      = profile.challengeResults || [];
+  const oeh     = profile.overallExamHistory || [];
+  const records = profile.records || {};
+
+  // Helpers
+  function rankLabel(r) { return (typeof rankDisplay === 'function') ? rankDisplay(r) : (r || '?'); }
+  function modLabel(m)  { return (typeof moduleCleanLabel === 'function') ? moduleCleanLabel(m) : (m || '?'); }
+  function dateStr(iso) {
+    if (!iso) return null;
+    try { return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
+    catch (e) { return null; }
+  }
+  function recordOf(date, extra) {
+    const m = (typeof dateStr === 'function') ? dateStr(date) : null;
+    return Object.assign({ meta: m || '—' }, extra || {});
+  }
+
+  // -------- VOLUME --------
+  // Most hands in a single day
+  let mostHandsDay = null;
+  let mostHandsDate = null;
+  Object.keys(dh).forEach(function (k) {
+    const h = (dh[k] && dh[k].hands) || 0;
+    if (h > (mostHandsDay || 0)) { mostHandsDay = h; mostHandsDate = k; }
+  });
+  // Career hands + active days
+  const careerHands = stats.totalHands || 0;
+  const activeDays  = Object.keys(dh).length;
+  // Longest session — cached
+  const ls = records.longestSessionATH;
+
+  const volume = [
+    { id: 'career_hands',     label: 'Career hands',      value: careerHands || null,            valueSuffix: '', meta: careerHands ? 'Across all sessions' : 'Train more sessions to set this record.' },
+    { id: 'most_hands_day',   label: 'Most hands · 1 day', value: mostHandsDay,                   valueSuffix: '', meta: mostHandsDate ? new Date(mostHandsDate + 'T12:00:00').toLocaleDateString() : 'Train more in a single day to set this record.' },
+    { id: 'active_days',      label: 'Active days',       value: activeDays || null,             valueSuffix: '', meta: activeDays ? 'Total days trained' : 'Show up tomorrow to start counting.' },
+    { id: 'longest_session',  label: 'Longest session',   value: ls ? ls.handCount : null,       valueSuffix: ' hands', meta: ls ? ((ls.source ? ls.source + ' · ' : '') + (dateStr(ls.date) || '')) : 'Train a longer single session to set this record.' }
+  ];
+
+  // -------- BOSS TESTS --------
+  // Best Boss overall % (any module/rank)
+  let bestBoss = null;
+  cr.forEach(function (c) {
+    const v = (c.scores && typeof c.scores.overall === 'number') ? c.scores.overall : null;
+    if (v == null) return;
+    if (!bestBoss || v > bestBoss.value) bestBoss = { value: v, date: c.date, module: c.module, rank: c.targetRank, passed: c.passed };
+  });
+  // Best pure %
+  let bestPure = null;
+  cr.forEach(function (c) {
+    const v = (c.scores && typeof c.scores.pure === 'number') ? c.scores.pure : null;
+    if (v == null) return;
+    if (!bestPure || v > bestPure.value) bestPure = { value: v, date: c.date, module: c.module, rank: c.targetRank };
+  });
+  // Best per module (top 1 per module by overall %)
+  const perModule = {};
+  cr.forEach(function (c) {
+    const v = (c.scores && typeof c.scores.overall === 'number') ? c.scores.overall : null;
+    if (v == null) return;
+    const cur = perModule[c.module];
+    if (!cur || v > cur.value) perModule[c.module] = { value: v, date: c.date, rank: c.targetRank };
+  });
+  // Total certs
+  const totalCerts = (typeof getHonorRoll === 'function') ? getHonorRoll().length : 0;
+
+  const bossList = [
+    { id: 'best_boss_overall', label: 'Best Boss · overall', value: bestBoss ? bestBoss.value : null, valueSuffix: '%', meta: bestBoss ? (modLabel(bestBoss.module) + ' · ' + rankLabel(bestBoss.rank) + ' · ' + (dateStr(bestBoss.date) || '')) : 'Run a Boss Test to set this record.' },
+    { id: 'best_boss_pure',    label: 'Best Boss · pure',    value: bestPure ? bestPure.value : null, valueSuffix: '%', meta: bestPure ? (modLabel(bestPure.module) + ' · ' + rankLabel(bestPure.rank) + ' · ' + (dateStr(bestPure.date) || '')) : 'Run a Boss Test to set this record.' },
+    { id: 'best_session_acc',  label: 'Best session accuracy', value: records.bestSessionAccuracyATH ? records.bestSessionAccuracyATH.accuracy : null, valueSuffix: '%', meta: records.bestSessionAccuracyATH ? (records.bestSessionAccuracyATH.hands + ' hands · ' + (dateStr(records.bestSessionAccuracyATH.date) || '')) : 'Train a 30+ hand session to set this record.' },
+    { id: 'total_certs',       label: 'Certifications earned', value: totalCerts || null, valueSuffix: '', meta: totalCerts ? 'Boss + Overall passes' : 'Pass your first Boss Test or Overall Exam to set this record.' }
+  ];
+  // Per-module rows (only emit modules with data)
+  const perModuleRows = Object.keys(perModule).map(function (m) {
+    const v = perModule[m];
+    return {
+      id: 'best_module_' + m,
+      label: 'Best ' + modLabel(m),
+      value: v.value,
+      valueSuffix: '%',
+      meta: rankLabel(v.rank) + ' · ' + (dateStr(v.date) || '')
+    };
+  });
+
+  // -------- OVERALL EXAMS --------
+  let bestExam = null;
+  let lowestCrit = null;
+  oeh.forEach(function (e) {
+    if (!e.passed) return;
+    if (typeof e.overallAccuracy === 'number') {
+      if (!bestExam || e.overallAccuracy > bestExam.value) bestExam = { value: e.overallAccuracy, date: e.date, rank: e.rankAttempted };
+    }
+    if (typeof e.criticalMistakes === 'number') {
+      if (lowestCrit === null || e.criticalMistakes < lowestCrit.value) lowestCrit = { value: e.criticalMistakes, date: e.date, rank: e.rankAttempted };
+    }
+  });
+  const ms = records.masteryScoreATH;
+
+  const examList = [
+    { id: 'best_exam_overall', label: 'Best Overall Exam',      value: bestExam ? bestExam.value : null, valueSuffix: '%', meta: bestExam ? (rankLabel(bestExam.rank) + ' · ' + (dateStr(bestExam.date) || '')) : 'Pass an Overall Exam to set this record.' },
+    { id: 'lowest_criticals',  label: 'Lowest critical mistakes', value: lowestCrit ? lowestCrit.value : null, valueSuffix: '', meta: lowestCrit ? (rankLabel(lowestCrit.rank) + ' Exam · ' + (dateStr(lowestCrit.date) || '')) : 'Pass an Overall Exam to set this record.', lowerIsBetter: true },
+    { id: 'mastery_ath',       label: 'Mastery score · ATH',   value: ms ? ms.value : null, valueSuffix: '', meta: ms ? (rankLabel(ms.rank) + ' · ' + (dateStr(ms.date) || '')) : 'Earn module ranks to grow Mastery Score.' }
+  ];
+
+  // -------- STREAKS --------
+  // Days from first drill -> first cert
+  let daysToFirstCert = null;
+  let daysToFirstRankUp = null;
+  const firstCertDate = (function () {
+    const passed = (cr.filter(function(c){return c.passed;}).map(function(c){return c.date;}))
+      .concat((oeh.filter(function(e){return e.passed;}).map(function(e){return e.date;})));
+    passed.sort();
+    return passed[0] || null;
+  })();
+  const firstSession = profile.firstSessionDate;
+  if (firstSession && firstCertDate) {
+    daysToFirstCert = Math.max(0, Math.floor((new Date(firstCertDate).getTime() - new Date(firstSession).getTime()) / 86400000));
+  }
+  const mrh = profile.moduleRankHistory || [];
+  if (firstSession && mrh.length > 0) {
+    const sortedMrh = mrh.slice().sort(function (a, b) { return new Date(a.date || 0) - new Date(b.date || 0); });
+    daysToFirstRankUp = Math.max(0, Math.floor((new Date(sortedMrh[0].date).getTime() - new Date(firstSession).getTime()) / 86400000));
+  }
+
+  const streakList = [
+    { id: 'streak_ath',          label: 'Best streak',           value: streaks.personalBest || null,    valueSuffix: streaks.personalBest ? ' day' + (streaks.personalBest === 1 ? '' : 's') : '', meta: streaks.personalBest ? '🔥 Personal best' : 'Train daily to start a streak.' },
+    { id: 'current_streak',      label: 'Current streak',        value: streaks.daily || null,            valueSuffix: streaks.daily ? ' day' + (streaks.daily === 1 ? '' : 's') : '', meta: streaks.daily ? '🔥 Active' : 'Train today to start a new streak.' },
+    { id: 'days_to_first_cert',  label: 'Days · first cert',     value: daysToFirstCert,                 valueSuffix: daysToFirstCert != null ? ' day' + (daysToFirstCert === 1 ? '' : 's') : '', meta: daysToFirstCert != null ? 'From first drill' : 'Pass a Boss/Overall to record this.' },
+    { id: 'days_to_first_rankup',label: 'Days · first rank-up',  value: daysToFirstRankUp,               valueSuffix: daysToFirstRankUp != null ? ' day' + (daysToFirstRankUp === 1 ? '' : 's') : '', meta: daysToFirstRankUp != null ? 'From first drill' : 'Earn a module rank to record this.' }
+  ];
+
+  // -------- TIME & PROGRESSION --------
+  const totalXP = profile.totalXP || 0;
+  const xpLevel = profile.xpLevel || 1;
+
+  const timeList = [
+    { id: 'total_xp',     label: 'Total XP',         value: totalXP || null, valueSuffix: ' XP', meta: totalXP ? 'All-time' : 'Complete a drill to earn your first XP.' },
+    { id: 'xp_level',     label: 'Current XP Level', value: xpLevel,         valueSuffix: '',    meta: xpLevel >= 1 ? 'Trainer level' : '—' },
+    { id: 'days_training',label: 'Days training',    value: activeDays || null, valueSuffix: ' day' + (activeDays === 1 ? '' : 's'), meta: activeDays ? 'Total active days' : 'Show up tomorrow to start counting.' }
+  ];
+
+  return {
+    volume:   volume,
+    boss:     bossList.concat(perModuleRows),
+    exam:     examList,
+    streaks:  streakList,
+    time:     timeList
+  };
+}
+
 // Render one Honor Roll row.
 function renderHonorRollRow(cert, idx) {
   const dateStr = cert.date ? new Date(cert.date).toLocaleDateString() : '—';
@@ -11507,6 +12049,121 @@ function _renderJourneyEvent(e) {
     '</div>';
 }
 
+// ============================================================
+// PERSONAL RECORDS CARD + OVERLAY v2.4.0
+// ============================================================
+// Two surfaces:
+//   renderRecordsCard()    - compact 2x2 preview card in Profile (4 records)
+//   renderRecordsOverlay() - dedicated full-screen overlay with all records
+//                            grouped by category. Opened via the preview's
+//                            "View all" link.
+
+// Format a value cell for the preview/overlay. Returns the value + suffix
+// when present, or a clean dash when null (empty/encouraging state).
+function _renderRecordValue(value, suffix) {
+  if (value === null || value === undefined) return '<span class="record-value-empty">—</span>';
+  if (typeof value === 'number') {
+    // Integer-format counts; one decimal for percent-style values? — keep as-is;
+    // input already comes pre-rounded from the aggregator.
+    const v = (value % 1 === 0) ? value.toString() : value.toFixed(1);
+    return v + (suffix || '');
+  }
+  return String(value) + (suffix || '');
+}
+
+// Compact 2x2 preview card. Pulls 4 specific top records from the aggregator
+// (per spec: Best Boss · Streak ATH · Most Hands per Day · Mastery ATH).
+function renderRecordsCard() {
+  const all = (typeof getPersonalRecords === 'function') ? getPersonalRecords() : null;
+  if (!all) return '';
+  // Look up the 4 specific records by id.
+  function find(category, id) {
+    const list = all[category] || [];
+    return list.find(function (r) { return r.id === id; }) || null;
+  }
+  const cells = [
+    { spec: find('boss',    'best_boss_overall') },
+    { spec: find('streaks', 'streak_ath') },
+    { spec: find('volume',  'most_hands_day') },
+    { spec: find('exam',    'mastery_ath') }
+  ];
+  const cellsHtml = cells.map(function (c) {
+    const r = c.spec;
+    if (!r) return '<div class="records-grid-cell"><div class="records-grid-label">—</div><div class="records-grid-value"><span class="record-value-empty">—</span></div></div>';
+    return '<div class="records-grid-cell">' +
+      '<div class="records-grid-label">' + r.label.toUpperCase() + '</div>' +
+      '<div class="records-grid-value">' + _renderRecordValue(r.value, r.valueSuffix) + '</div>' +
+      '<div class="records-grid-meta">' + (r.value == null ? r.meta : (r.meta || '')) + '</div>' +
+    '</div>';
+  }).join('');
+
+  return '' +
+    '<div class="card records-preview-card">' +
+      '<div class="card-title records-preview-title">' +
+        '<span>✦ Top Records</span>' +
+        '<button class="records-view-all-btn" onclick="openRecordsOverlay()" aria-label="View all personal records">View all →</button>' +
+      '</div>' +
+      '<div class="records-preview-grid">' + cellsHtml + '</div>' +
+    '</div>';
+}
+
+// Render a single row inside the Records overlay (one record line).
+function _renderRecordRow(r) {
+  const valueClass = r.value == null ? ' empty' : '';
+  return '<div class="records-row' + valueClass + '">' +
+    '<div class="records-row-label">' + r.label + '</div>' +
+    '<div class="records-row-value">' + _renderRecordValue(r.value, r.valueSuffix) + '</div>' +
+    '<div class="records-row-meta">' + (r.meta || '') + '</div>' +
+  '</div>';
+}
+
+// Render the dedicated Records overlay body. Grouped by category.
+function renderRecordsOverlayBody() {
+  const all = (typeof getPersonalRecords === 'function') ? getPersonalRecords() : null;
+  if (!all) return '<div class="records-overlay-body-inner"><div class="records-empty">No records yet.</div></div>';
+
+  function section(title, list) {
+    if (!list || list.length === 0) return '';
+    return '<div class="records-section">' +
+      '<div class="records-section-title">' + title + '</div>' +
+      '<div class="records-section-rows">' + list.map(_renderRecordRow).join('') + '</div>' +
+    '</div>';
+  }
+
+  return '<div class="records-card-frame">' +
+    '<button class="trainer-dossier-close records-overlay-close" onclick="closeRecordsOverlay()" ' +
+      'aria-label="Close Personal Records" title="Close">✕</button>' +
+    '<div class="records-overlay-eyebrow">▾ PERSONAL RECORDS</div>' +
+    '<div class="records-overlay-sub">All-time bests across every part of your training.</div>' +
+    section('Volume',           all.volume) +
+    section('Boss Tests',       all.boss) +
+    section('Overall Exams',    all.exam) +
+    section('Streaks',          all.streaks) +
+    section('Time & Progression', all.time) +
+  '</div>';
+}
+
+function openRecordsOverlay() {
+  const overlay = document.getElementById('recordsOverlay');
+  if (!overlay) return;
+  document.getElementById('recordsOverlayBody').innerHTML = renderRecordsOverlayBody();
+  overlay.classList.remove('hidden');
+  // Reuse the same body-scroll lock pattern as Profile overlay.
+  document.body.classList.add('profile-overlay-open');
+  const body = document.getElementById('recordsOverlayBody');
+  if (body) body.scrollTop = 0;
+}
+
+function closeRecordsOverlay() {
+  const overlay = document.getElementById('recordsOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  // Only release scroll-lock if the Profile overlay isn't also still open.
+  const profileOverlay = document.getElementById('profileOverlay');
+  const profileOpen = profileOverlay && !profileOverlay.classList.contains('hidden');
+  if (!profileOpen) document.body.classList.remove('profile-overlay-open');
+}
+
 // Open the cert seal viewer modal for a specific cert (by Honor Roll index).
 // Lazy-populates _honorRollCache if missing (so Trainer Card "Latest Cert"
 // click works even before Honor Roll card has rendered).
@@ -11615,10 +12272,13 @@ function renderHomeHeaderAvatar() {
     '</button>';
 }
 
-// Build the Profile overlay body (Trainer Dossier + My Journey + Honor Roll).
+// Build the Profile overlay body (Trainer Dossier + My Journey + Honor Roll
+// + Personal Records preview).
 // v2.3.0: My Journey card inserted between Dossier (who I am now) and Honor
 // Roll (full cert archive). The Journey is curated narrative; Honor Roll
 // remains the complete certification ledger.
+// v2.4.0: Personal Records preview card appended after Honor Roll. Compact
+// 2x2 grid; full ATH page opens via "View all" → renderRecordsOverlay().
 // Re-runs on Show All toggle to expand Honor Roll inline.
 function renderTrainerProfileBody() {
   const expanded = !!window._profileHonorRollExpanded;
@@ -11633,7 +12293,10 @@ function renderTrainerProfileBody() {
       subline: expanded
         ? 'All your certified milestones, preserved forever. Tap any record to re-live it.'
         : 'Your latest certified milestones, preserved forever. Tap any record to re-live it.'
-    });
+    }) +
+    // v2.4.0: Personal Records preview (4 top records). Full page is opened
+    // via the "View all →" button which routes to renderRecordsOverlay.
+    (typeof renderRecordsCard === 'function' ? renderRecordsCard() : '');
 }
 
 // Open Profile overlay. Optionally scroll to a section after open.
@@ -12672,6 +13335,11 @@ function showOverallExamResult() {
       newRank: oe.targetRank,
       timestamp: Date.now()
     };
+    // v2.4.0: promote masteryScoreATH on Overall pass too. masteryScore
+    // doesn't change here (Overall Exam doesn't move moduleRanks), but the
+    // *rank context* does — refresh the cached entry so the ATH carries the
+    // new rank label even if the value itself was already at ATH.
+    try { if (typeof _recordPromoteMastery === 'function') _recordPromoteMastery(); } catch (e) {}
   }
 
   App.saveProgress();
@@ -13544,6 +14212,9 @@ function showChallengeResult() {
       testId: ch.seed
     });
     profile.certifications.masteryScore = computeMasteryScore(profile.moduleRanks);
+    // v2.4.0: promote masteryScoreATH if the new mastery score beats the
+    // cached ATH (monotonic; never overwrites with lower value).
+    try { if (typeof _recordPromoteMastery === 'function') _recordPromoteMastery(); } catch (e) {}
     rankUp = { oldRank, newRank: ch.targetRank };
     // v1.8.11: track most-recent rank-up so Home Hero can show
     // "RECENTLY PROMOTED" badge + stronger aura for ~24h after.
@@ -14523,7 +15194,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.3.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.4.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -14634,7 +15305,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.3.0',
+    appVersion: '2.4.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -15102,7 +15773,13 @@ function confirmReset() {
     // v2.2.3: reset clears avatar so ensureTrainerIdentity re-derives a
     // fresh deterministic default from the new trainerId.
     avatarId: null,
-    records: {},
+    // v2.4.0: reset wipes Personal Records ATH cache so a brand-new identity
+    // starts fresh (no stale records from the previous trainer).
+    records: {
+      masteryScoreATH:        null,
+      longestSessionATH:      null,
+      bestSessionAccuracyATH: null
+    },
     styleTags: [],
     focusArc: null,
     totalXP: 0,
