@@ -4042,18 +4042,107 @@
       letter-spacing: 2.6px;
       color: #d4af37;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 14px;
       text-align: center;
+      opacity: 0.85;
+    }
+    /* ============================================================ */
+    /* DOSSIER HERO BLOCK v2.2.6                                     */
+    /* avatar (with subtle "Change avatar" link) + dominant callsign */
+    /* with inline ✎ edit + ID/Member meta — single visual unit.     */
+    /* ============================================================ */
+    .trainer-dossier-hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+    }
+    .trainer-dossier-avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Subtle avatar-change link — text only, no button chrome, so the
+       customization control reads quieter than the identity content. */
+    .trainer-dossier-avatar-link {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+      opacity: 0.65;
+      transition: opacity 0.15s, color 0.15s, background 0.15s;
+    }
+    .trainer-dossier-avatar-link:hover {
+      opacity: 1;
+      color: #d4af37;
+      background: rgba(212,175,55,0.08);
+    }
+    .trainer-dossier-avatar-link:focus-visible {
+      outline: 1px solid rgba(212,175,55,0.55);
+      outline-offset: 2px;
+    }
+    .trainer-dossier-callsign-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      max-width: 100%;
+      margin-top: 4px;
     }
     .trainer-dossier-callsign {
       position: relative;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       color: var(--text);
       text-align: center;
       line-height: 1.1;
       text-shadow: 0 0 24px rgba(212,175,55,0.25);
+      margin: 0;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .trainer-dossier-callsign-edit {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+      opacity: 0.7;
+    }
+    .trainer-dossier-callsign-edit:hover {
+      background: rgba(212,175,55,0.10);
+      color: #d4af37;
+      border-color: rgba(212,175,55,0.45);
+      opacity: 1;
+    }
+    .trainer-dossier-callsign-edit:active { transform: scale(0.92); }
+    .trainer-dossier-callsign-edit:focus-visible {
+      outline: 2px solid rgba(212,175,55,0.55);
+      outline-offset: 2px;
     }
     .trainer-dossier-id-line {
       position: relative;
@@ -4061,7 +4150,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-top: 6px;
+      margin-top: 2px;
       flex-wrap: wrap;
     }
     .trainer-id-tag {
@@ -4080,73 +4169,127 @@
       color: var(--text-secondary);
       letter-spacing: 0.4px;
     }
-    .trainer-dossier-tagline {
+    /* ============================================================ */
+    /* DOSSIER DIVIDER v2.2.6 — thin gold-tinted hairline between    */
+    /* the major dossier blocks (hero · rank · sections).            */
+    /* ============================================================ */
+    .trainer-dossier-divider {
       position: relative;
-      font-size: 13px;
-      color: var(--text);
-      text-align: center;
-      margin-top: 10px;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 8px;
-      font-style: italic;
-      font-weight: 500;
-      border-left: 2px solid rgba(212,175,55,0.4);
+      height: 1px;
+      margin: 16px 4px;
+      background: linear-gradient(
+        90deg,
+        rgba(212,175,55,0) 0%,
+        rgba(212,175,55,0.25) 50%,
+        rgba(212,175,55,0) 100%
+      );
     }
-    .trainer-dossier-section {
+    /* ============================================================ */
+    /* RANK STRIP v2.2.6                                             */
+    /* compact horizontal block: emblem · rank name · 3 mini-metrics */
+    /* ============================================================ */
+    .trainer-dossier-rank-strip {
       position: relative;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px dashed rgba(255,255,255,0.06);
-    }
-    .trainer-dossier-section-title {
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.4px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      padding-left: 2px;
-    }
-    .trainer-dossier-who-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 12px;
+      row-gap: 10px;
       align-items: center;
-      gap: 12px;
+      padding: 0 4px;
     }
-    .trainer-dossier-emblem { flex-shrink: 0; }
-    .trainer-dossier-rank-info {
-      flex: 1;
-      min-width: 0;
+    .trainer-dossier-rank-emblem {
+      grid-row: 1 / 3;
+      grid-column: 1;
+      flex-shrink: 0;
     }
     .trainer-dossier-rank-name {
+      grid-row: 1;
+      grid-column: 2;
       font-size: 16px;
       font-weight: 700;
       color: var(--text);
       letter-spacing: 0.3px;
+      line-height: 1.1;
     }
-    .trainer-dossier-rank-sub {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: 2px;
-      letter-spacing: 0.2px;
+    .trainer-dossier-rank-metrics {
+      grid-row: 2;
+      grid-column: 2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
     }
-    .trainer-dossier-edit-btn {
-      flex-shrink: 0;
-      width: 30px;
-      height: 30px;
+    .rank-metric {
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.05);
       border-radius: 6px;
-      background: rgba(255,255,255,0.04);
-      color: var(--text-secondary);
-      border: 1px solid rgba(255,255,255,0.08);
-      cursor: pointer;
-      font-size: 13px;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .trainer-dossier-edit-btn:hover {
-      background: rgba(212,175,55,0.10);
+    .rank-metric-label {
+      font-size: 8.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+      opacity: 0.75;
+    }
+    .rank-metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+      line-height: 1;
+    }
+    /* ============================================================ */
+    /* IDENTITY CAPTION v2.2.6                                       */
+    /* small ✦-prefixed journey sentence — reads as narrative caption */
+    /* not random italic; sits between rank strip and HOW I TRAIN.   */
+    /* ============================================================ */
+    .trainer-dossier-caption {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(212,175,55,0.04);
+      border: 1px solid rgba(212,175,55,0.14);
+      border-radius: 8px;
+      font-size: 12.5px;
+      color: var(--text);
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.4;
+      letter-spacing: 0.1px;
+    }
+    .trainer-dossier-caption-mark {
+      flex-shrink: 0;
       color: #d4af37;
-      border-color: rgba(212,175,55,0.40);
+      font-style: normal;
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 1.4;
+      text-shadow: 0 0 6px rgba(212,175,55,0.40);
+    }
+    .trainer-dossier-caption-text { flex: 1; min-width: 0; }
+    /* ============================================================ */
+    /* DOSSIER SECTIONS v2.2.6 — subtler titles, no top-border (the  */
+    /* divider element handles separation now).                      */
+    /* ============================================================ */
+    .trainer-dossier-section {
+      position: relative;
+    }
+    .trainer-dossier-section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-left: 2px;
+      opacity: 0.65;
     }
     .trainer-dossier-stat-grid {
       display: grid;
@@ -4495,32 +4638,8 @@
     .avatar-tile.size-32 { width: 32px; height: 32px; }
     .avatar-tile.size-40 { width: 40px; height: 40px; }
     .avatar-tile.size-56 { width: 56px; height: 56px; }
-    /* Trainer Dossier slot for the avatar — sits above callsign, centered */
-    .trainer-dossier-avatar-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 4px 0 10px;
-    }
-    .trainer-dossier-avatar-change {
-      background: none;
-      border: 1px dashed rgba(212,175,55,0.40);
-      color: var(--text-secondary);
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 5px 10px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .trainer-dossier-avatar-change:hover {
-      border-color: rgba(212,175,55,0.80);
-      color: var(--text);
-    }
+    /* v2.2.6: replaced .trainer-dossier-avatar-row + .avatar-change button
+       with .trainer-dossier-hero hierarchy + subtle .avatar-link (above). */
     /* Avatar Picker modal */
     .avatar-picker-grid {
       display: grid;
@@ -10586,42 +10705,75 @@ function renderTrainerCard() {
   const avatarRingColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
   const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
 
+  // v2.2.6: dossier rebuilt with proper visual hierarchy.
+  //   1. Hero block: avatar → callsign (dominant) + ✎ → ID/Member meta
+  //   2. Rank strip: emblem + rank name + 3 mini-metrics (Mastery / Lv / XP)
+  //   3. Identity caption: small ✦-prefixed journey sentence
+  //   4. HOW I TRAIN (subtler section titles)
+  //   5. WHAT DEFINES ME (subtler section titles)
+  // The old WHO I AM block is removed (it was a redundant identity restatement).
+  // The ✎ pencil moved next to the callsign where it belongs (it edits callsign).
+  // Avatar change is now a subtle text link under the avatar, not a button.
   return '' +
     '<div class="card trainer-dossier-card">' +
-      // v2.2.5: in-card close button (replaces the v2.1.0+ sticky overlay
-      // header). Sits at the top-right corner of the dossier card frame so
-      // the dismiss control reads as part of the Profile window itself, not
-      // as a separate top-of-screen toolbar. Wrapped in try/catch-free call
-      // since closeTrainerProfile is defensive on its own.
+      // v2.2.5: in-card close button. Sits at the top-right corner of the
+      // card frame so the dismiss control reads as part of the Profile
+      // window itself.
       '<button class="trainer-dossier-close" onclick="closeTrainerProfile()" ' +
         'aria-label="Close Trainer Profile" title="Close">✕</button>' +
       '<div class="trainer-dossier-eyebrow">▾ TRAINER DOSSIER</div>' +
-      '<div class="trainer-dossier-avatar-row">' +
-        '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
-          // v2.2.4: glyph in vivid gold (ring stays rank-color)
-          renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
-        '</span>' +
-        '<button class="trainer-dossier-avatar-change" onclick="openAvatarPicker()" aria-label="Change avatar">Change</button>' +
-      '</div>' +
-      '<div class="trainer-dossier-callsign">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</div>' +
-      '<div class="trainer-dossier-id-line">' +
-        '<span class="trainer-id-tag">' + (profile.trainerId || '—') + '</span>' +
-        '<span class="trainer-id-meta">Member since ' + memberSinceStr + '</span>' +
-      '</div>' +
-      '<div class="trainer-dossier-tagline">' + identitySentence + '</div>' +
 
-      '<div class="trainer-dossier-section">' +
-        '<div class="trainer-dossier-section-title">Who I Am</div>' +
-        '<div class="trainer-dossier-who-row">' +
-          '<div class="trainer-dossier-emblem">' + renderRankEmblem(overallRank, 'small') + '</div>' +
-          '<div class="trainer-dossier-rank-info">' +
-            '<div class="trainer-dossier-rank-name">' + overallDisplay + '</div>' +
-            '<div class="trainer-dossier-rank-sub">Mastery Score ' + ms.toFixed(1) + ' · Lv ' + (profile.xpLevel || 1) + ' · ' + (profile.totalXP || 0) + ' XP</div>' +
-          '</div>' +
-          '<button class="trainer-dossier-edit-btn" onclick="openCallsignEditor()" title="Edit callsign">✎</button>' +
+      // --- HERO BLOCK -------------------------------------------------
+      '<div class="trainer-dossier-hero">' +
+        '<div class="trainer-dossier-avatar-wrap">' +
+          '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
+            renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
+          '</span>' +
+          '<button class="trainer-dossier-avatar-link" onclick="openAvatarPicker()" ' +
+            'aria-label="Change avatar">Change avatar</button>' +
+        '</div>' +
+        '<div class="trainer-dossier-callsign-row">' +
+          '<h2 class="trainer-dossier-callsign">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</h2>' +
+          '<button class="trainer-dossier-callsign-edit" onclick="openCallsignEditor()" ' +
+            'aria-label="Edit callsign" title="Edit callsign">✎</button>' +
+        '</div>' +
+        '<div class="trainer-dossier-id-line">' +
+          '<span class="trainer-id-tag">' + (profile.trainerId || '—') + '</span>' +
+          '<span class="trainer-id-meta">Member since ' + memberSinceStr + '</span>' +
         '</div>' +
       '</div>' +
 
+      '<div class="trainer-dossier-divider" aria-hidden="true"></div>' +
+
+      // --- RANK STRIP -------------------------------------------------
+      '<div class="trainer-dossier-rank-strip">' +
+        '<div class="trainer-dossier-rank-emblem">' + renderRankEmblem(overallRank, 'small') + '</div>' +
+        '<div class="trainer-dossier-rank-name">' + overallDisplay + '</div>' +
+        '<div class="trainer-dossier-rank-metrics">' +
+          '<div class="rank-metric">' +
+            '<div class="rank-metric-label">Mastery</div>' +
+            '<div class="rank-metric-value">' + ms.toFixed(1) + '</div>' +
+          '</div>' +
+          '<div class="rank-metric">' +
+            '<div class="rank-metric-label">Level</div>' +
+            '<div class="rank-metric-value">' + (profile.xpLevel || 1) + '</div>' +
+          '</div>' +
+          '<div class="rank-metric">' +
+            '<div class="rank-metric-label">XP</div>' +
+            '<div class="rank-metric-value">' + (profile.totalXP || 0) + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      // --- IDENTITY CAPTION (journey sentence) ------------------------
+      '<div class="trainer-dossier-caption" role="note">' +
+        '<span class="trainer-dossier-caption-mark" aria-hidden="true">✦</span>' +
+        '<span class="trainer-dossier-caption-text">' + identitySentence + '</span>' +
+      '</div>' +
+
+      '<div class="trainer-dossier-divider" aria-hidden="true"></div>' +
+
+      // --- HOW I TRAIN ------------------------------------------------
       '<div class="trainer-dossier-section">' +
         '<div class="trainer-dossier-section-title">How I Train</div>' +
         '<div class="trainer-dossier-stat-grid">' +
@@ -10632,6 +10784,9 @@ function renderTrainerCard() {
         '</div>' +
       '</div>' +
 
+      '<div class="trainer-dossier-divider" aria-hidden="true"></div>' +
+
+      // --- WHAT DEFINES ME --------------------------------------------
       '<div class="trainer-dossier-section">' +
         '<div class="trainer-dossier-section-title">What Defines Me</div>' +
         _trainerDossierSlot('🏅', 'Signature Strength', signatureStrength, sigLockedHint) +
@@ -13759,7 +13914,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.5</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.6</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13870,7 +14025,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.5',
+    appVersion: '2.2.6',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
