@@ -4513,6 +4513,244 @@
       font-family: 'JetBrains Mono', monospace;
     }
     /* ============================================================ */
+    /* MY JOURNEY v2.3.0 — Origin-Story Timeline                     */
+    /* Vertical rail + colored dots + story cards / rank-up pills /  */
+    /* comeback cards / final "You Are Here" pin.                    */
+    /* ============================================================ */
+    .journey-card .card-title { color: #d4af37; }
+    .journey-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin: -4px 0 14px;
+      line-height: 1.5;
+    }
+    .journey-rail-wrap {
+      position: relative;
+      padding-left: 28px;
+    }
+    /* The rail itself — gold gradient line down the left edge */
+    .journey-rail {
+      position: absolute;
+      left: 13px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: linear-gradient(
+        180deg,
+        rgba(212,175,55,0) 0%,
+        rgba(212,175,55,0.45) 12%,
+        rgba(212,175,55,0.45) 88%,
+        rgba(212,175,55,0) 100%
+      );
+      border-radius: 2px;
+      pointer-events: none;
+    }
+    .journey-events {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .journey-row {
+      position: relative;
+      display: block;
+    }
+    /* Event dot — sits on the rail, color-coded by event class */
+    .journey-dot {
+      position: absolute;
+      left: -22px;
+      top: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.95),
+        0 0 0 3px rgba(212,175,55,0.40);
+      color: #d4af37;
+      z-index: 2;
+    }
+    .journey-dot.first {
+      color: #FFD700;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.95),
+        0 0 0 3px #d4af37,
+        0 0 8px rgba(255,215,0,0.45);
+    }
+    .journey-dot.rankup {
+      color: #6ee7b7;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.95),
+        0 0 0 3px rgba(110,231,183,0.55);
+    }
+    .journey-dot.comeback {
+      color: #fbbf24;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.95),
+        0 0 0 3px rgba(251,191,36,0.65),
+        0 0 10px rgba(251,191,36,0.35);
+    }
+    .journey-dot.you-here {
+      color: #FFD700;
+      box-shadow:
+        0 0 0 2px rgba(15,23,42,0.95),
+        0 0 0 3px #FFD700,
+        0 0 14px rgba(255,215,0,0.65);
+      animation: journeyHerePulse 2.4s ease-out infinite;
+    }
+    @keyframes journeyHerePulse {
+      0%   { box-shadow: 0 0 0 2px rgba(15,23,42,0.95), 0 0 0 3px #FFD700, 0 0 0 0 rgba(255,215,0,0.55); }
+      70%  { box-shadow: 0 0 0 2px rgba(15,23,42,0.95), 0 0 0 3px #FFD700, 0 0 0 10px rgba(255,215,0,0); }
+      100% { box-shadow: 0 0 0 2px rgba(15,23,42,0.95), 0 0 0 3px #FFD700, 0 0 0 0 rgba(255,215,0,0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .journey-dot.you-here { animation: none; }
+    }
+    /* Milestone story card — used for First X events */
+    .journey-event-card {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(212,175,55,0.05);
+      border: 1px solid rgba(212,175,55,0.22);
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .journey-event-card.is-tappable {
+      cursor: pointer;
+    }
+    .journey-event-card.is-tappable:hover {
+      background: rgba(212,175,55,0.10);
+      border-color: rgba(212,175,55,0.45);
+    }
+    .journey-event-card.is-tappable:active { transform: scale(0.99); }
+    .journey-event-card.is-tappable:focus-visible {
+      outline: 2px solid rgba(212,175,55,0.65);
+      outline-offset: 2px;
+    }
+    /* Comeback variant — warmer amber accent so the recovery arc reads as
+       its own beat, not just another milestone. */
+    .journey-event-card.comeback {
+      background: rgba(251,191,36,0.06);
+      border-color: rgba(251,191,36,0.30);
+    }
+    .journey-event-card.comeback.is-tappable:hover {
+      background: rgba(251,191,36,0.12);
+      border-color: rgba(251,191,36,0.55);
+    }
+    .journey-event-eyebrow {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 4px;
+    }
+    .journey-event-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      line-height: 1.25;
+    }
+    .journey-event-body {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+    .journey-event-foot {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .journey-comeback-arc {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #fbbf24;
+      opacity: 0.85;
+      flex: 1;
+      text-align: left;
+    }
+    /* Compact rank-up pill — single line, low visual weight */
+    .journey-rank-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(110,231,183,0.06);
+      border: 1px solid rgba(110,231,183,0.20);
+      font-size: 12px;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+    .journey-rank-pill.is-tappable {
+      cursor: pointer;
+    }
+    .journey-rank-pill.is-tappable:hover {
+      background: rgba(110,231,183,0.12);
+      border-color: rgba(110,231,183,0.45);
+    }
+    .journey-rank-pill.is-tappable:active { transform: scale(0.99); }
+    .journey-pill-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+    .journey-pill-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .journey-pill-chev {
+      color: #d4af37;
+      font-size: 14px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    /* You Are Here — pinned final marker with subtle pulsing dot */
+    .journey-you-are-here {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,215,0,0.10) 0%, transparent 70%),
+        linear-gradient(135deg, rgba(212,175,55,0.10), rgba(212,175,55,0.04));
+      border: 1px solid rgba(255,215,0,0.40);
+      box-shadow: 0 0 16px rgba(255,215,0,0.08);
+    }
+    .journey-yah-eyebrow {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      color: #FFD700;
+      text-transform: uppercase;
+      opacity: 0.95;
+      margin-bottom: 3px;
+      text-shadow: 0 0 6px rgba(255,215,0,0.30);
+    }
+    .journey-yah-line {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+    /* ============================================================ */
     /* HOME HEADER PROFILE/AVATAR BUTTON v2.2.3                     */
     /* (replaces the v2.2.2 in-hero chip — moved out to page-header */
     /*  top-right where users expect a profile/avatar control)       */
@@ -10846,6 +11084,238 @@ function getHonorRoll() {
   return certs;
 }
 
+// ============================================================
+// MY JOURNEY v2.3.0 — Origin-Story Timeline
+// ============================================================
+// Read-only aggregator that turns raw history into a curated narrative.
+// Reads ONLY existing data — no new persisted state, no instrumentation.
+//
+// Sources used:
+//   stats.dailyHistory{}          → First Drill (earliest YYYY-MM-DD key)
+//   profile.challengeResults[]    → Boss Test attempts (pass + fail) +
+//                                   per-module Boss-rank-up firsts
+//   profile.moduleRankHistory[]   → Module rank-up chronology
+//   profile.overallExamHistory[]  → Overall exams (pass + fail) + comeback chain
+//   getHonorRoll()                → Cert index resolution for tappable events
+//
+// Curation policy (Journey is a story of FIRSTS, not a full event log):
+//   - First Drill                 → 1 event, derived from earliest dailyHistory key
+//   - First Boss Attempt          → 1 event, oldest challengeResults entry
+//   - First Boss Clear            → 1 event, first challengeResults w/ passed:true
+//   - Module Rank-up              → 1 event PER (module, newRank) pair — only the
+//                                   first time you reach each tier in each module.
+//                                   Honor Roll preserves duplicates; Journey does not.
+//   - First Overall Exam Pass     → 1 event, first overallExamHistory w/ passed:true
+//                                   (this entry SUPPRESSES the corresponding
+//                                   rank_up_overall to avoid showing the same moment
+//                                   twice as "first" + "rank-up").
+//   - Overall Rank-up             → 1 event per subsequent overallExamHistory pass
+//   - Comeback                    → 1 event per failed-exam→recovery→pass chain
+//                                   (only emitted when chain completes — failures
+//                                   without a later pass do NOT create a comeback)
+//   - You Are Here                → always last; current callsign + rank + day count
+//
+// Returns chronological ASC array of typed event objects.
+function getJourneyEvents() {
+  const profile = App.state.profile || {};
+  const stats   = App.state.stats   || {};
+
+  // Resolve cert→Honor-Roll-index up front so cert events tap-open via the
+  // existing openCertSealViewer plumbing without rebuilding indices.
+  const honorRoll = (typeof getHonorRoll === 'function') ? getHonorRoll() : [];
+  function findCertIdx(date, kind, module, rank) {
+    if (!date) return -1;
+    return honorRoll.findIndex(function (c) {
+      if (c.kind !== kind) return false;
+      if (c.date !== date) return false;
+      if (kind === 'boss' && c.module !== module) return false;
+      if (c.rank !== rank) return false;
+      return true;
+    });
+  }
+  function moduleLabel(m) {
+    return (typeof moduleCleanLabel === 'function') ? moduleCleanLabel(m) : (m || '?');
+  }
+  function rankLabel(r) {
+    return (typeof rankDisplay === 'function') ? rankDisplay(r) : (r || '?');
+  }
+
+  const events = [];
+
+  // --- 1. First Drill ----------------------------------------------------
+  // dailyHistory keys are YYYY-MM-DD strings; earliest sorts first.
+  const dh = stats.dailyHistory || {};
+  const dayKeys = Object.keys(dh).filter(function (k) { return /^\d{4}-\d{2}-\d{2}$/.test(k); }).sort();
+  let firstDrillDate = null;
+  if (dayKeys.length > 0) {
+    // Anchor at noon so the date displays consistently across timezones.
+    firstDrillDate = new Date(dayKeys[0] + 'T12:00:00').toISOString();
+    events.push({
+      type: 'first_drill',
+      date: firstDrillDate,
+      label: 'First Drill',
+      sublabel: 'Your training journey begins'
+    });
+  }
+
+  // --- 2. First Boss Attempt + First Boss Clear --------------------------
+  const cr = (profile.challengeResults || []).slice().sort(function (a, b) {
+    return new Date(a.date || 0) - new Date(b.date || 0);
+  });
+  if (cr.length > 0) {
+    const firstAttempt = cr[0];
+    events.push({
+      type: 'first_boss_attempt',
+      date: firstAttempt.date,
+      module: firstAttempt.module,
+      label: 'First Boss Attempt',
+      sublabel: moduleLabel(firstAttempt.module) + ' · ' + rankLabel(firstAttempt.targetRank) + (firstAttempt.passed ? ' · cleared' : ' · learning the floor')
+    });
+    const firstClear = cr.find(function (c) { return c.passed; });
+    if (firstClear && firstClear !== firstAttempt) {
+      // Only emit a separate "First Boss Clear" event if the very first
+      // attempt didn't already pass (otherwise it's the same moment twice).
+      events.push({
+        type: 'first_boss_clear',
+        date: firstClear.date,
+        module: firstClear.module,
+        rank: firstClear.targetRank,
+        certIdx: findCertIdx(firstClear.date, 'boss', firstClear.module, firstClear.targetRank),
+        label: 'First Boss Cleared',
+        sublabel: moduleLabel(firstClear.module) + ' · ' + rankLabel(firstClear.targetRank) + ' certified'
+      });
+    } else if (firstClear && firstClear === firstAttempt) {
+      // First-attempt-was-also-the-first-pass — fold into the same event by
+      // upgrading its label so the user reads it as a clear, not a coin-flip.
+      events[events.length - 1].label = 'First Boss Cleared';
+      events[events.length - 1].sublabel = moduleLabel(firstClear.module) + ' · ' + rankLabel(firstClear.targetRank) + ' certified on first try';
+      events[events.length - 1].type = 'first_boss_clear';
+      events[events.length - 1].rank = firstClear.targetRank;
+      events[events.length - 1].certIdx = findCertIdx(firstClear.date, 'boss', firstClear.module, firstClear.targetRank);
+    }
+  }
+
+  // --- 3. Module Rank-up milestones (first promotion to each tier) -------
+  // moduleRankHistory entries are pushed only on PASS, but a module can be
+  // re-certified at the same tier (re-runs of the same Boss Test). Curate
+  // to first-time-only: emit one event per (module, newRank) pair.
+  const mrh = (profile.moduleRankHistory || []).slice().sort(function (a, b) {
+    return new Date(a.date || 0) - new Date(b.date || 0);
+  });
+  const seenModuleTier = {};
+  // Suppress the entry that corresponds to the "First Boss Cleared" event
+  // above (otherwise that promotion shows up twice — once as the first and
+  // once as the rank-up).
+  const firstClearKey = (() => {
+    const e = events.find(function (e) { return e.type === 'first_boss_clear'; });
+    return e ? (e.module + '|' + e.rank + '|' + e.date) : null;
+  })();
+  mrh.forEach(function (h) {
+    const key = h.module + '|' + h.newRank;
+    if (seenModuleTier[key]) return;
+    seenModuleTier[key] = true;
+    if (firstClearKey && (h.module + '|' + h.newRank + '|' + h.date) === firstClearKey) return;
+    events.push({
+      type: 'rank_up_module',
+      date: h.date,
+      module: h.module,
+      oldRank: h.oldRank,
+      newRank: h.newRank,
+      certIdx: findCertIdx(h.date, 'boss', h.module, h.newRank),
+      label: moduleLabel(h.module) + ' → ' + rankLabel(h.newRank),
+      sublabel: 'Promoted from ' + rankLabel(h.oldRank || 'Unranked')
+    });
+  });
+
+  // --- 4. First Overall Exam Pass + Overall Rank-up + Comeback chain -----
+  const oeh = (profile.overallExamHistory || []).slice().sort(function (a, b) {
+    return new Date(a.date || 0) - new Date(b.date || 0);
+  });
+  let firstOverallPassEmitted = false;
+  // Track open failed-exam state so we can stitch fail→comeback chains.
+  // Map from rankAttempted → {failDate, recoveryRequired, recoveryCompleted, idxInOeh}
+  const openFails = {};
+  oeh.forEach(function (e, i) {
+    const rank = e.rankAttempted;
+    if (!e.passed) {
+      // Open / refresh the fail-state for this rank
+      openFails[rank] = {
+        failDate: e.date,
+        recoveryRequired: e.recoveryRequired || 0,
+        recoveryCompleted: e.recoveryCompleted || 0
+      };
+      return;
+    }
+    // PASS — check if it's a comeback (matching prior fail with completed recovery)
+    const prevFail = openFails[rank];
+    if (prevFail && (prevFail.recoveryCompleted || 0) > 0) {
+      events.push({
+        type: 'comeback',
+        date: e.date,
+        rank: rank,
+        failedDate: prevFail.failDate,
+        recoveryCompleted: prevFail.recoveryCompleted,
+        recoveryRequired: prevFail.recoveryRequired,
+        certIdx: findCertIdx(e.date, 'overall', null, rank),
+        label: rankLabel(rank) + ' Exam · Comeback',
+        sublabel: 'After the ' + rankLabel(rank) + ' Exam fell short, you completed Recovery and rose again.'
+      });
+      delete openFails[rank];
+      // A comeback IS the first overall pass for this rank (and possibly
+      // the first overall pass overall) — mark as such so we don't emit a
+      // duplicate first_overall_pass / rank_up_overall right after.
+      if (!firstOverallPassEmitted) firstOverallPassEmitted = true;
+      return;
+    }
+    // First Overall Pass (only once)
+    if (!firstOverallPassEmitted) {
+      firstOverallPassEmitted = true;
+      events.push({
+        type: 'first_overall_pass',
+        date: e.date,
+        rank: rank,
+        certIdx: findCertIdx(e.date, 'overall', null, rank),
+        label: 'First Overall Certification',
+        sublabel: rankLabel(rank) + ' Overall Exam · certified'
+      });
+    } else {
+      events.push({
+        type: 'rank_up_overall',
+        date: e.date,
+        rank: rank,
+        certIdx: findCertIdx(e.date, 'overall', null, rank),
+        label: rankLabel(rank) + ' · Overall Rank-up',
+        sublabel: 'Overall Exam certified'
+      });
+    }
+    // Clear any stale open-fail (a clean pass without recovery) so it can't
+    // poison a future comeback computation.
+    delete openFails[rank];
+  });
+
+  // Final chronological sort
+  events.sort(function (a, b) { return new Date(a.date || 0) - new Date(b.date || 0); });
+
+  // --- 5. You Are Here ---------------------------------------------------
+  const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  let daysSinceFirst = 0;
+  if (firstDrillDate) {
+    const ms = Date.now() - new Date(firstDrillDate).getTime();
+    daysSinceFirst = Math.max(0, Math.floor(ms / 86400000));
+  }
+  events.push({
+    type: 'you_are_here',
+    date: new Date().toISOString(),
+    callsign: profile.callsign || 'Trainer',
+    rank: overallRank,
+    daysSinceFirst: daysSinceFirst,
+    label: 'You Are Here',
+    sublabel: rankLabel(overallRank) + ' · Day ' + daysSinceFirst + (daysSinceFirst === 0 ? ' · Just landed' : '')
+  });
+
+  return events;
+}
+
 // Render one Honor Roll row.
 function renderHonorRollRow(cert, idx) {
   const dateStr = cert.date ? new Date(cert.date).toLocaleDateString() : '—';
@@ -10901,6 +11371,139 @@ function renderHonorRollCard(opts) {
         visible.map(function (c, i) { return renderHonorRollRow(c, i); }).join('') +
       '</div>' +
       showAllBtn +
+    '</div>';
+}
+
+// ============================================================
+// MY JOURNEY CARD v2.3.0
+// ============================================================
+// Renders the curated origin-story timeline produced by getJourneyEvents().
+// Lives inside the Profile overlay between the Trainer Dossier and Honor
+// Roll cards. The Dossier says "who I am now," the Journey says "how I got
+// here," and the Honor Roll preserves the full certification archive.
+//
+// Event presentation:
+//   first_drill / first_boss_attempt / first_boss_clear /
+//   first_overall_pass / comeback                → larger story cards
+//   rank_up_module / rank_up_overall             → compact rank-up pills
+//   you_are_here                                 → final pinned marker
+//
+// Tap behavior:
+//   Cert-bearing events (boss clear / overall pass / rank-up / comeback)
+//   open the existing cert seal viewer via openCertSealViewer(certIdx).
+//   Honor Roll plumbing is reused unchanged — no new modal added.
+function renderJourneyCard() {
+  const events = (typeof getJourneyEvents === 'function') ? getJourneyEvents() : [];
+  // Always at least one event (You Are Here). "Minimal" = only First Drill +
+  // You Are Here (legacy / brand-new user).
+  const realEvents = events.filter(function (e) { return e.type !== 'you_are_here'; });
+  const youAreHere = events.find(function (e) { return e.type === 'you_are_here'; });
+
+  const eventCount = events.length;
+  const daysSpan   = (youAreHere && youAreHere.daysSinceFirst) || 0;
+  const isMinimal  = realEvents.length <= 1;
+  const subline    = isMinimal
+    ? 'Train more to unlock more chapters of your story.'
+    : 'Your story so far · ' + realEvents.length + ' chapter' + (realEvents.length === 1 ? '' : 's') + ' across ' + daysSpan + ' day' + (daysSpan === 1 ? '' : 's') + '.';
+
+  const rows = events.map(function (e) { return _renderJourneyEvent(e); }).join('');
+
+  return '' +
+    '<div class="card journey-card">' +
+      '<div class="card-title">✦ My Journey</div>' +
+      '<div class="journey-sub">' + subline + '</div>' +
+      '<div class="journey-rail-wrap">' +
+        '<div class="journey-rail" aria-hidden="true"></div>' +
+        '<div class="journey-events">' + rows + '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+// Render a single Journey event row. Branches on event.type to pick the
+// appropriate visual treatment (story card vs compact pill vs you-are-here).
+function _renderJourneyEvent(e) {
+  const dateStr = e.date
+    ? new Date(e.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    : '—';
+  const escape = (typeof _trainerEscapeHtml === 'function')
+    ? _trainerEscapeHtml
+    : function (s) { return String(s == null ? '' : s); };
+
+  // Tap-to-open cert seal viewer for cert-bearing events.
+  const tappable = (typeof e.certIdx === 'number' && e.certIdx >= 0);
+  const tapAttr  = tappable
+    ? ' onclick="openCertSealViewer(' + e.certIdx + ')" role="button" tabindex="0"'
+    : '';
+  const tapClass = tappable ? ' is-tappable' : '';
+
+  // Dot color / glyph by event type — keeps the rail readable at a glance.
+  const dotConfig = {
+    first_drill:        { glyph: '◆', cls: 'first',     ariaType: 'milestone' },
+    first_boss_attempt: { glyph: '◆', cls: 'first',     ariaType: 'milestone' },
+    first_boss_clear:   { glyph: '★', cls: 'first',     ariaType: 'milestone' },
+    first_overall_pass: { glyph: '★', cls: 'first',     ariaType: 'milestone' },
+    rank_up_module:     { glyph: '▲', cls: 'rankup',    ariaType: 'rank-up' },
+    rank_up_overall:    { glyph: '▲', cls: 'rankup',    ariaType: 'rank-up' },
+    comeback:           { glyph: '✦', cls: 'comeback',  ariaType: 'comeback' },
+    you_are_here:       { glyph: '●', cls: 'you-here',  ariaType: 'present' }
+  }[e.type] || { glyph: '·', cls: 'first', ariaType: 'event' };
+
+  const dot = '<span class="journey-dot ' + dotConfig.cls + '" aria-hidden="true">' + dotConfig.glyph + '</span>';
+
+  if (e.type === 'you_are_here') {
+    // Final pinned marker — pulses subtly to read as the live present moment.
+    return '' +
+      '<div class="journey-row">' +
+        dot +
+        '<div class="journey-you-are-here">' +
+          '<div class="journey-yah-eyebrow">YOU ARE HERE</div>' +
+          '<div class="journey-yah-line">' + escape(e.callsign) + ' · ' + escape(e.sublabel) + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  if (e.type === 'rank_up_module' || e.type === 'rank_up_overall') {
+    // Compact pill — one-line, low visual weight so a power user with many
+    // rank-ups doesn't drown the story.
+    return '' +
+      '<div class="journey-row">' +
+        dot +
+        '<div class="journey-rank-pill' + tapClass + '"' + tapAttr + '>' +
+          '<span class="journey-pill-date">' + dateStr + '</span>' +
+          '<span class="journey-pill-label">' + escape(e.label) + '</span>' +
+          (tappable ? '<span class="journey-pill-chev">›</span>' : '') +
+        '</div>' +
+      '</div>';
+  }
+
+  if (e.type === 'comeback') {
+    // Story card with the comeback arc explicitly framed (per spec tone:
+    // light RPG, concise, no shame language).
+    const recoveryNote = (e.recoveryCompleted && e.recoveryRequired)
+      ? '<span class="journey-comeback-arc">Recovery ' + e.recoveryCompleted + '/' + e.recoveryRequired + ' · certified</span>'
+      : '<span class="journey-comeback-arc">Recovery completed · certified</span>';
+    return '' +
+      '<div class="journey-row">' +
+        dot +
+        '<div class="journey-event-card comeback' + tapClass + '"' + tapAttr + '>' +
+          '<div class="journey-event-eyebrow">' + dateStr + ' · COMEBACK</div>' +
+          '<div class="journey-event-title">' + escape(e.label) + '</div>' +
+          '<div class="journey-event-body">' + escape(e.sublabel) + '</div>' +
+          '<div class="journey-event-foot">' + recoveryNote + (tappable ? '<span class="journey-pill-chev">›</span>' : '') + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // Default: "First X" milestone card — larger gold-bordered story card.
+  return '' +
+    '<div class="journey-row">' +
+      dot +
+      '<div class="journey-event-card milestone' + tapClass + '"' + tapAttr + '>' +
+        '<div class="journey-event-eyebrow">' + dateStr + ' · MILESTONE</div>' +
+        '<div class="journey-event-title">' + escape(e.label) + '</div>' +
+        '<div class="journey-event-body">' + escape(e.sublabel) + '</div>' +
+        (tappable ? '<div class="journey-event-foot"><span class="journey-pill-chev">›</span></div>' : '') +
+      '</div>' +
     '</div>';
 }
 
@@ -11012,12 +11615,18 @@ function renderHomeHeaderAvatar() {
     '</button>';
 }
 
-// Build the Profile overlay body (Trainer Dossier + Honor Roll preview).
+// Build the Profile overlay body (Trainer Dossier + My Journey + Honor Roll).
+// v2.3.0: My Journey card inserted between Dossier (who I am now) and Honor
+// Roll (full cert archive). The Journey is curated narrative; Honor Roll
+// remains the complete certification ledger.
 // Re-runs on Show All toggle to expand Honor Roll inline.
 function renderTrainerProfileBody() {
   const expanded = !!window._profileHonorRollExpanded;
   return '' +
     renderTrainerCard() +
+    // v2.3.0: Journey is read-only (no schema delta) and computed fresh on
+    // each render so it always reflects the latest history.
+    (typeof renderJourneyCard === 'function' ? renderJourneyCard() : '') +
     renderHonorRollCard({
       mode: expanded ? 'full' : 'preview',
       limit: 3,
@@ -13914,7 +14523,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.6</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.3.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -14025,7 +14634,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.6',
+    appVersion: '2.3.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
