@@ -4000,6 +4000,41 @@
         repeating-linear-gradient(45deg, rgba(212,175,55,0.015) 0px, rgba(212,175,55,0.015) 2px, transparent 2px, transparent 8px);
       opacity: 0.6;
     }
+    /* v2.2.5: in-card Profile-overlay close button. Sits inside the dossier
+       card frame at top-right so the dismiss control is part of the Profile
+       window itself, not a separate top-of-screen toolbar. Layered above
+       the decorative ::before pseudo via z-index. */
+    .trainer-dossier-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(15,23,42,0.65);
+      color: var(--text-secondary);
+      border: 1px solid rgba(212,175,55,0.30);
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+      backdrop-filter: blur(2px);
+    }
+    .trainer-dossier-close:hover {
+      background: rgba(248,113,113,0.15);
+      color: var(--danger);
+      border-color: rgba(248,113,113,0.50);
+    }
+    .trainer-dossier-close:active { transform: scale(0.92); }
+    .trainer-dossier-close:focus-visible {
+      outline: 2px solid rgba(212,175,55,0.70);
+      outline-offset: 2px;
+    }
     .trainer-dossier-eyebrow {
       position: relative;
       font-size: 10px;
@@ -4622,7 +4657,10 @@
     .profile-overlay-body {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 16px calc(90px + env(safe-area-inset-bottom, 0px)) 16px;
+      /* v2.2.5: notch-safe top padding now that the sticky header bar is gone.
+         The dossier card sits below this padding, so its top-right close
+         button is clear of the iOS notch / status bar. */
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(90px + env(safe-area-inset-bottom, 0px)) 16px;
       -webkit-overflow-scrolling: touch;
     }
     /* Identity Settings card — compact replacement for the v2.1.0+v2.2.0
@@ -4962,12 +5000,10 @@
 <input type="file" id="backupImportFileInput" accept="application/json,.json" style="display:none" onchange="_onBackupImportFileChange(event)">
 
 <!-- TRAINER PROFILE OVERLAY (v2.2.1 — IA correction) -->
-<div class="profile-overlay hidden" id="profileOverlay" role="dialog" aria-labelledby="profileOverlayTitle">
-  <div class="profile-overlay-header">
-    <button class="profile-overlay-close" onclick="closeTrainerProfile()" aria-label="Close Trainer Profile">✕</button>
-    <div class="profile-overlay-title" id="profileOverlayTitle">Trainer Profile</div>
-    <div class="profile-overlay-spacer" aria-hidden="true"></div>
-  </div>
+<div class="profile-overlay hidden" id="profileOverlay" role="dialog" aria-label="Trainer Profile">
+  <!-- v2.2.5: sticky header bar removed — close button now lives inside the
+       Trainer Dossier card frame at top-right (see renderTrainerCard).
+       The "TRAINER DOSSIER" eyebrow inside the card is the title. -->
   <div class="profile-overlay-body" id="profileOverlayBody">
     <!-- filled by openTrainerProfile() -->
   </div>
@@ -10552,6 +10588,13 @@ function renderTrainerCard() {
 
   return '' +
     '<div class="card trainer-dossier-card">' +
+      // v2.2.5: in-card close button (replaces the v2.1.0+ sticky overlay
+      // header). Sits at the top-right corner of the dossier card frame so
+      // the dismiss control reads as part of the Profile window itself, not
+      // as a separate top-of-screen toolbar. Wrapped in try/catch-free call
+      // since closeTrainerProfile is defensive on its own.
+      '<button class="trainer-dossier-close" onclick="closeTrainerProfile()" ' +
+        'aria-label="Close Trainer Profile" title="Close">✕</button>' +
       '<div class="trainer-dossier-eyebrow">▾ TRAINER DOSSIER</div>' +
       '<div class="trainer-dossier-avatar-row">' +
         '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
@@ -13716,7 +13759,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.4</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.5</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13827,7 +13870,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.4',
+    appVersion: '2.2.5',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
