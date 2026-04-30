@@ -4275,6 +4275,77 @@
     }
     .trainer-dossier-caption-text { flex: 1; min-width: 0; }
     /* ============================================================ */
+    /* STYLE TAGS v2.5.0 — derived identity rows in Dossier          */
+    /* Sits between identity caption and HOW I TRAIN. Max 3 rows.    */
+    /* Doesn't compete with hero (subtler title) or stat grid        */
+    /* (single-line rows + small reason caption).                    */
+    /* ============================================================ */
+    .trainer-dossier-style-tags {
+      position: relative;
+    }
+    .trainer-dossier-style-tags .trainer-dossier-section-title {
+      margin-bottom: 8px;
+    }
+    .style-tags-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .style-tag-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      background: rgba(212,175,55,0.04);
+      border: 1px solid rgba(212,175,55,0.18);
+      border-radius: 8px;
+    }
+    .style-tag-emoji {
+      flex-shrink: 0;
+      font-size: 16px;
+      line-height: 1.2;
+      width: 22px;
+      text-align: center;
+      color: #FFD700;
+      filter: drop-shadow(0 0 4px rgba(255,215,0,0.40));
+    }
+    .style-tag-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .style-tag-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+    }
+    .style-tag-reason {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      letter-spacing: 0.1px;
+      margin-top: 3px;
+      line-height: 1.4;
+      opacity: 0.85;
+    }
+    .style-tags-empty {
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.1px;
+      padding: 6px 2px;
+      line-height: 1.5;
+      font-style: italic;
+      opacity: 0.85;
+    }
+    .trainer-dossier-style-tags.is-empty .style-tags-empty {
+      /* a soft dashed pill to look "locked" without shame */
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.025);
+      border: 1px dashed rgba(255,255,255,0.10);
+      border-radius: 8px;
+      font-style: normal;
+    }
+    /* ============================================================ */
     /* DOSSIER SECTIONS v2.2.6 — subtler titles, no top-border (the  */
     /* divider element handles separation now).                      */
     /* ============================================================ */
@@ -11482,6 +11553,13 @@ function renderTrainerCard() {
 
       '<div class="trainer-dossier-divider" aria-hidden="true"></div>' +
 
+      // --- STYLE TAGS v2.5.0 (top 3 derived from data) ----------------
+      // Reads who-I-am-becoming from existing arrays. Empty state shows
+      // an encouraging line if no tag qualifies the sample-size gates.
+      (typeof renderStyleTagsBlock === 'function' ? renderStyleTagsBlock() : '') +
+
+      '<div class="trainer-dossier-divider" aria-hidden="true"></div>' +
+
       // --- HOW I TRAIN ------------------------------------------------
       '<div class="trainer-dossier-section">' +
         '<div class="trainer-dossier-section-title">How I Train</div>' +
@@ -11952,6 +12030,297 @@ function getPersonalRecords() {
     streaks:  streakList,
     time:     timeList
   };
+}
+
+// ============================================================
+// AUTO-DETECTED STYLE TAGS v2.5.0
+// ============================================================
+// Read-only aggregator. Reads existing data sources only — no new persisted
+// state, no instrumentation. Returns a deterministic top-3 list of positive
+// identity tags backed by data + sample-size gates.
+//
+// Tag set (8 tags, locked for v2.5.0):
+//   Tier A — narrative / character identity (highest priority):
+//     A1 Recovery Fighter      — completed comeback arc(s)
+//     A2 No-Punt Grinder       — low critical-mistake rate
+//     A3 Steady Defender       — strong BB Defense Boss accuracy
+//     A4 Pure Range Machine    — strong pure-spot accuracy
+//     A5 Mixed Spot Reader     — strong mixed-spot accuracy
+//   Tier B — performance / volume:
+//     B1 Pressure-Cool         — high Overall Exam pass rate + accuracy
+//     B2 Boss Slayer           — many Boss certifications
+//   Tier C — habit:
+//     C1 Daily Grinder         — long streak OR many active days
+//
+// Selection rules:
+//   1. Compute every tag's qualification (threshold + sample-size gate).
+//   2. Drop tags that don't qualify.
+//   3. Sort qualified by priority (A1..C1 ascending).
+//   4. Take top 3 (deterministic — same data → same tags).
+//   5. Tiebreaker within same tier: higher confidence percentage wins.
+//
+// All tags are POSITIVE identity. No diagnostic / shaming labels — those
+// belong to v2.6.0 Training Arc / Current Focus, not Style Tags.
+//
+// Stability: thresholds are sample-size-gated, so a single off-session
+// can't toggle a tag in/out. Once earned, a tag stays earned unless the
+// underlying aggregate drifts past threshold AND the user has enough new
+// data to move the average meaningfully.
+
+function getStyleTags() {
+  const profile = App.state.profile || {};
+  const stats   = App.state.stats   || {};
+  const streaks = App.state.streaks || {};
+  const cr      = profile.challengeResults   || [];
+  const oeh     = profile.overallExamHistory || [];
+
+  // Drill sessions (rotates at 500; OK for tag derivation since challengeResults
+  // and overallExamHistory provide stable historical signal regardless).
+  let sessions = [];
+  try { sessions = JSON.parse(localStorage.getItem('drillSessions') || '[]'); } catch (e) { sessions = []; }
+  if (!Array.isArray(sessions)) sessions = [];
+
+  const candidates = [];
+
+  // Helper: format a percentage with 0 decimals. Used in reason captions.
+  function pct(n) { return Math.round(n) + '%'; }
+  // Helper: format an integer.
+  function num(n) { return Math.round(n).toString(); }
+
+  // --- A1. Recovery Fighter -------------------------------------------
+  //     ≥1 completed comeback arc (failed exam → recovery → pass).
+  //     Source: getJourneyEvents() comeback events.
+  try {
+    const events = (typeof getJourneyEvents === 'function') ? getJourneyEvents() : [];
+    const comebacks = events.filter(function (e) { return e.type === 'comeback'; });
+    if (comebacks.length >= 1) {
+      candidates.push({
+        id: 'recovery_fighter',
+        priority: 1,
+        confidence: Math.min(100, comebacks.length * 50),
+        emoji: '✦',
+        label: 'Recovery Fighter',
+        copy: 'You turn failed attempts into training arcs.',
+        reason: comebacks.length === 1
+          ? '1 Recovery → Pass arc completed'
+          : comebacks.length + ' Recovery → Pass arcs completed'
+      });
+    }
+  } catch (e) { /* non-fatal */ }
+
+  // --- A2. No-Punt Grinder --------------------------------------------
+  //     critical-mistake rate < 2.5% across drillSessions + challengeResults
+  //     + overallExamHistory; require ≥100 total hands.
+  let totalHands = 0, criticalCount = 0;
+  cr.forEach(function (c) {
+    totalHands += (c.handCount || 0);
+    criticalCount += (c.criticalCount || 0);
+  });
+  oeh.forEach(function (e) {
+    totalHands += (e.handCount || 0);
+    criticalCount += (e.criticalMistakes || 0);
+  });
+  // drillSessions don't track critical separately in the entry shape, so we
+  // rely on Boss/Exam data which DOES track critical explicitly. (Per spec:
+  // critical mistakes are an authoritative signal from competitive tests.)
+  if (totalHands >= 100) {
+    const criticalRate = (criticalCount / totalHands) * 100;
+    if (criticalRate < 2.5) {
+      candidates.push({
+        id: 'no_punt_grinder',
+        priority: 2,
+        confidence: Math.min(100, 100 - (criticalRate / 2.5) * 100),
+        emoji: '✊',
+        label: 'No-Punt Grinder',
+        copy: 'You avoid the costly out-of-range mistakes that damage tournament stacks.',
+        reason: criticalRate.toFixed(1) + '% critical mistakes over ' + totalHands + ' hands'
+      });
+    }
+  }
+
+  // --- A3. Steady Defender --------------------------------------------
+  //     BB Defense Boss accuracy ≥85% with ≥15 BB Defense Boss hands.
+  try {
+    const mods = (typeof getModuleAnalytics === 'function') ? getModuleAnalytics() : [];
+    const bb = mods.find(function (m) { return m.module === 'bb_defense'; });
+    if (bb && bb.boss && bb.boss.hands >= 15 && typeof bb.boss.accuracy === 'number' && bb.boss.accuracy >= 85) {
+      candidates.push({
+        id: 'steady_defender',
+        priority: 3,
+        confidence: Math.min(100, bb.boss.accuracy),
+        emoji: '🛡',
+        label: 'Steady Defender',
+        copy: 'Your BB Defense decisions are becoming a signature strength.',
+        reason: 'BB Defense · ' + pct(bb.boss.accuracy) + ' over ' + bb.boss.hands + ' Boss hands'
+      });
+    }
+  } catch (e) { /* non-fatal */ }
+
+  // --- A4. Pure Range Machine -----------------------------------------
+  //     Weighted pure-spot accuracy ≥90% with ≥50 pure spots.
+  //     Source weighting (most → least authoritative):
+  //       challengeResults: c.pureCount + c.scores.pure (exact pure-spot counts)
+  //       drillSessions:    s.pureCorrect + s.purePct (derive pure-total)
+  let pureSpots = 0, pureHits = 0;
+  cr.forEach(function (c) {
+    if (c.pureCount > 0 && c.scores && typeof c.scores.pure === 'number') {
+      pureSpots += c.pureCount;
+      pureHits += c.pureCount * (c.scores.pure / 100);
+    }
+  });
+  sessions.forEach(function (s) {
+    const pc = (typeof s.pureCorrect === 'number') ? s.pureCorrect : 0;
+    const pp = (typeof s.purePct === 'number') ? s.purePct : 0;
+    if (pc > 0 && pp > 0) {
+      const total = Math.round(pc * 100 / pp);
+      pureSpots += total;
+      pureHits += pc;
+    }
+  });
+  if (pureSpots >= 50) {
+    const pureAccuracy = (pureHits / pureSpots) * 100;
+    if (pureAccuracy >= 90) {
+      candidates.push({
+        id: 'pure_range_machine',
+        priority: 4,
+        confidence: Math.min(100, pureAccuracy),
+        emoji: '🎯',
+        label: 'Pure Range Machine',
+        copy: 'You consistently recognize pure-range decisions.',
+        reason: pct(pureAccuracy) + ' pure accuracy over ' + pureSpots + ' spots'
+      });
+    }
+  }
+
+  // --- A5. Mixed Spot Reader ------------------------------------------
+  //     Weighted mixed accuracy ≥85% with ≥40 mixed spots.
+  let mixedSpots = 0, mixedHits = 0;
+  cr.forEach(function (c) {
+    if (c.mixedCount > 0 && c.scores && typeof c.scores.mixed === 'number') {
+      mixedSpots += c.mixedCount;
+      mixedHits += c.mixedCount * (c.scores.mixed / 100);
+    }
+  });
+  sessions.forEach(function (s) {
+    const mc = (typeof s.mixCorrect === 'number') ? s.mixCorrect : 0;
+    const mp = (typeof s.mixPct === 'number') ? s.mixPct : 0;
+    if (mc > 0 && mp > 0) {
+      const total = Math.round(mc * 100 / mp);
+      mixedSpots += total;
+      mixedHits += mc;
+    }
+  });
+  if (mixedSpots >= 40) {
+    const mixedAccuracy = (mixedHits / mixedSpots) * 100;
+    if (mixedAccuracy >= 85) {
+      candidates.push({
+        id: 'mixed_spot_reader',
+        priority: 5,
+        confidence: Math.min(100, mixedAccuracy),
+        emoji: '🧠',
+        label: 'Mixed Spot Reader',
+        copy: 'You read mixed/marginal spots with calm precision.',
+        reason: pct(mixedAccuracy) + ' mixed awareness over ' + mixedSpots + ' spots'
+      });
+    }
+  }
+
+  // --- B1. Pressure-Cool ----------------------------------------------
+  //     Overall Exam pass rate ≥70% AND avg pass-accuracy ≥85% with ≥3 passed exams.
+  if (oeh.length > 0) {
+    const passes = oeh.filter(function (e) { return e.passed; });
+    if (passes.length >= 3) {
+      const passRate = passes.length / oeh.length;
+      const avgAcc = passes.reduce(function (s, e) { return s + (e.overallAccuracy || 0); }, 0) / passes.length;
+      if (passRate >= 0.70 && avgAcc >= 85) {
+        candidates.push({
+          id: 'pressure_cool',
+          priority: 6,
+          confidence: Math.min(100, avgAcc),
+          emoji: '❄',
+          label: 'Pressure-Cool',
+          copy: 'You hold composure under exam conditions.',
+          reason: passes.length + '/' + oeh.length + ' Overall Exam pass' + (oeh.length === 1 ? '' : 'es') + ' · ' + pct(avgAcc) + ' avg'
+        });
+      }
+    }
+  }
+
+  // --- B2. Boss Slayer ------------------------------------------------
+  //     ≥5 Boss certifications.
+  const bossPasses = cr.filter(function (c) { return c.passed; }).length;
+  if (bossPasses >= 5) {
+    candidates.push({
+      id: 'boss_slayer',
+      priority: 7,
+      confidence: Math.min(100, bossPasses * 10),
+      emoji: '⚔',
+      label: 'Boss Slayer',
+      copy: 'You\'ve earned your way through the Boss arena.',
+      reason: bossPasses + ' Boss certification' + (bossPasses === 1 ? '' : 's') + ' earned'
+    });
+  }
+
+  // --- C1. Daily Grinder ----------------------------------------------
+  //     streaks.personalBest ≥14 OR active days ≥30.
+  const streakBest = (streaks.personalBest || 0);
+  const activeDays = Object.keys(stats.dailyHistory || {}).length;
+  if (streakBest >= 14 || activeDays >= 30) {
+    // Confidence weights toward the larger signal
+    const conf = Math.min(100, Math.max(streakBest * 5, activeDays * 2));
+    let reason;
+    if (streakBest >= 14 && activeDays >= 30) {
+      reason = streakBest + '-day streak · ' + activeDays + ' active days';
+    } else if (streakBest >= 14) {
+      reason = streakBest + '-day streak personal best';
+    } else {
+      reason = activeDays + ' active days';
+    }
+    candidates.push({
+      id: 'daily_grinder',
+      priority: 8,
+      confidence: conf,
+      emoji: '🔥',
+      label: 'Daily Grinder',
+      copy: 'Your training cadence is the work, not the willpower.',
+      reason: reason
+    });
+  }
+
+  // Selection: sort by priority asc, tiebreak by confidence desc, take top 3.
+  candidates.sort(function (a, b) {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return (b.confidence || 0) - (a.confidence || 0);
+  });
+  return candidates.slice(0, 3);
+}
+
+// Render the Style Tags strip injected into Trainer Dossier between identity
+// caption and HOW I TRAIN. Empty state shows a single encouraging line.
+function renderStyleTagsBlock() {
+  const tags = (typeof getStyleTags === 'function') ? getStyleTags() : [];
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return '<div class="trainer-dossier-style-tags is-empty">' +
+      '<div class="trainer-dossier-section-title">Style Tags</div>' +
+      '<div class="style-tags-empty">Build more history to reveal your playstyle.</div>' +
+    '</div>';
+  }
+  const escape = (typeof _trainerEscapeHtml === 'function')
+    ? _trainerEscapeHtml
+    : function (s) { return String(s == null ? '' : s); };
+  const rows = tags.map(function (t) {
+    return '<div class="style-tag-row">' +
+      '<span class="style-tag-emoji" aria-hidden="true">' + t.emoji + '</span>' +
+      '<div class="style-tag-body">' +
+        '<div class="style-tag-label">' + escape(t.label) + '</div>' +
+        '<div class="style-tag-reason">' + escape(t.reason) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  return '<div class="trainer-dossier-style-tags">' +
+    '<div class="trainer-dossier-section-title">Style Tags</div>' +
+    '<div class="style-tags-list">' + rows + '</div>' +
+  '</div>';
 }
 
 // Render one Honor Roll row.
@@ -15296,7 +15665,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.4.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.5.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -15407,7 +15776,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.4.1',
+    appVersion: '2.5.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
