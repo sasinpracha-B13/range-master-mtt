@@ -3975,6 +3975,213 @@
     .page-header p { font-size: 14px; color: var(--text-secondary); }
     /* DIVIDER */
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
+    /* ============================================================ */
+    /* TRAINER DOSSIER v2.1.0 — Identity anchor artifact            */
+    /* ============================================================ */
+    .trainer-dossier-card {
+      position: relative;
+      padding: 18px 16px 14px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(212,175,55,0.10) 0%, transparent 60%),
+        linear-gradient(180deg, #161d2a 0%, var(--surface) 100%);
+      border: 1px solid rgba(212,175,55,0.30);
+      border-radius: 14px;
+      box-shadow:
+        0 0 32px rgba(212,175,55,0.06),
+        inset 0 0 18px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .trainer-dossier-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(45deg, rgba(212,175,55,0.015) 0px, rgba(212,175,55,0.015) 2px, transparent 2px, transparent 8px);
+      opacity: 0.6;
+    }
+    .trainer-dossier-eyebrow {
+      position: relative;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2.6px;
+      color: #d4af37;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .trainer-dossier-callsign {
+      position: relative;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.1;
+      text-shadow: 0 0 24px rgba(212,175,55,0.25);
+    }
+    .trainer-dossier-id-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .trainer-id-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #d4af37;
+      letter-spacing: 0.8px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(212,175,55,0.10);
+      border: 1px solid rgba(212,175,55,0.30);
+    }
+    .trainer-id-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+    }
+    .trainer-dossier-tagline {
+      position: relative;
+      font-size: 13px;
+      color: var(--text);
+      text-align: center;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      font-style: italic;
+      font-weight: 500;
+      border-left: 2px solid rgba(212,175,55,0.4);
+    }
+    .trainer-dossier-section {
+      position: relative;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(255,255,255,0.06);
+    }
+    .trainer-dossier-section-title {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+    .trainer-dossier-who-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trainer-dossier-emblem { flex-shrink: 0; }
+    .trainer-dossier-rank-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .trainer-dossier-rank-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.3px;
+    }
+    .trainer-dossier-rank-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+    .trainer-dossier-edit-btn {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .trainer-dossier-edit-btn:hover {
+      background: rgba(212,175,55,0.10);
+      color: #d4af37;
+      border-color: rgba(212,175,55,0.40);
+    }
+    .trainer-dossier-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .trainer-dossier-stat {
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .trainer-dossier-stat .stat-label {
+      font-size: 9px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+    .trainer-dossier-stat .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.3px;
+    }
+    .trainer-dossier-stat .stat-value-sm {
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+    .trainer-dossier-slot {
+      padding: 10px 12px;
+      background: rgba(212,175,55,0.04);
+      border: 1px solid rgba(212,175,55,0.18);
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .trainer-dossier-slot:last-child { margin-bottom: 0; }
+    .trainer-dossier-slot.locked {
+      background: rgba(255,255,255,0.02);
+      border-color: rgba(255,255,255,0.06);
+      border-style: dashed;
+    }
+    .trainer-dossier-slot .slot-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      color: #d4af37;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .trainer-dossier-slot.locked .slot-title { color: var(--text-secondary); }
+    .trainer-dossier-slot .slot-value {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .trainer-dossier-slot .slot-value strong {
+      color: #d4af37;
+      font-weight: 700;
+    }
+    .trainer-dossier-slot .slot-locked {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.4;
+    }
     /* SOURCE BREAKDOWN — v1.9.10 (Progress analytics) */
     .src-row {
       display: grid;
@@ -4205,6 +4412,25 @@
 
 <!-- HIDDEN FILE INPUT for backup import -->
 <input type="file" id="backupImportFileInput" accept="application/json,.json" style="display:none" onchange="_onBackupImportFileChange(event)">
+
+<!-- CALLSIGN EDITOR MODAL (v2.1.0) -->
+<div class="modal-overlay hidden" id="callsignEditorModal">
+  <div class="modal-box">
+    <div class="modal-title">Edit Callsign</div>
+    <div class="modal-text">
+      <p>Pick a callsign that's yours. 1–20 characters · letters / numbers / space / underscore / hyphen.</p>
+    </div>
+    <input type="text" id="callsignInput" maxlength="20" placeholder="ChipShark"
+      autocomplete="off" autocapitalize="off" spellcheck="false"
+      style="width:100%;padding:10px 12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;outline:none"
+      onkeydown="if(event.key==='Enter'){saveCallsign()}else if(event.key==='Escape'){closeCallsignEditor()}">
+    <div id="callsignError" style="font-size:11px;color:var(--danger);margin-top:6px;min-height:14px"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-secondary btn-full" onclick="closeCallsignEditor()">Cancel</button>
+      <button class="btn btn-primary btn-full" onclick="saveCallsign()">Save</button>
+    </div>
+  </div>
+</div>
 
 <!-- HAND POPUP (Browse) -->
 <div class="popup-overlay hidden" id="handPopup">
@@ -4492,6 +4718,16 @@ const App = {
     // existing users without profile don't break. Module ranks all start
     // Unranked — official ranks unlock via Challenge Mode (v1.8.1+).
     profile: {
+      // v2.1.0: Trainer Identity Foundation. Set once on first session;
+      // wiped on confirmReset (a reset = identity reborn).
+      trainerId: null,           // "RM-XXXXXX" generated on first session
+      callsign: 'Trainer',       // user-editable, default 'Trainer'
+      firstSessionDate: null,    // ISO date, set once on first session
+      // Reserved slots for upcoming pillars (declared so loadProgress
+      // deep-merge picks them up; populated in v2.4-2.6):
+      records: {},               // v2.4.0 — Personal Records ATH
+      styleTags: [],             // v2.5.0 — Auto-detected style tags
+      focusArc: null,            // v2.6.0 — Current Training Arc
       totalXP: 0,
       xpLevel: 1,
       certifications: {
@@ -4528,6 +4764,9 @@ const App = {
     safe('registerSW',      () => this.registerSW());
     safe('checkDisclaimer', () => this.checkDisclaimer());
     safe('checkIOSInstall', () => this.checkIOSInstall());
+    // v2.1.0: ensure Trainer Identity exists (sets trainerId + firstSessionDate
+    // on first session; idempotent on subsequent loads).
+    safe('ensureTrainerIdentity', () => ensureTrainerIdentity());
     // renderSettings/Progress/Browse are STANDALONE functions, not methods on App.
     safe('renderSettings',  () => renderSettings());
     safe('renderProgress',  () => renderProgress());
@@ -9340,6 +9579,270 @@ function rankDisplay(internalRank) {
   return RANK_DISPLAY[internalRank] || internalRank;
 }
 
+// ============================================================
+// TRAINER IDENTITY FOUNDATION v2.1.0
+// ============================================================
+// Persistent Trainer ID + Callsign + first-session date.
+// Set once on first session, wiped on confirmReset (identity reborn).
+//
+// Philosophy: data should not just be stats — it should answer
+//   "Who am I?" (callsign + ID + rank + member since)
+//   "How do I train?" (career hands + active days + streak + style)
+//   "What defines me?" (signature strength + focus arc + latest cert)
+// Slots for Signature/Focus/Cert show data-locked aspirational
+// prompts when criteria not yet met (not silent "coming soon").
+
+// Generate identity on first session if not yet set. Idempotent.
+// Existing users get firstSessionDate derived from earliest dailyHistory
+// key when possible (more accurate than "today").
+function ensureTrainerIdentity() {
+  const profile = App.state.profile;
+  if (!profile) return;
+  let mutated = false;
+  if (!profile.trainerId) {
+    const seed = (Date.now() ^ Math.floor(Math.random() * 0xFFFFFFFF)) >>> 0;
+    let id = seed.toString(36).toUpperCase().slice(-6);
+    while (id.length < 6) id = '0' + id;
+    profile.trainerId = 'RM-' + id;
+    mutated = true;
+  }
+  if (!profile.firstSessionDate) {
+    // Try to derive from earliest dailyHistory key first (more accurate
+    // for existing users); fall back to today.
+    const dh = (App.state.stats && App.state.stats.dailyHistory) || {};
+    const dates = Object.keys(dh).sort();
+    if (dates.length > 0) {
+      profile.firstSessionDate = new Date(dates[0]).toISOString();
+    } else {
+      profile.firstSessionDate = new Date().toISOString();
+    }
+    mutated = true;
+  }
+  if (typeof profile.callsign !== 'string' || profile.callsign.trim().length === 0) {
+    profile.callsign = 'Trainer';
+    mutated = true;
+  }
+  if (mutated) {
+    try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  }
+}
+
+// Validate + sanitize a callsign. Returns clean string or null.
+function validateCallsign(input) {
+  if (typeof input !== 'string') return null;
+  const trimmed = input.trim();
+  if (trimmed.length < 1 || trimmed.length > 20) return null;
+  // Letters / numbers / space / underscore / hyphen only
+  if (!/^[A-Za-z0-9 _\-]+$/.test(trimmed)) return null;
+  return trimmed;
+}
+
+function openCallsignEditor() {
+  const modal = document.getElementById('callsignEditorModal');
+  if (!modal) return;
+  const input = document.getElementById('callsignInput');
+  const err = document.getElementById('callsignError');
+  if (input) input.value = App.state.profile.callsign || '';
+  if (err) err.textContent = '';
+  modal.classList.remove('hidden');
+  setTimeout(() => { if (input) input.focus(); }, 80);
+}
+function closeCallsignEditor() {
+  const modal = document.getElementById('callsignEditorModal');
+  if (modal) modal.classList.add('hidden');
+}
+function saveCallsign() {
+  const input = document.getElementById('callsignInput');
+  const err = document.getElementById('callsignError');
+  if (!input) return;
+  const clean = validateCallsign(input.value);
+  if (!clean) {
+    if (err) err.textContent = 'Use 1–20 chars, letters/numbers/space/underscore/hyphen.';
+    return;
+  }
+  App.state.profile.callsign = clean;
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  closeCallsignEditor();
+  if (typeof showToast === 'function') showToast('✓ Callsign updated · ' + clean);
+  if (typeof renderSettings === 'function') renderSettings();
+}
+
+// Tiny HTML escape for callsign render
+function _trainerEscapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Build a short identity sentence (rank + progression cue)
+function _trainerIdentitySentence(profile) {
+  const overallRank = profile.certifications.overallRank;
+  const overallDisplay = rankDisplay(overallRank);
+  const ms = profile.certifications.masteryScore || 0;
+  const next = (typeof getNextOverallRank === 'function') ? getNextOverallRank(overallRank) : null;
+  const nextThreshold = next ? OVERALL_UNLOCK_THRESHOLDS[next] : null;
+  if (overallRank === 'Unranked') {
+    if (ms >= 25) return 'Aspiring Trainer · Squire Exam unlocked';
+    if (ms > 0)   return 'Aspiring Trainer · Building toward Squire';
+    return 'Aspiring Trainer · First steps';
+  }
+  if (next) {
+    if (ms >= nextThreshold) return overallDisplay + ' · ' + rankDisplay(next) + ' Exam ready';
+    const ptsTo = Math.max(0, nextThreshold - ms);
+    return overallDisplay + ' · ' + ptsTo.toFixed(1) + ' pts to ' + rankDisplay(next) + ' Exam';
+  }
+  return overallDisplay + ' · Apex reached';
+}
+
+// Render one "What Defines Me" slot with data-locked aspirational copy
+function _trainerDossierSlot(icon, title, value, lockedHint) {
+  if (value) {
+    return '<div class="trainer-dossier-slot">' +
+      '<div class="slot-title">' + icon + ' ' + title + '</div>' +
+      '<div class="slot-value">' + value + '</div>' +
+    '</div>';
+  }
+  return '<div class="trainer-dossier-slot locked">' +
+    '<div class="slot-title">' + icon + ' ' + title + '</div>' +
+    '<div class="slot-locked">🔒 ' + lockedHint + '</div>' +
+  '</div>';
+}
+
+function _formatLatestCert(cert) {
+  if (!cert) return null;
+  const date = cert.date ? new Date(cert.date).toLocaleDateString() : '—';
+  if (cert.type === 'overall') {
+    return rankDisplay(cert.rank) + ' Overall Exam · ' + date +
+      (cert.certId ? ' · ' + cert.certId : '');
+  }
+  return moduleCleanLabel(cert.module) + ' ' + rankDisplay(cert.rank) + ' · ' + date;
+}
+
+// Top-level render. Returns the Trainer Dossier card HTML.
+function renderTrainerCard() {
+  const profile = App.state.profile;
+  if (!profile) return '';
+  const stats = App.state.stats || {};
+  const streaks = App.state.streaks || {};
+
+  const overallRank = profile.certifications.overallRank;
+  const overallDisplay = rankDisplay(overallRank);
+  const ms = profile.certifications.masteryScore || 0;
+  const totalHands = stats.totalHands || 0;
+  const activeDays = Object.keys(stats.dailyHistory || {}).length;
+  const streak = streaks.daily || 0;
+  const memberSince = profile.firstSessionDate ? new Date(profile.firstSessionDate) : null;
+  const memberSinceStr = memberSince ? memberSince.toLocaleDateString() : '—';
+  const identitySentence = _trainerIdentitySentence(profile);
+
+  // Session style — derived from drillSessions
+  let sessions = [];
+  try { sessions = JSON.parse(localStorage.getItem('drillSessions') || '[]'); } catch (e) {}
+  const sessionsCount = sessions.length;
+  const totalSessionHands = sessions.reduce(function (s, x) { return s + (x.handCount || 0); }, 0);
+  const avgHandsPerSession = sessionsCount > 0 ? Math.round(totalSessionHands / sessionsCount) : 0;
+  let sessionStyle;
+  if (sessionsCount === 0)        sessionStyle = '—';
+  else if (avgHandsPerSession >= 50) sessionStyle = 'Marathon · ' + avgHandsPerSession + ' avg';
+  else if (avgHandsPerSession >= 25) sessionStyle = 'Steady · ' + avgHandsPerSession + ' avg';
+  else                                sessionStyle = 'Sprint · ' + avgHandsPerSession + ' avg';
+
+  // What Defines Me — v2.1.0 simple-derive forms (richer in v2.4-2.6).
+  // Signature Strength: best practice module if user has 50+ hands AND a module with 20+ practice hands.
+  let signatureStrength = null;
+  if (totalHands >= 50 && typeof getModuleAnalytics === 'function') {
+    const mods = getModuleAnalytics().filter(function (m) {
+      return m.practice && m.practice.hands >= 20 && typeof m.practice.accuracy === 'number';
+    });
+    mods.sort(function (a, b) { return b.practice.accuracy - a.practice.accuracy; });
+    if (mods.length > 0) {
+      const top = mods[0];
+      signatureStrength = 'Best at <strong>' + top.label + '</strong> · ' + top.practice.accuracy + '% over ' + top.practice.hands + ' hands';
+    }
+  }
+  const sigLockedHint = totalHands >= 50
+    ? 'Drill any module to 20+ hands to reveal Signature Strength'
+    : 'Train ' + (50 - totalHands) + ' more hand' + ((50 - totalHands) === 1 ? '' : 's') + ' to reveal Signature Strength';
+
+  // Current Focus: weakest module (if any) when 50+ total hands
+  let currentFocus = null;
+  if (totalHands >= 50 && typeof getModuleAnalytics === 'function') {
+    const mods = getModuleAnalytics().filter(function (m) {
+      return m.practice && m.practice.hands >= 20 && typeof m.practice.accuracy === 'number';
+    });
+    mods.sort(function (a, b) { return a.practice.accuracy - b.practice.accuracy; });
+    if (mods.length > 0 && mods[0].practice.accuracy < 80) {
+      currentFocus = 'Closing the gap on <strong>' + mods[0].label + '</strong> · ' + mods[0].practice.accuracy + '% accuracy';
+    }
+  }
+  const focusLockedHint = totalHands >= 50
+    ? 'Strong all-around — no clear focus arc yet'
+    : 'Build 50+ hands of practice to discover your Focus Arc';
+
+  // Latest Cert: most recent from moduleRankHistory + passed overallExamHistory
+  const allCerts = [];
+  (profile.moduleRankHistory || []).forEach(function (c) {
+    allCerts.push({
+      type: 'module',
+      module: c.module,
+      rank: c.newRank,
+      date: c.date || c.awardedAt,
+      certId: c.testId ? ('RM-' + Number(c.testId).toString(36).toUpperCase().slice(-6)) : null
+    });
+  });
+  (profile.overallExamHistory || []).filter(function (e) { return e.passed; }).forEach(function (e) {
+    allCerts.push({
+      type: 'overall',
+      rank: e.rankAttempted || e.targetRank,
+      date: e.date || e.certifiedAt,
+      certId: e.seed ? ('RM-' + Number(e.seed).toString(36).toUpperCase().slice(-6)) : null
+    });
+  });
+  allCerts.sort(function (a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+  const latestCertText = allCerts.length > 0 ? _formatLatestCert(allCerts[0]) : null;
+  const certLockedHint = 'Clear your first Boss Test to unlock Honor Roll';
+
+  return '' +
+    '<div class="card trainer-dossier-card">' +
+      '<div class="trainer-dossier-eyebrow">▾ TRAINER DOSSIER</div>' +
+      '<div class="trainer-dossier-callsign">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</div>' +
+      '<div class="trainer-dossier-id-line">' +
+        '<span class="trainer-id-tag">' + (profile.trainerId || '—') + '</span>' +
+        '<span class="trainer-id-meta">Member since ' + memberSinceStr + '</span>' +
+      '</div>' +
+      '<div class="trainer-dossier-tagline">' + identitySentence + '</div>' +
+
+      '<div class="trainer-dossier-section">' +
+        '<div class="trainer-dossier-section-title">Who I Am</div>' +
+        '<div class="trainer-dossier-who-row">' +
+          '<div class="trainer-dossier-emblem">' + renderRankEmblem(overallRank, 'small') + '</div>' +
+          '<div class="trainer-dossier-rank-info">' +
+            '<div class="trainer-dossier-rank-name">' + overallDisplay + '</div>' +
+            '<div class="trainer-dossier-rank-sub">Mastery Score ' + ms.toFixed(1) + ' · Lv ' + (profile.xpLevel || 1) + ' · ' + (profile.totalXP || 0) + ' XP</div>' +
+          '</div>' +
+          '<button class="trainer-dossier-edit-btn" onclick="openCallsignEditor()" title="Edit callsign">✎</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="trainer-dossier-section">' +
+        '<div class="trainer-dossier-section-title">How I Train</div>' +
+        '<div class="trainer-dossier-stat-grid">' +
+          '<div class="trainer-dossier-stat"><div class="stat-label">Career hands</div><div class="stat-value">' + totalHands + '</div></div>' +
+          '<div class="trainer-dossier-stat"><div class="stat-label">Active days</div><div class="stat-value">' + activeDays + '</div></div>' +
+          '<div class="trainer-dossier-stat"><div class="stat-label">Streak</div><div class="stat-value">🔥 ' + streak + '</div></div>' +
+          '<div class="trainer-dossier-stat"><div class="stat-label">Session style</div><div class="stat-value stat-value-sm">' + sessionStyle + '</div></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="trainer-dossier-section">' +
+        '<div class="trainer-dossier-section-title">What Defines Me</div>' +
+        _trainerDossierSlot('🏅', 'Signature Strength', signatureStrength, sigLockedHint) +
+        _trainerDossierSlot('🎯', 'Current Focus',     currentFocus,      focusLockedHint) +
+        _trainerDossierSlot('🏆', 'Latest Cert',       latestCertText,    certLockedHint) +
+      '</div>' +
+    '</div>';
+}
+
 function rankBadge(internalRank, opts) {
   opts = opts || {};
   const display = rankDisplay(internalRank);
@@ -11976,6 +12479,8 @@ function renderLogoSystemPreview() {
 function renderSettings() {
   const s = App.state.settings;
   document.getElementById('settingsContent').innerHTML = `
+    ${renderTrainerCard()}
+
     <div class="card">
       <div class="settings-row">
         <div>
@@ -12109,7 +12614,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.0.4</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.1.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -12220,7 +12725,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.0.4',
+    appVersion: '2.1.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -12398,6 +12903,10 @@ function confirmImportBackup() {
   writeIfPresent('drillSessions',  data.drillSessions);
   // Reload in-memory state from localStorage so all renders see the new data
   try { App.loadProgress(); } catch (e) { /* defensive */ }
+  // v2.1.0: ensure Trainer Identity exists after restore. If imported backup
+  // is from v2.0.x or earlier, profile won't have trainerId — generate one
+  // now so the Trainer Card renders correctly post-import.
+  if (typeof ensureTrainerIdentity === 'function') ensureTrainerIdentity();
   // Re-render whatever's visible
   if (App.state.tab === 'mastery' && typeof renderMastery === 'function') renderMastery();
   if (App.state.tab === 'progress' && typeof renderProgress === 'function') renderProgress();
@@ -12672,7 +13181,15 @@ function confirmReset() {
   App.state.streaks = { current: 0, daily: 0, personalBest: 0, lastPracticeDate: null };
   App.state.stats = { totalHands: 0, totalTime: 0, dailyHistory: {} };
   // v1.9.7: also reset profile to defaults (mirrors App.state.profile init shape)
+  // v2.1.0: trainerId / callsign / firstSessionDate wiped here — reset =
+  // identity reborn. ensureTrainerIdentity() below regenerates a fresh ID.
   App.state.profile = {
+    trainerId: null,
+    callsign: 'Trainer',
+    firstSessionDate: null,
+    records: {},
+    styleTags: [],
+    focusArc: null,
     totalXP: 0,
     xpLevel: 1,
     certifications: {
@@ -12696,12 +13213,15 @@ function confirmReset() {
     badges: [],
     dailyMission: { generatedAt: null, missions: [], completed: [] }
   };
+  // v2.1.0: regenerate fresh Trainer ID + firstSessionDate so the new
+  // identity is ready immediately on next render (no blank Trainer Card).
+  if (typeof ensureTrainerIdentity === 'function') ensureTrainerIdentity();
   closeResetModal();
   // Re-render whatever the user might be looking at so the wipe is visible
   renderSettings();
   if (typeof renderMastery === 'function') renderMastery();
   if (typeof renderProgress === 'function') renderProgress();
-  showToast('✓ Progress reset');
+  showToast('✓ Progress reset · New Trainer ID issued');
 }
 
 // ============================================================
