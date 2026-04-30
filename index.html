@@ -4399,7 +4399,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(0 0 4px rgba(212,175,55,0.25));
+      /* v2.2.4: stronger gold glow so the vivid-gold glyph pops on dark backdrop */
+      filter:
+        drop-shadow(0 0 6px rgba(255,215,0,0.55))
+        drop-shadow(0 1px 1px rgba(0,0,0,0.45));
     }
     /* First-time cue — tiny "Profile" label drops below the button until
        the user opens the overlay once. Settles off permanently after first
@@ -4448,6 +4451,12 @@
       flex-shrink: 0;
       color: var(--avatar-ring-color, #d4af37);
     }
+    /* v2.2.4: gold glow on the glyph SVG inside any avatar-tile (Dossier + Settings swatch) */
+    .avatar-tile > svg {
+      filter:
+        drop-shadow(0 0 5px rgba(255,215,0,0.55))
+        drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+    }
     .avatar-tile.size-32 { width: 32px; height: 32px; }
     .avatar-tile.size-40 { width: 40px; height: 40px; }
     .avatar-tile.size-56 { width: 56px; height: 56px; }
@@ -4495,9 +4504,15 @@
       border: 1.5px solid rgba(148,163,184,0.20);
       cursor: pointer;
       transition: border-color 0.15s, transform 0.12s, box-shadow 0.18s;
-      color: #d4af37;
+      color: #FFD700;
       padding: 0;
       font-family: inherit;
+    }
+    /* v2.2.4: gold glow on picker tile SVGs to match identity surfaces */
+    .avatar-picker-tile > svg {
+      filter:
+        drop-shadow(0 0 5px rgba(255,215,0,0.50))
+        drop-shadow(0 1px 1px rgba(0,0,0,0.45));
     }
     .avatar-picker-tile:hover {
       border-color: rgba(212,175,55,0.55);
@@ -10243,6 +10258,12 @@ const AVATAR_PRESETS = [
 ];
 const AVATAR_PRESET_BY_ID = AVATAR_PRESETS.reduce(function (m, a) { m[a.id] = a; return m; }, {});
 
+// v2.2.4: avatar glyphs always render in vivid gold (regardless of rank).
+// The ring around the avatar still tracks the user's rank color so progression
+// is visible — but the emblem itself is the identity object and reads as a
+// premium gold medal across every surface (Home, Dossier, Settings, Picker).
+const AVATAR_GLYPH_GOLD = '#FFD700';
+
 // Deterministic default — hash a string to a preset index so every Trainer ID
 // gets the same avatar across reloads / devices restored from backup.
 function pickDefaultAvatarId(seedStr) {
@@ -10311,7 +10332,8 @@ function openAvatarPicker() {
              'onclick="setAvatarId(\'' + p.id + '\')" ' +
              'aria-label="Avatar: ' + p.label + '" title="' + p.label + '">' +
              '<span class="picker-check" aria-hidden="true">✓</span>' +
-             renderAvatarGlyph(p.id, 30, ringColor) +
+             // v2.2.4: all picker tiles in vivid gold (consistent w/ identity surfaces)
+             renderAvatarGlyph(p.id, 30, AVATAR_GLYPH_GOLD) +
            '</button>';
   }).join('');
   grid.innerHTML = tiles;
@@ -10533,7 +10555,8 @@ function renderTrainerCard() {
       '<div class="trainer-dossier-eyebrow">▾ TRAINER DOSSIER</div>' +
       '<div class="trainer-dossier-avatar-row">' +
         '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
-          renderAvatarGlyph(avatarId, 32, avatarRingColor) +
+          // v2.2.4: glyph in vivid gold (ring stays rank-color)
+          renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
         '</span>' +
         '<button class="trainer-dossier-avatar-change" onclick="openAvatarPicker()" aria-label="Change avatar">Change</button>' +
       '</div>' +
@@ -10784,7 +10807,8 @@ function renderHomeHeaderAvatar() {
       'aria-label="Open Trainer Profile" ' +
       'style="--avatar-ring-color:' + ringColor + '">' +
       '<span class="header-avatar-glyph">' +
-        renderAvatarGlyph(avatarId, 26, ringColor) +
+        // v2.2.4: glyph in vivid gold (ring stays rank-color)
+        renderAvatarGlyph(avatarId, 26, AVATAR_GLYPH_GOLD) +
       '</span>' +
       cueLabel +
     '</button>';
@@ -10886,7 +10910,8 @@ function renderIdentitySettingsCard() {
         '<span class="identity-row-value">' +
           '<span class="identity-row-avatar-swatch">' +
             '<span class="avatar-tile size-32" style="--avatar-ring-color:' + avatarRingColor + '">' +
-              renderAvatarGlyph(avatarId, 18, avatarRingColor) +
+              // v2.2.4: glyph in vivid gold (ring stays rank-color)
+              renderAvatarGlyph(avatarId, 18, AVATAR_GLYPH_GOLD) +
             '</span>' +
           '</span>' +
           _trainerEscapeHtml(avatarPreset.label) +
@@ -13691,7 +13716,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.3</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.4</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13802,7 +13827,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.3',
+    appVersion: '2.2.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
