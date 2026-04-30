@@ -4335,116 +4335,209 @@
       font-family: 'JetBrains Mono', monospace;
     }
     /* ============================================================ */
-    /* PROFILE PLACEMENT & IDENTITY IA v2.2.1                       */
-    /* Chip affordance polish v2.2.2 — button-like + first-time pulse */
+    /* HOME HEADER PROFILE/AVATAR BUTTON v2.2.3                     */
+    /* (replaces the v2.2.2 in-hero chip — moved out to page-header */
+    /*  top-right where users expect a profile/avatar control)       */
     /* ============================================================ */
-    /* Home Profile Chip — sits in hero-utility-row top-right.
-       Reads as a tappable destination, not decoration: stronger gold
-       gradient, raised shadow, dedicated "Profile" label, chevron, and a
-       one-time pulse cue that stops permanently after the first open. */
-    .home-profile-chip {
+    .page-header-with-avatar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      /* Respect notch / status bar on iOS PWA install */
+      padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    }
+    .page-header-with-avatar .page-header-text { min-width: 0; flex: 1 1 auto; }
+    .page-header-with-avatar .page-header-actions {
+      flex: 0 0 auto;
+      /* Reserve room for the floating "Profile" cue label below the button
+         so its absolute-positioned text doesn't collide with the hero card. */
+      position: relative;
+      min-height: 56px;
+      min-width: 48px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+    .header-avatar-btn {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      border-radius: 50%;
+      border: 2px solid var(--avatar-ring-color, #d4af37);
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.10), rgba(0,0,0,0.0) 55%),
+        linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 2px 10px rgba(0,0,0,0.45),
+        0 0 0 3px rgba(15,23,42,0.85),
+        0 0 0 4px rgba(212,175,55,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s;
+      font-family: inherit;
+      color: var(--avatar-ring-color, #d4af37);
+    }
+    .header-avatar-btn:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 3px 14px rgba(0,0,0,0.55),
+        0 0 0 3px rgba(15,23,42,0.85),
+        0 0 0 5px var(--avatar-ring-color, #d4af37),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .header-avatar-btn:active { transform: scale(0.96); }
+    .header-avatar-btn:focus-visible {
+      outline: 2px solid var(--avatar-ring-color, #d4af37);
+      outline-offset: 3px;
+    }
+    .header-avatar-btn .header-avatar-glyph {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 4px rgba(212,175,55,0.25));
+    }
+    /* First-time cue — tiny "Profile" label drops below the button until
+       the user opens the overlay once. Settles off permanently after first
+       open so the resting state is just an avatar, not a labelled control. */
+    .header-avatar-btn .header-avatar-cue {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--avatar-ring-color, #d4af37);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0.95;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    }
+    /* One-time pulse glow ring — fades out permanently once the user opens
+       Profile (handled in JS by clearing the .pulse class on re-render). */
+    @keyframes headerAvatarPulse {
+      0%   { box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 0 0 3px rgba(15,23,42,0.85), 0 0 0 4px rgba(212,175,55,0.18), 0 0 0 6px rgba(212,175,55,0.45), inset 0 1px 0 rgba(255,255,255,0.08); }
+      70%  { box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 0 0 3px rgba(15,23,42,0.85), 0 0 0 4px rgba(212,175,55,0.18), 0 0 0 14px rgba(212,175,55,0.00), inset 0 1px 0 rgba(255,255,255,0.08); }
+      100% { box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 0 0 3px rgba(15,23,42,0.85), 0 0 0 4px rgba(212,175,55,0.18), 0 0 0 6px rgba(212,175,55,0.00), inset 0 1px 0 rgba(255,255,255,0.08); }
+    }
+    .header-avatar-btn.pulse { animation: headerAvatarPulse 2.4s ease-out infinite; }
+    .header-avatar-btn.pulse:hover { animation: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .header-avatar-btn.pulse { animation: none; }
+    }
+    /* ============================================================ */
+    /* AVATAR — shared visuals (Trainer Dossier tile + Settings row) */
+    /* ============================================================ */
+    .avatar-tile {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 12px 7px 12px;
-      min-height: 32px;
-      max-width: 100%;
-      background: linear-gradient(135deg, rgba(212,175,55,0.20), rgba(212,175,55,0.10));
-      color: var(--text);
-      border: 1px solid rgba(212,175,55,0.50);
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
-      font-family: inherit;
-      margin-left: auto;
-      flex-shrink: 1;
+      justify-content: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.10), rgba(0,0,0,0.0) 55%),
+        linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
       box-shadow:
-        0 2px 8px rgba(212,175,55,0.18),
+        0 0 0 2px var(--avatar-ring-color, #d4af37),
+        0 0 0 4px rgba(15,23,42,0.85),
         inset 0 1px 0 rgba(255,255,255,0.06);
-      position: relative;
-      overflow: hidden;
-    }
-    .home-profile-chip:hover {
-      background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(212,175,55,0.16));
-      border-color: rgba(212,175,55,0.70);
-      box-shadow:
-        0 3px 12px rgba(212,175,55,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-    .home-profile-chip:active { transform: scale(0.97); }
-    .home-profile-chip:focus-visible {
-      outline: 2px solid rgba(212,175,55,0.70);
-      outline-offset: 2px;
-    }
-    .home-profile-chip .hpc-icon {
-      color: #d4af37;
-      font-size: 12px;
-      line-height: 1;
       flex-shrink: 0;
-      text-shadow: 0 0 6px rgba(212,175,55,0.40);
+      color: var(--avatar-ring-color, #d4af37);
     }
-    .home-profile-chip .hpc-name {
-      color: var(--text);
-      max-width: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex-shrink: 1;
-      min-width: 0;
+    .avatar-tile.size-32 { width: 32px; height: 32px; }
+    .avatar-tile.size-40 { width: 40px; height: 40px; }
+    .avatar-tile.size-56 { width: 56px; height: 56px; }
+    /* Trainer Dossier slot for the avatar — sits above callsign, centered */
+    .trainer-dossier-avatar-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 4px 0 10px;
     }
-    .home-profile-chip .hpc-divider {
+    .trainer-dossier-avatar-change {
+      background: none;
+      border: 1px dashed rgba(212,175,55,0.40);
       color: var(--text-secondary);
-      opacity: 0.6;
-      flex-shrink: 0;
-    }
-    .home-profile-chip .hpc-rank {
-      color: #d4af37;
-      flex-shrink: 0;
-    }
-    .home-profile-chip .hpc-label {
-      color: var(--text-secondary);
-      font-weight: 600;
-      font-size: 11px;
-      letter-spacing: 0.5px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      padding-left: 6px;
-      margin-left: 2px;
-      border-left: 1px solid rgba(212,175,55,0.28);
-      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s;
     }
-    .home-profile-chip .hpc-arrow {
+    .trainer-dossier-avatar-change:hover {
+      border-color: rgba(212,175,55,0.80);
+      color: var(--text);
+    }
+    /* Avatar Picker modal */
+    .avatar-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 4px 0 6px;
+    }
+    .avatar-picker-tile {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      border: 1.5px solid rgba(148,163,184,0.20);
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.12s, box-shadow 0.18s;
       color: #d4af37;
-      font-size: 14px;
-      margin-left: -2px;
-      line-height: 1;
-      flex-shrink: 0;
-      transition: transform 0.18s ease;
+      padding: 0;
+      font-family: inherit;
     }
-    .home-profile-chip:hover .hpc-arrow { transform: translateX(2px); }
-    /* Tighter at very narrow widths so the chip never wraps the row */
-    @media (max-width: 380px) {
-      .home-profile-chip { padding: 7px 10px; gap: 5px; font-size: 12px; }
-      .home-profile-chip .hpc-name { max-width: 76px; }
-      .home-profile-chip .hpc-label { font-size: 10px; padding-left: 5px; }
+    .avatar-picker-tile:hover {
+      border-color: rgba(212,175,55,0.55);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.30);
     }
-    /* One-time pulse — applied via .pulse class until the user opens
-       Profile for the first time. After first open the flag flips and the
-       class is gone forever (until reset). Subtle gold glow ring; no layout
-       shift, no infinite distraction beyond the first session. */
-    @keyframes hpcPulse {
-      0%   { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 0 rgba(212,175,55,0.45); }
-      60%  { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 8px rgba(212,175,55,0.00); }
-      100% { box-shadow: 0 2px 8px rgba(212,175,55,0.18), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 0 rgba(212,175,55,0.00); }
+    .avatar-picker-tile.selected {
+      border-color: #d4af37;
+      box-shadow:
+        0 0 0 2px rgba(212,175,55,0.40),
+        0 2px 12px rgba(212,175,55,0.20);
     }
-    .home-profile-chip.pulse {
-      animation: hpcPulse 2.4s ease-out infinite;
+    .avatar-picker-tile .picker-check {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      font-size: 11px;
+      color: #d4af37;
+      opacity: 0;
+      transition: opacity 0.15s;
     }
-    .home-profile-chip.pulse:hover { animation: none; }
-    @media (prefers-reduced-motion: reduce) {
-      .home-profile-chip.pulse { animation: none; }
+    .avatar-picker-tile.selected .picker-check { opacity: 1; }
+    .avatar-picker-tile-label {
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      letter-spacing: 0.6px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Tiny avatar swatch in Settings identity row */
+    .identity-row-avatar-swatch {
+      display: inline-flex;
+      margin-right: 8px;
+      vertical-align: middle;
     }
     /* Profile Overlay — full-screen mobile, slide-up + fade in */
     .profile-overlay {
@@ -4895,6 +4988,20 @@
   </div>
 </div>
 
+<!-- v2.2.3: AVATAR PICKER MODAL -->
+<div class="modal-overlay hidden" id="avatarPickerModal" onclick="if(event.target===this)closeAvatarPicker()">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-title">Choose Avatar</div>
+    <div class="modal-text">
+      <p>Pick a preset emblem for your trainer. Tap one to apply.</p>
+    </div>
+    <div class="avatar-picker-grid" id="avatarPickerGrid"><!-- Filled by openAvatarPicker() --></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-secondary btn-full" onclick="closeAvatarPicker()">Done</button>
+    </div>
+  </div>
+</div>
+
 <!-- HAND POPUP (Browse) -->
 <div class="popup-overlay hidden" id="handPopup">
   <div class="popup-content" id="handPopupContent"></div>
@@ -5060,9 +5167,17 @@
 
   <!-- MASTERY / HOME TAB (v1.8.1: now default landing) -->
   <div class="tab-panel active" id="tab-mastery">
-    <div class="page-header">
-      <h1>🏆 Home</h1>
-      <div class="page-subtitle">Preflop Mastery System</div>
+    <!-- v2.2.3: page-header now hosts the Profile/Avatar button on the
+         right. Avatar swapped in by renderHomeHeaderAvatar() so it
+         re-paints when callsign / rank / avatar / first-open flag change. -->
+    <div class="page-header page-header-with-avatar">
+      <div class="page-header-text">
+        <h1>🏆 Home</h1>
+        <div class="page-subtitle">Preflop Mastery System</div>
+      </div>
+      <div class="page-header-actions" id="homeHeaderAvatarMount">
+        <!-- Filled by renderHomeHeaderAvatar() -->
+      </div>
     </div>
     <div class="container" style="padding-top:12px" id="masteryContent">
       <!-- v1.8.4: inline loading state — visible BEFORE JS runs.
@@ -5190,6 +5305,11 @@ const App = {
       // user opens the Trainer Profile overlay for the first time, then set
       // to true permanently (until reset). Backup-safe (additive).
       hasOpenedTrainerProfile: false,
+      // v2.2.3: identity avatar — preset glyph id (string) from
+      // AVATAR_PRESETS. null on first install; ensureTrainerIdentity()
+      // populates a deterministic default from trainerId. Additive +
+      // backup-safe; user can change anytime via Avatar Picker.
+      avatarId: null,
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
       records: {},               // v2.4.0 — Personal Records ATH
@@ -10089,9 +10209,59 @@ function ensureTrainerIdentity() {
     profile.callsign = 'Trainer';
     mutated = true;
   }
+  // v2.2.3: derive a deterministic default avatar from trainerId so every
+  // identity gets a non-blank, identity-feeling default. Idempotent.
+  if (!profile.avatarId || !AVATAR_PRESET_BY_ID[profile.avatarId]) {
+    profile.avatarId = pickDefaultAvatarId(profile.trainerId);
+    mutated = true;
+  }
   if (mutated) {
     try { App.saveProgress(); } catch (e) { /* non-fatal */ }
   }
+}
+
+// ============================================================
+// AVATAR PRESETS v2.2.3
+// ============================================================
+// 12 single-color SVG glyphs. Drawn inline (no asset loading), tinted
+// via currentColor so they pick up the rank-color ring. Lightweight
+// foundation only — no rarity, no unlocks, no upload, no economy.
+// Preset list is locked for v2.2.3 to keep scope tight.
+const AVATAR_PRESETS = [
+  { id: 'spade',   label: 'Spade',       svg: '<path d="M32 6 C 22 18 12 26 12 38 a 10 10 0 0 0 18 6 l -2 12 h 8 l -2 -12 a 10 10 0 0 0 18 -6 C 52 26 42 18 32 6 Z" fill="currentColor"/>' },
+  { id: 'heart',   label: 'Heart',       svg: '<path d="M32 56 C 14 42 6 32 6 22 a 12 12 0 0 1 22 -7 a 12 12 0 0 1 22 7 C 50 32 42 42 32 56 Z" fill="currentColor"/>' },
+  { id: 'diamond', label: 'Diamond',     svg: '<path d="M32 6 L 56 32 L 32 58 L 8 32 Z" fill="currentColor"/>' },
+  { id: 'club',    label: 'Club',        svg: '<path d="M32 8 a 9 9 0 0 1 8 14 a 9 9 0 0 1 -2 18 l 2 12 h -16 l 2 -12 a 9 9 0 0 1 -2 -18 a 9 9 0 0 1 8 -14 Z" fill="currentColor"/>' },
+  { id: 'sword',   label: 'Sword',       svg: '<path d="M44 6 L 56 6 L 56 18 L 26 48 L 30 52 L 24 58 L 16 50 L 22 44 L 26 48 L 14 36 L 18 32 L 30 44 Z" fill="currentColor"/><rect x="20" y="44" width="14" height="3" transform="rotate(45 27 45)" fill="currentColor"/>' },
+  { id: 'shield',  label: 'Shield',      svg: '<path d="M32 4 L 54 12 V 30 C 54 44 44 54 32 60 C 20 54 10 44 10 30 V 12 Z" fill="currentColor"/><path d="M32 14 L 46 19 V 30 C 46 40 40 47 32 51 C 24 47 18 40 18 30 V 19 Z" fill="rgba(0,0,0,0.35)"/>' },
+  { id: 'crown',   label: 'Crown',       svg: '<path d="M8 22 L 18 38 L 26 22 L 32 40 L 38 22 L 46 38 L 56 22 L 52 50 L 12 50 Z" fill="currentColor"/><circle cx="8" cy="22" r="3" fill="currentColor"/><circle cx="56" cy="22" r="3" fill="currentColor"/><circle cx="32" cy="20" r="3" fill="currentColor"/>' },
+  { id: 'helm',    label: 'Knight Helm', svg: '<path d="M16 14 C 16 10 22 8 32 8 C 42 8 48 10 48 14 V 36 C 48 46 42 54 32 56 C 22 54 16 46 16 36 Z" fill="currentColor"/><rect x="22" y="22" width="20" height="3" fill="rgba(0,0,0,0.5)"/><rect x="22" y="30" width="20" height="3" fill="rgba(0,0,0,0.5)"/><rect x="22" y="38" width="20" height="3" fill="rgba(0,0,0,0.5)"/>' },
+  { id: 'star',    label: 'Star',        svg: '<path d="M32 4 L 39 24 L 60 24 L 43 37 L 50 58 L 32 45 L 14 58 L 21 37 L 4 24 L 25 24 Z" fill="currentColor"/>' },
+  { id: 'bolt',    label: 'Bolt',        svg: '<path d="M36 4 L 14 36 H 28 L 24 60 L 50 26 H 36 Z" fill="currentColor"/>' },
+  { id: 'anchor',  label: 'Anchor',      svg: '<circle cx="32" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="4"/><rect x="30" y="18" width="4" height="32" fill="currentColor"/><rect x="22" y="24" width="20" height="4" fill="currentColor"/><path d="M12 42 C 12 52 22 58 32 58 C 42 58 52 52 52 42 L 46 42 C 46 48 40 52 32 52 C 24 52 18 48 18 42 Z" fill="currentColor"/>' },
+  { id: 'chip',    label: 'Poker Chip',  svg: '<circle cx="32" cy="32" r="26" fill="currentColor"/><circle cx="32" cy="32" r="18" fill="rgba(0,0,0,0.30)"/><circle cx="32" cy="32" r="10" fill="currentColor"/><rect x="30" y="2" width="4" height="10" fill="rgba(0,0,0,0.40)"/><rect x="30" y="52" width="4" height="10" fill="rgba(0,0,0,0.40)"/><rect x="2" y="30" width="10" height="4" fill="rgba(0,0,0,0.40)"/><rect x="52" y="30" width="10" height="4" fill="rgba(0,0,0,0.40)"/>' }
+];
+const AVATAR_PRESET_BY_ID = AVATAR_PRESETS.reduce(function (m, a) { m[a.id] = a; return m; }, {});
+
+// Deterministic default — hash a string to a preset index so every Trainer ID
+// gets the same avatar across reloads / devices restored from backup.
+function pickDefaultAvatarId(seedStr) {
+  const s = (seedStr && String(seedStr)) || 'default';
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  const idx = Math.abs(h) % AVATAR_PRESETS.length;
+  return AVATAR_PRESETS[idx].id;
+}
+
+// Render a preset glyph as an inline SVG. size in px. color is the fill
+// (defaults to currentColor so the parent's color cascades). Falls back to
+// the spade preset if the requested id is unknown.
+function renderAvatarGlyph(avatarId, size, color) {
+  const preset = AVATAR_PRESET_BY_ID[avatarId] || AVATAR_PRESET_BY_ID.spade;
+  const px = size || 32;
+  const fill = color || 'currentColor';
+  return '<svg viewBox="0 0 64 64" width="' + px + '" height="' + px + '" ' +
+    'aria-hidden="true" style="display:block;color:' + fill + '">' + preset.svg + '</svg>';
 }
 
 // Validate + sanitize a callsign. Returns clean string or null.
@@ -10118,6 +10288,76 @@ function closeCallsignEditor() {
   const modal = document.getElementById('callsignEditorModal');
   if (modal) modal.classList.add('hidden');
 }
+
+// ============================================================
+// AVATAR PICKER v2.2.3
+// ============================================================
+// Renders the 12-tile preset grid into the modal, marks the current
+// selection, wires tile-tap to setAvatarId() (which persists + re-renders
+// every identity surface). Apply-on-tap with no Save button — the modal
+// reads as a chooser, and "Done" just closes.
+function openAvatarPicker() {
+  const modal = document.getElementById('avatarPickerModal');
+  const grid  = document.getElementById('avatarPickerGrid');
+  if (!modal || !grid) return;
+  const profile = App.state.profile || {};
+  const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  const ringColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
+  const currentId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+  const tiles = AVATAR_PRESETS.map(function (p) {
+    const sel = (p.id === currentId) ? ' selected' : '';
+    return '<button class="avatar-picker-tile' + sel + '" ' +
+             'data-avatar-id="' + p.id + '" ' +
+             'onclick="setAvatarId(\'' + p.id + '\')" ' +
+             'aria-label="Avatar: ' + p.label + '" title="' + p.label + '">' +
+             '<span class="picker-check" aria-hidden="true">✓</span>' +
+             renderAvatarGlyph(p.id, 30, ringColor) +
+           '</button>';
+  }).join('');
+  grid.innerHTML = tiles;
+  modal.classList.remove('hidden');
+}
+
+function closeAvatarPicker() {
+  const modal = document.getElementById('avatarPickerModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+// Apply selected avatar across every identity surface. Defensive try/catch
+// per re-render so a single render failure can't block the others.
+function setAvatarId(avatarId) {
+  if (!AVATAR_PRESET_BY_ID[avatarId]) return;
+  if (!App.state.profile) return;
+  if (App.state.profile.avatarId === avatarId) {
+    // Tap-same-tile = just close (avoid useless re-renders + toast spam)
+    closeAvatarPicker();
+    return;
+  }
+  App.state.profile.avatarId = avatarId;
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  // Update tile selection inline (visual feedback before re-render replaces it)
+  const grid = document.getElementById('avatarPickerGrid');
+  if (grid) {
+    grid.querySelectorAll('.avatar-picker-tile').forEach(function (t) {
+      t.classList.toggle('selected', t.getAttribute('data-avatar-id') === avatarId);
+    });
+  }
+  // Re-render the 3 identity surfaces (avatar appears in all of them)
+  try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
+  try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
+  // If Profile overlay is open, refresh its body so the dossier tile updates
+  try {
+    const overlay = document.getElementById('profileOverlay');
+    if (overlay && !overlay.classList.contains('hidden')) {
+      const body = document.getElementById('profileOverlayBody');
+      if (body && typeof renderTrainerProfileBody === 'function') {
+        body.innerHTML = renderTrainerProfileBody();
+      }
+    }
+  } catch (e) {}
+  const preset = AVATAR_PRESET_BY_ID[avatarId];
+  if (typeof showToast === 'function') showToast('✓ Avatar set · ' + preset.label);
+}
 function saveCallsign() {
   const input = document.getElementById('callsignInput');
   const err = document.getElementById('callsignError');
@@ -10133,7 +10373,8 @@ function saveCallsign() {
   if (typeof showToast === 'function') showToast('✓ Callsign updated · ' + clean);
   // v2.2.1: callsign appears in 3 surfaces — refresh all so they stay in sync
   //   Settings → Identity Settings card row
-  //   Mastery → Home Profile Chip (in hero-utility-row)
+  //   Mastery → page-header avatar button (callsign read via aria-label only
+  //             post-v2.2.3; visual surface no longer shows the name here)
   //   Profile overlay → Trainer Dossier callsign + Honor Roll subtitle
   if (typeof renderSettings === 'function') renderSettings();
   if (typeof renderMastery === 'function') renderMastery();
@@ -10281,9 +10522,21 @@ function renderTrainerCard() {
     : null;
   const certLockedHint = 'Clear your first Boss Test to unlock Honor Roll';
 
+  // v2.2.3: avatar tile sits under the eyebrow, above the callsign — same
+  // rank-ring color as the Home header button so the two read as the same
+  // identity object. "Change" link opens the Avatar Picker modal.
+  const avatarRingColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
+  const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+
   return '' +
     '<div class="card trainer-dossier-card">' +
       '<div class="trainer-dossier-eyebrow">▾ TRAINER DOSSIER</div>' +
+      '<div class="trainer-dossier-avatar-row">' +
+        '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
+          renderAvatarGlyph(avatarId, 32, avatarRingColor) +
+        '</span>' +
+        '<button class="trainer-dossier-avatar-change" onclick="openAvatarPicker()" aria-label="Change avatar">Change</button>' +
+      '</div>' +
       '<div class="trainer-dossier-callsign">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</div>' +
       '<div class="trainer-dossier-id-line">' +
         '<span class="trainer-id-tag">' + (profile.trainerId || '—') + '</span>' +
@@ -10500,31 +10753,40 @@ function closeCertSealViewer() {
 // Module-level state for Honor Roll preview/expanded toggle inside Profile
 window._profileHonorRollExpanded = false;
 
-// Render the compact identity chip placed inside the Hero card's
-// hero-utility-row (top-right). Avoids pushing Today's Plan down.
-// Trainer ID is intentionally NOT the primary label per IA spec.
-function renderHomeProfileChip() {
+// v2.2.3: Render the circular avatar/profile button into the Home page-header
+// top-right mount point. Replaces the v2.2.2 in-hero chip — the page-header
+// position is where users naturally expect a profile/avatar control. The
+// button carries:
+//   - the user's chosen preset avatar glyph
+//   - a rank-colored ring (so identity reads as "this is YOU at THIS rank")
+//   - a one-time "Profile" floating label + .pulse glow until first open,
+//     so first-time users immediately understand it's tappable
+// After the first open, both the label and the pulse settle off and the
+// button rests in a clean avatar-only state (still rank-ringed).
+function renderHomeHeaderAvatar() {
+  const mount = document.getElementById('homeHeaderAvatarMount');
+  if (!mount) return; // Mastery tab not in the DOM (rare init order)
   const profile = App.state.profile || {};
-  const callsign = profile.callsign || 'Trainer';
   const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
-  // Secondary label: rank name when ranked, "Lv N" when still Wanderer
-  const secondary = overallRank === 'Unranked'
-    ? 'Lv ' + (profile.xpLevel || 1)
-    : (typeof rankDisplay === 'function' ? rankDisplay(overallRank) : overallRank);
-  // v2.2.2: pulse class added until user opens Profile for the first time.
-  // ✦ glyph chosen over ⚔ because ⚔ is already used for Boss Tests in this
-  // app and would create semantic confusion. ✦ is already established as the
-  // identity marker in TRAINER DOSSIER + HONOR ROLL eyebrows.
-  const pulseCls = profile.hasOpenedTrainerProfile ? '' : ' pulse';
-  return '' +
-    '<button class="home-profile-chip' + pulseCls + '" onclick="openTrainerProfile()" ' +
-      'aria-label="Open Trainer Profile">' +
-      '<span class="hpc-icon" aria-hidden="true">✦</span>' +
-      '<span class="hpc-name">' + _trainerEscapeHtml(callsign) + '</span>' +
-      '<span class="hpc-divider" aria-hidden="true">·</span>' +
-      '<span class="hpc-rank">' + secondary + '</span>' +
-      '<span class="hpc-label">Profile</span>' +
-      '<span class="hpc-arrow" aria-hidden="true">›</span>' +
+  const ringColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
+  const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+  const isFirstTime = !profile.hasOpenedTrainerProfile;
+  const pulseCls = isFirstTime ? ' pulse' : '';
+  // First-time floating label sits beneath the button to teach the affordance
+  // without colliding with anything in the row. Removed entirely after first
+  // open — no permanent text label, just the avatar circle.
+  const cueLabel = isFirstTime
+    ? '<span class="header-avatar-cue" aria-hidden="true">Profile</span>'
+    : '';
+  mount.innerHTML =
+    '<button class="header-avatar-btn' + pulseCls + '" ' +
+      'onclick="openTrainerProfile()" ' +
+      'aria-label="Open Trainer Profile" ' +
+      'style="--avatar-ring-color:' + ringColor + '">' +
+      '<span class="header-avatar-glyph">' +
+        renderAvatarGlyph(avatarId, 26, ringColor) +
+      '</span>' +
+      cueLabel +
     '</button>';
 }
 
@@ -10609,9 +10871,28 @@ function renderIdentitySettingsCard() {
   const honorRollBtn = certCount > 0
     ? '<button class="identity-shortcut-btn alt" onclick="openTrainerProfile(\'honor-roll\')">🏆 Honor Roll · ' + certCount + ' certification' + (certCount === 1 ? '' : 's') + ' →</button>'
     : '';
+  // v2.2.3: surface the avatar in Settings Identity row + give a direct
+  // "Change" entry point so users discover the picker without going through
+  // the Profile overlay first.
+  const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+  const avatarRingColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
+  const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+  const avatarPreset = AVATAR_PRESET_BY_ID[avatarId] || AVATAR_PRESETS[0];
   return '' +
     '<div class="card identity-settings-card">' +
       '<div class="card-title">✦ Identity</div>' +
+      '<div class="identity-row">' +
+        '<span class="identity-row-label">Avatar</span>' +
+        '<span class="identity-row-value">' +
+          '<span class="identity-row-avatar-swatch">' +
+            '<span class="avatar-tile size-32" style="--avatar-ring-color:' + avatarRingColor + '">' +
+              renderAvatarGlyph(avatarId, 18, avatarRingColor) +
+            '</span>' +
+          '</span>' +
+          _trainerEscapeHtml(avatarPreset.label) +
+        '</span>' +
+        '<button class="identity-row-edit" onclick="openAvatarPicker()">Change</button>' +
+      '</div>' +
       '<div class="identity-row">' +
         '<span class="identity-row-label">Callsign</span>' +
         '<span class="identity-row-value">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</span>' +
@@ -11813,7 +12094,12 @@ function renderMastery() {
   // v1.8.4: defensive wrapper — if any sub-renderer throws, show recovery
   // state instead of leaving the tab blank.
   try {
-    return _renderMasteryImpl();
+    var out = _renderMasteryImpl();
+    // v2.2.3: page-header avatar button is mounted via a separate, defensive
+    // call so a Mastery render failure cannot blank the identity entry, and
+    // an avatar render failure cannot blank Mastery.
+    try { renderHomeHeaderAvatar(); } catch (e) { console.warn('[HomeHeaderAvatar]', e); }
+    return out;
   } catch (e) {
     console.error('[Mastery] render error:', e);
     var el = document.getElementById('masteryContent');
@@ -11826,6 +12112,9 @@ function renderMastery() {
         </div>
       `;
     }
+    // Even if Mastery body fails, still try to mount the header avatar so
+    // the user can reach Profile → reset / settings.
+    try { renderHomeHeaderAvatar(); } catch (e2) { /* swallow */ }
   }
 }
 function _renderMasteryImpl() {
@@ -11877,10 +12166,10 @@ function _renderMasteryImpl() {
       <div class="hero-character-layer">${renderRankCharacterSvg(overallRank, { width: 280, height: 280, tint: 'currentColor' })}</div>
       <div class="hero-readability-scrim"></div>
       <div class="hero-dust-layer"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <!-- v2.2.3: profile chip removed — moved to page-header avatar button -->
       <div class="hero-utility-row">
         <div class="hero-banner-eyebrow">Rank Profile${overallRank !== 'Unranked' ? ' · ' + renderCertSealMini(14) + ' CERTIFIED' : ''}</div>
         ${promotedBadge}
-        ${renderHomeProfileChip()}
       </div>
       <div class="mastery-hero-row">
         <div class="rank-emblem hero" style="--rank-color:${heroVars.color};--rank-bg:${heroVars.bg};--rank-glow:${heroVars.glow}">${renderRankEmblemSVG(overallRank, 'large')}</div>
@@ -13402,7 +13691,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.2</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.2.3</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -13513,7 +13802,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.2.2',
+    appVersion: '2.2.3',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -13978,6 +14267,9 @@ function confirmReset() {
     // v2.2.2: reset wipes the one-time profile-chip pulse flag so a brand-new
     // identity gets the same first-time pulse cue as a fresh install.
     hasOpenedTrainerProfile: false,
+    // v2.2.3: reset clears avatar so ensureTrainerIdentity re-derives a
+    // fresh deterministic default from the new trainerId.
+    avatarId: null,
     records: {},
     styleTags: [],
     focusArc: null,
