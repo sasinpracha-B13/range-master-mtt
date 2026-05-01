@@ -4436,6 +4436,135 @@
     }
     .boss-drop-card.set-complete .boss-drop-eyebrow { color: #d4af37; }
 
+    /* v3.1.6 — Item Detail Modal upgrades (before/after, zoom, exclusive treatment) */
+    .item-detail-shell { padding: 20px 16px 60px; max-width: 480px; margin: 0 auto; }
+    .item-detail-header-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .item-detail-tags-row {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .item-detail-preview-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .item-detail-preview-cell {
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%),
+        linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
+      border-radius: 10px; border: 1px solid rgba(212,175,55,0.20);
+      box-shadow: inset 0 0 16px rgba(0,0,0,0.40);
+      padding-bottom: 6px; overflow: hidden; position: relative;
+      aspect-ratio: 1 / 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    }
+    .item-detail-preview-cell svg {
+      width: 90%; height: 80%; image-rendering: pixelated;
+    }
+    .item-detail-preview-label {
+      position: absolute; top: 6px; left: 8px;
+      font-size: 9px; font-weight: 800; letter-spacing: 1px;
+      color: var(--text-secondary); text-transform: uppercase;
+      background: rgba(0,0,0,0.55); padding: 2px 6px; border-radius: 999px;
+    }
+    .item-detail-preview-cell.preview-marked .item-detail-preview-label { color: #d4af37; }
+    .item-detail-zoom-row {
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.18) 0%, transparent 70%),
+        linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
+      border-radius: 10px; border: 1px solid rgba(212,175,55,0.30);
+      padding: 12px; margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+    .item-detail-zoom-row svg { width: 95%; height: 90%; image-rendering: pixelated; }
+    .item-detail-zoom-label {
+      position: absolute; top: 6px; left: 8px;
+      font-size: 9px; font-weight: 800; letter-spacing: 1px;
+      color: #d4af37; text-transform: uppercase;
+      background: rgba(0,0,0,0.55); padding: 2px 6px; border-radius: 999px;
+    }
+    .item-detail-name {
+      font-size: 22px; font-weight: 800; letter-spacing: 0.4px;
+      text-align: center; color: var(--text); margin-bottom: 4px;
+    }
+    .item-detail-meta {
+      font-size: 11.5px; color: var(--text-secondary);
+      text-align: center; letter-spacing: 0.8px;
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+    .item-detail-flavor {
+      font-size: 13px; color: var(--text); font-style: italic;
+      text-align: center; line-height: 1.5; margin-bottom: 18px;
+      padding: 0 8px;
+    }
+    .item-detail-state-block {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+    }
+    .item-detail-state-block.preview-state {
+      background: rgba(212,175,55,0.06); border-color: rgba(212,175,55,0.30);
+    }
+    .item-detail-state-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.4px;
+      color: #d4af37; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .item-detail-state-text {
+      font-size: 13.5px; color: var(--text); font-weight: 600; line-height: 1.45;
+    }
+    .item-detail-cta {
+      width: 100%; padding: 14px; border-radius: 10px;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.6px;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .item-detail-cta.buy {
+      background: linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(212,175,55,0.15) 100%);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #d4af37;
+    }
+    .item-detail-cta.buy:hover {
+      background: linear-gradient(135deg, rgba(212,175,55,0.35) 0%, rgba(212,175,55,0.20) 100%);
+    }
+    .item-detail-cta.equip {
+      background: rgba(110,231,183,0.15);
+      border: 1px solid rgba(110,231,183,0.50);
+      color: #6ee7b7;
+    }
+    .item-detail-cta.equip:hover { background: rgba(110,231,183,0.25); }
+    .item-detail-cta.equipped {
+      background: rgba(212,175,55,0.20);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #d4af37;
+      cursor: default;
+    }
+    .item-detail-cta.unaffordable {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+    }
+    .item-detail-cta.unlock {
+      background: rgba(232,74,94,0.15);
+      border: 1px solid rgba(232,74,94,0.45);
+      color: #e84a5e;
+    }
+    .item-detail-cta.unlock:hover { background: rgba(232,74,94,0.25); }
+    /* v3.1.6 — Prestige glow on Boss/Rank/Achievement/Prestige cards */
+    .shop-card.preview-boss {
+      box-shadow: inset 0 0 0 1px rgba(232,74,94,0.15), 0 0 14px rgba(232,74,94,0.10);
+    }
+    .shop-card.preview-rank {
+      box-shadow: inset 0 0 0 1px rgba(167,139,250,0.20), 0 0 14px rgba(167,139,250,0.10);
+    }
+    .shop-card.preview-achievement {
+      box-shadow: inset 0 0 0 1px rgba(110,231,183,0.18), 0 0 14px rgba(110,231,183,0.10);
+    }
+    .shop-card.affordable .shop-card-rarity[data-rarity="prestige"] {
+      box-shadow: 0 0 6px rgba(212,175,55,0.40);
+    }
+
     .unlock-cta-btn {
       width: 100%; padding: 12px; border-radius: 10px;
       background: linear-gradient(135deg, rgba(212,175,55,0.20) 0%, rgba(212,175,55,0.10) 100%);
@@ -6689,8 +6818,9 @@
   <div class="profile-overlay-body" id="shopOverlayBody"></div>
 </div>
 
-<!-- v3.1.0 How to Unlock modal — read-only sub-modal for preview-only items -->
-<div class="profile-overlay hidden" id="unlockModal" role="dialog" aria-label="How to Unlock">
+<!-- v3.1.0 / v3.1.6: Unified Item Detail Modal — handles all item states
+     (buyable/owned/equipped/preview-only). Reuses same overlay shell. -->
+<div class="profile-overlay hidden" id="unlockModal" role="dialog" aria-label="Item Detail">
   <div class="profile-overlay-body" id="unlockModalBody"></div>
 </div>
 
@@ -14904,21 +15034,341 @@ function _avAccessoryPocketWatch() {
   return s;
 }
 
-// === ACCESSORY: shop_silver_band — simple polished silver wristband (entry tier) ===
+// === ACCESSORY: shop_silver_band — v3.1.6 REDESIGNED: chunky chrome cuff with gem ===
 function _avAccessorySilverBand() {
-  const silver   = '#c0c4d0';
-  const silverHl = '#e8eaf0';
-  const silverSh = '#7a808a';
-  const R = _avRect;
-  let s = '';
-  // Wristband on left wrist (over hand area at y=39-40)
-  s += R(18, 39, 4, 2, silver);    // 2-row band
-  s += R(18, 39, 4, 1, silverHl);  // top highlight (chrome shine)
-  s += R(18, 40, 4, 1, silverSh);  // bottom shadow
-  // Tiny gold accent dot (premium touch)
-  s += R(20, 39, 1, 1, '#d4af37');
+  const silver='#c0c4d0', silverHl='#e8eaf0', silverSh='#7a808a', gem='#3a8ec4', gemHl='#7fc8e0';
+  const R = _avRect; let s = '';
+  // BIGGER wristband — extends y=37-41 (5 rows) and full hand width
+  s += R(17, 37, 6, 1, silverHl);   // top edge highlight
+  s += R(17, 38, 6, 3, silver);     // main cuff body
+  s += R(17, 41, 6, 1, silverSh);   // bottom shadow
+  // Engraved center band (darker line)
+  s += R(17, 40, 6, 1, silverSh);
+  // Embedded blue gem center
+  s += R(19, 38, 2, 2, gem);
+  s += R(19, 38, 2, 1, gemHl);      // gem shine
   return s;
 }
+
+// === ACCESSORY: shop_card_charm — v3.1.6 REDESIGNED: full playing card on chain ===
+function _avAccessoryShopCardCharm() {
+  const card='#f0f0f8', cardSh='#a8a8b8', red='#c41a2a', dark='#1a1a26', chain='#a88040';
+  const R = _avRect; let s = '';
+  // Chain to belt (more visible than v3.1.5)
+  s += R(15, 40, 1, 2, chain);
+  s += R(16, 39, 1, 1, chain);
+  s += R(17, 39, 1, 1, chain);
+  // BIGGER card display 5w x 7h (was 4w x 5h)
+  s += R(13, 41, 6, 7, card);
+  s += R(13, 41, 6, 1, cardSh);     // top shadow
+  s += R(13, 47, 6, 1, '#7a7a8a');  // bottom shadow
+  s += R(18, 41, 1, 7, '#7a7a8a');  // R edge shadow
+  s += R(13, 41, 1, 7, cardSh);     // L edge shadow
+  // BIG red suit symbol (heart/diamond)
+  s += R(15, 43, 2, 1, red);
+  s += R(14, 44, 4, 2, red);
+  s += R(15, 46, 2, 1, red);
+  // Corner indicator
+  s += R(14, 42, 1, 1, dark);
+  s += R(17, 47, 1, 1, dark);
+  return s;
+}
+
+// === ACCESSORY: shop_pocket_watch — v3.1.6 REDESIGNED: bigger watch face + visible chain ===
+function _avAccessoryPocketWatch() {
+  const gold='#d4af37', goldHl='#f0d060', goldSh='#9e7d20', face='#f0f0f8', faceTxt='#1a1a26', chain='#a88040';
+  const R = _avRect; let s = '';
+  // CHAIN going from belt to watch (longer + more visible)
+  s += R(22, 40, 1, 1, chain);
+  s += R(21, 40, 1, 1, chain);
+  s += R(20, 41, 1, 1, chain);
+  s += R(19, 42, 1, 1, chain);
+  // BIGGER watch body 6x6 (was 4x4)
+  s += R(13, 42, 6, 6, gold);
+  s += R(13, 42, 6, 1, goldHl);     // top highlight
+  s += R(13, 47, 6, 1, goldSh);     // bottom shadow
+  s += R(18, 42, 1, 6, goldSh);     // R edge
+  s += R(13, 42, 1, 6, goldHl);     // L edge highlight
+  // White watch face (bigger)
+  s += R(14, 43, 4, 4, face);
+  // Hour hands (12 + 3 indicators)
+  s += R(15, 43, 1, 1, faceTxt);    // 12 dot
+  s += R(16, 45, 1, 1, faceTxt);    // center
+  s += R(15, 44, 1, 2, faceTxt);    // hour hand
+  // Crown stem on top
+  s += R(15, 41, 1, 1, gold);
+  return s;
+}
+
+// === ACCESSORY: shop_compass_charm — v3.1.6 REDESIGNED: bigger brass compass with N/S markings ===
+function _avAccessoryShopCompassCharm() {
+  const brass='#a88040', brassHl='#d4af37', brassSh='#5e4225', face='#1a1a26', red='#c41a2a', white='#f0f0f8';
+  const R = _avRect; let s = '';
+  // Strap to belt
+  s += R(20, 40, 1, 1, brassSh);
+  s += R(19, 40, 1, 1, brassSh);
+  // BIGGER compass body 6x6 (was 4x4)
+  s += R(13, 41, 6, 6, brass);
+  s += R(13, 41, 6, 1, brassHl);    // top highlight
+  s += R(13, 46, 6, 1, brassSh);    // bottom shadow
+  s += R(18, 41, 1, 6, brassSh);
+  s += R(13, 41, 1, 6, brassHl);
+  // Dark dial face (bigger)
+  s += R(14, 42, 4, 4, face);
+  // N indicator (red triangle)
+  s += R(15, 42, 2, 1, red);
+  s += R(16, 43, 1, 1, red);
+  // S indicator (white)
+  s += R(16, 45, 1, 1, white);
+  // Center dot
+  s += R(16, 44, 1, 1, brassHl);
+  return s;
+}
+
+// === ACCESSORY: shop_strategy_notebook — v3.1.6 REDESIGNED: bigger leather notebook with bookmark ===
+function _avAccessoryShopStrategyNotebook() {
+  const cover='#5e3a1f', coverHl='#8b6534', coverSh='#3a1f10', spine='#a88040', label='#f0f0f8', mark='#c41a2a';
+  const R = _avRect; let s = '';
+  // BIGGER notebook 6w x 8h (was 4w x 6h)
+  s += R(13, 39, 6, 8, cover);
+  s += R(13, 39, 6, 1, coverHl);    // top highlight
+  s += R(13, 46, 6, 1, coverSh);    // bottom shadow
+  s += R(13, 39, 1, 8, coverHl);    // L spine highlight
+  s += R(18, 39, 1, 8, coverSh);    // R edge
+  // Brass binding (visible spine)
+  s += R(13, 40, 1, 1, spine);
+  s += R(13, 42, 1, 1, spine);
+  s += R(13, 44, 1, 1, spine);
+  // White label on cover (bigger)
+  s += R(14, 41, 4, 2, label);
+  s += R(14, 41, 4, 1, '#a8a8b8');  // label shadow
+  // Red bookmark sticking out top
+  s += R(17, 38, 1, 2, mark);
+  // Chip mark on label
+  s += R(15, 41, 2, 1, '#5e3a1f');
+  return s;
+}
+
+// === ACCESSORY: shop_tactical_wristband — v3.1.6 REDESIGNED: wider band with metal hardware ===
+function _avAccessoryShopTacticalWristband() {
+  const band='#3a4232', bandHl='#5a6248', bandSh='#1a221a', metal='#7a808a', metalHl='#c0c4d0', accent='#a88040';
+  const R = _avRect; let s = '';
+  // WIDER + TALLER wristband 6w x 4h (was 4w x 2h)
+  s += R(17, 37, 6, 4, band);
+  s += R(17, 37, 6, 1, bandHl);
+  s += R(17, 40, 6, 1, bandSh);
+  // Metal buckle/clip prominent on side
+  s += R(18, 38, 2, 2, metal);
+  s += R(18, 38, 2, 1, metalHl);
+  // Brass accent stripe
+  s += R(20, 38, 1, 2, accent);
+  // Stitched detail
+  s += R(17, 39, 1, 1, bandHl);
+  s += R(22, 39, 1, 1, bandHl);
+  return s;
+}
+
+// === ACCESSORY: shop_ranger_emblem_charm — v3.1.6 REDESIGNED: bigger badge with star ===
+function _avAccessoryShopRangerEmblem() {
+  const bronze='#cd7f32', bronzeHl='#e8a050', bronzeSh='#a06628', dark='#5e3a1f', star='#f0d060';
+  const R = _avRect; let s = '';
+  // BIGGER badge 6w x 5h (was 4w x 4h)
+  s += R(13, 41, 6, 5, bronze);
+  s += R(13, 41, 6, 1, bronzeHl);
+  s += R(13, 45, 6, 1, bronzeSh);
+  s += R(18, 41, 1, 5, bronzeSh);
+  s += R(13, 41, 1, 5, bronzeHl);
+  // Inner dark area
+  s += R(14, 42, 4, 3, dark);
+  // BIG 5-point star center
+  s += R(15, 42, 2, 1, star);
+  s += R(14, 43, 4, 1, star);
+  s += R(15, 44, 2, 1, star);
+  // Strap
+  s += R(15, 40, 1, 1, bronzeSh);
+  s += R(17, 40, 1, 1, bronzeSh);
+  return s;
+}
+
+// === ACCESSORY: shop_gold_card_clip — v3.1.6 REDESIGNED: bigger clip + visible card ===
+function _avAccessoryShopGoldCardClip() {
+  const gold='#d4af37', goldHl='#f0d060', goldSh='#9e7d20', card='#f0f0f8', dark='#1a2332';
+  const R = _avRect; let s = '';
+  // Clip body extends from chest down (taller)
+  s += R(13, 36, 6, 6, gold);
+  s += R(13, 36, 6, 1, goldHl);
+  s += R(13, 41, 6, 1, goldSh);
+  s += R(18, 36, 1, 6, goldSh);
+  s += R(13, 36, 1, 6, goldHl);
+  // Card peeking out top
+  s += R(14, 35, 4, 1, card);
+  s += R(14, 35, 1, 1, '#7a7a8a');
+  s += R(17, 35, 1, 1, '#7a7a8a');
+  // Engraved emblem center
+  s += R(14, 37, 4, 3, dark);
+  s += R(15, 38, 1, 1, gold);
+  s += R(17, 38, 1, 1, gold);
+  s += R(16, 39, 1, 1, gold);
+  return s;
+}
+
+// === BOSS ACCESSORY: boss_pf_chip_charm — v3.1.6 REDESIGNED: glowing chip stack ===
+function _avAccessoryBossPFChipCharm() {
+  const gold='#d4af37', goldHl='#f0d060', goldSh='#9e7d20', red='#c41a2a', dark='#1a2332', flame='#ff8c1a';
+  const R = _avRect; let s = '';
+  // STACK of 3 chips (much more dramatic than single chip)
+  // Bottom chip (largest, gold)
+  s += R(13, 45, 6, 2, gold);
+  s += R(13, 45, 6, 1, goldHl);
+  s += R(13, 46, 6, 1, goldSh);
+  // Middle chip (red)
+  s += R(13, 43, 6, 2, red);
+  s += R(13, 43, 6, 1, '#e84050');
+  s += R(13, 44, 6, 1, '#8e1a26');
+  // Top chip (gold with center dot)
+  s += R(13, 41, 6, 2, gold);
+  s += R(13, 41, 6, 1, goldHl);
+  s += R(15, 41, 2, 1, dark);       // center logo
+  // Flame spark above (Push/Fold theme)
+  s += R(15, 40, 2, 1, flame);
+  s += R(16, 39, 1, 1, '#ffd060');
+  return s;
+}
+
+// === BOSS ACCESSORY: boss_cvj_risk_charm — v3.1.6 REDESIGNED: bigger card tag with bold suit ===
+function _avAccessoryBossCVJRiskCharm() {
+  const wine='#7a1a26', wineHl='#a83040', wineSh='#4a0f1a', card='#f0f0f8', red='#c41a2a', dark='#0a0a14', chain='#5e2418';
+  const R = _avRect; let s = '';
+  // Chain
+  s += R(20, 40, 1, 1, chain);
+  s += R(19, 40, 1, 1, chain);
+  // Card tag body (bigger 6x6)
+  s += R(13, 41, 6, 6, wine);
+  s += R(13, 41, 6, 1, wineHl);
+  s += R(13, 46, 6, 1, wineSh);
+  s += R(18, 41, 1, 6, wineSh);
+  s += R(13, 41, 1, 6, wineHl);
+  // White card center
+  s += R(14, 42, 4, 4, card);
+  s += R(14, 42, 4, 1, '#a8a8b8');
+  // BIG red Ace symbol
+  s += R(15, 43, 2, 1, red);
+  s += R(15, 44, 2, 1, red);
+  // Corner letters
+  s += R(14, 42, 1, 1, dark);
+  s += R(17, 45, 1, 1, dark);
+  return s;
+}
+
+// === BOSS ACCESSORY: boss_md_decision_marker — v3.1.6 REDESIGNED: split-color chip with dual symbols ===
+function _avAccessoryBossMDDecisionMarker() {
+  const cyan='#2da8c4', cyanHl='#5fc8e0', cyanSh='#1a6e80', mag='#c4407a', magHl='#e870a0', magSh='#7a2050', dark='#1a2332';
+  const R = _avRect; let s = '';
+  // BIGGER split chip 6w x 6h (was 4w x 4h)
+  // L half cyan
+  s += R(13, 41, 3, 6, cyan);
+  s += R(13, 41, 3, 1, cyanHl);
+  s += R(13, 46, 3, 1, cyanSh);
+  s += R(13, 41, 1, 6, cyanHl);
+  // R half magenta
+  s += R(16, 41, 3, 6, mag);
+  s += R(16, 41, 3, 1, magHl);
+  s += R(16, 46, 3, 1, magSh);
+  s += R(18, 41, 1, 6, magSh);
+  // Center vertical seam (dark)
+  s += R(15, 41, 1, 6, dark);
+  // Dual symbols on each side
+  s += R(14, 43, 1, 2, cyanHl);     // L symbol
+  s += R(17, 43, 1, 2, magHl);      // R symbol
+  // Strap
+  s += R(20, 40, 1, 1, dark);
+  return s;
+}
+
+// === BOSS ACCESSORY: boss_rj_shadow_band — v3.1.6 REDESIGNED: spiked dark band with gem ===
+function _avAccessoryBossRJShadowBand() {
+  const dark='#2a1f4a', darkHl='#3a2f5a', darkSh='#1a0f2a', spike='#a78bfa', gem='#a78bfa', gemHl='#e8d4ff';
+  const R = _avRect; let s = '';
+  // WIDER + TALLER band 6w x 4h (was 4w x 2h)
+  s += R(17, 37, 6, 4, dark);
+  s += R(17, 37, 6, 1, darkHl);
+  s += R(17, 40, 6, 1, darkSh);
+  // Spikes on top
+  s += R(18, 36, 1, 1, spike);
+  s += R(20, 35, 1, 2, spike);      // tallest center spike
+  s += R(22, 36, 1, 1, spike);
+  // Center purple gem
+  s += R(19, 38, 2, 2, gem);
+  s += R(19, 38, 2, 1, gemHl);      // gem shine
+  return s;
+}
+
+// === ACHIEVEMENT ACCESSORY: achv_no_critical_patch — v3.1.6 REDESIGNED: bigger green badge ===
+function _avAccessoryAchvNoCriticalPatch() {
+  const green='#1a6e30', greenHl='#3a8e50', greenSh='#0a4e20', white='#ffffff', gold='#d4af37';
+  const R = _avRect; let s = '';
+  // BIGGER patch 6w x 6h
+  s += R(13, 41, 6, 6, green);
+  s += R(13, 41, 6, 1, greenHl);
+  s += R(13, 46, 6, 1, greenSh);
+  s += R(18, 41, 1, 6, greenSh);
+  s += R(13, 41, 1, 6, greenHl);
+  // BIG checkmark
+  s += R(14, 43, 1, 1, white);
+  s += R(15, 44, 1, 1, white);
+  s += R(16, 45, 1, 1, white);
+  s += R(17, 43, 1, 1, white);
+  s += R(16, 44, 1, 1, white);
+  // Gold trim corners
+  s += R(13, 41, 1, 1, gold);
+  s += R(18, 41, 1, 1, gold);
+  return s;
+}
+
+// === ACHIEVEMENT ACCESSORY: achv_no_mistake_armband — v3.1.6 REDESIGNED: wider armband ===
+function _avAccessoryAchvNoMistakeArmband() {
+  const band='#1a6e30', bandHl='#3a8e50', bandSh='#0a4e20', white='#ffffff', gold='#d4af37';
+  const R = _avRect; let s = '';
+  // WIDER + TALLER armband 6w x 5h
+  s += R(17, 36, 6, 5, band);
+  s += R(17, 36, 6, 1, bandHl);
+  s += R(17, 40, 6, 1, bandSh);
+  // White stripe across center
+  s += R(17, 38, 6, 1, white);
+  // Gold trim
+  s += R(17, 36, 6, 1, gold);
+  // Crossed bars motif
+  s += R(19, 37, 1, 1, white);
+  s += R(20, 39, 1, 1, white);
+  return s;
+}
+
+// === RANK ACCESSORY: rank_squire_insignia — v3.1.6 REDESIGNED: bigger bronze star pin ===
+function _avAccessoryRankSquireInsignia() {
+  const bronze='#cd7f32', bronzeHl='#e8a050', bronzeSh='#a06628', dark='#5e3a1f', shine='#f0d060';
+  const R = _avRect; let s = '';
+  // BIGGER 5-pointed star
+  // Top point
+  s += R(15, 40, 2, 1, bronze);
+  // Upper body
+  s += R(14, 41, 4, 1, bronze);
+  s += R(13, 42, 6, 1, bronze);
+  // Middle (widest)
+  s += R(13, 43, 6, 1, bronze);
+  s += R(13, 43, 6, 1, bronzeHl);
+  // Lower body (V shape)
+  s += R(14, 44, 4, 1, bronze);
+  s += R(15, 45, 1, 1, bronze);
+  s += R(17, 45, 1, 1, bronze);
+  // Center shine
+  s += R(15, 42, 2, 1, shine);
+  // Side shadows
+  s += R(13, 44, 1, 1, bronzeSh);
+  s += R(18, 44, 1, 1, bronzeSh);
+  return s;
+}
+
+// (Note: shop_red_bandana sprite enhanced inline at its existing definition below.)
 
 // ============================================================
 // v3.1.0 PREVIEW-ONLY SPRITES — Boss / Achievement / Rank
@@ -17106,6 +17556,7 @@ function _avShoesRankWarlordCommandBoots(bodyType) {
 }
 
 // === FACE: shop_red_bandana — red bandana tied across forehead with side knot ===
+// v3.1.6 ENHANCED: thicker bandana, bigger knot, longer tail
 function _avFaceRedBandana() {
   const red    = '#c41a2a';
   const redSh  = '#8e1a26';
@@ -17113,15 +17564,16 @@ function _avFaceRedBandana() {
   const knot   = '#8e1a26';
   const R = _avRect;
   let s = '';
-  // Main band across forehead (sits at y=8-9, between hair and brows)
-  s += R(22, 8, 20, 2, red);
-  s += R(22, 8, 20, 1, redHl);     // top highlight
+  // THICKER band — 3 rows now (was 2). Sits at y=7-9.
+  s += R(22, 7, 20, 3, red);
+  s += R(22, 7, 20, 1, redHl);     // top highlight
   s += R(22, 9, 20, 1, redSh);     // bottom shadow
-  // Knot tied on right side (small bump)
-  s += R(40, 7, 3, 1, red);        // knot top
-  s += R(40, 8, 3, 2, knot);       // knot body (slightly darker)
-  s += R(43, 9, 1, 1, redSh);      // knot edge shadow
-  // Tail draping down right side (2-px tail)
+  // BIGGER knot tied on right side (was 3w, now 4w x 3h)
+  s += R(40, 6, 4, 1, red);        // knot top
+  s += R(40, 7, 4, 3, knot);       // knot body
+  s += R(43, 8, 1, 2, redSh);      // knot R edge shadow
+  s += R(40, 6, 1, 1, redHl);      // knot top highlight
+  // Longer + wider tail draping down (3-px tail)
   s += R(42, 10, 1, 2, red);       // tail upper
   s += R(43, 11, 1, 1, redSh);     // tail tip shadow
   return s;
@@ -17379,10 +17831,24 @@ function _avPartsHair(style, baseHex) {
   return '';
 }
 
-// ---- COMPOSER v2.8.0 ----
+// v3.1.6: Slot-aware preview viewBoxes — each slot zooms to where the item lives
+// so face/shoes/accessory items become 3-4x more visible in card thumbnails.
+// Used by mode='zoom' + slotZoom param.
+const SLOT_ZOOM_VIEWBOXES = {
+  head:      '16 0 32 18',     // head + crown area
+  face:      '20 10 24 14',    // face features only
+  top:       '12 24 40 22',    // upper body + arms
+  bottom:    '18 42 28 16',    // hips + thighs + calves
+  shoes:     '18 50 28 14',    // feet + ankle
+  back:      '0 0 64 64',      // full body (back items extend silhouette)
+  accessory: '10 32 28 18'     // hip/waist area where most accessories live
+};
+
+// ---- COMPOSER v2.8.0 + v3.1.6 ----
 // Returns inline SVG for a Pixel Trainer character. mode:
 //   'bust'  → viewBox="14 0 36 30" — head + shoulders crop for 46px Home
 //   'stand' → viewBox="0 0 64 64"  — full body for Trainer Stand
+//   'zoom'  → slot-aware crop (requires opts.slotZoom = head|face|top|bottom|shoes|back|accessory)
 //
 // v2.8.0 Z-order (back→front):
 //   back item → body → bottom → shoes → top → belt → face → hair → faceMask → hat → accessory
@@ -17393,7 +17859,12 @@ function renderCharacterSvg(opts, mode) {
   const hairStyle = (safeOpts.hairStyle && AVATAR_HAIR_STYLE_LABELS[safeOpts.hairStyle]) ? safeOpts.hairStyle : 'short_crop';
   const hairColor = (safeOpts.hairColor && AVATAR_HAIR_COLORS[safeOpts.hairColor])     ? safeOpts.hairColor : 'dark_brown';
   const equipped  = (safeOpts.equipped && typeof safeOpts.equipped === 'object') ? safeOpts.equipped : {};
-  const viewBox = (mode === 'bust') ? '14 0 36 30' : '0 0 64 64';
+  // v3.1.6: support slot-aware zoom mode
+  let viewBox;
+  if (mode === 'bust') viewBox = '14 0 36 30';
+  else if (mode === 'zoom' && safeOpts.slotZoom && SLOT_ZOOM_VIEWBOXES[safeOpts.slotZoom]) {
+    viewBox = SLOT_ZOOM_VIEWBOXES[safeOpts.slotZoom];
+  } else viewBox = '0 0 64 64';
   const skinHex = AVATAR_SKIN_TONES[skin];
   const hairHex = AVATAR_HAIR_COLORS[hairColor];
   // Defensive null defaults — slot may be undefined or null
@@ -19740,7 +20211,8 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
   const isPreviewOnly = !!item.previewOnly;
   const isPurchasable = !isPreviewOnly && (item.price != null);
   const affordable = isPurchasable && (chips >= item.price);
-  // Mini character preview with this item equipped (override slot for preview)
+  // v3.1.6: Mini character preview uses SLOT-AWARE ZOOM so the item fills
+  // the thumbnail. Face/shoes/accessory items become 3-4x more visible.
   const previewEquipped = Object.assign({}, equipped);
   previewEquipped[item.slot] = item.id;
   const previewOpts = {
@@ -19748,9 +20220,10 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
     skin: profile.avatarCharacter && profile.avatarCharacter.skin,
     hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
     hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
-    equipped: previewEquipped
+    equipped: previewEquipped,
+    slotZoom: item.slot   // v3.1.6: zoom to the slot area
   };
-  const previewSvg = renderCharacterSvg(previewOpts, 'stand');
+  const previewSvg = renderCharacterSvg(previewOpts, 'zoom');
   // v3.0.1: Header row — source tag (left) + rarity pill (right). Lives ABOVE
   // the preview thumb so badges are never blocked by the preview frame.
   const itemSource = item.source || 'shop';
@@ -19792,11 +20265,13 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
   }
   // v3.1.2: prominent slot pill replaces the small uppercase slot text
   const slotPill = '<div class="shop-card-slot-pill">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>';
+  // v3.1.6: thumb + name area open detail modal; action buttons stay direct
+  const detailOpen = "openItemDetailModal('" + item.id + "')";
   return '' +
     '<div class="' + cardClass + '">' +
       headerHtml +
-      '<div class="shop-card-thumb">' + previewSvg + '</div>' +
-      '<div class="shop-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
+      '<div class="shop-card-thumb" onclick="' + detailOpen + '" style="cursor:pointer">' + previewSvg + '</div>' +
+      '<div class="shop-card-name" onclick="' + detailOpen + '" style="cursor:pointer">' + _trainerEscapeHtml(item.name) + '</div>' +
       slotPill +
       priceHtml +
       actionHtml +
@@ -19850,99 +20325,174 @@ function buyShopItem(itemId) {
 // Lightweight read-only modal. Shows item preview + source + rarity + unlock
 // requirement + safe CTA (home/drill navigation only). Does NOT mutate state.
 
-function openHowToUnlockModal(itemId) {
+// v3.1.6: Unified Item Detail Modal — handles ALL item states
+// (buyable/insufficient/owned/equipped/preview-only).
+// Replaces v3.1.0 openHowToUnlockModal with a richer presentation surface.
+// Card tap (thumb or name) opens this modal. Buy/Equip/Unlock CTA is
+// state-aware. Preview-only items still get progress meta.
+function openItemDetailModal(itemId) {
   const item = WARDROBE_ITEM_BY_ID[itemId];
   if (!item) return;
-  if (!item.previewOnly) {
-    if (typeof showToast === 'function') showToast('This item is already buyable from Shop');
-    return;
-  }
   const overlay = document.getElementById('unlockModal');
   if (!overlay) return;
   const body = document.getElementById('unlockModalBody');
-  if (body) body.innerHTML = _renderHowToUnlockModalBody(item);
+  if (body) body.innerHTML = _renderItemDetailModalBody(item);
   overlay.classList.remove('hidden');
 }
 
-function closeHowToUnlockModal() {
+// Backward-compat alias — old "How to Unlock" CTA in v3.1.0 cards still works
+function openHowToUnlockModal(itemId) { openItemDetailModal(itemId); }
+function closeHowToUnlockModal() { closeItemDetailModal(); }
+
+function closeItemDetailModal() {
   const overlay = document.getElementById('unlockModal');
   if (overlay) overlay.classList.add('hidden');
 }
 
-function _renderHowToUnlockModalBody(item) {
+// Pick a flavor sentence for an item — falls back to description if no separate flavor.
+// Adds extra punchy lead for boss/rank items to sell trophy/prestige feel.
+function _itemFlavorText(item) {
+  const desc = item.description || '';
+  if (item.flavor) return item.flavor;
+  if (item.source === 'boss')        return desc + ' A trophy earned from the boss.';
+  if (item.source === 'rank')        return desc + ' Worn by those who have proven their rank.';
+  if (item.source === 'achievement') return desc + ' Earned through dedication.';
+  return desc;
+}
+
+function _renderItemDetailModalBody(item) {
   const profile = App.state.profile || {};
   const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
-  // Build preview with this item equipped (same pattern as shop card)
-  const previewEquipped = Object.assign({}, equipped);
-  previewEquipped[item.slot] = item.id;
-  const previewOpts = {
+  const ownedSet = new Set(profile.ownedItemIds || []);
+  const isOwned = ownedSet.has(item.id);
+  const isEquipped = (equipped[item.slot] === item.id);
+  const isPreviewOnly = !!item.previewOnly && !isOwned;   // v3.2.0 owned-takes-precedence
+  const chips = profile.chips || 0;
+  const isPurchasable = !item.previewOnly && (typeof item.price === 'number');
+  const affordable = isPurchasable && (chips >= item.price);
+
+  // Build CURRENT preview (what user looks like RIGHT NOW)
+  const currentOpts = {
     bodyType: profile.avatarCharacter && profile.avatarCharacter.bodyType,
     skin: profile.avatarCharacter && profile.avatarCharacter.skin,
     hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
     hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
-    equipped: previewEquipped
+    equipped: equipped
   };
+  const currentSvg = renderCharacterSvg(currentOpts, 'stand');
+
+  // Build PREVIEW (with this item equipped) — read-only, never mutates
+  const previewEquipped = Object.assign({}, equipped);
+  previewEquipped[item.slot] = item.id;
+  const previewOpts = Object.assign({}, currentOpts, { equipped: previewEquipped });
   const previewSvg = renderCharacterSvg(previewOpts, 'stand');
+
+  // Slot-aware ZOOM preview — focuses on the item area
+  const zoomOpts = Object.assign({}, previewOpts, { slotZoom: item.slot });
+  const zoomSvg = renderCharacterSvg(zoomOpts, 'zoom');
+
   const itemSource = item.source || 'shop';
   const sourceColor = SOURCE_COLORS[itemSource] || SOURCE_COLORS.shop;
   const rarityColor = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
-  const unlock = item.unlock || {};
-  // Compute progress if available (e.g. streak items)
-  let progressHtml = '';
-  if (unlock.progressKey === 'streaks.daily' && App.state.streaks) {
-    const cur = App.state.streaks.daily || 0;
-    const tgt = unlock.target || 0;
-    const pct = Math.min(100, Math.round((cur / tgt) * 100));
-    progressHtml =
-      '<div class="unlock-progress-row">' +
-        '<div class="unlock-progress-label">Progress: ' + cur + ' / ' + tgt + ' days</div>' +
-        '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
-      '</div>';
-  }
-  // v3.2.0: Boss set progress for boss items — show "Boss Set: X / Y owned"
-  if (item.source === 'boss' && unlock.boss) {
-    const moduleKey = BOSS_NAME_TO_MODULE_KEY[unlock.boss];
-    if (moduleKey) {
-      const setItems = getBossItemsForModule(moduleKey);
-      const ownedCount = getOwnedBossItems(moduleKey, profile).length;
-      const pct = setItems.length > 0 ? Math.round((ownedCount / setItems.length) * 100) : 0;
+  const sourceTag = '<span class="shop-card-source" style="background:' + sourceColor.bg +
+    ';border:1px solid ' + sourceColor.border + ';color:' + sourceColor.text + '">' +
+    (SOURCE_LABELS[itemSource] || 'Shop') + '</span>';
+  const rarityPill = '<span class="shop-card-rarity" style="background:' + rarityColor.bg +
+    ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
+    (RARITY_LABELS[item.rarity] || 'Common') + '</span>';
+  const slotPill = '<span class="shop-card-slot-pill">' + WARDROBE_SLOT_LABELS[item.slot] + '</span>';
+
+  // META line: slot · style · price/source
+  const styleLabel = item.style ? (' · ' + item.style.toUpperCase()) : '';
+  let metaParts = [WARDROBE_SLOT_LABELS[item.slot]];
+  if (item.style) metaParts.push(item.style.toUpperCase());
+  if (typeof item.price === 'number') metaParts.push(formatChips(item.price) + ' Chips');
+  const metaLine = metaParts.join(' · ');
+
+  // STATE BLOCK + CTA
+  let stateHtml = '';
+  let ctaHtml = '';
+  if (isEquipped) {
+    stateHtml = '<div class="item-detail-state-block"><div class="item-detail-state-label">Status</div><div class="item-detail-state-text">✓ Currently equipped</div></div>';
+    ctaHtml = '<button class="item-detail-cta equipped" disabled>✓ Equipped</button>';
+  } else if (isOwned) {
+    stateHtml = '<div class="item-detail-state-block"><div class="item-detail-state-label">Status</div><div class="item-detail-state-text">✓ Owned · ready to equip</div></div>';
+    ctaHtml = '<button class="item-detail-cta equip" onclick="closeItemDetailModal(); equipItem(\'' + item.id + '\')">Equip Now</button>';
+  } else if (isPreviewOnly) {
+    // Preview-only Boss/Achievement/Rank — show unlock requirement + progress
+    const unlock = item.unlock || {};
+    let progressHtml = '';
+    if (unlock.progressKey === 'streaks.daily' && App.state.streaks) {
+      const cur = App.state.streaks.daily || 0;
+      const tgt = unlock.target || 0;
+      const pct = Math.min(100, Math.round((cur / tgt) * 100));
       progressHtml +=
         '<div class="unlock-progress-row">' +
-          '<div class="unlock-progress-label">Boss Set: ' + ownedCount + ' / ' + setItems.length + ' owned</div>' +
+          '<div class="unlock-progress-label">Progress: ' + cur + ' / ' + tgt + ' days</div>' +
           '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
         '</div>';
     }
-  }
-  // Safe CTA — only home / drill navigation, no fragile deep routing
-  let ctaHtml = '';
-  if (unlock.ctaTarget && unlock.ctaLabel) {
-    let onclickAction = '';
-    if (unlock.ctaTarget === 'home') onclickAction = "closeHowToUnlockModal(); closeShopOverlay(); switchTab('mastery');";
-    else if (unlock.ctaTarget === 'drill') onclickAction = "closeHowToUnlockModal(); closeShopOverlay(); switchTab('drill');";
-    if (onclickAction) {
-      ctaHtml = '<button class="unlock-cta-btn" onclick="' + onclickAction + '">' + _trainerEscapeHtml(unlock.ctaLabel) + ' →</button>';
+    if (item.source === 'boss' && unlock.boss) {
+      const moduleKey = BOSS_NAME_TO_MODULE_KEY[unlock.boss];
+      if (moduleKey) {
+        const setItems = getBossItemsForModule(moduleKey);
+        const ownedCount = getOwnedBossItems(moduleKey, profile).length;
+        const pct = setItems.length > 0 ? Math.round((ownedCount / setItems.length) * 100) : 0;
+        progressHtml +=
+          '<div class="unlock-progress-row">' +
+            '<div class="unlock-progress-label">Boss Set: ' + ownedCount + ' / ' + setItems.length + ' owned</div>' +
+            '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
+          '</div>';
+      }
     }
-  }
-  return '' +
-    '<div class="unlock-modal-shell">' +
-      '<div class="unlock-modal-header-row">' +
-        '<button class="unlock-close-btn" onclick="closeHowToUnlockModal()" aria-label="Close" title="Close">✕</button>' +
-      '</div>' +
-      '<div class="unlock-modal-preview">' + previewSvg + '</div>' +
-      '<div class="unlock-modal-tags">' +
-        '<span class="shop-card-source" style="background:' + sourceColor.bg + ';border:1px solid ' + sourceColor.border + ';color:' + sourceColor.text + '">' +
-          (SOURCE_LABELS[itemSource] || 'Shop') + '</span>' +
-        '<span class="shop-card-rarity" style="background:' + rarityColor.bg + ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
-          (RARITY_LABELS[item.rarity] || 'Common') + '</span>' +
-      '</div>' +
-      '<h2 class="unlock-modal-title">' + _trainerEscapeHtml(item.name) + '</h2>' +
-      '<p class="unlock-modal-desc">' + _trainerEscapeHtml(item.description || '') + '</p>' +
-      '<div class="unlock-modal-req">' +
-        '<div class="unlock-req-label">How to Unlock</div>' +
-        '<div class="unlock-req-text">' + _trainerEscapeHtml(unlock.requirement || 'Earn through gameplay.') + '</div>' +
+    stateHtml =
+      '<div class="item-detail-state-block preview-state">' +
+        '<div class="item-detail-state-label">How to Unlock</div>' +
+        '<div class="item-detail-state-text">' + _trainerEscapeHtml(unlock.requirement || 'Earn through gameplay.') + '</div>' +
         (item.source === 'boss' ? '<div class="unlock-req-subtext">Each Boss clear grants one unowned item from this set.</div>' : '') +
         progressHtml +
+      '</div>';
+    // Safe CTA navigation — home/drill only
+    if (unlock.ctaTarget === 'home') {
+      ctaHtml = '<button class="item-detail-cta unlock" onclick="closeItemDetailModal(); closeShopOverlay(); switchTab(\'mastery\');">' + _trainerEscapeHtml(unlock.ctaLabel || 'View Mastery Path') + ' →</button>';
+    } else if (unlock.ctaTarget === 'drill') {
+      ctaHtml = '<button class="item-detail-cta unlock" onclick="closeItemDetailModal(); closeShopOverlay(); switchTab(\'drill\');">' + _trainerEscapeHtml(unlock.ctaLabel || 'Train') + ' →</button>';
+    } else {
+      ctaHtml = '<button class="item-detail-cta unlock" disabled>How to Unlock</button>';
+    }
+  } else if (isPurchasable) {
+    if (affordable) {
+      ctaHtml = '<button class="item-detail-cta buy" onclick="closeItemDetailModal(); buyShopItem(\'' + item.id + '\')">' + renderChipsIcon(16) + 'Buy · ' + formatChips(item.price) + '</button>';
+    } else {
+      const need = item.price - chips;
+      stateHtml = '<div class="item-detail-state-block"><div class="item-detail-state-label">Need More Chips</div><div class="item-detail-state-text">' + formatChips(need) + ' more Chips needed.</div></div>';
+      ctaHtml = '<button class="item-detail-cta unaffordable" disabled>Need ' + formatChips(need) + ' more</button>';
+    }
+  }
+
+  return '' +
+    '<div class="item-detail-shell">' +
+      '<div class="item-detail-header-row">' +
+        '<button class="unlock-close-btn" onclick="closeItemDetailModal()" aria-label="Close" title="Close">✕</button>' +
       '</div>' +
+      // Tags row (source · rarity · slot)
+      '<div class="item-detail-tags-row">' + sourceTag + rarityPill + slotPill + '</div>' +
+      // Before/After mini grid
+      '<div class="item-detail-preview-grid">' +
+        '<div class="item-detail-preview-cell"><span class="item-detail-preview-label">Current</span>' + currentSvg + '</div>' +
+        '<div class="item-detail-preview-cell preview-marked"><span class="item-detail-preview-label">Preview</span>' + previewSvg + '</div>' +
+      '</div>' +
+      // Slot-aware zoom preview (full-width)
+      '<div class="item-detail-zoom-row">' +
+        '<span class="item-detail-zoom-label">Item Zoom · ' + WARDROBE_SLOT_LABELS[item.slot] + '</span>' +
+        zoomSvg +
+      '</div>' +
+      // Name + meta + flavor
+      '<h2 class="item-detail-name">' + _trainerEscapeHtml(item.name) + '</h2>' +
+      '<div class="item-detail-meta">' + _trainerEscapeHtml(metaLine) + '</div>' +
+      '<p class="item-detail-flavor">' + _trainerEscapeHtml(_itemFlavorText(item)) + '</p>' +
+      // State block + CTA
+      stateHtml +
       ctaHtml +
     '</div>';
 }
@@ -22947,7 +23497,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.2.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.2.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -23058,7 +23608,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.2.0',
+    appVersion: '3.2.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
