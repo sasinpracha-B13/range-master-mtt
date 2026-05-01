@@ -11760,14 +11760,19 @@ const AVATAR_HAIR_COLORS = {
 };
 const AVATAR_HAIR_COLOR_LABELS = { black:'Black', dark_brown:'Dark brown', light_brown:'Light brown', blonde:'Blonde', red:'Red', silver:'Silver' };
 
-const AVATAR_HAIR_STYLES_LIST = ['short_crop', 'side_part', 'bob', 'ponytail', 'long_flow', 'curls'];
+// v2.7.5: expanded to 10 styles (added 4 feminine styles for hair variety)
+const AVATAR_HAIR_STYLES_LIST = ['short_crop', 'side_part', 'bob', 'ponytail', 'long_flow', 'curls', 'pixie', 'twin_braids', 'space_buns', 'wavy_bob'];
 const AVATAR_HAIR_STYLE_LABELS = {
-  short_crop: 'Short Crop',
-  side_part:  'Side Part',
-  bob:        'Bob',
-  ponytail:   'Ponytail',
-  long_flow:  'Long Flow',
-  curls:      'Curls'
+  short_crop:  'Short Crop',
+  side_part:   'Side Part',
+  bob:         'Bob',
+  ponytail:    'Ponytail',
+  long_flow:   'Long Flow',
+  curls:       'Curls',
+  pixie:       'Pixie Cut',
+  twin_braids: 'Twin Braids',
+  space_buns:  'Space Buns',
+  wavy_bob:    'Wavy Bob'
 };
 
 const AVATAR_BODY_TYPES_LIST = ['masc', 'fem'];
@@ -11788,19 +11793,33 @@ function _avPartsBody(bodyType, skinHex) {
   const hl = _avLighten(skinHex, 0.10);
   const R = _avRect;
   let s = '';
-  // Head
+  // === v2.7.5 v6 ROUND HEAD — bevel corners + smoother chin taper ===
   s += R(24, 6, 16, 1, skinHex);
   s += R(23, 7, 18, 1, skinHex);
-  s += R(22, 8, 20, 2, skinHex);
-  s += R(22, 10, 20, 8, skinHex);
-  s += R(23, 18, 18, 2, skinHex);
-  s += R(24, 20, 16, 1, skinHex);
-  s += R(25, 21, 14, 1, sh);
-  // Right-side face shadow
-  s += R(40, 10, 2, 8, sh);
-  s += R(39, 18, 2, 2, sh);
-  s += R(38, 20, 2, 1, sh);
-  s += R(23, 10, 1, 2, hl);
+  // y=8 BEVEL (was 20w straight, now 18w with corner shadows = rounder upper cheekbone)
+  s += R(23, 8, 18, 1, skinHex);
+  s += R(22, 8, 1, 1, sh);       // L upper bevel corner shadow
+  s += R(41, 8, 1, 1, sh);       // R upper bevel corner shadow
+  // Main face widest (20w x 8 rows):
+  s += R(22, 9, 20, 8, skinHex);
+  // y=17 JAW BEVEL (was 20w, now 18w)
+  s += R(23, 17, 18, 1, skinHex);
+  s += R(22, 17, 1, 1, sh);      // L lower bevel corner shadow
+  s += R(41, 17, 1, 1, sh);      // R lower bevel corner shadow
+  // SMOOTHER chin taper (4-row gradient)
+  s += R(24, 18, 16, 1, skinHex);
+  s += R(25, 19, 14, 1, skinHex);
+  s += R(26, 20, 12, 1, skinHex);    // smaller chin tip
+  s += R(27, 21, 10, 1, sh);         // chin underside shadow
+  // Right-side face shadow (under-light from upper-left, follows new contour):
+  s += R(40, 9, 2, 8, sh);
+  s += R(40, 17, 1, 1, sh);
+  s += R(39, 18, 1, 1, sh);
+  s += R(38, 19, 1, 1, sh);
+  s += R(37, 20, 1, 1, sh);
+  // Left-cheek highlight:
+  s += R(22, 10, 1, 4, hl);
+  s += R(23, 9, 1, 1, hl);
   // Neck
   s += R(28, 22, 8, 4, skinHex);
   s += R(34, 22, 2, 4, sh);
@@ -11864,132 +11883,250 @@ function _avPartsBody(bodyType, skinHex) {
   return s;
 }
 
-// ---- STARTER OUTFIT (Trainer Academy casual; fused for v2.7.0) ----
+// ---- STARTER OUTFIT v2.7.5 (Trainer Academy casual; v7 teal jacket + leather cuffs + chest pocket + epaulettes + female arm sleeves) ----
 function _avPartsOutfit(bodyType) {
-  const jacket   = '#7a8059';
-  const jacketSh = '#54593b';
-  const jacketHl = '#969a73';
-  const collar   = '#3e4128';
-  const collarHl = '#5a5e3e';
-  const lapel    = '#4f5435';
-  const cuff     = '#3e4128';
-  const cuffHl   = '#5a5e3e';
-  const hem      = '#3e4128';
+  // === v7 TEAL TRAINER PALETTE (high contrast vs dark BG, WARM-LEATHER cuffs vs cool teal body) ===
+  const jacket   = '#3d8a96';          // bright teal main
+  const jacketSh = '#2a6e7a';          // brighter teal shadow (no longer blends)
+  const jacketHl = '#5fb3bf';          // light teal highlight
+  const collar   = '#1a4a52';          // very deep teal collar
+  const collarHl = '#3d8a96';
+  const lapel    = '#2d7280';          // mid teal lapel folds
+  // CUFFS — warm BROWN LEATHER (cohesive with belt + boots, strong contrast vs teal)
+  const cuff     = '#5e3a1f';
+  const cuffHl   = '#8b6534';
+  const cuffEdge = '#3a1f10';
+  const cuffStitch = '#d4af37';        // gold stitching detail
+  const hem      = '#1a4a52';
+  const seamShadow = '#1a4a52';
+  const sideSeamHl = '#5fb3bf';        // side seam highlight stripe
+  const liningTan = '#c8a578';         // inner V warm-tan lining
+  const pocketDark = '#2d7280';        // chest pocket recess
+  const pocketTrim = '#5fb3bf';
+  const epauletteHl = '#7fcad6';       // shoulder tab highlight
+  // Belt + trousers + boots (warm earth — pair with cool teal)
   const beltBrn  = '#3e2918';
   const beltBrnSh= '#1f130a';
   const beltGold = '#d4af37';
   const beltGoldHl = '#f0d060';
   const beltGoldSh = '#9e7d20';
+  const stitching = '#5a4520';
   const trouser  = '#3a2515';
   const trouserSh= '#1f130a';
   const bootCuff = '#5e4225';
   const bootBody = '#1a1410';
   const bootHl   = '#3a2515';
   const bootSole = '#0a0805';
-  const bootLace = '#54593b';
+  const bootLace = '#2a1a10';
+  const tongueColor = '#3a2515';
+  const toeCap = '#0a0805';
+  // Shared
+  const undershirt = '#e8d8b8';        // cream undershirt visible inside V-collar
+  const buttonGold = '#d4af37';
+  const buttonShadow = '#7a5f15';
   const R = _avRect;
   let s = '';
-  // v2.7.1: jacket now follows the amplified body shapes
   if (bodyType === 'masc') {
-    // MALE — broad shoulder collar, straight torso
+    // === MALE — broad shoulder collar, V-tapered torso ===
     s += R(20, 26, 24, 1, collar);
     s += R(18, 27, 28, 1, collar);
-    s += R(16, 28, 32, 1, collar);    // matches 32w shoulder peak
+    s += R(16, 28, 32, 1, collar);
     s += R(17, 29, 30, 1, collar);
     s += R(18, 30, 28, 1, collar);
-    // V notch
-    s += R(28, 27, 8, 1, lapel);
-    s += R(29, 28, 6, 1, lapel);
-    s += R(30, 29, 4, 1, lapel);
-    // Jacket main body (V-tapered from broad shoulders to torso)
-    s += R(19, 31, 26, 1, jacket);
-    s += R(20, 32, 24, 9, jacket);
-    // Lapel V edges
+    // V notch — undershirt cream peek
+    s += R(28, 27, 8, 1, undershirt);
+    s += R(29, 28, 6, 1, undershirt);
+    s += R(30, 29, 4, 1, undershirt);
+    // Lapel folds
+    s += R(27, 27, 1, 1, lapel);
+    s += R(36, 27, 1, 1, lapel);
     s += R(27, 28, 1, 2, collarHl);
     s += R(36, 28, 1, 2, collarHl);
-    // Shadow on broad-shoulder right side
+    s += R(28, 30, 1, 1, lapel);
+    s += R(35, 30, 1, 1, lapel);
+    // Inner collar warm-tan lining
+    s += R(28, 28, 8, 1, liningTan);
+    s += R(29, 29, 6, 1, liningTan);
+    // Jacket V-tapered body
+    s += R(19, 31, 26, 1, jacket);
+    s += R(20, 32, 24, 9, jacket);
+    // SIDE SEAM stripes (1-px highlight down each side)
+    s += R(20, 32, 1, 9, sideSeamHl);
+    s += R(43, 32, 1, 9, sideSeamHl);
+    // SHOULDER EPAULETTES
+    s += R(18, 30, 4, 1, epauletteHl);
+    s += R(42, 30, 4, 1, epauletteHl);
+    s += R(20, 30, 1, 1, buttonGold);
+    s += R(43, 30, 1, 1, buttonGold);
+    // CHEST POCKET
+    s += R(22, 33, 5, 4, pocketDark);
+    s += R(22, 33, 5, 1, pocketTrim);
+    s += R(24, 34, 1, 1, buttonGold);
+    s += R(25, 34, 1, 1, buttonShadow);
+    s += R(22, 36, 5, 1, jacketSh);
+    // Front jacket buttons (3 small)
+    s += R(31, 32, 1, 1, buttonGold);
+    s += R(32, 32, 1, 1, buttonShadow);
+    s += R(31, 35, 1, 1, buttonGold);
+    s += R(32, 35, 1, 1, buttonShadow);
+    s += R(31, 38, 1, 1, buttonGold);
+    s += R(32, 38, 1, 1, buttonShadow);
+    // Shadow + highlight
     s += R(46, 28, 1, 1, jacketSh);
     s += R(45, 29, 1, 1, jacketSh);
     s += R(44, 30, 2, 11, jacketSh);
-    // Highlight on broad-shoulder left side
     s += R(16, 28, 1, 1, jacketHl);
     s += R(18, 30, 1, 11, jacketHl);
-    // Center seam
-    s += R(31, 30, 2, 11, lapel);
-    // Sleeve cuffs (at hand position)
+    // SLEEVE CUFFS — brown leather + gold stitch + center button
     s += R(18, 37, 4, 2, cuff);
-    s += R(42, 37, 4, 2, cuff);
     s += R(18, 37, 4, 1, cuffHl);
+    s += R(18, 38, 1, 1, cuffEdge);
+    s += R(21, 38, 1, 1, cuffEdge);
+    s += R(19, 37, 2, 1, cuffStitch);
+    s += R(20, 38, 1, 1, buttonGold);
+    s += R(42, 37, 4, 2, cuff);
     s += R(42, 37, 4, 1, cuffHl);
+    s += R(42, 38, 1, 1, cuffEdge);
+    s += R(45, 38, 1, 1, cuffEdge);
+    s += R(43, 37, 2, 1, cuffStitch);
+    s += R(43, 38, 1, 1, buttonGold);
     s += R(18, 39, 1, 4, jacketSh);
     s += R(45, 39, 1, 4, jacketSh);
-    // Lower hem
+    // LOWER HEM with seam separation
     s += R(20, 41, 24, 1, hem);
+    s += R(20, 42, 24, 1, seamShadow);
   } else {
-    // FEMALE — narrow shoulders, dramatic waist taper, hip flare
+    // === FEMALE — narrow shoulders, hourglass waist, hip flare ===
     s += R(24, 25, 16, 1, collar);
     s += R(23, 26, 18, 1, collar);
     s += R(22, 27, 20, 2, collar);
-    // V notch
-    s += R(28, 27, 8, 1, lapel);
-    s += R(29, 28, 6, 1, lapel);
-    s += R(30, 29, 4, 1, lapel);
-    // Jacket upper body (20w shoulders down to bust)
+    // V notch — undershirt cream peek
+    s += R(28, 27, 8, 1, undershirt);
+    s += R(29, 28, 6, 1, undershirt);
+    s += R(30, 29, 4, 1, undershirt);
+    // Lapel folds
+    s += R(27, 27, 1, 1, lapel);
+    s += R(36, 27, 1, 1, lapel);
+    s += R(27, 28, 1, 2, collarHl);
+    s += R(36, 28, 1, 2, collarHl);
+    s += R(28, 30, 1, 1, lapel);
+    s += R(35, 30, 1, 1, lapel);
+    // Inner collar warm-tan lining
+    s += R(28, 28, 8, 1, liningTan);
+    s += R(29, 29, 6, 1, liningTan);
+    // Jacket upper body
     s += R(22, 29, 20, 4, jacket);
+    // SHOULDER EPAULETTES (narrower for fem)
+    s += R(22, 30, 4, 1, epauletteHl);
+    s += R(38, 30, 4, 1, epauletteHl);
+    s += R(23, 30, 1, 1, buttonGold);
+    s += R(40, 30, 1, 1, buttonGold);
+    // CHEST POCKET (smaller, fits female cut)
+    s += R(24, 33, 4, 4, pocketDark);
+    s += R(24, 33, 4, 1, pocketTrim);
+    s += R(25, 34, 1, 1, buttonGold);
+    s += R(26, 34, 1, 1, buttonShadow);
     // Waist taper (jacket follows body curve)
     s += R(23, 33, 18, 1, jacket);
     s += R(24, 34, 16, 1, jacket);
-    s += R(25, 35, 14, 3, jacket);    // narrowest waist
+    s += R(25, 35, 14, 3, jacket);
+    // SIDE SEAM stripes (follow hourglass curve)
+    s += R(22, 30, 1, 3, sideSeamHl);
+    s += R(41, 30, 1, 3, sideSeamHl);
+    s += R(25, 35, 1, 3, sideSeamHl);
+    s += R(38, 35, 1, 3, sideSeamHl);
     // Hip flare back out
     s += R(24, 38, 16, 1, jacket);
     s += R(22, 39, 20, 1, jacket);
-    s += R(21, 40, 22, 2, jacket);    // hip peak (wider than shoulders!)
-    // Lapel V edges
-    s += R(27, 28, 1, 2, collarHl);
-    s += R(36, 28, 1, 2, collarHl);
-    // Curved shadow + highlight (hourglass)
-    s += R(41, 28, 1, 5, jacketSh);   // shoulder
+    s += R(21, 40, 22, 2, jacket);
+    // Hip seam highlight
+    s += R(21, 40, 1, 2, sideSeamHl);
+    s += R(42, 40, 1, 2, sideSeamHl);
+    // === FEMALE ARM SLEEVES — bridge shoulder→cuff (real fix for sleeve "blending") ===
+    // L arm slants from shoulder y=29 outward to cuff y=37
+    s += R(21, 29, 2, 1, jacket);
+    s += R(20, 30, 3, 1, jacket);
+    s += R(19, 31, 4, 1, jacket);
+    s += R(18, 32, 5, 5, jacket);
+    s += R(18, 32, 1, 5, jacketHl);
+    s += R(22, 29, 1, 1, jacketSh);
+    s += R(22, 30, 1, 1, jacketSh);
+    s += R(22, 31, 1, 1, jacketSh);
+    s += R(22, 32, 1, 5, jacketSh);
+    // R arm — mirror
+    s += R(41, 29, 2, 1, jacket);
+    s += R(42, 30, 3, 1, jacket);
+    s += R(43, 31, 4, 1, jacket);
+    s += R(42, 32, 5, 5, jacket);
+    s += R(42, 32, 1, 5, jacketHl);
+    s += R(46, 32, 1, 5, jacketSh);
+    s += R(45, 31, 1, 1, jacketSh);
+    // Front buttons (3 small)
+    s += R(31, 31, 1, 1, buttonGold);
+    s += R(32, 31, 1, 1, buttonShadow);
+    s += R(31, 34, 1, 1, buttonGold);
+    s += R(32, 34, 1, 1, buttonShadow);
+    s += R(31, 37, 1, 1, buttonGold);
+    s += R(32, 37, 1, 1, buttonShadow);
+    // Shadow + highlight follows hourglass
+    s += R(41, 28, 1, 5, jacketSh);
     s += R(40, 33, 1, 1, jacketSh);
-    s += R(38, 35, 2, 3, jacketSh);   // waist shadow
-    s += R(41, 40, 2, 2, jacketSh);   // hip shadow
+    s += R(38, 35, 2, 3, jacketSh);
+    s += R(41, 40, 2, 2, jacketSh);
     s += R(22, 28, 1, 5, jacketHl);
     s += R(25, 35, 1, 3, jacketHl);
     s += R(21, 40, 1, 2, jacketHl);
-    // Center seam
-    s += R(31, 30, 2, 10, lapel);
-    // Sleeve cuffs
+    // SLEEVE CUFFS — brown leather + gold stitch + button
     s += R(18, 37, 4, 2, cuff);
-    s += R(42, 37, 4, 2, cuff);
     s += R(18, 37, 4, 1, cuffHl);
+    s += R(18, 38, 1, 1, cuffEdge);
+    s += R(21, 38, 1, 1, cuffEdge);
+    s += R(19, 37, 2, 1, cuffStitch);
+    s += R(20, 38, 1, 1, buttonGold);
+    s += R(42, 37, 4, 2, cuff);
     s += R(42, 37, 4, 1, cuffHl);
+    s += R(42, 38, 1, 1, cuffEdge);
+    s += R(45, 38, 1, 1, cuffEdge);
+    s += R(43, 37, 2, 1, cuffStitch);
+    s += R(43, 38, 1, 1, buttonGold);
     s += R(18, 39, 1, 4, jacketSh);
     s += R(45, 39, 1, 4, jacketSh);
-    // Lower hem (follows hip width)
+    // LOWER HEM following hip line + seam
     s += R(21, 42, 22, 1, hem);
+    s += R(21, 43, 22, 1, seamShadow);
   }
-  // Belt
-  s += R(22, 42, 20, 2, beltBrn);
-  s += R(22, 43, 20, 1, beltBrnSh);
-  s += R(30, 42, 4, 2, beltGold);
-  s += R(30, 42, 4, 1, beltGoldHl);
-  s += R(30, 43, 4, 1, beltGoldSh);
-  // Trousers
-  s += R(22, 44, 20, 1, trouser);
-  s += R(25, 45, 6, 9, trouser);
-  s += R(33, 45, 6, 9, trouser);
-  s += R(30, 45, 1, 9, trouserSh);
-  s += R(38, 45, 1, 9, trouserSh);
-  s += R(31, 45, 2, 9, _avDarken(trouser, 0.45));
-  // Boots
+  // === BELT — gold buckle with stitching ===
+  s += R(22, 44, 20, 2, beltBrn);
+  s += R(22, 45, 20, 1, beltBrnSh);
+  s += R(22, 44, 1, 2, stitching);
+  s += R(41, 44, 1, 2, stitching);
+  // Gold buckle 4w x 3h with center pin
+  s += R(30, 43, 4, 1, beltGold);
+  s += R(30, 44, 4, 2, beltGold);
+  s += R(30, 43, 4, 1, beltGoldHl);
+  s += R(30, 45, 4, 1, beltGoldSh);
+  s += R(31, 44, 2, 1, beltGoldSh);
+  // === TROUSERS ===
+  s += R(22, 46, 20, 1, trouser);
+  s += R(25, 47, 6, 7, trouser);
+  s += R(33, 47, 6, 7, trouser);
+  s += R(30, 47, 1, 7, trouserSh);
+  s += R(38, 47, 1, 7, trouserSh);
+  s += R(31, 47, 2, 7, _avDarken(trouser, 0.45));
+  // === BOOTS — tongue + toe cap + heel + extending sole ===
   s += R(23, 54, 8, 2, bootCuff);
-  s += R(23, 56, 8, 5, bootBody);
-  s += R(23, 57, 1, 3, bootHl);
-  s += R(27, 56, 1, 4, bootLace);
+  s += R(23, 56, 8, 4, bootBody);
+  s += R(26, 54, 2, 6, tongueColor);
+  s += R(27, 56, 1, 3, bootLace);
+  s += R(23, 58, 4, 2, toeCap);
+  s += R(23, 56, 1, 1, bootHl);
   s += R(22, 60, 10, 2, bootSole);
   s += R(33, 54, 8, 2, bootCuff);
-  s += R(33, 56, 8, 5, bootBody);
-  s += R(33, 57, 1, 3, bootHl);
-  s += R(37, 56, 1, 4, bootLace);
+  s += R(33, 56, 8, 4, bootBody);
+  s += R(36, 54, 2, 6, tongueColor);
+  s += R(37, 56, 1, 3, bootLace);
+  s += R(37, 58, 4, 2, toeCap);
+  s += R(33, 56, 1, 1, bootHl);
   s += R(32, 60, 10, 2, bootSole);
   return s;
 }
@@ -12015,70 +12152,232 @@ function _avPartsFace() {
   return s;
 }
 
-// ---- HAIR (one of 6 styles, 3-tone shading per style) ----
+// ---- HAIR v2.7.5 (10 styles, 3-tone shading + crown sparkle + multi-strand) ----
 function _avPartsHair(style, baseHex) {
   const hl = _avLighten(baseHex, 0.25);
   const sh = _avDarken(baseHex, 0.30);
   const R = _avRect;
   switch (style) {
     case 'short_crop':
+      // v7 ROUNDED — true dome cap (4w peak → 8w → 12w → 16w → 20w taper)
       return [
-        R(23, 4, 18, 2, baseHex), R(22, 6, 20, 4, baseHex),
+        R(28, 2, 4, 1, baseHex),
+        R(26, 3, 8, 1, baseHex),
+        R(24, 4, 12, 1, baseHex),
+        R(23, 5, 16, 1, baseHex),
+        R(22, 6, 20, 1, baseHex),
+        R(22, 7, 20, 3, baseHex),
+        R(25, 10, 4, 1, baseHex), R(33, 10, 4, 1, baseHex),
+        R(27, 11, 1, 1, sh),
         R(22, 10, 3, 2, baseHex), R(39, 10, 3, 2, baseHex),
-        R(24, 5, 6, 1, hl), R(23, 7, 3, 1, hl),
-        R(40, 6, 2, 4, sh), R(40, 10, 2, 2, sh), R(22, 11, 1, 1, sh)
+        R(22, 12, 1, 1, sh), R(41, 12, 1, 1, sh),
+        R(26, 3, 4, 1, hl), R(24, 4, 8, 1, hl),
+        R(23, 5, 6, 1, hl), R(22, 7, 4, 1, hl),
+        R(30, 3, 1, 1, '#ffffff'),
+        R(34, 3, 2, 1, sh), R(36, 4, 2, 1, sh),
+        R(38, 5, 2, 1, sh), R(40, 7, 2, 4, sh),
+        R(20, 8, 1, 1, baseHex)
       ].join('');
     case 'side_part':
+      // Asymmetric sweep + parting line + multi-strand
       return [
         R(22, 4, 20, 4, baseHex),
-        R(20, 8, 14, 2, baseHex), R(20, 10, 6, 3, baseHex),
+        R(28, 5, 1, 2, sh),
+        R(20, 8, 14, 1, baseHex), R(20, 9, 13, 1, baseHex),
+        R(20, 10, 7, 2, baseHex), R(22, 12, 4, 1, baseHex),
         R(36, 8, 6, 2, baseHex), R(38, 10, 4, 3, baseHex),
-        R(23, 5, 10, 1, hl), R(22, 8, 6, 1, hl), R(21, 10, 2, 1, hl),
-        R(40, 6, 2, 6, sh), R(20, 12, 6, 1, sh), R(41, 12, 1, 1, sh)
+        R(23, 5, 10, 1, hl), R(22, 8, 6, 1, hl),
+        R(21, 10, 2, 1, hl), R(23, 9, 4, 1, hl),
+        R(25, 11, 3, 1, hl),
+        R(25, 5, 1, 1, '#ffffff'),
+        R(40, 6, 2, 6, sh), R(20, 12, 6, 1, sh), R(41, 12, 1, 1, sh),
+        R(19, 11, 1, 1, baseHex)
       ].join('');
     case 'bob':
+      // v7 ROUNDED — 3-section cascading curve (no more tall rectangles)
       return [
-        R(22, 4, 20, 5, baseHex),
-        R(21, 9, 5, 13, baseHex), R(38, 9, 5, 13, baseHex),
-        R(20, 19, 2, 4, baseHex), R(42, 19, 2, 4, baseHex),
-        R(23, 5, 10, 1, hl), R(22, 7, 6, 1, hl), R(22, 10, 3, 1, hl),
-        R(40, 6, 2, 4, sh), R(41, 10, 2, 12, sh),
-        R(20, 22, 2, 1, sh), R(42, 22, 2, 1, sh)
+        R(26, 3, 12, 1, baseHex),
+        R(24, 4, 16, 1, baseHex),
+        R(23, 5, 18, 1, baseHex),
+        R(22, 6, 20, 3, baseHex),
+        R(31, 6, 1, 1, sh),
+        R(20, 9, 6, 3, baseHex),
+        R(19, 12, 6, 3, baseHex),
+        R(18, 15, 6, 3, baseHex),
+        R(19, 18, 5, 3, baseHex),
+        R(20, 21, 4, 1, baseHex),
+        R(38, 9, 6, 3, baseHex),
+        R(39, 12, 6, 3, baseHex),
+        R(40, 15, 6, 3, baseHex),
+        R(41, 18, 5, 3, baseHex),
+        R(40, 21, 4, 1, baseHex),
+        R(26, 9, 1, 1, sh), R(37, 9, 1, 1, sh),
+        R(24, 4, 8, 1, hl), R(23, 6, 6, 1, hl),
+        R(20, 9, 1, 3, hl), R(19, 12, 1, 3, hl), R(18, 15, 1, 3, hl),
+        R(31, 4, 1, 1, '#ffffff'),
+        R(40, 5, 1, 3, sh), R(41, 6, 1, 4, sh),
+        R(43, 12, 1, 3, sh), R(45, 15, 1, 3, sh), R(45, 18, 1, 3, sh),
+        R(20, 22, 4, 1, sh), R(40, 22, 4, 1, sh)
       ].join('');
     case 'ponytail':
+      // Pulled-back gather lines + thicker tail with tapering tip
       return [
         R(22, 4, 20, 5, baseHex),
+        R(28, 6, 12, 1, sh), R(31, 8, 10, 1, sh),
         R(22, 9, 4, 3, baseHex), R(38, 9, 4, 3, baseHex),
-        R(43, 11, 2, 2, '#8b3a2a'),
-        R(43, 13, 4, 4, baseHex), R(44, 17, 4, 6, baseHex),
-        R(45, 23, 3, 6, baseHex), R(46, 29, 2, 4, baseHex),
+        R(43, 10, 3, 1, '#a04030'),
+        R(43, 11, 3, 2, '#8b3a2a'),
+        R(43, 13, 3, 1, '#5e2418'),
+        R(43, 14, 4, 3, baseHex), R(44, 17, 4, 6, baseHex),
+        R(45, 23, 3, 6, baseHex), R(46, 29, 2, 3, baseHex),
+        R(47, 32, 1, 1, baseHex),
         R(23, 5, 8, 1, hl), R(22, 7, 4, 1, hl),
-        R(43, 14, 1, 6, hl), R(44, 20, 1, 6, hl),
+        R(43, 15, 1, 6, hl), R(44, 21, 1, 6, hl),
+        R(45, 27, 1, 4, hl),
+        R(28, 5, 1, 1, '#ffffff'),
         R(40, 6, 2, 4, sh),
-        R(46, 13, 1, 4, sh), R(47, 17, 1, 6, sh), R(47, 23, 1, 6, sh)
+        R(46, 14, 1, 3, sh), R(47, 17, 1, 6, sh), R(47, 23, 1, 6, sh)
       ].join('');
     case 'long_flow':
+      // Multi-strand flowing with wavy edges + face-frame + tip wisps
       return [
         R(22, 4, 20, 5, baseHex),
-        R(19, 9, 4, 23, baseHex), R(41, 9, 4, 23, baseHex),
+        R(31, 5, 1, 1, sh),
+        R(19, 9, 4, 12, baseHex),
+        R(18, 21, 5, 11, baseHex),
+        R(41, 9, 4, 12, baseHex),
+        R(41, 21, 5, 11, baseHex),
         R(22, 9, 4, 14, baseHex), R(38, 9, 4, 14, baseHex),
-        R(18, 28, 2, 4, baseHex), R(44, 28, 2, 4, baseHex),
+        R(23, 14, 1, 6, sh), R(40, 14, 1, 6, sh),
+        R(17, 30, 2, 2, baseHex), R(45, 30, 2, 2, baseHex),
+        R(20, 32, 1, 1, baseHex), R(43, 32, 1, 1, baseHex),
         R(23, 5, 10, 1, hl), R(22, 7, 6, 1, hl),
         R(19, 10, 1, 10, hl), R(22, 10, 1, 8, hl),
+        R(18, 22, 1, 8, hl),
+        R(41, 22, 1, 8, hl), R(38, 11, 1, 8, hl),
+        R(31, 6, 1, 1, '#ffffff'),
         R(40, 6, 2, 4, sh),
         R(41, 11, 1, 14, sh), R(44, 11, 1, 12, sh),
-        R(19, 25, 1, 6, sh), R(44, 25, 1, 6, sh)
+        R(45, 22, 1, 8, sh), R(19, 25, 1, 6, sh)
       ].join('');
     case 'curls':
+      // 3-bump crown + side curl coils + texture
       return [
-        R(24, 1, 4, 2, baseHex), R(30, 1, 4, 2, baseHex), R(36, 1, 4, 2, baseHex),
+        R(24, 0, 4, 1, baseHex), R(24, 1, 4, 2, baseHex),
+        R(30, 0, 4, 1, baseHex), R(30, 1, 4, 2, baseHex),
+        R(36, 0, 4, 1, baseHex), R(36, 1, 4, 2, baseHex),
         R(22, 3, 20, 2, baseHex),
         R(20, 5, 24, 7, baseHex),
         R(18, 9, 4, 5, baseHex), R(42, 9, 4, 5, baseHex),
-        R(25, 1, 2, 1, hl), R(31, 1, 2, 1, hl), R(37, 1, 2, 1, hl),
+        R(17, 11, 1, 2, baseHex), R(46, 11, 1, 2, baseHex),
+        R(25, 0, 2, 1, hl), R(31, 0, 2, 1, hl), R(37, 0, 2, 1, hl),
+        R(25, 2, 2, 1, hl), R(31, 2, 2, 1, hl), R(37, 2, 2, 1, hl),
         R(22, 4, 18, 1, hl), R(20, 6, 4, 1, hl), R(20, 9, 2, 1, hl),
+        R(31, 1, 1, 1, '#ffffff'),
+        R(28, 3, 1, 1, sh), R(34, 3, 1, 1, sh),
         R(40, 7, 4, 5, sh), R(43, 9, 1, 5, sh),
         R(18, 13, 4, 1, sh), R(42, 13, 4, 1, sh)
+      ].join('');
+    case 'pixie':
+      // FEMININE short pixie — asymmetric swept fringe + side wisps + crown sparkle
+      return [
+        R(23, 4, 18, 1, baseHex),
+        R(22, 5, 20, 3, baseHex),
+        R(24, 8, 4, 2, baseHex),
+        R(28, 8, 12, 1, baseHex),
+        R(30, 9, 12, 2, baseHex),
+        R(38, 11, 4, 2, baseHex),
+        R(40, 13, 2, 1, baseHex),
+        R(22, 8, 2, 4, baseHex), R(40, 8, 2, 2, baseHex),
+        R(21, 11, 1, 2, baseHex),
+        R(28, 4, 1, 1, '#ffffff'),
+        R(24, 5, 8, 1, hl), R(25, 7, 6, 1, hl), R(31, 9, 6, 1, hl),
+        R(40, 6, 2, 2, sh), R(28, 9, 1, 1, sh), R(38, 13, 2, 1, sh)
+      ].join('');
+    case 'twin_braids':
+      // v7 ROUNDED — twin braids with TAPERED segments (pinch shadow + corner pixels)
+      return [
+        R(26, 3, 12, 1, baseHex),
+        R(24, 4, 16, 1, baseHex),
+        R(22, 5, 20, 4, baseHex),
+        R(31, 4, 1, 5, sh),
+        R(31, 5, 1, 1, '#ffffff'),
+        R(25, 9, 4, 1, baseHex), R(35, 9, 4, 1, baseHex),
+        R(21, 9, 4, 4, baseHex), R(39, 9, 4, 4, baseHex),
+        R(20, 13, 4, 1, '#a04030'), R(40, 13, 4, 1, '#a04030'),
+        R(20, 14, 4, 1, '#5e2418'), R(40, 14, 4, 1, '#5e2418'),
+        R(20, 15, 4, 2, baseHex),
+        R(21, 17, 2, 1, sh),
+        R(20, 17, 1, 1, baseHex), R(23, 17, 1, 1, baseHex),
+        R(20, 18, 4, 2, baseHex),
+        R(21, 20, 2, 1, sh),
+        R(20, 20, 1, 1, baseHex), R(23, 20, 1, 1, baseHex),
+        R(20, 21, 4, 2, baseHex),
+        R(21, 23, 2, 1, sh),
+        R(20, 23, 1, 1, baseHex), R(23, 23, 1, 1, baseHex),
+        R(21, 24, 3, 2, baseHex),
+        R(21, 26, 2, 1, baseHex), R(22, 27, 1, 1, baseHex),
+        R(40, 15, 4, 2, baseHex),
+        R(41, 17, 2, 1, sh),
+        R(40, 17, 1, 1, baseHex), R(43, 17, 1, 1, baseHex),
+        R(40, 18, 4, 2, baseHex),
+        R(41, 20, 2, 1, sh),
+        R(40, 20, 1, 1, baseHex), R(43, 20, 1, 1, baseHex),
+        R(40, 21, 4, 2, baseHex),
+        R(41, 23, 2, 1, sh),
+        R(40, 23, 1, 1, baseHex), R(43, 23, 1, 1, baseHex),
+        R(40, 24, 3, 2, baseHex),
+        R(41, 26, 2, 1, baseHex), R(41, 27, 1, 1, baseHex),
+        R(24, 4, 8, 1, hl), R(23, 5, 7, 1, hl), R(33, 5, 7, 1, hl),
+        R(20, 15, 1, 8, hl), R(40, 15, 1, 8, hl),
+        R(40, 6, 2, 4, sh)
+      ].join('');
+    case 'space_buns':
+      // v7 ROUNDED — true oval buns (3w → 5w → 7w widest → 5w → 3w taper)
+      return [
+        R(23, 0, 3, 1, baseHex),
+        R(22, 1, 5, 1, baseHex),
+        R(21, 2, 7, 1, baseHex), R(21, 3, 7, 1, baseHex),
+        R(22, 4, 5, 1, baseHex),
+        R(38, 0, 3, 1, baseHex),
+        R(37, 1, 5, 1, baseHex),
+        R(36, 2, 7, 1, baseHex), R(36, 3, 7, 1, baseHex),
+        R(37, 4, 5, 1, baseHex),
+        R(23, 0, 2, 1, hl), R(38, 0, 2, 1, hl),
+        R(22, 1, 2, 1, hl), R(37, 1, 2, 1, hl),
+        R(21, 2, 1, 2, hl), R(36, 2, 1, 2, hl),
+        R(26, 1, 1, 1, sh), R(41, 1, 1, 1, sh),
+        R(27, 2, 1, 2, sh), R(42, 2, 1, 2, sh),
+        R(23, 4, 3, 1, sh), R(38, 4, 3, 1, sh),
+        R(23, 5, 3, 1, '#a04030'), R(38, 5, 3, 1, '#a04030'),
+        R(22, 6, 20, 3, baseHex),
+        R(22, 9, 4, 4, baseHex), R(38, 9, 4, 4, baseHex),
+        R(25, 9, 4, 1, baseHex), R(35, 9, 4, 1, baseHex),
+        R(28, 9, 8, 2, baseHex),
+        R(31, 6, 1, 1, '#ffffff'),
+        R(23, 7, 12, 1, hl), R(22, 8, 4, 1, hl), R(28, 10, 4, 1, hl),
+        R(40, 7, 2, 6, sh), R(28, 11, 1, 1, sh)
+      ].join('');
+    case 'wavy_bob':
+      // FEMININE chin-length BOB with WAVE pattern
+      return [
+        R(22, 4, 20, 5, baseHex),
+        R(31, 5, 1, 1, sh),
+        R(31, 6, 1, 1, '#ffffff'),
+        R(20, 9, 5, 4, baseHex),
+        R(21, 13, 5, 4, baseHex),
+        R(20, 17, 5, 4, baseHex),
+        R(39, 9, 5, 4, baseHex),
+        R(38, 13, 5, 4, baseHex),
+        R(39, 17, 5, 4, baseHex),
+        R(22, 21, 3, 2, baseHex), R(39, 21, 3, 2, baseHex),
+        R(24, 9, 16, 1, baseHex), R(25, 10, 14, 1, baseHex),
+        R(27, 11, 1, 1, sh),
+        R(20, 10, 1, 3, hl), R(21, 14, 1, 3, hl), R(20, 18, 1, 3, hl),
+        R(23, 5, 9, 1, hl),
+        R(40, 6, 2, 4, sh),
+        R(43, 11, 1, 2, sh), R(42, 15, 1, 2, sh), R(43, 19, 1, 2, sh),
+        R(20, 22, 5, 1, sh), R(39, 22, 5, 1, sh)
       ].join('');
   }
   return '';
@@ -16902,7 +17201,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.5</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -17013,7 +17312,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.7.1',
+    appVersion: '2.7.5',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
