@@ -5601,36 +5601,57 @@
 
     /* ===== Theme-specific primitives (button surface) ===== */
 
-    /* FIRE — flame tongues rising from edges */
+    /* FIRE — actual flame silhouette via clip-path + flicker dance */
     .fx-flame-tongue {
       position: absolute;
-      width: 8px; height: 16px;
-      background: linear-gradient(0deg, var(--fx-secondary, #c41a2a) 0%, var(--fx-primary, #ff8c1a) 50%, var(--fx-glow, #ffd060) 100%);
-      border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
-      filter: blur(0.5px);
+      width: 10px; height: 18px;
+      background: linear-gradient(0deg,
+        var(--fx-secondary, #c41a2a) 0%,
+        var(--fx-primary, #ff8c1a) 45%,
+        var(--fx-glow, #ffd060) 80%,
+        #ffffff 100%);
+      /* Asymmetric flame silhouette — narrow flickering top, wide base */
+      clip-path: polygon(50% 0%, 70% 18%, 60% 35%, 78% 50%, 65% 70%, 80% 85%, 50% 100%, 20% 85%, 35% 70%, 22% 50%, 40% 35%, 30% 18%);
       transform-origin: 50% 100%;
+      filter: drop-shadow(0 0 4px var(--fx-primary, #ff8c1a)) drop-shadow(0 0 8px var(--fx-glow, #ffd060));
       opacity: 0;
-      animation: fx-flame-rise calc(520ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-flame-rise calc(560ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-flame-rise {
-      0%   { opacity: 0; transform: scaleY(0.3) translateY(0); }
-      30%  { opacity: 0.95; transform: scaleY(1.0) translateY(-4px); }
-      80%  { opacity: 0.6; transform: scaleY(0.7) translateY(-12px); }
-      100% { opacity: 0;   transform: scaleY(0.4) translateY(-20px); }
+      0%   { opacity: 0;    transform: scaleY(0.3) scaleX(1.2) translateY(0); }
+      20%  { opacity: 1;    transform: scaleY(1.0) scaleX(1.0) translateY(-4px); }
+      45%  { opacity: 0.95; transform: scaleY(1.15) scaleX(0.85) translateY(-9px); }
+      70%  { opacity: 0.7;  transform: scaleY(0.95) scaleX(0.95) translateY(-15px); }
+      100% { opacity: 0;    transform: scaleY(0.5) scaleX(0.7) translateY(-26px); }
     }
     .fx-flame-spark {
       position: absolute;
       width: 4px; height: 4px;
       border-radius: 50%;
       background: var(--fx-glow, #ffd060);
-      box-shadow: 0 0 6px var(--fx-primary, #ff8c1a);
+      box-shadow: 0 0 8px var(--fx-primary, #ff8c1a), 0 0 14px var(--fx-glow, #ffd060);
       opacity: 0;
-      animation: fx-spark-rise calc(620ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-spark-rise calc(680ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-spark-rise {
-      0%   { opacity: 0; transform: translateY(0) scale(1); }
-      30%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(calc(-30px * var(--fx-scale, 1))) scale(0.4); }
+      0%   { opacity: 0; transform: translateY(0) translateX(0) scale(1); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(calc(-34px * var(--fx-scale, 1))) translateX(var(--fx-spark-drift, 4px)) scale(0.3); }
+    }
+    /* Ember — small glowing dot that drifts up like a hot ash */
+    .fx-flame-ember {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--fx-primary, #ff8c1a);
+      box-shadow: 0 0 5px var(--fx-primary, #ff8c1a);
+      opacity: 0;
+      animation: fx-ember-drift calc(820ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-ember-drift {
+      0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+      30%  { opacity: 0.9; }
+      100% { opacity: 0; transform: translate(var(--fx-spark-drift, 6px), calc(-40px * var(--fx-scale, 1))) scale(0.2); }
     }
 
     /* WATER — ripple expanding ring + drop streaks */
@@ -5646,19 +5667,43 @@
       30%  { opacity: 0.85; }
       100% { opacity: 0;    transform: scale(1.18); }
     }
+    /* WATER — teardrop shape (rotated rounded square with one pointed corner) */
     .fx-water-droplet {
       position: absolute;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--fx-glow, #b8e0ff);
-      box-shadow: 0 0 4px var(--fx-primary, #60a5fa);
+      width: 8px; height: 8px;
+      background: radial-gradient(circle at 35% 65%,
+        #ffffff 0%,
+        var(--fx-glow, #b8e0ff) 30%,
+        var(--fx-primary, #60a5fa) 80%);
+      /* Classic teardrop: round 3 corners + square 1 corner, then rotate so
+         the square corner points UP (north) for a falling droplet shape */
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      filter: drop-shadow(0 0 3px var(--fx-primary, #60a5fa));
       opacity: 0;
-      animation: fx-droplet-fall calc(560ms * var(--fx-time, 1)) ease-in forwards;
+      animation: fx-droplet-fall calc(620ms * var(--fx-time, 1)) ease-in forwards;
     }
     @keyframes fx-droplet-fall {
-      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      0%   { opacity: 0; transform: rotate(-45deg) translate(0, 0) scale(0.8); }
       20%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(calc(20px * var(--fx-scale, 1))) scale(0.6); }
+      60%  { opacity: 1; }
+      100% { opacity: 0; transform: rotate(-45deg) translate(0, calc(22px * var(--fx-scale, 1))) scale(0.5); }
+    }
+    /* Splash — small concentric arcs spreading outward at landing point */
+    .fx-water-splash {
+      position: absolute;
+      width: 12px; height: 6px;
+      border-top: 2px solid transparent;
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      box-shadow: inset 0 4px 0 var(--fx-glow, #b8e0ff);
+      filter: drop-shadow(0 0 4px var(--fx-primary, #60a5fa));
+      opacity: 0;
+      animation: fx-splash-spread calc(420ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-splash-spread {
+      0%   { opacity: 0; transform: scaleX(0.4); }
+      40%  { opacity: 1; transform: scaleX(1.2); }
+      100% { opacity: 0; transform: scaleX(1.6); }
     }
 
     /* EARTH — dust pulse from bottom edge */
@@ -5679,19 +5724,62 @@
       30%  { opacity: 0.85; transform: translateX(-50%) translateY(-2px) scaleY(1.2); }
       100% { opacity: 0;    transform: translateX(-50%) translateY(-12px) scaleY(0.6); }
     }
+    /* Rocky chunk fragments — irregular polygon (not a square) */
     .fx-earth-rock {
       position: absolute;
-      width: 5px; height: 5px;
+      width: 7px; height: 6px;
       background: var(--fx-secondary, #7a5535);
-      border: 1px solid var(--fx-primary, #a87850);
+      box-shadow: inset 1px 1px 0 var(--fx-primary, #a87850), inset -1px -1px 0 #3e2515;
+      /* Irregular pentagon-ish chunk shape, not a clean square */
+      clip-path: polygon(20% 0%, 80% 10%, 100% 50%, 80% 100%, 20% 90%, 0% 50%);
       transform: rotate(var(--fx-rot, 0deg));
       opacity: 0;
-      animation: fx-rock-fly calc(540ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-rock-fly calc(620ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-rock-fly {
       0%   { opacity: 0; transform: translate(0, 0) rotate(var(--fx-rot, 0deg)); }
-      30%  { opacity: 1; }
-      100% { opacity: 0; transform: translate(var(--fx-dx, 0), var(--fx-dy, -16px)) rotate(calc(var(--fx-rot, 0deg) + 180deg)); }
+      25%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--fx-dx, 0), var(--fx-dy, -22px)) rotate(calc(var(--fx-rot, 0deg) + 240deg)); }
+    }
+    /* Ground crack — jagged horizontal split line growing outward */
+    .fx-earth-crack {
+      position: absolute;
+      height: 4px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--fx-secondary, #7a5535) 20%,
+        #1a0f0a 50%,
+        var(--fx-secondary, #7a5535) 80%,
+        transparent 100%);
+      /* Zigzag fissure shape */
+      clip-path: polygon(
+        0% 50%, 8% 0%, 16% 100%, 24% 0%, 32% 100%,
+        40% 0%, 48% 100%, 56% 0%, 64% 100%, 72% 0%,
+        80% 100%, 88% 0%, 100% 50%);
+      filter: drop-shadow(0 0 2px var(--fx-secondary, #7a5535)) drop-shadow(0 1px 0 #1a0f0a);
+      transform-origin: 50% 50%;
+      opacity: 0;
+      animation: fx-earth-crack calc(560ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-earth-crack {
+      0%   { opacity: 0; transform: scaleX(0); }
+      30%  { opacity: 1; transform: scaleX(1); }
+      80%  { opacity: 0.8; transform: scaleX(1.05); }
+      100% { opacity: 0; transform: scaleX(1.1); }
+    }
+    /* Quake shake — applied to the entire button surface */
+    .fx-quake-shake {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      animation: fx-quake-shake calc(420ms * var(--fx-time, 1)) ease-in-out forwards;
+    }
+    @keyframes fx-quake-shake {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      15%      { transform: translateX(-1px) translateY(1px); }
+      30%      { transform: translateX(1px) translateY(-1px); }
+      45%      { transform: translateX(-1px) translateY(0); }
+      60%      { transform: translateX(1px) translateY(1px); }
+      80%      { transform: translateX(0) translateY(-1px); }
     }
 
     /* WIND — streak lines */
@@ -5708,22 +5796,37 @@
       100% { opacity: 0; transform: translateX(40px) scaleX(1.4); }
     }
 
-    /* LIGHTNING — branching arc lines (SVG-friendly via stacked clip-path lines) */
+    /* LIGHTNING — actual zigzag bolt shape via clip-path + flicker strobe */
     .fx-arc-line {
       position: absolute;
-      width: 2px;
-      background: linear-gradient(180deg, var(--fx-glow, #fef9c3) 0%, var(--fx-primary, #fbbf24) 70%, transparent 100%);
-      box-shadow: 0 0 8px var(--fx-primary, #fbbf24), 0 0 16px var(--fx-glow, #fef9c3);
+      width: 14px; height: 38px;
+      background: linear-gradient(180deg,
+        #ffffff 0%,
+        var(--fx-glow, #fef9c3) 30%,
+        var(--fx-primary, #fbbf24) 70%,
+        var(--fx-secondary, #facc15) 100%);
+      /* Classic jagged lightning bolt silhouette */
+      clip-path: polygon(
+        45% 0%, 95% 30%, 60% 30%,
+        100% 60%, 65% 60%,
+        85% 100%, 0% 50%,
+        40% 50%, 5% 22%
+      );
+      filter: drop-shadow(0 0 6px var(--fx-primary, #fbbf24)) drop-shadow(0 0 14px var(--fx-glow, #fef9c3));
       transform-origin: 50% 0%;
       transform: rotate(var(--fx-rot, 0deg));
       opacity: 0;
-      animation: fx-arc-snap calc(360ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-arc-snap calc(420ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-arc-snap {
-      0%   { opacity: 0; height: 0; }
-      30%  { opacity: 1; height: calc(40px * var(--fx-scale, 1)); }
-      60%  { opacity: 0.7; }
-      100% { opacity: 0; height: calc(50px * var(--fx-scale, 1)); }
+      /* Flicker pattern: snap on, brief blink, fade */
+      0%   { opacity: 0; transform: rotate(var(--fx-rot, 0deg)) scaleY(0); }
+      15%  { opacity: 1; transform: rotate(var(--fx-rot, 0deg)) scaleY(1); }
+      25%  { opacity: 0.2; }
+      35%  { opacity: 1; }
+      55%  { opacity: 0.4; }
+      70%  { opacity: 1; }
+      100% { opacity: 0; transform: rotate(var(--fx-rot, 0deg)) scaleY(1); }
     }
     .fx-lightning-flash {
       position: absolute; inset: 0;
@@ -5731,31 +5834,55 @@
       background: var(--fx-glow, #fef9c3);
       opacity: 0;
       mix-blend-mode: screen;
-      animation: fx-lightning-flash calc(280ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-lightning-flash calc(320ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-lightning-flash {
       0%   { opacity: 0; }
-      20%  { opacity: 0.7; }
-      40%  { opacity: 0.1; }
-      60%  { opacity: 0.5; }
+      10%  { opacity: 0.85; }
+      25%  { opacity: 0.05; }
+      40%  { opacity: 0.65; }
+      55%  { opacity: 0.1; }
+      70%  { opacity: 0.3; }
       100% { opacity: 0; }
     }
 
-    /* ICE — frost crystals from corners */
+    /* ICE — 6-point snowflake (3 overlapping line gradients at 0°/60°/120°) */
     .fx-frost-crystal {
       position: absolute;
-      width: 12px; height: 12px;
+      width: 16px; height: 16px;
       background:
-        linear-gradient(45deg, transparent 40%, var(--fx-glow, #e7f5ff) 50%, transparent 60%),
-        linear-gradient(-45deg, transparent 40%, var(--fx-glow, #e7f5ff) 50%, transparent 60%);
-      filter: drop-shadow(0 0 4px var(--fx-primary, #a5d8ff));
+        linear-gradient(0deg,
+          transparent 44%, var(--fx-glow, #e7f5ff) 47%, #ffffff 50%,
+          var(--fx-glow, #e7f5ff) 53%, transparent 56%),
+        linear-gradient(60deg,
+          transparent 44%, var(--fx-glow, #e7f5ff) 47%, #ffffff 50%,
+          var(--fx-glow, #e7f5ff) 53%, transparent 56%),
+        linear-gradient(120deg,
+          transparent 44%, var(--fx-glow, #e7f5ff) 47%, #ffffff 50%,
+          var(--fx-glow, #e7f5ff) 53%, transparent 56%);
+      filter: drop-shadow(0 0 4px var(--fx-primary, #a5d8ff)) drop-shadow(0 0 8px var(--fx-glow, #e7f5ff));
       opacity: 0;
-      animation: fx-crystal-grow calc(620ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-crystal-grow calc(720ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-crystal-grow {
-      0%   { opacity: 0; transform: scale(0); }
-      40%  { opacity: 1; transform: scale(1.2); }
-      100% { opacity: 0; transform: scale(1.6); }
+      0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+      40%  { opacity: 1; transform: scale(1.1) rotate(45deg); }
+      80%  { opacity: 0.85; transform: scale(1.3) rotate(75deg); }
+      100% { opacity: 0; transform: scale(1.6) rotate(120deg); }
+    }
+    /* Frost creep — pale white frame border that crawls in */
+    .fx-frost-creep {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 1px solid var(--fx-glow, #e7f5ff);
+      box-shadow: inset 0 0 14px var(--fx-glow, #e7f5ff), 0 0 8px var(--fx-primary, #a5d8ff);
+      opacity: 0;
+      animation: fx-frost-creep calc(580ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-frost-creep {
+      0%   { opacity: 0; clip-path: inset(50% 50% 50% 50%); }
+      30%  { opacity: 0.9; clip-path: inset(0% 0% 0% 0%); }
+      100% { opacity: 0; clip-path: inset(0% 0% 0% 0%); }
     }
 
     /* HEART — soft pulse */
@@ -5775,19 +5902,50 @@
       100% { opacity: 0; transform: translate(-50%, -50%) translateY(-30px) scale(0.6); }
     }
 
-    /* LAVA — molten cracks */
+    /* LAVA — molten cracks (jagged glowing fissure) */
     .fx-lava-crack {
       position: absolute;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, var(--fx-glow, #fed7aa) 30%, var(--fx-primary, #f97316) 50%, var(--fx-glow, #fed7aa) 70%, transparent 100%);
-      box-shadow: 0 0 8px var(--fx-primary, #f97316);
+      height: 3px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--fx-glow, #fed7aa) 25%,
+        #ffffff 50%,
+        var(--fx-primary, #f97316) 70%,
+        transparent 100%);
+      /* Jagged fissure with offset zigzag */
+      clip-path: polygon(
+        0% 50%, 12% 0%, 22% 100%, 35% 0%, 48% 100%,
+        62% 0%, 75% 100%, 88% 0%, 100% 50%);
+      filter: drop-shadow(0 0 6px var(--fx-primary, #f97316)) drop-shadow(0 0 12px var(--fx-glow, #fed7aa));
+      transform-origin: 50% 50%;
       opacity: 0;
-      animation: fx-crack-glow calc(620ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-crack-glow calc(680ms * var(--fx-time, 1)) ease-out forwards;
     }
     @keyframes fx-crack-glow {
       0%   { opacity: 0; transform: scaleX(0); }
       30%  { opacity: 1; transform: scaleX(1); }
-      100% { opacity: 0; transform: scaleX(1.2); }
+      80%  { opacity: 0.8; transform: scaleX(1.05); }
+      100% { opacity: 0; transform: scaleX(1.15); }
+    }
+    /* Lava bubble — molten bubble pop rising from surface */
+    .fx-lava-bubble {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%,
+        #ffffff 0%,
+        var(--fx-glow, #fed7aa) 30%,
+        var(--fx-primary, #f97316) 70%);
+      box-shadow: 0 0 6px var(--fx-primary, #f97316), inset 0 -1px 1px var(--fx-secondary, #dc2626);
+      opacity: 0;
+      animation: fx-bubble-pop calc(560ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-bubble-pop {
+      0%   { opacity: 0; transform: translateY(4px) scale(0.4); }
+      30%  { opacity: 1; transform: translateY(-2px) scale(1.2); }
+      60%  { opacity: 1; transform: translateY(-8px) scale(1.0); }
+      80%  { opacity: 0.6; transform: translateY(-12px) scale(1.4); }
+      100% { opacity: 0; transform: translateY(-16px) scale(0.6); }
     }
 
     /* CARD — suit pip flick at corners */
@@ -17972,21 +18130,32 @@ function _fxBuildHtml(pack, kind) {
           ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
             return '<div class="fx-flame-tongue" style="left:' + l + ';bottom:-2px;animation-delay:' + (i * 30) + 'ms"></div>';
           }).join('') +
-          '<div class="fx-flame-spark" style="left:30%;top:50%;animation-delay:80ms"></div>' +
-          '<div class="fx-flame-spark" style="left:70%;top:60%;animation-delay:140ms"></div>' +
-          '<div class="fx-flame-spark" style="left:50%;top:40%;animation-delay:200ms"></div>';
+          // v3.7.2 — embers drift up like real burning
+          '<div class="fx-flame-ember" style="left:20%;top:60%;--fx-spark-drift:-4px;animation-delay:120ms"></div>' +
+          '<div class="fx-flame-ember" style="left:50%;top:55%;--fx-spark-drift:2px;animation-delay:200ms"></div>' +
+          '<div class="fx-flame-ember" style="left:80%;top:65%;--fx-spark-drift:6px;animation-delay:280ms"></div>' +
+          '<div class="fx-flame-spark" style="left:30%;top:50%;--fx-spark-drift:0;animation-delay:80ms"></div>' +
+          '<div class="fx-flame-spark" style="left:70%;top:60%;--fx-spark-drift:4px;animation-delay:140ms"></div>' +
+          '<div class="fx-flame-spark" style="left:50%;top:40%;--fx-spark-drift:-3px;animation-delay:200ms"></div>';
         break;
       case 'fx_water':
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
           '<div class="fx-ripple"></div>' +
           '<div class="fx-ripple" style="animation-delay:120ms"></div>' +
-          '<div class="fx-water-droplet" style="left:20%;top:20%"></div>' +
-          '<div class="fx-water-droplet" style="left:50%;top:10%;animation-delay:60ms"></div>' +
-          '<div class="fx-water-droplet" style="left:80%;top:25%;animation-delay:120ms"></div>';
+          // v3.7.2 — teardrops + splash on landing
+          '<div class="fx-water-droplet" style="left:20%;top:5%"></div>' +
+          '<div class="fx-water-droplet" style="left:50%;top:0%;animation-delay:60ms"></div>' +
+          '<div class="fx-water-droplet" style="left:80%;top:8%;animation-delay:120ms"></div>' +
+          '<div class="fx-water-splash" style="left:18%;bottom:0;animation-delay:280ms"></div>' +
+          '<div class="fx-water-splash" style="left:48%;bottom:0;animation-delay:340ms"></div>' +
+          '<div class="fx-water-splash" style="left:78%;bottom:0;animation-delay:400ms"></div>';
         break;
       case 'fx_earth':
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
           '<div class="fx-earth-dust"></div>' +
+          // v3.7.2 — quake shake + jagged ground crack splitting horizontally
+          '<div class="fx-quake-shake"></div>' +
+          '<div class="fx-earth-crack" style="left:5%;top:50%;width:90%"></div>' +
           ['-30','-15','15','30'].map(function (rot, i) {
             const dx = (rot < 0 ? '-' : '') + (Math.abs(rot) * 0.6) + 'px';
             return '<div class="fx-earth-rock" style="left:50%;bottom:0;--fx-rot:' + rot + 'deg;--fx-dx:' + dx + ';--fx-dy:-22px;animation-delay:' + (i * 30) + 'ms"></div>';
@@ -17999,14 +18168,16 @@ function _fxBuildHtml(pack, kind) {
           }).join('');
         break;
       case 'fx_lightning':
+        // v3.7.2 — 3 jagged bolts with strobe flicker
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-lightning-flash"></div>' +
-          ['10%','30%','50%','70%','90%'].map(function (l, i) {
-            const rot = (i % 2 === 0 ? -8 : 8) + (i * 3);
-            return '<div class="fx-arc-line" style="left:' + l + ';top:0;--fx-rot:' + rot + 'deg;animation-delay:' + (i * 40) + 'ms"></div>';
-          }).join('');
+          '<div class="fx-arc-line" style="left:18%;top:0;--fx-rot:-12deg;animation-delay:0ms"></div>' +
+          '<div class="fx-arc-line" style="left:48%;top:0;--fx-rot:8deg;animation-delay:60ms"></div>' +
+          '<div class="fx-arc-line" style="left:78%;top:0;--fx-rot:-6deg;animation-delay:130ms"></div>';
         break;
       case 'fx_ice':
+        // v3.7.2 — snowflakes + frost creep border
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-frost-creep"></div>' +
           '<div class="fx-frost-crystal" style="left:6px;top:6px"></div>' +
           '<div class="fx-frost-crystal" style="right:6px;top:6px;animation-delay:60ms"></div>' +
           '<div class="fx-frost-crystal" style="left:6px;bottom:6px;animation-delay:120ms"></div>' +
@@ -18020,10 +18191,14 @@ function _fxBuildHtml(pack, kind) {
           '<div class="fx-heart-pulse" style="left:70%;animation-delay:160ms">♥</div>';
         break;
       case 'fx_lava':
+        // v3.7.2 — molten cracks + bubbling magma surface
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
           '<div class="fx-lava-crack" style="left:10%;top:30%;width:80%"></div>' +
           '<div class="fx-lava-crack" style="left:5%;top:55%;width:90%;animation-delay:80ms"></div>' +
-          '<div class="fx-lava-crack" style="left:15%;top:75%;width:70%;animation-delay:160ms"></div>';
+          '<div class="fx-lava-crack" style="left:15%;top:75%;width:70%;animation-delay:160ms"></div>' +
+          '<div class="fx-lava-bubble" style="left:25%;bottom:10%;animation-delay:140ms"></div>' +
+          '<div class="fx-lava-bubble" style="left:55%;bottom:15%;animation-delay:220ms"></div>' +
+          '<div class="fx-lava-bubble" style="left:78%;bottom:8%;animation-delay:300ms"></div>';
         break;
       case 'fx_card':
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
@@ -18039,20 +18214,25 @@ function _fxBuildHtml(pack, kind) {
           '<div class="fx-neon-scan" style="animation-delay:160ms"></div>';
         break;
       case 'fx_boss_inferno':
+        // v3.7.2 — premium fire: more flames + embers drifting up + sparks
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-surface-fill"></div>' +
           ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
             return '<div class="fx-flame-tongue" style="left:' + l + ';bottom:-2px;animation-delay:' + (i * 25) + 'ms"></div>';
           }).join('') +
           ['20%','40%','60%','80%'].map(function (l, i) {
-            return '<div class="fx-flame-spark" style="left:' + l + ';top:60%;animation-delay:' + (80 + i * 50) + 'ms"></div>';
+            return '<div class="fx-flame-spark" style="left:' + l + ';top:60%;--fx-spark-drift:' + (i % 2 === 0 ? -4 : 4) + 'px;animation-delay:' + (80 + i * 50) + 'ms"></div>';
+          }).join('') +
+          ['15%','35%','55%','75%'].map(function (l, i) {
+            return '<div class="fx-flame-ember" style="left:' + l + ';top:55%;--fx-spark-drift:' + (i % 2 === 0 ? 3 : -3) + 'px;animation-delay:' + (140 + i * 60) + 'ms"></div>';
           }).join('');
         break;
       case 'fx_boss_storm':
+        // v3.7.2 — premium lightning: 4 zigzag bolts at staggered angles + flash
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-lightning-flash"></div>' +
-          ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
-            const rot = (i % 2 === 0 ? -10 : 10);
-            return '<div class="fx-arc-line" style="left:' + l + ';top:0;--fx-rot:' + rot + 'deg;animation-delay:' + (i * 30) + 'ms"></div>';
-          }).join('');
+          '<div class="fx-arc-line" style="left:12%;top:0;--fx-rot:-15deg;animation-delay:0ms"></div>' +
+          '<div class="fx-arc-line" style="left:38%;top:0;--fx-rot:10deg;animation-delay:50ms"></div>' +
+          '<div class="fx-arc-line" style="left:60%;top:0;--fx-rot:-8deg;animation-delay:100ms"></div>' +
+          '<div class="fx-arc-line" style="left:82%;top:0;--fx-rot:14deg;animation-delay:150ms"></div>';
         break;
       case 'fx_boss_shadow':
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div>' +
