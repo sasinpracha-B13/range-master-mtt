@@ -6026,20 +6026,352 @@
       100% { opacity: 0; transform: rotate(280deg) scale(1.12); }
     }
 
+    /* ========================================================================
+       v3.7.3 — Anime-style premium primitives (for non-elemental + exclusive
+       packs). Inspired by anime battle effect language: power-up rings,
+       energy beams, divine light, shockwaves, speed lines, slashes.
+       ======================================================================== */
+
+    /* POWER RING — concentric ring expanding (Dragon Ball power-up vibe) */
+    .fx-power-ring {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 3px solid var(--fx-primary, #d4af37);
+      box-shadow: 0 0 16px var(--fx-primary, #d4af37), inset 0 0 12px var(--fx-glow, #fff);
+      opacity: 0;
+      animation: fx-power-ring-expand calc(720ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-power-ring-expand {
+      0%   { opacity: 0;    transform: scale(0.5); border-width: 1px; }
+      30%  { opacity: 1;    transform: scale(1.0); border-width: 4px; }
+      70%  { opacity: 0.55; transform: scale(1.5); border-width: 2px; }
+      100% { opacity: 0;    transform: scale(2.0); border-width: 0px; }
+    }
+
+    /* DIVINE BEAM — vertical light column (anime ascension/transcendence) */
+    .fx-divine-beam {
+      position: absolute;
+      width: 60%; left: 20%;
+      top: -100%; height: 300%;
+      background: linear-gradient(0deg,
+        transparent 0%,
+        var(--fx-primary, #d4af37) 30%,
+        var(--fx-glow, #fff) 50%,
+        var(--fx-primary, #d4af37) 70%,
+        transparent 100%);
+      filter: blur(3px);
+      opacity: 0;
+      mix-blend-mode: screen;
+      transform-origin: 50% 50%;
+      animation: fx-beam-rise calc(720ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-beam-rise {
+      0%   { opacity: 0;    transform: scaleY(0) scaleX(0.5); }
+      30%  { opacity: 0.85; transform: scaleY(1) scaleX(1); }
+      80%  { opacity: 0.5;  transform: scaleY(1) scaleX(1.1); }
+      100% { opacity: 0;    transform: scaleY(1) scaleX(1.4); }
+    }
+
+    /* RADIAL SHOCKWAVE — circle exploding outward from button */
+    .fx-shockwave {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 3px solid var(--fx-primary, #d4af37);
+      box-shadow: 0 0 24px var(--fx-glow, #fff);
+      opacity: 0;
+      animation: fx-shockwave-burst calc(560ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-shockwave-burst {
+      0%   { opacity: 0; transform: scale(0.3); border-width: 4px; }
+      30%  { opacity: 1; transform: scale(1.0); border-width: 3px; }
+      100% { opacity: 0; transform: scale(2.4); border-width: 0px; }
+    }
+
+    /* SPEED LINES — radial focus lines (anime impact) */
+    .fx-speed-line {
+      position: absolute; left: 50%; top: 50%;
+      width: 30px; height: 2px;
+      background: linear-gradient(90deg, var(--fx-glow, #fff) 0%, var(--fx-primary, #d4af37) 60%, transparent 100%);
+      filter: drop-shadow(0 0 4px var(--fx-primary, #d4af37));
+      transform-origin: 0% 50%;
+      transform: translate(0, -50%) rotate(var(--fx-rot, 0deg));
+      opacity: 0;
+      animation: fx-speed-line-snap calc(380ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-speed-line-snap {
+      0%   { opacity: 0; transform: translate(0, -50%) rotate(var(--fx-rot, 0deg)) scaleX(0); }
+      30%  { opacity: 1; transform: translate(0, -50%) rotate(var(--fx-rot, 0deg)) scaleX(1.0); }
+      100% { opacity: 0; transform: translate(0, -50%) rotate(var(--fx-rot, 0deg)) scaleX(1.6) translateX(8px); }
+    }
+
+    /* ENERGY SLASH — diagonal sword cut (anime slash effect) */
+    .fx-energy-slash {
+      position: absolute; left: 50%; top: 50%;
+      width: 250%; height: 6px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--fx-glow, #fff) 30%,
+        var(--fx-primary, #d4af37) 50%,
+        var(--fx-glow, #fff) 70%,
+        transparent 100%);
+      filter: drop-shadow(0 0 8px var(--fx-primary, #d4af37)) drop-shadow(0 0 16px var(--fx-glow, #fff));
+      transform-origin: 50% 50%;
+      transform: translate(-50%, -50%) rotate(var(--fx-rot, 45deg)) scaleX(0);
+      opacity: 0;
+      animation: fx-slash-cut calc(440ms * var(--fx-time, 1)) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fx-slash-cut {
+      0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--fx-rot, 45deg)) scaleX(0); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--fx-rot, 45deg)) scaleX(1.4); }
+    }
+
+    /* CASINO CHIP — spinning poker chip for Card pack */
+    .fx-casino-chip {
+      position: absolute;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle,
+          var(--fx-glow, #f0d060) 0%,
+          var(--fx-glow, #f0d060) 28%,
+          var(--fx-secondary, #0f1729) 30%,
+          var(--fx-secondary, #0f1729) 38%,
+          var(--fx-primary, #d4af37) 40%,
+          var(--fx-primary, #d4af37) 60%,
+          var(--fx-secondary, #0f1729) 62%,
+          var(--fx-secondary, #0f1729) 70%,
+          var(--fx-primary, #d4af37) 72%,
+          var(--fx-glow, #f0d060) 100%);
+      filter: drop-shadow(0 0 6px var(--fx-primary, #d4af37));
+      opacity: 0;
+      animation: fx-chip-spin calc(620ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-chip-spin {
+      0%   { opacity: 0; transform: rotate(0deg) scale(0.4); }
+      25%  { opacity: 1; transform: rotate(180deg) scale(1.1); }
+      100% { opacity: 0; transform: rotate(720deg) translateY(calc(-30px * var(--fx-scale, 1))) translateX(var(--fx-chip-drift, 0)) scale(0.5); }
+    }
+
+    /* HEART PARTICLE — floating heart for Heart pack */
+    .fx-heart-particle {
+      position: absolute;
+      font-size: 12px;
+      color: var(--fx-glow, #fecdd3);
+      text-shadow: 0 0 6px var(--fx-primary, #fb7185), 0 0 12px var(--fx-glow, #fecdd3);
+      opacity: 0;
+      animation: fx-heart-float calc(820ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-heart-float {
+      0%   { opacity: 0; transform: translateY(0) translateX(0) scale(0.4) rotate(0deg); }
+      30%  { opacity: 1; transform: translateY(-8px) scale(1.1) rotate(-8deg); }
+      100% { opacity: 0; transform: translateY(calc(-40px * var(--fx-scale, 1))) translateX(var(--fx-heart-drift, 0)) scale(0.5) rotate(8deg); }
+    }
+
+    /* HEART SPARKLE — small ✦ stars accompanying hearts */
+    .fx-heart-sparkle {
+      position: absolute;
+      font-size: 8px;
+      color: #ffffff;
+      text-shadow: 0 0 4px var(--fx-primary, #fb7185);
+      opacity: 0;
+      animation: fx-sparkle-pop calc(580ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-sparkle-pop {
+      0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+      40%  { opacity: 1; transform: scale(1.4) rotate(180deg); }
+      100% { opacity: 0; transform: scale(0.6) rotate(360deg); }
+    }
+
+    /* GLITCH RGB SPLIT — RGB chromatic aberration for Neon */
+    .fx-glitch-rgb-r {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 2px solid #ff0066;
+      opacity: 0;
+      animation: fx-glitch-r calc(420ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    .fx-glitch-rgb-g {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 2px solid #00ff88;
+      opacity: 0;
+      animation: fx-glitch-g calc(420ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    .fx-glitch-rgb-b {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 2px solid #00ccff;
+      opacity: 0;
+      animation: fx-glitch-b calc(420ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-glitch-r {
+      0%, 100% { opacity: 0; transform: translate(0, 0); }
+      15%      { opacity: 0.85; transform: translate(-3px, -1px); }
+      40%      { opacity: 0.6; transform: translate(2px, 1px); }
+      70%      { opacity: 0.4; transform: translate(-1px, 0); }
+    }
+    @keyframes fx-glitch-g {
+      0%, 100% { opacity: 0; transform: translate(0, 0); }
+      20%      { opacity: 0.7; transform: translate(2px, 1px); }
+      50%      { opacity: 0.85; transform: translate(-2px, -1px); }
+    }
+    @keyframes fx-glitch-b {
+      0%, 100% { opacity: 0; transform: translate(0, 0); }
+      25%      { opacity: 0.85; transform: translate(3px, 0); }
+      55%      { opacity: 0.6; transform: translate(-2px, 1px); }
+    }
+
+    /* PIXEL GRID — for Neon */
+    .fx-pixel-grid {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background-image:
+        linear-gradient(0deg,   var(--fx-primary, #22d3ee) 1px, transparent 1px),
+        linear-gradient(90deg,  var(--fx-primary, #22d3ee) 1px, transparent 1px);
+      background-size: 8px 8px;
+      opacity: 0;
+      mix-blend-mode: screen;
+      animation: fx-pixel-grid-flash calc(380ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-pixel-grid-flash {
+      0%   { opacity: 0; }
+      30%  { opacity: 0.45; }
+      100% { opacity: 0; }
+    }
+
+    /* VOID PORTAL — swirling dark portal for Shadow Rift */
+    .fx-void-portal {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 0deg,
+          var(--fx-primary, #7c3aed) 0%,
+          var(--fx-secondary, #0f0f1f) 25%,
+          var(--fx-primary, #7c3aed) 50%,
+          var(--fx-secondary, #0f0f1f) 75%,
+          var(--fx-primary, #7c3aed) 100%);
+      filter: blur(4px);
+      opacity: 0;
+      animation: fx-portal-spin calc(720ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-portal-spin {
+      0%   { opacity: 0;   transform: scale(0.3) rotate(0deg); }
+      30%  { opacity: 0.85; transform: scale(1.0) rotate(180deg); }
+      100% { opacity: 0;   transform: scale(1.4) rotate(540deg); }
+    }
+
+    /* GOLD STREAM — diagonal gold beam for Royal Crest */
+    .fx-gold-stream {
+      position: absolute; left: 50%; top: 50%;
+      width: 220%; height: 4px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--fx-glow, #d4af37) 40%,
+        #ffffff 50%,
+        var(--fx-glow, #d4af37) 60%,
+        transparent 100%);
+      filter: drop-shadow(0 0 8px var(--fx-primary, #a78bfa)) drop-shadow(0 0 16px var(--fx-glow, #d4af37));
+      transform-origin: 50% 50%;
+      transform: translate(-50%, -50%) rotate(var(--fx-rot, 0deg)) scaleX(0);
+      opacity: 0;
+      animation: fx-gold-stream calc(620ms * var(--fx-time, 1)) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fx-gold-stream {
+      0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--fx-rot, 0deg)) scaleX(0); }
+      25%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--fx-rot, 0deg)) scaleX(1.2); }
+    }
+
+    /* CROWN GLEAM — large central regal symbol for Royal Crest */
+    .fx-crown-gleam {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 28px;
+      color: var(--fx-glow, #d4af37);
+      text-shadow:
+        0 0 8px var(--fx-primary, #a78bfa),
+        0 0 16px var(--fx-glow, #d4af37),
+        0 0 24px var(--fx-primary, #a78bfa);
+      opacity: 0;
+      animation: fx-crown-gleam calc(680ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes fx-crown-gleam {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-15deg); }
+      40%  { opacity: 1; transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6) rotate(8deg); }
+    }
+
+    /* HALO LAYER — multiple expanding rings for Mythic ascension */
+    .fx-halo-layer {
+      position: absolute; left: 50%; top: 50%;
+      width: 100%; height: 30%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid var(--fx-glow, #fef3c7);
+      box-shadow: 0 0 16px var(--fx-primary, #fbbf24), inset 0 0 12px var(--fx-glow, #fef3c7);
+      opacity: 0;
+      animation: fx-halo-bloom calc(720ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-halo-bloom {
+      0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.4); }
+      30%  { opacity: 1;    transform: translate(-50%, -50%) scale(1.0); }
+      80%  { opacity: 0.6;  transform: translate(-50%, -50%) scale(1.5); }
+      100% { opacity: 0;    transform: translate(-50%, -50%) scale(1.9); }
+    }
+
+    /* ASCENSION SPARKLE — small upward-rising star particles */
+    .fx-ascension-sparkle {
+      position: absolute;
+      font-size: 10px;
+      color: var(--fx-glow, #fef3c7);
+      text-shadow: 0 0 6px var(--fx-primary, #fbbf24);
+      opacity: 0;
+      animation: fx-ascend-rise calc(820ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-ascend-rise {
+      0%   { opacity: 0; transform: translateY(0) scale(0.4); }
+      30%  { opacity: 1; transform: translateY(-6px) scale(1.0); }
+      100% { opacity: 0; transform: translateY(calc(-44px * var(--fx-scale, 1))) translateX(var(--fx-ascend-drift, 0)) scale(0.4); }
+    }
+
     /* Reduced-motion fallback */
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-tongue,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-spark,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-ember,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-water-droplet,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-water-splash,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-earth-rock,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-earth-crack,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-quake-shake,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-wind-streak,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-arc-line,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-frost-crystal,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-frost-creep,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-card-pip,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-neon-scan,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-void-shard,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-lava-crack,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-lava-bubble,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-heart-pulse,
-    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-premium-arc {
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-heart-particle,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-heart-sparkle,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-premium-arc,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-power-ring,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-divine-beam,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-shockwave,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-speed-line,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-energy-slash,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-casino-chip,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-glitch-rgb-r,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-glitch-rgb-g,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-glitch-rgb-b,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-pixel-grid,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-void-portal,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-gold-stream,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-crown-gleam,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-halo-layer,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-ascension-sparkle {
       animation: none !important;
       display: none !important;
     }
@@ -18185,10 +18517,18 @@ function _fxBuildHtml(pack, kind) {
           '<div class="fx-frost-crystal" style="left:50%;top:50%;transform:translate(-50%,-50%);animation-delay:240ms"></div>';
         break;
       case 'fx_heart':
+        // v3.7.3 — multi-heart trail + sparkle stars + soft pink wash
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
-          '<div class="fx-heart-pulse" style="left:30%">♥</div>' +
-          '<div class="fx-heart-pulse" style="left:50%;animation-delay:80ms">♥</div>' +
-          '<div class="fx-heart-pulse" style="left:70%;animation-delay:160ms">♥</div>';
+          // 5 hearts at varying sizes/delays floating up
+          '<div class="fx-heart-particle" style="left:15%;bottom:10%;font-size:14px;--fx-heart-drift:-3px">♥</div>' +
+          '<div class="fx-heart-particle" style="left:35%;bottom:20%;font-size:11px;--fx-heart-drift:2px;animation-delay:80ms">♥</div>' +
+          '<div class="fx-heart-particle" style="left:50%;bottom:5%;font-size:18px;--fx-heart-drift:0;animation-delay:40ms">♥</div>' +
+          '<div class="fx-heart-particle" style="left:65%;bottom:25%;font-size:10px;--fx-heart-drift:-2px;animation-delay:140ms">♥</div>' +
+          '<div class="fx-heart-particle" style="left:85%;bottom:15%;font-size:13px;--fx-heart-drift:4px;animation-delay:200ms">♥</div>' +
+          // Sparkle stars between hearts
+          '<div class="fx-heart-sparkle" style="left:25%;top:30%;animation-delay:120ms">✦</div>' +
+          '<div class="fx-heart-sparkle" style="left:55%;top:25%;animation-delay:180ms">✦</div>' +
+          '<div class="fx-heart-sparkle" style="left:75%;top:35%;animation-delay:240ms">✦</div>';
         break;
       case 'fx_lava':
         // v3.7.2 — molten cracks + bubbling magma surface
@@ -18201,62 +18541,143 @@ function _fxBuildHtml(pack, kind) {
           '<div class="fx-lava-bubble" style="left:78%;bottom:8%;animation-delay:300ms"></div>';
         break;
       case 'fx_card':
+        // v3.7.3 — spinning casino chips + 4-corner suit burst + gold border surge
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
-          '<div class="fx-card-pip" style="left:15%;top:15%">♠</div>' +
-          '<div class="fx-card-pip" style="right:15%;top:15%;animation-delay:60ms">♥</div>' +
-          '<div class="fx-card-pip" style="left:15%;bottom:15%;animation-delay:120ms">♦</div>' +
-          '<div class="fx-card-pip" style="right:15%;bottom:15%;animation-delay:180ms">♣</div>';
+          // 4 spinning chips bursting outward at corners
+          '<div class="fx-casino-chip" style="left:50%;top:50%;transform:translate(-50%,-50%);--fx-chip-drift:-30px;animation-delay:0ms"></div>' +
+          '<div class="fx-casino-chip" style="left:50%;top:50%;transform:translate(-50%,-50%);--fx-chip-drift:30px;animation-delay:80ms"></div>' +
+          '<div class="fx-casino-chip" style="left:50%;top:50%;transform:translate(-50%,-50%);--fx-chip-drift:0;animation-delay:160ms"></div>' +
+          // 4 corner suit pips (existing)
+          '<div class="fx-card-pip" style="left:15%;top:15%;font-size:18px">♠</div>' +
+          '<div class="fx-card-pip" style="right:15%;top:15%;font-size:18px;animation-delay:60ms">♥</div>' +
+          '<div class="fx-card-pip" style="left:15%;bottom:15%;font-size:18px;animation-delay:120ms">♦</div>' +
+          '<div class="fx-card-pip" style="right:15%;bottom:15%;font-size:18px;animation-delay:180ms">♣</div>';
         break;
       case 'fx_neon':
+        // v3.7.3 — RGB chromatic aberration glitch + pixel grid + scanline storm
         buttonHtml = '<div class="fx-border-correct"></div>' +
+          // RGB split borders (jitter creates classic cyber glitch)
+          '<div class="fx-glitch-rgb-r"></div>' +
+          '<div class="fx-glitch-rgb-g"></div>' +
+          '<div class="fx-glitch-rgb-b"></div>' +
+          // Pixel grid overlay flashes
+          '<div class="fx-pixel-grid"></div>' +
+          // Scanline storm (4 sweeping)
           '<div class="fx-neon-scan"></div>' +
-          '<div class="fx-neon-scan" style="animation-delay:80ms"></div>' +
-          '<div class="fx-neon-scan" style="animation-delay:160ms"></div>';
+          '<div class="fx-neon-scan" style="animation-delay:60ms"></div>' +
+          '<div class="fx-neon-scan" style="animation-delay:120ms"></div>' +
+          '<div class="fx-neon-scan" style="animation-delay:180ms"></div>';
         break;
       case 'fx_boss_inferno':
-        // v3.7.2 — premium fire: more flames + embers drifting up + sparks
+        // v3.7.3 — ANIME LEVEL: power-ring + divine-beam (phoenix ascension) +
+        // shockwave + 6 flames + 4 sparks + 4 embers + premium arc.
+        // 17+ elements vs free Fire's 12. Premium feels obviously bigger.
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-surface-fill"></div>' +
+          // Anime-style layers: expanding power ring + vertical phoenix beam + shockwave
+          '<div class="fx-power-ring"></div>' +
+          '<div class="fx-divine-beam" style="animation-delay:80ms"></div>' +
+          '<div class="fx-shockwave" style="animation-delay:120ms"></div>' +
+          // 6 flame tongues (same as free Fire base)
           ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
             return '<div class="fx-flame-tongue" style="left:' + l + ';bottom:-2px;animation-delay:' + (i * 25) + 'ms"></div>';
           }).join('') +
+          // 4 sparks
           ['20%','40%','60%','80%'].map(function (l, i) {
             return '<div class="fx-flame-spark" style="left:' + l + ';top:60%;--fx-spark-drift:' + (i % 2 === 0 ? -4 : 4) + 'px;animation-delay:' + (80 + i * 50) + 'ms"></div>';
           }).join('') +
+          // 4 embers
           ['15%','35%','55%','75%'].map(function (l, i) {
             return '<div class="fx-flame-ember" style="left:' + l + ';top:55%;--fx-spark-drift:' + (i % 2 === 0 ? 3 : -3) + 'px;animation-delay:' + (140 + i * 60) + 'ms"></div>';
           }).join('');
         break;
       case 'fx_boss_storm':
-        // v3.7.2 — premium lightning: 4 zigzag bolts at staggered angles + flash
+        // v3.7.3 — ANIME LEVEL: shockwave + 6 zigzag bolts + 6 speed lines +
+        // double flash + premium arc. 16+ elements vs free Lightning's 4.
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-lightning-flash"></div>' +
-          '<div class="fx-arc-line" style="left:12%;top:0;--fx-rot:-15deg;animation-delay:0ms"></div>' +
-          '<div class="fx-arc-line" style="left:38%;top:0;--fx-rot:10deg;animation-delay:50ms"></div>' +
-          '<div class="fx-arc-line" style="left:60%;top:0;--fx-rot:-8deg;animation-delay:100ms"></div>' +
-          '<div class="fx-arc-line" style="left:82%;top:0;--fx-rot:14deg;animation-delay:150ms"></div>';
+          // Anime-style: radial shockwave + speed lines
+          '<div class="fx-shockwave"></div>' +
+          // Speed lines radiating from center (anime impact frames)
+          [0, 60, 120, 180, 240, 300].map(function (rot) {
+            return '<div class="fx-speed-line" style="--fx-rot:' + rot + 'deg;animation-delay:60ms"></div>';
+          }).join('') +
+          // 6 jagged bolts (more than free Lightning's 3)
+          '<div class="fx-arc-line" style="left:8%;top:0;--fx-rot:-18deg;animation-delay:0ms"></div>' +
+          '<div class="fx-arc-line" style="left:25%;top:0;--fx-rot:8deg;animation-delay:40ms"></div>' +
+          '<div class="fx-arc-line" style="left:42%;top:0;--fx-rot:-12deg;animation-delay:80ms"></div>' +
+          '<div class="fx-arc-line" style="left:58%;top:0;--fx-rot:10deg;animation-delay:120ms"></div>' +
+          '<div class="fx-arc-line" style="left:75%;top:0;--fx-rot:-6deg;animation-delay:160ms"></div>' +
+          '<div class="fx-arc-line" style="left:90%;top:0;--fx-rot:14deg;animation-delay:200ms"></div>';
         break;
       case 'fx_boss_shadow':
+        // v3.7.3 — ANIME LEVEL: void portal swirl + 8 shards + power ring (dark)
+        // + premium arc. The portal makes it feel like reality itself is tearing.
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div>' +
-          [0, 45, 90, 135, 180, 225, 270, 315].map(function (rot) {
-            // Shards radiate from EDGES (anchored at left/top of viewport-relative position)
+          // Central void portal swirl (the dramatic centerpiece)
+          '<div class="fx-void-portal"></div>' +
+          // Power ring expanding outward (purple void wave)
+          '<div class="fx-power-ring" style="animation-delay:120ms"></div>' +
+          // 8-direction shards (existing pattern but layered ABOVE portal)
+          [0, 45, 90, 135, 180, 225, 270, 315].map(function (rot, i) {
             const x = 50 + 45 * Math.cos((rot - 90) * Math.PI / 180);
             const y = 50 + 45 * Math.sin((rot - 90) * Math.PI / 180);
-            return '<div class="fx-void-shard" style="left:' + x + '%;top:' + y + '%;--fx-rot:' + rot + 'deg"></div>';
+            return '<div class="fx-void-shard" style="left:' + x + '%;top:' + y + '%;--fx-rot:' + rot + 'deg;animation-delay:' + (i * 25) + 'ms"></div>';
           }).join('');
         break;
       case 'fx_achv_emerald':
+        // v3.7.3 — disciplined focus state: power ring + 8 speed lines
+        // (focused convergence) + 4 corner crystals + central energy slash
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
-          '<div class="fx-frost-crystal" style="left:6px;top:6px"></div>' +
-          '<div class="fx-frost-crystal" style="right:6px;top:6px;animation-delay:60ms"></div>' +
-          '<div class="fx-frost-crystal" style="left:6px;bottom:6px;animation-delay:120ms"></div>' +
-          '<div class="fx-frost-crystal" style="right:6px;bottom:6px;animation-delay:180ms"></div>';
+          // Power ring (focused energy buildup)
+          '<div class="fx-power-ring"></div>' +
+          // 8 speed lines converging — anime focus state
+          [0, 45, 90, 135, 180, 225, 270, 315].map(function (rot) {
+            return '<div class="fx-speed-line" style="--fx-rot:' + rot + 'deg;animation-delay:80ms"></div>';
+          }).join('') +
+          // Diagonal energy slash through center
+          '<div class="fx-energy-slash" style="--fx-rot:-30deg;animation-delay:140ms"></div>' +
+          // 4 corner crystals (existing)
+          '<div class="fx-frost-crystal" style="left:6px;top:6px;animation-delay:60ms"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;top:6px;animation-delay:120ms"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;bottom:6px;animation-delay:180ms"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;bottom:6px;animation-delay:240ms"></div>';
         break;
       case 'fx_rank_royal':
+        // v3.7.3 — REGAL ENTRY: 4-direction gold streams + crown gleam +
+        // power ring + premium arc. Anime royal-character entrance.
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-surface-fill"></div>' +
-          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px">♛</div>';
+          // Power ring (royal aura buildup)
+          '<div class="fx-power-ring"></div>' +
+          // 4 gold streams shooting in cardinal + diagonal directions
+          '<div class="fx-gold-stream" style="--fx-rot:0deg;animation-delay:0ms"></div>' +
+          '<div class="fx-gold-stream" style="--fx-rot:90deg;animation-delay:40ms"></div>' +
+          '<div class="fx-gold-stream" style="--fx-rot:45deg;animation-delay:80ms"></div>' +
+          '<div class="fx-gold-stream" style="--fx-rot:-45deg;animation-delay:120ms"></div>' +
+          // Central crown gleam (the regal centerpiece)
+          '<div class="fx-crown-gleam" style="animation-delay:200ms">♛</div>' +
+          // Sparkle accents
+          '<div class="fx-heart-sparkle" style="left:20%;top:25%;animation-delay:240ms;color:#f0d060">✦</div>' +
+          '<div class="fx-heart-sparkle" style="right:20%;top:25%;animation-delay:280ms;color:#f0d060">✦</div>' +
+          '<div class="fx-heart-sparkle" style="left:20%;bottom:25%;animation-delay:320ms;color:#f0d060">✦</div>' +
+          '<div class="fx-heart-sparkle" style="right:20%;bottom:25%;animation-delay:360ms;color:#f0d060">✦</div>';
         break;
       case 'fx_rank_mythic':
-        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-halo-sweep"></div><div class="fx-surface-fill"></div>' +
-          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px">☼</div>';
+        // v3.7.3 — DIVINE ASCENSION: vertical divine beam + 3 expanding halo
+        // layers + central sun + ascending sparkles. Anime transcendence moment.
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          // Vertical divine light beam (the centerpiece)
+          '<div class="fx-divine-beam"></div>' +
+          // 3 expanding halo layers (multi-ring ascension)
+          '<div class="fx-halo-layer" style="animation-delay:0ms"></div>' +
+          '<div class="fx-halo-layer" style="animation-delay:120ms"></div>' +
+          '<div class="fx-halo-layer" style="animation-delay:240ms"></div>' +
+          // Central sun emblem (gleaming)
+          '<div class="fx-crown-gleam" style="animation-delay:160ms;font-size:24px">☼</div>' +
+          // Ascending sparkles rising up
+          '<div class="fx-ascension-sparkle" style="left:15%;bottom:10%;--fx-ascend-drift:-3px;animation-delay:200ms">✦</div>' +
+          '<div class="fx-ascension-sparkle" style="left:35%;bottom:5%;--fx-ascend-drift:2px;animation-delay:260ms">✧</div>' +
+          '<div class="fx-ascension-sparkle" style="left:55%;bottom:15%;--fx-ascend-drift:-2px;animation-delay:320ms">✦</div>' +
+          '<div class="fx-ascension-sparkle" style="left:75%;bottom:5%;--fx-ascend-drift:3px;animation-delay:380ms">✧</div>' +
+          '<div class="fx-ascension-sparkle" style="left:88%;bottom:12%;--fx-ascend-drift:-4px;animation-delay:440ms">✦</div>';
         break;
       default:
         buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>';
@@ -18384,10 +18805,13 @@ function triggerAnswerFx(kind, opts) {
     '<div class="fx-frame-layer" style="' + frameStyle + '">' + (html.frameLayer || '') + '</div>' +
     '<div class="fx-button-layer" style="' + buttonStyle + '">' + (html.buttonLayer || '') + '</div>';
   document.body.appendChild(container);
-  // Auto-cleanup after the longest animation duration completes
+  // Auto-cleanup after the longest animation duration completes.
+  // v3.7.3 — premium packs (Mythic/Royal) include staggered sparkle particles
+  // with up to 440ms delay + 820ms duration = ~1260ms total. Bumped from
+  // 800ms → 1400ms so the final ascension sparkles aren't cut off.
   setTimeout(function () {
     if (container.parentNode) container.parentNode.removeChild(container);
-  }, 800);
+  }, 1400);
 }
 
 // Apply settings on boot so initial FX uses correct intensity
