@@ -3976,6 +3976,164 @@
     /* DIVIDER */
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
     /* ============================================================ */
+    /* WARDROBE FOUNDATION v2.8.0                                   */
+    /* ============================================================ */
+    .wardrobe-overlay-shell { padding: 20px 16px 60px; max-width: 760px; margin: 0 auto; }
+    .wardrobe-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 4px;
+    }
+    .wardrobe-back-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary, #94a3b8); padding: 6px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+    }
+    .wardrobe-back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .wardrobe-close-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary); width: 32px; height: 32px; border-radius: 6px;
+      font-size: 16px; cursor: pointer; line-height: 1;
+    }
+    .wardrobe-close-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .wardrobe-title-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; margin-bottom: 6px; padding-top: 10px;
+    }
+    .wardrobe-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; color: var(--text); }
+    .wardrobe-count { font-size: 11px; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+    .wardrobe-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
+    .wardrobe-preview-stage {
+      width: 100%; max-width: 280px; margin: 0 auto 16px;
+      aspect-ratio: 1 / 1;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%),
+        linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
+      border-radius: 14px; border: 1px solid rgba(212,175,55,0.24);
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.45);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 12px; overflow: hidden; position: relative;
+    }
+    .wardrobe-preview-stage::after {
+      content: ''; position: absolute; left: 32px; right: 32px; bottom: 8px; height: 5px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%);
+      border-radius: 50%; filter: blur(2.5px);
+    }
+    .wardrobe-preview-stage svg {
+      width: 80%; height: 80%; image-rendering: pixelated; position: relative; z-index: 1;
+    }
+    .wardrobe-equipped-summary {
+      text-align: center; font-size: 11.5px; color: var(--text-secondary);
+      line-height: 1.55; margin-bottom: 18px; padding: 8px 14px;
+      background: rgba(212,175,55,0.05); border: 1px dashed rgba(212,175,55,0.20);
+      border-radius: 8px;
+    }
+    .wardrobe-equipped-summary strong { color: var(--text); font-weight: 700; }
+    .wardrobe-tabs {
+      display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+      padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .wardrobe-tab {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-secondary); padding: 6px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .wardrobe-tab:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .wardrobe-tab.active {
+      background: rgba(212,175,55,0.15); border-color: rgba(212,175,55,0.40);
+      color: #d4af37;
+    }
+    .wardrobe-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .wardrobe-card {
+      background: rgba(0,0,0,0.20); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 10px; display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+    }
+    .wardrobe-card.equipped {
+      border-color: rgba(212,175,55,0.50); background: rgba(212,175,55,0.06);
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.20);
+    }
+    .wardrobe-card-thumb {
+      width: 96px; height: 96px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.10) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2332 0%, #0a0e16 100%);
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 4px; overflow: hidden; position: relative; margin-bottom: 8px;
+    }
+    .wardrobe-card-thumb svg { width: 90%; height: 90%; image-rendering: pixelated; }
+    .wardrobe-card-name {
+      font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px;
+    }
+    .wardrobe-card-slot {
+      font-size: 9.5px; color: var(--text-secondary); letter-spacing: 0.8px;
+      text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+    }
+    .wardrobe-card-actions { display: flex; gap: 6px; width: 100%; }
+    .wardrobe-equip-btn {
+      flex: 1; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.30);
+      color: #d4af37; padding: 6px 8px; border-radius: 6px; font-size: 10px;
+      font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .wardrobe-equip-btn:hover { background: rgba(212,175,55,0.22); }
+    .wardrobe-equipped-pill {
+      flex: 1; background: rgba(212,175,55,0.18); border: 1px solid rgba(212,175,55,0.50);
+      color: #d4af37; padding: 6px 8px; border-radius: 6px; font-size: 10px;
+      font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; text-align: center;
+      pointer-events: none;
+    }
+    .wardrobe-unequip-btn {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary); padding: 6px 8px; border-radius: 6px; font-size: 10px;
+      font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+    }
+    .wardrobe-unequip-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .wardrobe-empty-slot-placeholder {
+      grid-column: 1 / -1;
+      padding: 28px 16px; text-align: center;
+      background: rgba(0,0,0,0.15); border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 10px; color: var(--text-secondary);
+    }
+    .wardrobe-empty-icon { font-size: 28px; opacity: 0.4; margin-bottom: 8px; }
+    .wardrobe-empty-text { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .wardrobe-empty-sub { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+    .wardrobe-shop-teaser {
+      margin-top: 24px; padding: 14px 16px; text-align: center;
+      background: rgba(0,0,0,0.20); border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 10px; color: var(--text-secondary); font-size: 11.5px;
+      letter-spacing: 0.4px;
+    }
+    .wardrobe-shop-teaser strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 12.5px; font-weight: 700; }
+
+    /* Wardrobe entry card inside Profile overlay */
+    .wardrobe-entry-card {
+      background: var(--surface, #161d2a); border: 1px solid rgba(212,175,55,0.18);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .wardrobe-entry-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.30);
+      display: flex; align-items: center; justify-content: center;
+      color: #d4af37; font-size: 18px; flex-shrink: 0;
+    }
+    .wardrobe-entry-text { flex: 1; min-width: 0; }
+    .wardrobe-entry-title { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; color: var(--gold, #d4af37); text-transform: uppercase; margin-bottom: 2px; }
+    .wardrobe-entry-sub { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
+    .wardrobe-entry-btn {
+      background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.40);
+      color: #d4af37; padding: 7px 12px; border-radius: 6px; font-size: 11px;
+      font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .wardrobe-entry-btn:hover { background: rgba(212,175,55,0.22); }
+
+    /* ============================================================ */
     /* TRAINER DOSSIER v2.1.0 — Identity anchor artifact            */
     /* ============================================================ */
     .trainer-dossier-card {
@@ -5979,6 +6137,11 @@
 </div>
 
 <!-- v2.4.0: PERSONAL RECORDS OVERLAY (full-screen ATH page) -->
+<!-- v2.8.0 Wardrobe overlay — full-screen modal, reuses .profile-overlay styles -->
+<div class="profile-overlay hidden" id="wardrobeOverlay" role="dialog" aria-label="Wardrobe">
+  <div class="profile-overlay-body" id="wardrobeOverlayBody"></div>
+</div>
+
 <div class="profile-overlay hidden" id="recordsOverlay" role="dialog" aria-label="Personal Records">
   <!-- Reuses .profile-overlay layout (full-screen mobile, scroll body, etc.).
        Close button lives inside the records card frame at top-right. -->
@@ -6376,9 +6539,11 @@ const App = {
       avatarCharacter: {
         bodyType:   'masc',           // 'masc' | 'fem'
         skin:       'medium',         // 'fair' | 'light' | 'medium' | 'tan' | 'brown' | 'deep'
-        hairStyle:  'short_crop',     // 'short_crop' | 'side_part' | 'bob' | 'ponytail' | 'long_flow' | 'curls'
+        hairStyle:  'short_crop',     // 'short_crop' | 'side_part' | 'bob' | 'ponytail' | 'long_flow' | 'curls' | 'pixie' | 'twin_braids' | 'space_buns' | 'wavy_bob'
         hairColor:  'dark_brown',     // 'black' | 'dark_brown' | 'light_brown' | 'blonde' | 'red' | 'silver'
-        // Reserved for v2.8.0+ Wardrobe (null = starter outfit fused into base):
+        // Legacy reserved fields (kept for backward backup compat — v2.8.0
+        // moved equipped state to profile.wardrobe.equipped, but these stay
+        // declared so old backups still import cleanly):
         hat:        null,
         top:        null,
         bottom:     null,
@@ -6387,6 +6552,22 @@ const App = {
         accessory:  null,
         faceMask:   null,
         faceMark:   null
+      },
+      // v2.8.0: Wardrobe Foundation — owned starter items + equipped slots.
+      // Starter pool deliberately small (6 items) to preserve motivation for
+      // future Chips (v2.9), Shop (v3.0), Boss Drops (v3.1). Empty slots
+      // (face/back/accessory) are intentional — show "More unlocks soon".
+      ownedItemIds: ['starter_basic_cap', 'starter_training_headband', 'starter_plain_tee', 'starter_training_pants', 'starter_shorts', 'starter_training_shoes'],
+      wardrobe: {
+        equipped: {
+          head:      null,
+          face:      null,
+          top:       'starter_plain_tee',
+          bottom:    'starter_training_pants',
+          shoes:     'starter_training_shoes',
+          back:      null,
+          accessory: null
+        }
       },
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
@@ -11361,6 +11542,37 @@ function ensureTrainerIdentity() {
       mutated = true;
     }
   });
+  // v2.8.0: Wardrobe Foundation migration — populate starter items + default
+  // equipped. Idempotent: safe to run repeatedly. Existing v2.7.x users get
+  // the clean Plain Tee + Training Pants + Training Shoes baseline on their
+  // next load. The legacy v2.7.5 teal jacket / brown trousers / boots remain
+  // accessible only as renderer fallback (defensive null path).
+  if (!Array.isArray(profile.ownedItemIds)) {
+    profile.ownedItemIds = STARTER_OWNED_ITEM_IDS.slice();
+    mutated = true;
+  }
+  // Idempotent union: ensure all current starter items are owned even if
+  // user's profile is from a partial/older v2.8.x state.
+  STARTER_OWNED_ITEM_IDS.forEach(function (id) {
+    if (profile.ownedItemIds.indexOf(id) === -1) {
+      profile.ownedItemIds.push(id);
+      mutated = true;
+    }
+  });
+  if (!profile.wardrobe || typeof profile.wardrobe !== 'object') {
+    profile.wardrobe = { equipped: {} };
+    mutated = true;
+  }
+  if (!profile.wardrobe.equipped || typeof profile.wardrobe.equipped !== 'object') {
+    profile.wardrobe.equipped = {};
+    mutated = true;
+  }
+  Object.keys(WARDROBE_DEFAULT_EQUIPPED).forEach(function (slot) {
+    if (profile.wardrobe.equipped[slot] === undefined) {
+      profile.wardrobe.equipped[slot] = WARDROBE_DEFAULT_EQUIPPED[slot];
+      mutated = true;
+    }
+  });
   if (mutated) {
     try { App.saveProgress(); } catch (e) { /* non-fatal */ }
   }
@@ -11780,6 +11992,46 @@ const AVATAR_BODY_TYPES_LIST = ['masc', 'fem'];
 // Internal IDs stay 'masc'/'fem' for code stability; only display labels change.
 const AVATAR_BODY_TYPE_LABELS = { masc: 'Male', fem: 'Female' };
 
+// ============================================================
+// WARDROBE FOUNDATION v2.8.0
+// ============================================================
+// Schema: profile.ownedItemIds[] + profile.wardrobe.equipped{slot:itemId|null}
+// Renderer: each slot dispatches to per-item sprite function in _avParts*.
+//
+// v2.8.0 ships 6 starter items (deliberately incomplete — preserves motivation
+// for v2.9 Chips, v3.0 Shop, v3.1 Boss Drops). Empty slots (face/back/accessory)
+// are intentional and show "More unlocks soon" in the Wardrobe overlay.
+//
+// All starter items: ownedByDefault=true, rarity='starter', no economy.
+const WARDROBE_SLOTS_LIST = ['head', 'face', 'top', 'bottom', 'shoes', 'back', 'accessory'];
+const WARDROBE_SLOT_LABELS = {
+  head:'Head', face:'Face', top:'Top', bottom:'Bottom',
+  shoes:'Shoes', back:'Back', accessory:'Accessory'
+};
+const STARTER_WARDROBE_ITEMS = [
+  { id:'starter_basic_cap',         slot:'head',   name:'Basic Cap',         rarity:'starter', ownedByDefault:true, description:'A plain dark-blue baseball cap.' },
+  { id:'starter_training_headband', slot:'head',   name:'Training Headband', rarity:'starter', ownedByDefault:true, description:'A soft white sweatband for focused sessions.' },
+  { id:'starter_plain_tee',         slot:'top',    name:'Plain Tee',         rarity:'starter', ownedByDefault:true, description:'A clean white tee for daily training.' },
+  { id:'starter_training_pants',    slot:'bottom', name:'Training Pants',    rarity:'starter', ownedByDefault:true, description:'Gray track pants with side stripes.' },
+  { id:'starter_shorts',            slot:'bottom', name:'Shorts',            rarity:'starter', ownedByDefault:true, description:'Khaki training shorts.' },
+  { id:'starter_training_shoes',    slot:'shoes',  name:'Training Shoes',    rarity:'starter', ownedByDefault:true, description:'White sneakers with a red sole.' }
+];
+const STARTER_OWNED_ITEM_IDS = STARTER_WARDROBE_ITEMS.map(function (it) { return it.id; });
+const WARDROBE_ITEM_BY_ID = {};
+STARTER_WARDROBE_ITEMS.forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
+// Default equipped on first v2.8.0 load — clean baseline (Plain Tee + Training
+// Pants + Training Shoes). No continuity with v2.7.5 teal jacket — by design,
+// to make the dress-up loop feel intentional and beginner-friendly.
+const WARDROBE_DEFAULT_EQUIPPED = {
+  head: null,
+  face: null,
+  top: 'starter_plain_tee',
+  bottom: 'starter_training_pants',
+  shoes: 'starter_training_shoes',
+  back: null,
+  accessory: null
+};
+
 // ---- Color math helpers (used for skin shading + hair 3-tone) ----
 function _avHex2rgb(h) { return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
 function _avRgb2hex(rr,gg,bb) { return '#' + [rr,gg,bb].map(function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');}).join(''); }
@@ -11883,8 +12135,167 @@ function _avPartsBody(bodyType, skinHex) {
   return s;
 }
 
-// ---- STARTER OUTFIT v2.7.5 (Trainer Academy casual; v7 teal jacket + leather cuffs + chest pocket + epaulettes + female arm sleeves) ----
-function _avPartsOutfit(bodyType) {
+// ============================================================
+// v2.8.0 OUTFIT — per-slot dispatchers (replaces fused _avPartsOutfit)
+// ============================================================
+// Each slot dispatches to a per-item sprite function. Default branch falls back
+// to the v2.7.5 starter look (teal jacket / brown trousers / brown boots) — a
+// defensive null-safety path. Normal users always have a starter item equipped
+// via WARDROBE_DEFAULT_EQUIPPED, so the fallback is never reachable in practice.
+
+function _avPartsTop(bodyType, itemId) {
+  switch (itemId) {
+    case 'starter_plain_tee':       return _avTopPlainTee(bodyType);
+    case 'starter_trainer_jacket':  return _avTopTrainerJacket(bodyType);
+    default:                        return _avTopTrainerJacket(bodyType);  // safe fallback
+  }
+}
+function _avPartsBottom(bodyType, itemId) {
+  switch (itemId) {
+    case 'starter_training_pants':   return _avBottomTrainingPants(bodyType);
+    case 'starter_shorts':           return _avBottomShorts(bodyType);
+    case 'starter_trainer_trousers': return _avBottomTrainerTrousers(bodyType);
+    default:                         return _avBottomTrainerTrousers(bodyType);
+  }
+}
+function _avPartsShoes(bodyType, itemId) {
+  switch (itemId) {
+    case 'starter_training_shoes': return _avShoesTrainingShoes(bodyType);
+    case 'starter_brown_boots':    return _avShoesTrainerBoots(bodyType);
+    default:                       return _avShoesTrainerBoots(bodyType);
+  }
+}
+function _avPartsHat(itemId) {
+  switch (itemId) {
+    case 'starter_basic_cap':         return _avHatBasicCap();
+    case 'starter_training_headband': return _avHatTrainingHeadband();
+    default: return '';
+  }
+}
+function _avPartsFaceMask(itemId) {
+  // v2.8.0: no starter face items (slot intentionally empty, populated v2.8.1+)
+  return '';
+}
+function _avPartsBack(itemId) {
+  // v2.8.0: no starter back items
+  return '';
+}
+function _avPartsAccessory(itemId) {
+  // v2.8.0: no starter accessory items
+  return '';
+}
+
+// Belt always renders (between top + bottom); not slot-controlled in v2.8.0.
+function _avPartsBelt(bodyType) {
+  const beltBrn  = '#3e2918';
+  const beltBrnSh= '#1f130a';
+  const beltGold = '#d4af37';
+  const beltGoldHl = '#f0d060';
+  const beltGoldSh = '#9e7d20';
+  const stitching = '#5a4520';
+  const R = _avRect;
+  let s = '';
+  s += R(22, 44, 20, 2, beltBrn);
+  s += R(22, 45, 20, 1, beltBrnSh);
+  s += R(22, 44, 1, 2, stitching);
+  s += R(41, 44, 1, 2, stitching);
+  s += R(30, 43, 4, 1, beltGold);
+  s += R(30, 44, 4, 2, beltGold);
+  s += R(30, 43, 4, 1, beltGoldHl);
+  s += R(30, 45, 4, 1, beltGoldSh);
+  s += R(31, 44, 2, 1, beltGoldSh);
+  return s;
+}
+
+// ============================================================
+// PER-ITEM SPRITES (Trainer Jacket / Plain Tee / etc.)
+// ============================================================
+
+// === TOP: starter_plain_tee — clean white V-neck tee, no buttons/pockets ===
+function _avTopPlainTee(bodyType) {
+  const tee   = '#f0f0f8';
+  const teeSh = '#a8a8b8';
+  const teeHl = '#ffffff';
+  const trim  = '#7a7a8a';
+  const R = _avRect;
+  let s = '';
+  if (bodyType === 'masc') {
+    // Tee body matches male torso silhouette
+    s += R(20, 27, 24, 2, tee);
+    s += R(18, 29, 28, 1, tee);
+    s += R(19, 30, 26, 1, tee);
+    s += R(19, 31, 26, 1, tee);
+    s += R(20, 32, 24, 9, tee);
+    // V neckline (skin shows through — clear V notch)
+    s += R(28, 27, 8, 1, trim);
+    s += R(29, 28, 6, 1, trim);
+    s += R(30, 29, 4, 1, trim);
+    // Highlight (L) + shadow (R) — basic 3-tone
+    s += R(20, 32, 1, 9, teeHl);
+    s += R(43, 32, 1, 9, teeSh);
+    s += R(18, 30, 1, 11, teeHl);
+    s += R(45, 30, 1, 11, teeSh);
+    // Short sleeve hem trim (light gray edge at wrist)
+    s += R(18, 37, 4, 1, trim);
+    s += R(42, 37, 4, 1, trim);
+    s += R(18, 38, 4, 1, tee);
+    s += R(42, 38, 4, 1, tee);
+    s += R(18, 39, 1, 4, teeSh);
+    s += R(45, 39, 1, 4, teeSh);
+    // Lower hem
+    s += R(20, 41, 24, 1, trim);
+    s += R(20, 42, 24, 1, teeSh);
+  } else {
+    // FEMALE — fitted tee + arm sleeves bridging shoulder→cuff
+    s += R(24, 25, 16, 1, trim);   // collar trim
+    s += R(23, 26, 18, 1, trim);
+    s += R(22, 27, 20, 2, tee);
+    s += R(28, 27, 8, 1, trim);    // V notch
+    s += R(29, 28, 6, 1, trim);
+    s += R(30, 29, 4, 1, trim);
+    s += R(22, 29, 20, 4, tee);
+    s += R(23, 33, 18, 1, tee);
+    s += R(24, 34, 16, 1, tee);
+    s += R(25, 35, 14, 3, tee);
+    s += R(24, 38, 16, 1, tee);
+    s += R(22, 39, 20, 1, tee);
+    s += R(21, 40, 22, 2, tee);
+    // Highlight + shadow following hourglass
+    s += R(22, 28, 1, 5, teeHl);
+    s += R(25, 35, 1, 3, teeHl);
+    s += R(21, 40, 1, 2, teeHl);
+    s += R(41, 28, 1, 5, teeSh);
+    s += R(38, 35, 2, 3, teeSh);
+    s += R(41, 40, 2, 2, teeSh);
+    // Female arm sleeves (5-px cone shoulder→cuff)
+    s += R(21, 29, 2, 1, tee);
+    s += R(20, 30, 3, 1, tee);
+    s += R(19, 31, 4, 1, tee);
+    s += R(18, 32, 5, 5, tee);
+    s += R(18, 32, 1, 5, teeHl);
+    s += R(22, 32, 1, 5, teeSh);
+    s += R(41, 29, 2, 1, tee);
+    s += R(42, 30, 3, 1, tee);
+    s += R(43, 31, 4, 1, tee);
+    s += R(42, 32, 5, 5, tee);
+    s += R(42, 32, 1, 5, teeHl);
+    s += R(46, 32, 1, 5, teeSh);
+    // Sleeve hem trim
+    s += R(18, 37, 4, 1, trim);
+    s += R(42, 37, 4, 1, trim);
+    s += R(18, 38, 4, 1, tee);
+    s += R(42, 38, 4, 1, tee);
+    s += R(18, 39, 1, 4, teeSh);
+    s += R(45, 39, 1, 4, teeSh);
+    // Lower hem
+    s += R(21, 42, 22, 1, trim);
+    s += R(21, 43, 22, 1, teeSh);
+  }
+  return s;
+}
+
+// === TOP: starter_trainer_jacket (= v2.7.5 teal jacket, kept as fallback + future Shop item) ===
+function _avTopTrainerJacket(bodyType) {
   // === v7 TEAL TRAINER PALETTE (high contrast vs dark BG, WARM-LEATHER cuffs vs cool teal body) ===
   const jacket   = '#3d8a96';          // bright teal main
   const jacketSh = '#2a6e7a';          // brighter teal shadow (no longer blends)
@@ -12095,25 +12506,92 @@ function _avPartsOutfit(bodyType) {
     s += R(21, 42, 22, 1, hem);
     s += R(21, 43, 22, 1, seamShadow);
   }
-  // === BELT — gold buckle with stitching ===
-  s += R(22, 44, 20, 2, beltBrn);
-  s += R(22, 45, 20, 1, beltBrnSh);
-  s += R(22, 44, 1, 2, stitching);
-  s += R(41, 44, 1, 2, stitching);
-  // Gold buckle 4w x 3h with center pin
-  s += R(30, 43, 4, 1, beltGold);
-  s += R(30, 44, 4, 2, beltGold);
-  s += R(30, 43, 4, 1, beltGoldHl);
-  s += R(30, 45, 4, 1, beltGoldSh);
-  s += R(31, 44, 2, 1, beltGoldSh);
-  // === TROUSERS ===
+  return s;
+}
+
+// === BOTTOM: starter_trainer_trousers (= v2.7.5 brown trousers, fallback) ===
+function _avBottomTrainerTrousers(bodyType) {
+  const trouser   = '#3a2515';
+  const trouserSh = '#1f130a';
+  const R = _avRect;
+  let s = '';
   s += R(22, 46, 20, 1, trouser);
   s += R(25, 47, 6, 7, trouser);
   s += R(33, 47, 6, 7, trouser);
   s += R(30, 47, 1, 7, trouserSh);
   s += R(38, 47, 1, 7, trouserSh);
   s += R(31, 47, 2, 7, _avDarken(trouser, 0.45));
-  // === BOOTS — tongue + toe cap + heel + extending sole ===
+  return s;
+}
+
+// === BOTTOM: starter_training_pants — gray track pants with white side stripes ===
+function _avBottomTrainingPants(bodyType) {
+  const pants    = '#5a6275';      // mid gray-blue
+  const pantsSh  = '#3a4252';      // darker shadow
+  const pantsHl  = '#7c8499';      // light highlight
+  const stripe   = '#f0f0f8';      // white side stripe
+  const R = _avRect;
+  let s = '';
+  // Hip transition
+  s += R(22, 46, 20, 1, pants);
+  // Left leg
+  s += R(25, 47, 6, 7, pants);
+  s += R(25, 47, 1, 7, pantsHl);   // outer side highlight
+  s += R(28, 47, 1, 7, stripe);    // white side stripe (key visual feature)
+  s += R(30, 47, 1, 7, pantsSh);   // inner shadow
+  // Right leg
+  s += R(33, 47, 6, 7, pants);
+  s += R(33, 47, 1, 7, pantsSh);   // inner shadow
+  s += R(35, 47, 1, 7, stripe);    // white side stripe
+  s += R(38, 47, 1, 7, pantsHl);   // outer highlight
+  // Center crotch shadow
+  s += R(31, 47, 2, 7, _avDarken(pants, 0.40));
+  return s;
+}
+
+// === BOTTOM: starter_shorts — khaki training shorts (knee length, exposes lower legs) ===
+function _avBottomShorts(bodyType) {
+  const shorts   = '#a89066';      // khaki
+  const shortsSh = '#7a6a48';
+  const shortsHl = '#c8b288';
+  // Skin showing below shorts (need to derive — but skin is in body layer.
+  // Shorts are SHORTER so they only cover y=46-50, leaving y=51-53 bare.
+  // The body layer ends at y=43 (hands), legs y=44-53 are NOT drawn in body
+  // layer — they were always covered by trousers. So we need to ADD skin
+  // pixels for the calf area.)
+  const R = _avRect;
+  let s = '';
+  // Shorts body (only 5 rows tall: y=46-50)
+  s += R(22, 46, 20, 1, shorts);
+  s += R(25, 47, 6, 4, shorts);    // L leg upper (4 rows shorter)
+  s += R(33, 47, 6, 4, shorts);    // R leg upper
+  s += R(25, 47, 1, 4, shortsHl);  // outer highlights
+  s += R(38, 47, 1, 4, shortsHl);
+  s += R(30, 47, 1, 4, shortsSh);  // inner shadows
+  s += R(33, 47, 1, 4, shortsSh);
+  s += R(31, 47, 2, 4, _avDarken(shorts, 0.40));   // crotch shadow
+  // Hem trim (1-px darker line at bottom of shorts)
+  s += R(25, 50, 6, 1, shortsSh);
+  s += R(33, 50, 6, 1, shortsSh);
+  // Note: legs y=51-53 left bare. Boots cover y=54-62 so the gap is intentional
+  // "calf showing" — but the body layer doesn't draw skin for legs. So if shorts
+  // are equipped, we need to inject skin pixels for the calves. Done in the
+  // composer (_avComposeBottom) — see renderCharacterSvg.
+  return s;
+}
+
+// === SHOES: starter_trainer_boots (= v2.7.5 brown boots, fallback) ===
+function _avShoesTrainerBoots(bodyType) {
+  const bootCuff = '#5e4225';
+  const bootBody = '#1a1410';
+  const bootHl   = '#3a2515';
+  const bootSole = '#0a0805';
+  const bootLace = '#2a1a10';
+  const tongueColor = '#3a2515';
+  const toeCap = '#0a0805';
+  const R = _avRect;
+  let s = '';
+  // L boot
   s += R(23, 54, 8, 2, bootCuff);
   s += R(23, 56, 8, 4, bootBody);
   s += R(26, 54, 2, 6, tongueColor);
@@ -12121,6 +12599,7 @@ function _avPartsOutfit(bodyType) {
   s += R(23, 58, 4, 2, toeCap);
   s += R(23, 56, 1, 1, bootHl);
   s += R(22, 60, 10, 2, bootSole);
+  // R boot
   s += R(33, 54, 8, 2, bootCuff);
   s += R(33, 56, 8, 4, bootBody);
   s += R(36, 54, 2, 6, tongueColor);
@@ -12128,6 +12607,80 @@ function _avPartsOutfit(bodyType) {
   s += R(37, 58, 4, 2, toeCap);
   s += R(33, 56, 1, 1, bootHl);
   s += R(32, 60, 10, 2, bootSole);
+  return s;
+}
+
+// === SHOES: starter_training_shoes — white sneakers with red sole ===
+function _avShoesTrainingShoes(bodyType) {
+  const shoeBody  = '#f0f0f8';     // white
+  const shoeSh    = '#a8a8b8';     // gray shadow
+  const shoeHl    = '#ffffff';     // pure white highlight
+  const shoeSole  = '#c41a2a';     // red sole
+  const shoeSoleSh = '#8e1a1f';    // dark red sole shadow
+  const lace      = '#1a1a26';     // dark lace
+  const trim      = '#7a7a8a';     // gray trim
+  const R = _avRect;
+  let s = '';
+  // L sneaker
+  s += R(23, 54, 8, 2, shoeBody);  // top body
+  s += R(23, 56, 8, 4, shoeBody);  // main body
+  s += R(23, 54, 1, 6, shoeHl);    // L outer highlight
+  s += R(30, 54, 1, 6, shoeSh);    // R inner shadow
+  s += R(27, 56, 1, 3, lace);      // dark lace line
+  s += R(26, 55, 1, 1, lace);      // small lace knot
+  s += R(28, 57, 1, 1, lace);
+  s += R(23, 60, 9, 1, shoeSole);  // red sole top edge
+  s += R(22, 61, 10, 1, shoeSoleSh);  // red sole bottom (darker)
+  // R sneaker (mirror)
+  s += R(33, 54, 8, 2, shoeBody);
+  s += R(33, 56, 8, 4, shoeBody);
+  s += R(40, 54, 1, 6, shoeSh);
+  s += R(33, 54, 1, 6, shoeHl);
+  s += R(37, 56, 1, 3, lace);
+  s += R(36, 55, 1, 1, lace);
+  s += R(38, 57, 1, 1, lace);
+  s += R(33, 60, 9, 1, shoeSole);
+  s += R(32, 61, 10, 1, shoeSoleSh);
+  return s;
+}
+
+// === HEAD: starter_basic_cap — dark blue baseball cap with brim ===
+function _avHatBasicCap() {
+  const cap    = '#2d4a7a';        // dark blue
+  const capSh  = '#1a2e52';        // darker shadow
+  const capHl  = '#4a6ea8';        // lighter highlight
+  const brim   = '#1a2e52';        // dark brim (matches shadow)
+  const R = _avRect;
+  let s = '';
+  // Cap dome (covers top of head + hair)
+  s += R(24, 4, 16, 1, cap);
+  s += R(22, 5, 20, 4, cap);       // main cap body
+  // Highlight on top-left (3D feel)
+  s += R(23, 5, 8, 1, capHl);
+  s += R(22, 6, 4, 1, capHl);
+  // Shadow on right
+  s += R(40, 6, 2, 3, capSh);
+  // Brim — extends forward (to the right side of viewport since the character faces us)
+  s += R(28, 9, 14, 1, brim);      // brim front edge (covers forehead/eye area top)
+  s += R(28, 10, 14, 1, capSh);    // brim shadow row
+  // Tiny logo accent — gold pixel on front of cap
+  s += R(31, 7, 1, 1, '#d4af37');
+  return s;
+}
+
+// === HEAD: starter_training_headband — white horizontal sweatband on forehead ===
+function _avHatTrainingHeadband() {
+  const band   = '#f0f0f8';        // white
+  const bandSh = '#a8a8b8';        // gray shadow
+  const accent = '#c41a2a';        // red center accent (athletic detail)
+  const R = _avRect;
+  let s = '';
+  // Headband strip across forehead (over hair area at y=8-9)
+  s += R(22, 8, 20, 2, band);      // 20w x 2h white band
+  s += R(22, 8, 20, 1, '#ffffff'); // top highlight (pure white)
+  s += R(22, 9, 20, 1, bandSh);    // bottom shadow
+  // Red center accent stripe
+  s += R(31, 8, 2, 1, accent);
   return s;
 }
 
@@ -12383,25 +12936,64 @@ function _avPartsHair(style, baseHex) {
   return '';
 }
 
-// ---- COMPOSER ----
+// ---- COMPOSER v2.8.0 ----
 // Returns inline SVG for a Pixel Trainer character. mode:
 //   'bust'  → viewBox="14 0 36 30" — head + shoulders crop for 46px Home
 //   'stand' → viewBox="0 0 64 64"  — full body for Trainer Stand
+//
+// v2.8.0 Z-order (back→front):
+//   back item → body → bottom → shoes → top → belt → face → hair → faceMask → hat → accessory
 function renderCharacterSvg(opts, mode) {
   const safeOpts = opts || {};
   const bodyType  = (safeOpts.bodyType  && AVATAR_BODY_TYPE_LABELS[safeOpts.bodyType]) ? safeOpts.bodyType  : 'masc';
   const skin      = (safeOpts.skin      && AVATAR_SKIN_TONES[safeOpts.skin])           ? safeOpts.skin      : 'medium';
   const hairStyle = (safeOpts.hairStyle && AVATAR_HAIR_STYLE_LABELS[safeOpts.hairStyle]) ? safeOpts.hairStyle : 'short_crop';
   const hairColor = (safeOpts.hairColor && AVATAR_HAIR_COLORS[safeOpts.hairColor])     ? safeOpts.hairColor : 'dark_brown';
+  const equipped  = (safeOpts.equipped && typeof safeOpts.equipped === 'object') ? safeOpts.equipped : {};
   const viewBox = (mode === 'bust') ? '14 0 36 30' : '0 0 64 64';
   const skinHex = AVATAR_SKIN_TONES[skin];
   const hairHex = AVATAR_HAIR_COLORS[hairColor];
+  // Defensive null defaults — slot may be undefined or null
+  const eqHead = equipped.head      || null;
+  const eqFace = equipped.face      || null;
+  const eqTop  = equipped.top       || null;
+  const eqBot  = equipped.bottom    || null;
+  const eqShoe = equipped.shoes     || null;
+  const eqBack = equipped.back      || null;
+  const eqAcc  = equipped.accessory || null;
+  // Calf skin patch — needed when shorts are equipped (legs y=51-53 otherwise empty)
+  const calfSkin = (eqBot === 'starter_shorts')
+    ? (_avRect(25, 51, 6, 3, skinHex) + _avRect(33, 51, 6, 3, skinHex)
+       + _avRect(30, 51, 1, 3, _avDarken(skinHex, 0.18)) + _avRect(38, 51, 1, 3, _avDarken(skinHex, 0.18)))
+    : '';
   return '<svg viewBox="' + viewBox + '" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:100%;image-rendering:pixelated">' +
+    _avPartsBack(eqBack) +
     _avPartsBody(bodyType, skinHex) +
-    _avPartsOutfit(bodyType) +
+    _avPartsBottom(bodyType, eqBot) +
+    calfSkin +
+    _avPartsShoes(bodyType, eqShoe) +
+    _avPartsTop(bodyType, eqTop) +
+    _avPartsBelt(bodyType) +
     _avPartsFace() +
     _avPartsHair(hairStyle, hairHex) +
+    _avPartsFaceMask(eqFace) +
+    _avPartsHat(eqHead) +
+    _avPartsAccessory(eqAcc) +
   '</svg>';
+}
+
+// Helper: build SVG opts from a profile (combines avatarCharacter + wardrobe.equipped).
+// Use this at all callsites instead of passing avatarCharacter alone.
+function _avBuildOptsFromProfile(profile) {
+  const ac = (profile && profile.avatarCharacter) || {};
+  const eq = (profile && profile.wardrobe && profile.wardrobe.equipped) || {};
+  return {
+    bodyType:  ac.bodyType,
+    skin:      ac.skin,
+    hairStyle: ac.hairStyle,
+    hairColor: ac.hairColor,
+    equipped:  eq
+  };
 }
 
 // Render a preset glyph as an inline SVG. size in px. color is the fill
@@ -12494,7 +13086,7 @@ function _refreshCharacterPickerPreview() {
       renderAvatarGlyph(avatarId, 80, AVATAR_GLYPH_GOLD) +
     '</div>';
   } else {
-    previewEl.innerHTML = renderCharacterSvg(profile.avatarCharacter, 'stand');
+    previewEl.innerHTML = renderCharacterSvg(_avBuildOptsFromProfile(profile), 'stand');
   }
 }
 
@@ -12517,7 +13109,7 @@ function _renderCharacterPickerOptions(tab) {
     AVATAR_BODY_TYPES_LIST.forEach(function (bt) {
       const sel = (ac.bodyType === bt) ? ' selected' : '';
       // Each option shows a mini-stand of just THIS body type (with current other choices)
-      const sampleSvg = renderCharacterSvg({ bodyType: bt, skin: ac.skin, hairStyle: ac.hairStyle, hairColor: ac.hairColor }, 'stand');
+      const sampleSvg = renderCharacterSvg({ bodyType: bt, skin: ac.skin, hairStyle: ac.hairStyle, hairColor: ac.hairColor, equipped: (profile.wardrobe && profile.wardrobe.equipped) || {} }, 'stand');
       html += '<button class="cp-option cp-option-body' + sel + '" data-cp-value="' + bt + '" ' +
         'onclick="setCharacterField(\'bodyType\', \'' + bt + '\')" ' +
         'aria-label="' + AVATAR_BODY_TYPE_LABELS[bt] + '">' +
@@ -12539,7 +13131,7 @@ function _renderCharacterPickerOptions(tab) {
     AVATAR_HAIR_STYLES_LIST.forEach(function (st) {
       const sel = (ac.hairStyle === st) ? ' selected' : '';
       // Bust-only preview shows the head with this hair on current other choices
-      const sampleSvg = renderCharacterSvg({ bodyType: ac.bodyType, skin: ac.skin, hairStyle: st, hairColor: ac.hairColor }, 'bust');
+      const sampleSvg = renderCharacterSvg({ bodyType: ac.bodyType, skin: ac.skin, hairStyle: st, hairColor: ac.hairColor, equipped: (profile.wardrobe && profile.wardrobe.equipped) || {} }, 'bust');
       html += '<button class="cp-option cp-option-hair' + sel + '" ' +
         'onclick="setCharacterField(\'hairStyle\', \'' + st + '\')" ' +
         'aria-label="Hair: ' + AVATAR_HAIR_STYLE_LABELS[st] + '">' +
@@ -12844,7 +13436,7 @@ function renderTrainerCard() {
                   renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
                 '</span>')
             : ('<div class="trainer-stand-frame">' +
-                  renderCharacterSvg(profile.avatarCharacter, 'stand') +
+                  renderCharacterSvg(_avBuildOptsFromProfile(profile), 'stand') +
                 '</div>')
           ) +
           '<button class="trainer-dossier-avatar-link" onclick="openAvatarPicker()" ' +
@@ -14246,7 +14838,7 @@ function renderHomeHeaderAvatar() {
   } else {
     // Pixel Trainer bust — fills the 46px circle frame
     avatarInner = '<span class="header-avatar-pixel">' +
-      renderCharacterSvg(profile.avatarCharacter, 'bust') +
+      renderCharacterSvg(_avBuildOptsFromProfile(profile), 'bust') +
     '</span>';
   }
   mount.innerHTML =
@@ -14271,6 +14863,8 @@ function renderTrainerProfileBody() {
   const expanded = !!window._profileHonorRollExpanded;
   return '' +
     renderTrainerCard() +
+    // v2.8.0: Wardrobe entry point — small card between Trainer card and Journey
+    (typeof renderWardrobeEntryCard === 'function' ? renderWardrobeEntryCard() : '') +
     // v2.3.0: Journey is read-only (no schema delta) and computed fresh on
     // each render so it always reflects the latest history.
     (typeof renderJourneyCard === 'function' ? renderJourneyCard() : '') +
@@ -14284,6 +14878,209 @@ function renderTrainerProfileBody() {
     // v2.4.0: Personal Records preview (4 top records). Full page is opened
     // via the "View all →" button which routes to renderRecordsOverlay.
     (typeof renderRecordsCard === 'function' ? renderRecordsCard() : '');
+}
+
+// ============================================================
+// WARDROBE OVERLAY v2.8.0
+// ============================================================
+// Pattern follows renderTrainerProfileBody / openTrainerProfile (full-screen
+// modal, .profile-overlay reused for layout). Tab filter + grid of owned
+// items + live preview at top. Apply-on-tap pattern: equipItem mutates
+// profile.wardrobe.equipped, persists, re-renders preview + grid + outer
+// surfaces (Home / Settings / Profile).
+
+window._wardrobeActiveTab = 'all';   // 'all' | 'head' | 'face' | 'top' | 'bottom' | 'shoes' | 'back' | 'accessory'
+
+function renderWardrobeEntryCard() {
+  const profile = App.state.profile || {};
+  const ownedCount = (profile.ownedItemIds || []).length;
+  return '' +
+    '<div class="wardrobe-entry-card">' +
+      '<div class="wardrobe-entry-icon">✦</div>' +
+      '<div class="wardrobe-entry-text">' +
+        '<div class="wardrobe-entry-title">Wardrobe</div>' +
+        '<div class="wardrobe-entry-sub">Customize your trainer outfit · ' + ownedCount + ' item' + (ownedCount === 1 ? '' : 's') + '</div>' +
+      '</div>' +
+      '<button class="wardrobe-entry-btn" onclick="openWardrobeOverlay()">Open</button>' +
+    '</div>';
+}
+
+function openWardrobeOverlay() {
+  const overlay = document.getElementById('wardrobeOverlay');
+  if (!overlay) return;
+  window._wardrobeActiveTab = 'all';
+  document.getElementById('wardrobeOverlayBody').innerHTML = renderWardrobeOverlayBody();
+  overlay.classList.remove('hidden');
+  document.body.classList.add('profile-overlay-open');
+  // Reset scroll
+  const body = document.getElementById('wardrobeOverlayBody');
+  if (body) body.scrollTop = 0;
+}
+
+function closeWardrobeOverlay() {
+  const overlay = document.getElementById('wardrobeOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  document.body.classList.remove('profile-overlay-open');
+}
+
+function _wardrobeBackToProfile() {
+  closeWardrobeOverlay();
+  // Profile overlay should still be open underneath (we never closed it)
+  // — but if it's closed for some reason, re-open
+  const profileOverlay = document.getElementById('profileOverlay');
+  if (profileOverlay && profileOverlay.classList.contains('hidden')) {
+    openTrainerProfile();
+  }
+}
+
+function renderWardrobeOverlayBody() {
+  const profile = App.state.profile || {};
+  const owned = (profile.ownedItemIds || []).slice();
+  const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
+  const activeTab = window._wardrobeActiveTab || 'all';
+  const ownedItems = owned
+    .map(function (id) { return WARDROBE_ITEM_BY_ID[id]; })
+    .filter(function (it) { return !!it; });
+  // Equipped summary line
+  const equippedNames = ['top','bottom','shoes','head','face','back','accessory']
+    .map(function (slot) {
+      const id = equipped[slot];
+      if (!id) return null;
+      const item = WARDROBE_ITEM_BY_ID[id];
+      return item ? item.name : null;
+    })
+    .filter(function (n) { return !!n; });
+  const summaryText = equippedNames.length > 0
+    ? 'Wearing: <strong>' + equippedNames.join('</strong> · <strong>') + '</strong>'
+    : 'Nothing equipped';
+  // Filter by tab
+  const filtered = (activeTab === 'all') ? ownedItems : ownedItems.filter(function (it) { return it.slot === activeTab; });
+  // Render tabs
+  const tabs = ['all'].concat(WARDROBE_SLOTS_LIST);
+  const tabsHtml = tabs.map(function (t) {
+    const label = (t === 'all') ? 'All' : WARDROBE_SLOT_LABELS[t];
+    const cls = (activeTab === t) ? ' active' : '';
+    return '<button class="wardrobe-tab' + cls + '" onclick="_wardrobeSetTab(\'' + t + '\')">' + label + '</button>';
+  }).join('');
+  // Render grid
+  let gridHtml;
+  if (filtered.length === 0 && activeTab !== 'all') {
+    // Empty slot placeholder
+    gridHtml = '' +
+      '<div class="wardrobe-empty-slot-placeholder">' +
+        '<div class="wardrobe-empty-icon">✦</div>' +
+        '<div class="wardrobe-empty-text">No ' + WARDROBE_SLOT_LABELS[activeTab] + ' items yet.</div>' +
+        '<div class="wardrobe-empty-sub">More outfit pieces unlock soon. Train to earn future cosmetics.</div>' +
+      '</div>';
+  } else {
+    gridHtml = filtered.map(function (it) { return _wardrobeRenderItemCard(it, equipped, profile); }).join('');
+  }
+  return '' +
+    '<div class="wardrobe-overlay-shell">' +
+      '<div class="wardrobe-header-row">' +
+        '<button class="wardrobe-back-btn" onclick="_wardrobeBackToProfile()">← Profile</button>' +
+        '<button class="wardrobe-close-btn" onclick="closeWardrobeOverlay()" aria-label="Close Wardrobe" title="Close">✕</button>' +
+      '</div>' +
+      '<div class="wardrobe-title-row">' +
+        '<div class="wardrobe-title">Wardrobe</div>' +
+        '<div class="wardrobe-count">' + owned.length + ' item' + (owned.length === 1 ? '' : 's') + '</div>' +
+      '</div>' +
+      '<div class="wardrobe-sub">Customize your trainer\'s outfit. Tap an item to equip.</div>' +
+      '<div class="wardrobe-preview-stage" id="wardrobePreviewStage">' +
+        renderCharacterSvg(_avBuildOptsFromProfile(profile), 'stand') +
+      '</div>' +
+      '<div class="wardrobe-equipped-summary">' + summaryText + '</div>' +
+      '<div class="wardrobe-tabs">' + tabsHtml + '</div>' +
+      '<div class="wardrobe-grid">' + gridHtml + '</div>' +
+      '<div class="wardrobe-shop-teaser">' +
+        '<strong>More outfit pieces unlock soon.</strong>' +
+        'Train to earn future cosmetics from Shop and Boss Drops.' +
+      '</div>' +
+    '</div>';
+}
+
+// Render a single item card with thumbnail (mini character with just this item equipped on top)
+function _wardrobeRenderItemCard(item, equipped, profile) {
+  const isEquipped = (equipped[item.slot] === item.id);
+  // Build a thumbnail preview: the user's character with this item swapped into its slot
+  const thumbEquipped = Object.assign({}, equipped);
+  thumbEquipped[item.slot] = item.id;
+  const thumbOpts = {
+    bodyType: profile.avatarCharacter && profile.avatarCharacter.bodyType,
+    skin: profile.avatarCharacter && profile.avatarCharacter.skin,
+    hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
+    hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
+    equipped: thumbEquipped
+  };
+  const thumbSvg = renderCharacterSvg(thumbOpts, 'stand');
+  // Equip / Equipped pill / Unequip button logic
+  // - Optional slots (head, face, back, accessory): show Unequip when equipped
+  // - Required slots (top, bottom, shoes): no unequip (would leave naked body)
+  const optionalSlot = (item.slot === 'head' || item.slot === 'face' || item.slot === 'back' || item.slot === 'accessory');
+  let actionsHtml = '';
+  if (isEquipped) {
+    actionsHtml = '<div class="wardrobe-equipped-pill">✓ Equipped</div>';
+    if (optionalSlot) {
+      actionsHtml += '<button class="wardrobe-unequip-btn" onclick="unequipSlot(\'' + item.slot + '\')">×</button>';
+    }
+  } else {
+    actionsHtml = '<button class="wardrobe-equip-btn" onclick="equipItem(\'' + item.id + '\')">Equip</button>';
+  }
+  return '' +
+    '<div class="wardrobe-card' + (isEquipped ? ' equipped' : '') + '">' +
+      '<div class="wardrobe-card-thumb">' + thumbSvg + '</div>' +
+      '<div class="wardrobe-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
+      '<div class="wardrobe-card-slot">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>' +
+      '<div class="wardrobe-card-actions">' + actionsHtml + '</div>' +
+    '</div>';
+}
+
+function _wardrobeSetTab(tab) {
+  window._wardrobeActiveTab = tab;
+  const body = document.getElementById('wardrobeOverlayBody');
+  if (body) body.innerHTML = renderWardrobeOverlayBody();
+}
+
+// Equip item: validate ownership + slot match, mutate profile.wardrobe.equipped, persist, re-render all surfaces.
+function equipItem(itemId) {
+  if (!App.state.profile) return;
+  const item = WARDROBE_ITEM_BY_ID[itemId];
+  if (!item) { console.warn('[equipItem] unknown item:', itemId); return; }
+  const profile = App.state.profile;
+  if (!Array.isArray(profile.ownedItemIds) || profile.ownedItemIds.indexOf(itemId) === -1) {
+    console.warn('[equipItem] item not owned:', itemId);
+    return;
+  }
+  if (!profile.wardrobe) profile.wardrobe = { equipped: {} };
+  if (!profile.wardrobe.equipped) profile.wardrobe.equipped = {};
+  profile.wardrobe.equipped[item.slot] = itemId;
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  // Re-render Wardrobe overlay (preview + grid update)
+  const body = document.getElementById('wardrobeOverlayBody');
+  if (body) body.innerHTML = renderWardrobeOverlayBody();
+  // Re-render outer surfaces
+  try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
+  try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
+  if (typeof showToast === 'function') showToast('✓ Equipped · ' + item.name);
+}
+
+// Unequip slot (only valid for optional slots: head, face, back, accessory)
+function unequipSlot(slot) {
+  if (!App.state.profile) return;
+  if (slot !== 'head' && slot !== 'face' && slot !== 'back' && slot !== 'accessory') {
+    console.warn('[unequipSlot] cannot unequip required slot:', slot);
+    return;
+  }
+  const profile = App.state.profile;
+  if (!profile.wardrobe || !profile.wardrobe.equipped) return;
+  profile.wardrobe.equipped[slot] = null;
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  const body = document.getElementById('wardrobeOverlayBody');
+  if (body) body.innerHTML = renderWardrobeOverlayBody();
+  try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
+  try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
+  if (typeof showToast === 'function') showToast('✓ Unequipped · ' + WARDROBE_SLOT_LABELS[slot]);
 }
 
 // Open Profile overlay. Optionally scroll to a section after open.
@@ -14371,7 +15168,7 @@ function renderIdentitySettingsCard() {
   } else {
     // Pixel Trainer bust in a small circular frame
     swatchInner = '<span class="identity-row-pixel-bust" style="--avatar-ring-color:' + avatarRingColor + '">' +
-      renderCharacterSvg(profile.avatarCharacter, 'bust') +
+      renderCharacterSvg(_avBuildOptsFromProfile(profile), 'bust') +
     '</span>';
     const ac = profile.avatarCharacter || {};
     const bodyLbl = AVATAR_BODY_TYPE_LABELS[ac.bodyType] || 'Trainer';
@@ -17201,7 +17998,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.5</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.8.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -17312,7 +18109,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.7.5',
+    appVersion: '2.8.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -17801,6 +18598,19 @@ function confirmReset() {
       bodyType: 'masc', skin: 'medium', hairStyle: 'short_crop', hairColor: 'dark_brown',
       hat: null, top: null, bottom: null, shoes: null,
       back: null, accessory: null, faceMask: null, faceMark: null
+    },
+    // v2.8.0: reset wardrobe to starter pool + default equipped baseline.
+    ownedItemIds: STARTER_OWNED_ITEM_IDS.slice(),
+    wardrobe: {
+      equipped: {
+        head: null,
+        face: null,
+        top: 'starter_plain_tee',
+        bottom: 'starter_training_pants',
+        shoes: 'starter_training_shoes',
+        back: null,
+        accessory: null
+      }
     },
     // v2.4.0: reset wipes Personal Records ATH cache so a brand-new identity
     // starts fresh (no stale records from the previous trainer).
