@@ -4221,6 +4221,101 @@
       background: rgba(0,0,0,0.15); border: 1px dashed rgba(255,255,255,0.08);
       border-radius: 10px; color: var(--text-secondary);
     }
+    /* v3.1.0: Preview-only card styling — dashed border + source-tinted */
+    .shop-card.preview-only {
+      border-style: dashed;
+      background: rgba(0,0,0,0.18);
+    }
+    .shop-card.preview-boss { border-color: rgba(232,74,94,0.45); }
+    .shop-card.preview-achievement { border-color: rgba(110,231,183,0.45); }
+    .shop-card.preview-rank { border-color: rgba(167,139,250,0.50); }
+    .shop-card-preview-label {
+      font-size: 9.5px; font-weight: 800; letter-spacing: 1px;
+      color: var(--text-secondary); text-transform: uppercase; opacity: 0.7;
+      margin-bottom: 8px;
+    }
+    .shop-unlock-btn {
+      width: 100%; padding: 6px 8px; border-radius: 6px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.12s ease;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18);
+      color: var(--text);
+    }
+    .shop-unlock-btn:hover {
+      background: rgba(212,175,55,0.10);
+      border-color: rgba(212,175,55,0.40);
+      color: #d4af37;
+    }
+    /* How to Unlock modal */
+    .unlock-modal-shell { padding: 20px 16px 60px; max-width: 480px; margin: 0 auto; }
+    .unlock-modal-header-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .unlock-close-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary); width: 32px; height: 32px; border-radius: 6px;
+      font-size: 16px; cursor: pointer; line-height: 1;
+    }
+    .unlock-close-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .unlock-modal-preview {
+      width: 220px; height: 220px; margin: 0 auto 14px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%),
+        linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
+      border-radius: 14px; border: 1px solid rgba(212,175,55,0.24);
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.45);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 12px; overflow: hidden; position: relative;
+    }
+    .unlock-modal-preview svg { width: 80%; height: 80%; image-rendering: pixelated; }
+    .unlock-modal-tags {
+      display: flex; gap: 8px; justify-content: center; margin-bottom: 10px;
+    }
+    .unlock-modal-title {
+      font-size: 22px; font-weight: 800; letter-spacing: 0.4px;
+      text-align: center; color: var(--text); margin-bottom: 6px;
+    }
+    .unlock-modal-desc {
+      font-size: 13px; color: var(--text-secondary); text-align: center;
+      line-height: 1.5; margin-bottom: 16px;
+    }
+    .unlock-modal-req {
+      padding: 14px 16px;
+      background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.30);
+      border-radius: 10px; margin-bottom: 14px;
+    }
+    .unlock-req-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.4px;
+      color: #d4af37; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .unlock-req-text {
+      font-size: 14px; color: var(--text); font-weight: 600; line-height: 1.45;
+    }
+    .unlock-progress-row { margin-top: 10px; }
+    .unlock-progress-label {
+      font-size: 11px; color: var(--text-secondary); margin-bottom: 5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .unlock-progress-bar {
+      width: 100%; height: 6px; border-radius: 999px;
+      background: rgba(255,255,255,0.05); overflow: hidden;
+    }
+    .unlock-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37 0%, #f0d060 100%);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+    .unlock-cta-btn {
+      width: 100%; padding: 12px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.20) 0%, rgba(212,175,55,0.10) 100%);
+      border: 1px solid rgba(212,175,55,0.50);
+      color: #d4af37; font-size: 13px; font-weight: 800; letter-spacing: 0.6px;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .unlock-cta-btn:hover {
+      background: linear-gradient(135deg, rgba(212,175,55,0.30) 0%, rgba(212,175,55,0.15) 100%);
+      border-color: rgba(212,175,55,0.75);
+    }
     .shop-cross-link {
       margin-top: 24px; padding: 14px 16px;
       background: var(--surface, #161d2a); border: 1px solid rgba(255,255,255,0.08);
@@ -6460,6 +6555,11 @@
 <!-- v3.0.0 Shop overlay — full-screen modal where Chips become cosmetics -->
 <div class="profile-overlay hidden" id="shopOverlay" role="dialog" aria-label="Shop">
   <div class="profile-overlay-body" id="shopOverlayBody"></div>
+</div>
+
+<!-- v3.1.0 How to Unlock modal — read-only sub-modal for preview-only items -->
+<div class="profile-overlay hidden" id="unlockModal" role="dialog" aria-label="How to Unlock">
+  <div class="profile-overlay-body" id="unlockModalBody"></div>
 </div>
 
 <div class="profile-overlay hidden" id="recordsOverlay" role="dialog" aria-label="Personal Records">
@@ -12491,19 +12591,160 @@ const SHOP_WARDROBE_ITEMS = [
   // ----- PRESTIGE tier (1 item, 1500) -----
   { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  source:'shop', price:1500, description:'Gold-trimmed championship jacket with crest.' }
 ];
-// Combined item map (starter + shop). Renderer dispatchers look up here.
+// Combined item map (starter + shop). Preview-only items are added AFTER their
+// const declarations later in this file (BOSS/ACHIEVEMENT/RANK) — see merge
+// block below the RANK_PREVIEW_ITEMS array.
 const WARDROBE_ITEM_BY_ID = {};
 STARTER_WARDROBE_ITEMS.forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
 SHOP_WARDROBE_ITEMS.forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
+
+// v3.1.0: Unified Shop catalog — merges purchasable shop items + all preview-only
+// catalog items (boss/achievement/rank). Function definition hoisted; references
+// resolve at call time when all const arrays are defined.
+function getCatalogItems() {
+  return [].concat(SHOP_WARDROBE_ITEMS, BOSS_PREVIEW_ITEMS, ACHIEVEMENT_PREVIEW_ITEMS, RANK_PREVIEW_ITEMS);
+}
 // Rarity color tokens (matches Cosmetic Content System taxonomy)
+// v3.1.0: + 'signature' rarity for Boss exclusive items (crimson)
 const RARITY_COLORS = {
-  starter:  { bg:'rgba(148,163,184,0.10)', border:'rgba(148,163,184,0.40)', text:'#94a3b8' },
-  common:   { bg:'rgba(255,255,255,0.06)', border:'rgba(255,255,255,0.30)', text:'#e8ecf4' },
-  uncommon: { bg:'rgba(96,165,250,0.10)',  border:'rgba(96,165,250,0.45)',  text:'#60a5fa' },
-  rare:     { bg:'rgba(167,139,250,0.10)', border:'rgba(167,139,250,0.50)', text:'#a78bfa' },
-  prestige: { bg:'rgba(212,175,55,0.12)',  border:'rgba(212,175,55,0.60)',  text:'#d4af37' }
+  starter:   { bg:'rgba(148,163,184,0.10)', border:'rgba(148,163,184,0.40)', text:'#94a3b8' },
+  common:    { bg:'rgba(255,255,255,0.06)', border:'rgba(255,255,255,0.30)', text:'#e8ecf4' },
+  uncommon:  { bg:'rgba(96,165,250,0.10)',  border:'rgba(96,165,250,0.45)',  text:'#60a5fa' },
+  rare:      { bg:'rgba(167,139,250,0.10)', border:'rgba(167,139,250,0.50)', text:'#a78bfa' },
+  prestige:  { bg:'rgba(212,175,55,0.12)',  border:'rgba(212,175,55,0.60)',  text:'#d4af37' },
+  signature: { bg:'rgba(232,74,94,0.10)',   border:'rgba(232,74,94,0.55)',   text:'#e84a5e' }
 };
-const RARITY_LABELS = { starter:'Starter', common:'Common', uncommon:'Uncommon', rare:'Rare', prestige:'Prestige' };
+const RARITY_LABELS = { starter:'Starter', common:'Common', uncommon:'Uncommon', rare:'Rare', prestige:'Prestige', signature:'Signature' };
+
+// ============================================================
+// v3.1.0 PREVIEW-ONLY CATALOG — Boss / Achievement / Rank
+// ============================================================
+// All preview items: purchasable=false, previewOnly=true, no price.
+// They appear in Shop catalog with "How to Unlock" CTA — visible but not buyable.
+// Actual drop/grant logic deferred to v3.2.0+.
+//
+// Each item has unlock metadata: { type, requirement, ctaLabel?, ctaTarget?, progressKey?, target? }
+// CTA targets are intentionally limited to safe existing navigation: 'home' | 'drill'
+// (no fragile deep routing in v3.1.0).
+
+// 7 Bosses × 3 signature items = 21 items. Auras deferred to v3.2.0.
+const BOSS_PREVIEW_ITEMS = [
+  // Push/Fold Boss — All-In Set (red theme)
+  { id:'boss_pf_allin_band',     slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'All-In Band', description:'Worn by trainers who master the all-in moment.',
+    unlock:{ type:'boss', boss:'Push/Fold Boss', requirement:'Defeat the Push/Fold Boss', ctaLabel:'Train Push/Fold', ctaTarget:'drill' } },
+  { id:'boss_pf_jersey',         slot:'top',       source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Push/Fold Jersey', description:'Bold red jersey of the All-In Master.',
+    unlock:{ type:'boss', boss:'Push/Fold Boss', requirement:'Defeat the Push/Fold Boss', ctaLabel:'Train Push/Fold', ctaTarget:'drill' } },
+  { id:'boss_pf_chip_charm',     slot:'accessory', source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Chip Storm Charm', description:'A spinning chip charm earned at the all-in line.',
+    unlock:{ type:'boss', boss:'Push/Fold Boss', requirement:'Defeat the Push/Fold Boss', ctaLabel:'Train Push/Fold', ctaTarget:'drill' } },
+  // Call vs Jam Boss — Pressure Set (deep wine theme)
+  { id:'boss_cvj_headset',       slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Final Call Headset', description:'Worn by hero callers who hold their nerve.',
+    unlock:{ type:'boss', boss:'Call vs Jam Boss', requirement:'Defeat the Call vs Jam Boss', ctaLabel:'Train Call vs Jam', ctaTarget:'drill' } },
+  { id:'boss_cvj_jamline_jacket', slot:'top',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Jamline Jacket', description:'A wine-red jacket marked by jam-line decisions.',
+    unlock:{ type:'boss', boss:'Call vs Jam Boss', requirement:'Defeat the Call vs Jam Boss', ctaLabel:'Train Call vs Jam', ctaTarget:'drill' } },
+  { id:'boss_cvj_risk_charm',    slot:'accessory', source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Risk Tag Charm', description:'A small bold tag worn at the hip.',
+    unlock:{ type:'boss', boss:'Call vs Jam Boss', requirement:'Defeat the Call vs Jam Boss', ctaLabel:'Train Call vs Jam', ctaTarget:'drill' } },
+  // BB Defense Boss — Fortress Set (gray/silver theme)
+  { id:'boss_bb_fortress_helm',  slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Fortress Helm', description:'A defensive knight helm earned at the wall.',
+    unlock:{ type:'boss', boss:'BB Defense Boss', requirement:'Defeat the BB Defense Boss', ctaLabel:'Train BB Defense', ctaTarget:'drill' } },
+  { id:'boss_bb_bulwark_jacket', slot:'top',       source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Bulwark Jacket', description:'Plated gray jacket of the Wall.',
+    unlock:{ type:'boss', boss:'BB Defense Boss', requirement:'Defeat the BB Defense Boss', ctaLabel:'Train BB Defense', ctaTarget:'drill' } },
+  { id:'boss_bb_fortress_banner', slot:'back',     source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Fortress Banner', description:'A gray banner draping from the shoulder.',
+    unlock:{ type:'boss', boss:'BB Defense Boss', requirement:'Defeat the BB Defense Boss', ctaLabel:'Train BB Defense', ctaTarget:'drill' } },
+  // Blind Battle Boss — Sentinel Set (gold theme)
+  { id:'boss_bb_sentinel_visor', slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Sentinel Visor', description:'A gold visor of the blind sentinel.',
+    unlock:{ type:'boss', boss:'Blind Battle Boss', requirement:'Defeat the Blind Battle Boss', ctaLabel:'Train Blind Battle', ctaTarget:'drill' } },
+  { id:'boss_bb_duelguard_coat', slot:'top',       source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Duelguard Coat', description:'A gold-trim coat for the blind duel.',
+    unlock:{ type:'boss', boss:'Blind Battle Boss', requirement:'Defeat the Blind Battle Boss', ctaLabel:'Train Blind Battle', ctaTarget:'drill' } },
+  { id:'boss_bb_twin_coin_banner', slot:'back',    source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Twin-Coin Banner', description:'A back banner showing two crossed coins.',
+    unlock:{ type:'boss', boss:'Blind Battle Boss', requirement:'Defeat the Blind Battle Boss', ctaLabel:'Train Blind Battle', ctaTarget:'drill' } },
+  // Rejam Boss — Ambush Set (purple theme)
+  { id:'boss_rj_hood',           slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Rejam Hood', description:'A dark purple hood for the silent counter.',
+    unlock:{ type:'boss', boss:'Rejam Boss', requirement:'Defeat the Rejam Boss', ctaLabel:'Train Rejam', ctaTarget:'drill' } },
+  { id:'boss_rj_ambush_cloak',   slot:'back',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Ambush Cloak', description:'A flowing purple cloak earned at the rejam.',
+    unlock:{ type:'boss', boss:'Rejam Boss', requirement:'Defeat the Rejam Boss', ctaLabel:'Train Rejam', ctaTarget:'drill' } },
+  { id:'boss_rj_shadow_band',    slot:'accessory', source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Shadow Wristband', description:'A dark wristband marked by counter-strike timing.',
+    unlock:{ type:'boss', boss:'Rejam Boss', requirement:'Defeat the Rejam Boss', ctaLabel:'Train Rejam', ctaTarget:'drill' } },
+  // Open vs 3-Bet Boss — Counterplay Set (cyan theme)
+  { id:'boss_o3b_visor',         slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Counterplay Visor', description:'A cyan visor with a tactical grid.',
+    unlock:{ type:'boss', boss:'Open vs 3-Bet Boss', requirement:'Defeat the Open vs 3-Bet Boss', ctaLabel:'Train Open vs 3-Bet', ctaTarget:'drill' } },
+  { id:'boss_o3b_jacket',        slot:'top',       source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'3-Bet Breaker Jacket', description:'Sharp cyan jacket of the precise opener.',
+    unlock:{ type:'boss', boss:'Open vs 3-Bet Boss', requirement:'Defeat the Open vs 3-Bet Boss', ctaLabel:'Train Open vs 3-Bet', ctaTarget:'drill' } },
+  { id:'boss_o3b_satchel',       slot:'back',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Solver Satchel', description:'A study satchel of the Architect.',
+    unlock:{ type:'boss', boss:'Open vs 3-Bet Boss', requirement:'Defeat the Open vs 3-Bet Boss', ctaLabel:'Train Open vs 3-Bet', ctaTarget:'drill' } },
+  // Mixed Decision Boss — Prism Set (multi-color theme)
+  { id:'boss_md_prism_visor',    slot:'head',      source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Prism Visor', description:'A two-tone visor of the mixed master.',
+    unlock:{ type:'boss', boss:'Mixed Decision Boss', requirement:'Defeat the Mixed Decision Boss', ctaLabel:'Train Mixed Decision', ctaTarget:'drill' } },
+  { id:'boss_md_split_coat',     slot:'top',       source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Split-Tone Coat', description:'A coat split between two frequencies.',
+    unlock:{ type:'boss', boss:'Mixed Decision Boss', requirement:'Defeat the Mixed Decision Boss', ctaLabel:'Train Mixed Decision', ctaTarget:'drill' } },
+  { id:'boss_md_decision_marker', slot:'accessory', source:'boss', rarity:'signature', purchasable:false, previewOnly:true,
+    name:'Decision Marker', description:'A two-tone chip held in the hand.',
+    unlock:{ type:'boss', boss:'Mixed Decision Boss', requirement:'Defeat the Mixed Decision Boss', ctaLabel:'Train Mixed Decision', ctaTarget:'drill' } }
+];
+
+// 5 Achievement preview items
+const ACHIEVEMENT_PREVIEW_ITEMS = [
+  { id:'achv_streak_7_band',     slot:'head',      source:'achievement', rarity:'uncommon', purchasable:false, previewOnly:true,
+    name:'7-Day Streak Band', description:'Earned by training on 7 consecutive days.',
+    unlock:{ type:'streak', requirement:'Train on 7 consecutive days', progressKey:'streaks.daily', target:7, ctaLabel:'Today\'s Mission', ctaTarget:'home' } },
+  { id:'achv_streak_30_cape',    slot:'back',      source:'achievement', rarity:'rare',     purchasable:false, previewOnly:true,
+    name:'30-Day Marathon Cape', description:'A long cape earned by 30 consecutive training days.',
+    unlock:{ type:'streak', requirement:'Train on 30 consecutive days', progressKey:'streaks.daily', target:30, ctaLabel:'Today\'s Mission', ctaTarget:'home' } },
+  { id:'achv_no_critical_patch', slot:'accessory', source:'achievement', rarity:'rare',     purchasable:false, previewOnly:true,
+    name:'No-Critical Patch', description:'Awarded for clearing a Boss with zero critical mistakes.',
+    unlock:{ type:'milestone', requirement:'Clear any Module Boss with 0 critical mistakes', ctaLabel:'Train', ctaTarget:'drill' } },
+  { id:'achv_scholar_glasses',   slot:'face',      source:'achievement', rarity:'uncommon', purchasable:false, previewOnly:true,
+    name:'Range Scholar Glasses', description:'Earned by completing 1,000 total training hands.',
+    unlock:{ type:'milestone', requirement:'Complete 1,000 total hands', ctaLabel:'Train', ctaTarget:'drill' } },
+  { id:'achv_pb_crown',          slot:'head',      source:'achievement', rarity:'rare',     purchasable:false, previewOnly:true,
+    name:'Personal Best Crown', description:'A small crown for breaking 10 Personal Records.',
+    unlock:{ type:'milestone', requirement:'Break 10 Personal Records', ctaLabel:'Train', ctaTarget:'drill' } }
+];
+
+// 5 Rank reward preview items
+const RANK_PREVIEW_ITEMS = [
+  { id:'rank_squire_insignia',   slot:'accessory', source:'rank', rarity:'uncommon', purchasable:false, previewOnly:true,
+    name:'Squire Insignia', description:'A small bronze star awarded upon reaching Squire.',
+    unlock:{ type:'rank', requirement:'Reach Squire (Bronze) rank', requiredRank:'Bronze', ctaLabel:'View Mastery Path', ctaTarget:'home' } },
+  { id:'rank_ranger_mantle',     slot:'back',      source:'rank', rarity:'rare',     purchasable:false, previewOnly:true,
+    name:'Ranger Silver Mantle', description:'A silver mantle awarded upon reaching Ranger.',
+    unlock:{ type:'rank', requirement:'Reach Ranger (Silver) rank', requiredRank:'Silver', ctaLabel:'View Mastery Path', ctaTarget:'home' } },
+  { id:'rank_knight_cape',       slot:'back',      source:'rank', rarity:'rare',     purchasable:false, previewOnly:true,
+    name:'Knight Trim Cape', description:'A gold-trim cape awarded upon reaching Knight.',
+    unlock:{ type:'rank', requirement:'Reach Knight (Gold) rank', requiredRank:'Gold', ctaLabel:'View Mastery Path', ctaTarget:'home' } },
+  { id:'rank_champion_mantle',   slot:'top',       source:'rank', rarity:'prestige', purchasable:false, previewOnly:true,
+    name:'Champion Mantle', description:'A platinum-trim mantle awarded upon reaching Champion.',
+    unlock:{ type:'rank', requirement:'Reach Champion (Platinum) rank', requiredRank:'Platinum', ctaLabel:'View Mastery Path', ctaTarget:'home' } },
+  { id:'rank_warlord_mark',      slot:'face',      source:'rank', rarity:'prestige', purchasable:false, previewOnly:true,
+    name:'Warlord Mark', description:'A diamond mark awarded upon reaching Warlord.',
+    unlock:{ type:'rank', requirement:'Reach Warlord (Diamond) rank', requiredRank:'Diamond', ctaLabel:'View Mastery Path', ctaTarget:'home' } }
+];
+
+// v3.1.0: Register all preview-only items in WARDROBE_ITEM_BY_ID. Runs AFTER
+// the const declarations above (consts are not hoisted, so this MUST come
+// after BOSS/ACHIEVEMENT/RANK arrays are defined).
+[].concat(BOSS_PREVIEW_ITEMS, ACHIEVEMENT_PREVIEW_ITEMS, RANK_PREVIEW_ITEMS)
+  .forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
+
 // Default equipped on first v2.8.0 load — clean baseline (Plain Tee + Training
 // Pants + Training Shoes). No continuity with v2.7.5 teal jacket — by design,
 // to make the dress-up loop feel intentional and beginner-friendly.
@@ -12906,12 +13147,21 @@ function _avPartsBody(bodyType, skinHex) {
 
 function _avPartsTop(bodyType, itemId) {
   switch (itemId) {
-    case 'starter_plain_tee':       return _avTopPlainTee(bodyType);
-    case 'starter_trainer_jacket':  return _avTopTrainerJacket(bodyType);
-    case 'shop_pocket_tee':         return _avTopPocketTee(bodyType);
-    case 'shop_track_jacket':       return _avTopTrackJacket(bodyType);
-    case 'shop_champion_jacket':    return _avTopChampionJacket(bodyType);
-    default:                        return _avTopTrainerJacket(bodyType);  // safe fallback
+    case 'starter_plain_tee':         return _avTopPlainTee(bodyType);
+    case 'starter_trainer_jacket':    return _avTopTrainerJacket(bodyType);
+    case 'shop_pocket_tee':           return _avTopPocketTee(bodyType);
+    case 'shop_track_jacket':         return _avTopTrackJacket(bodyType);
+    case 'shop_champion_jacket':      return _avTopChampionJacket(bodyType);
+    // v3.1.0 boss preview tops
+    case 'boss_pf_jersey':            return _avTopBossPFJersey(bodyType);
+    case 'boss_cvj_jamline_jacket':   return _avTopBossCVJJamline(bodyType);
+    case 'boss_bb_bulwark_jacket':    return _avTopBossBBBulwarkJacket(bodyType);
+    case 'boss_bb_duelguard_coat':    return _avTopBossBlindDuelguard(bodyType);
+    case 'boss_o3b_jacket':           return _avTopBossO3BJacket(bodyType);
+    case 'boss_md_split_coat':        return _avTopBossMDSplitCoat(bodyType);
+    // v3.1.0 rank preview tops
+    case 'rank_champion_mantle':      return _avTopRankChampionMantle(bodyType);
+    default:                          return _avTopTrainerJacket(bodyType);  // safe fallback
   }
 }
 function _avPartsBottom(bodyType, itemId) {
@@ -12939,26 +13189,57 @@ function _avPartsHat(itemId) {
     case 'starter_training_headband': return _avHatTrainingHeadband();
     case 'shop_simple_visor':         return _avHatSunVisor();
     case 'shop_aviator_hat':          return _avHatAviatorCap();
+    // v3.1.0 boss preview hats
+    case 'boss_pf_allin_band':        return _avHatBossPFAllInBand();
+    case 'boss_cvj_headset':          return _avHatBossCVJHeadset();
+    case 'boss_bb_fortress_helm':     return _avHatBossBBFortressHelm();
+    case 'boss_bb_sentinel_visor':    return _avHatBossBlindSentinelVisor();
+    case 'boss_rj_hood':              return _avHatBossRJHood();
+    case 'boss_o3b_visor':            return _avHatBossO3BVisor();
+    case 'boss_md_prism_visor':       return _avHatBossMDPrismVisor();
+    // v3.1.0 achievement preview hats
+    case 'achv_streak_7_band':        return _avHatAchvStreak7Band();
+    case 'achv_pb_crown':             return _avHatAchvPBCrown();
     default: return '';
   }
 }
 function _avPartsFaceMask(itemId) {
   switch (itemId) {
-    case 'shop_red_bandana': return _avFaceRedBandana();
+    case 'shop_red_bandana':       return _avFaceRedBandana();
+    // v3.1.0 preview face items
+    case 'achv_scholar_glasses':   return _avFaceAchvScholarGlasses();
+    case 'rank_warlord_mark':      return _avFaceRankWarlordMark();
     default: return '';
   }
 }
 function _avPartsBack(itemId) {
   switch (itemId) {
-    case 'shop_messenger_bag':   return _avBackMessengerBag();
-    case 'shop_satchel_studded': return _avBackStuddedSatchel();
+    case 'shop_messenger_bag':         return _avBackMessengerBag();
+    case 'shop_satchel_studded':       return _avBackStuddedSatchel();
+    // v3.1.0 boss preview backs
+    case 'boss_bb_fortress_banner':    return _avBackBossBBFortressBanner();
+    case 'boss_bb_twin_coin_banner':   return _avBackBossBlindTwinCoinBanner();
+    case 'boss_rj_ambush_cloak':       return _avBackBossRJAmbushCloak();
+    case 'boss_o3b_satchel':           return _avBackBossO3BSatchel();
+    // v3.1.0 achievement + rank preview backs
+    case 'achv_streak_30_cape':        return _avBackAchvMarathonCape();
+    case 'rank_ranger_mantle':         return _avBackRankRangerMantle();
+    case 'rank_knight_cape':           return _avBackRankKnightCape();
     default: return '';
   }
 }
 function _avPartsAccessory(itemId) {
   switch (itemId) {
-    case 'shop_pocket_watch': return _avAccessoryPocketWatch();
-    case 'shop_silver_band':  return _avAccessorySilverBand();
+    case 'shop_pocket_watch':           return _avAccessoryPocketWatch();
+    case 'shop_silver_band':            return _avAccessorySilverBand();
+    // v3.1.0 boss preview accessories
+    case 'boss_pf_chip_charm':          return _avAccessoryBossPFChipCharm();
+    case 'boss_cvj_risk_charm':         return _avAccessoryBossCVJRiskCharm();
+    case 'boss_rj_shadow_band':         return _avAccessoryBossRJShadowBand();
+    case 'boss_md_decision_marker':     return _avAccessoryBossMDDecisionMarker();
+    // v3.1.0 achievement + rank preview accessories
+    case 'achv_no_critical_patch':      return _avAccessoryAchvNoCriticalPatch();
+    case 'rank_squire_insignia':        return _avAccessoryRankSquireInsignia();
     default: return '';
   }
 }
@@ -13998,6 +14279,426 @@ function _avAccessorySilverBand() {
   s += R(18, 40, 4, 1, silverSh);  // bottom shadow
   // Tiny gold accent dot (premium touch)
   s += R(20, 39, 1, 1, '#d4af37');
+  return s;
+}
+
+// ============================================================
+// v3.1.0 PREVIEW-ONLY SPRITES — Boss / Achievement / Rank
+// ============================================================
+// Lightweight sprites (3-7 rects each) for preview catalog items. These render
+// the same way as shop items via the per-slot dispatchers — preview-only
+// status is enforced at the BUY/EQUIP layer, not the render layer.
+
+// ----- BOSS PREVIEW SPRITES (21 items) -----
+
+// Push/Fold Boss — All-In Set (red theme)
+function _avHatBossPFAllInBand() {
+  const R = _avRect; let s = '';
+  s += R(22, 8, 20, 2, '#c41a2a');
+  s += R(22, 8, 20, 1, '#e84050');
+  s += R(31, 8, 2, 1, '#d4af37');     // gold chip emblem center
+  s += R(40, 8, 3, 2, '#8e1a26');     // side knot
+  return s;
+}
+function _avTopBossPFJersey(bodyType) {
+  const body='#c41a2a', sh='#8e1a26', hl='#e84050', stripe='#f0f0f8';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    s += R(28, 27, 8, 1, sh);          // V neck
+    s += R(20, 31, 4, 1, stripe);      // L stripe
+    s += R(40, 31, 4, 1, stripe);      // R stripe
+    s += R(31, 35, 2, 3, stripe);      // center number stripe
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body); s += R(28, 27, 8, 1, sh);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+    s += R(31, 30, 2, 8, stripe);      // center number stripe
+  }
+  return s;
+}
+function _avAccessoryBossPFChipCharm() {
+  const R = _avRect; let s = '';
+  // Chip-shaped charm at left hip
+  s += R(15, 41, 4, 4, '#d4af37');
+  s += R(15, 41, 4, 1, '#f0d060');
+  s += R(15, 44, 4, 1, '#9e7d20');
+  s += R(16, 42, 2, 2, '#1a2332');    // chip face
+  s += R(16, 42, 2, 1, '#c41a2a');    // red emblem
+  return s;
+}
+
+// Call vs Jam Boss — Pressure Set (deep wine theme)
+function _avHatBossCVJHeadset() {
+  const R = _avRect; let s = '';
+  // Headband across top
+  s += R(22, 4, 20, 2, '#1a1a26');
+  s += R(22, 4, 20, 1, '#3a3a4a');
+  // Ear cups on sides
+  s += R(20, 8, 4, 4, '#1a1a26');
+  s += R(40, 8, 4, 4, '#1a1a26');
+  s += R(20, 8, 1, 4, '#3a3a4a');     // L cup highlight
+  // Tiny mic boom
+  s += R(19, 12, 1, 2, '#5a5a6a');
+  return s;
+}
+function _avTopBossCVJJamline(bodyType) {
+  const body='#7a1a26', sh='#4a0f1a', hl='#a83040';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    s += R(28, 27, 8, 1, sh);
+    s += R(31, 28, 2, 13, '#d4af37');  // gold center stripe
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body); s += R(28, 27, 8, 1, sh);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(31, 28, 2, 12, '#d4af37');  // gold stripe
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avAccessoryBossCVJRiskCharm() {
+  const R = _avRect; let s = '';
+  s += R(15, 41, 4, 4, '#7a1a26');    // wine red tag
+  s += R(15, 41, 4, 1, '#a83040');
+  s += R(16, 42, 2, 2, '#f0f0f8');    // white center
+  s += R(16, 42, 2, 1, '#c41a2a');    // red mark
+  return s;
+}
+
+// BB Defense Boss — Fortress Set (gray/silver theme)
+function _avHatBossBBFortressHelm() {
+  const R = _avRect; let s = '';
+  // Gray knight helm covering head
+  s += R(23, 4, 18, 1, '#6a7080');
+  s += R(22, 5, 20, 5, '#6a7080');
+  s += R(22, 5, 20, 1, '#9aa0b0');    // top highlight
+  s += R(40, 6, 2, 4, '#3a404a');     // right shadow
+  s += R(22, 10, 20, 1, '#3a404a');   // bottom edge
+  // Visor slit (eyes area at y=11-12 visible)
+  s += R(24, 11, 16, 1, '#1a1a26');
+  return s;
+}
+function _avTopBossBBBulwarkJacket(bodyType) {
+  const body='#6a7080', sh='#3a404a', hl='#9aa0b0', plate='#5a606e';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    s += R(20, 33, 24, 1, plate);     // chest plate line
+    s += R(20, 38, 24, 1, plate);     // belt plate line
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(22, 33, 20, 1, plate);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avBackBossBBFortressBanner() {
+  const R = _avRect; let s = '';
+  // Gray banner draping right shoulder
+  s += R(43, 30, 6, 18, '#6a7080');
+  s += R(43, 30, 6, 1, '#9aa0b0');
+  s += R(43, 47, 6, 1, '#3a404a');
+  s += R(48, 30, 1, 18, '#3a404a');
+  s += R(45, 36, 2, 4, '#9aa0b0');    // emblem center
+  return s;
+}
+
+// Blind Battle Boss — Sentinel Set (gold theme)
+function _avHatBossBlindSentinelVisor() {
+  const R = _avRect; let s = '';
+  s += R(24, 7, 16, 1, '#d4af37');    // top strap
+  s += R(22, 8, 20, 1, '#d4af37');    // brim
+  s += R(20, 9, 24, 1, '#d4af37');    // wider brim
+  s += R(20, 10, 24, 1, '#9e7d20');   // brim shadow
+  s += R(31, 7, 2, 1, '#1a2332');     // emblem
+  return s;
+}
+function _avTopBossBlindDuelguard(bodyType) {
+  const body='#3a3a52', sh='#1a1a36', hl='#5a5a72', gold='#d4af37';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    s += R(20, 30, 24, 1, gold);      // gold collar trim
+    s += R(20, 41, 24, 1, gold);      // gold hem
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 1, gold);
+    s += R(22, 30, 20, 3, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(21, 42, 22, 1, gold);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avBackBossBlindTwinCoinBanner() {
+  const R = _avRect; let s = '';
+  s += R(43, 30, 6, 18, '#3a3a52');
+  s += R(43, 30, 6, 1, '#5a5a72');
+  s += R(48, 30, 1, 18, '#1a1a36');
+  s += R(44, 35, 2, 2, '#d4af37');    // L coin
+  s += R(46, 38, 2, 2, '#d4af37');    // R coin (offset)
+  return s;
+}
+
+// Rejam Boss — Ambush Set (purple theme)
+function _avHatBossRJHood() {
+  const R = _avRect; let s = '';
+  // Hood drapes from top of head down sides past temples
+  s += R(22, 4, 20, 2, '#2a1f4a');
+  s += R(20, 6, 24, 4, '#2a1f4a');
+  s += R(20, 6, 1, 4, '#3a2f5a');     // L highlight
+  s += R(43, 6, 1, 4, '#1a0f2a');     // R shadow
+  s += R(20, 10, 4, 3, '#2a1f4a');    // L drape
+  s += R(40, 10, 4, 3, '#2a1f4a');    // R drape
+  return s;
+}
+function _avBackBossRJAmbushCloak() {
+  const R = _avRect; let s = '';
+  s += R(43, 28, 6, 22, '#2a1f4a');
+  s += R(43, 28, 6, 1, '#3a2f5a');
+  s += R(48, 28, 1, 22, '#1a0f2a');
+  s += R(43, 49, 6, 1, '#1a0f2a');
+  // Inner highlight stripe
+  s += R(45, 30, 1, 18, '#3a2f5a');
+  return s;
+}
+function _avAccessoryBossRJShadowBand() {
+  const R = _avRect; let s = '';
+  s += R(18, 39, 4, 2, '#2a1f4a');    // dark wristband
+  s += R(18, 39, 4, 1, '#3a2f5a');
+  s += R(18, 40, 4, 1, '#1a0f2a');
+  s += R(20, 39, 1, 1, '#a78bfa');    // small purple gem
+  return s;
+}
+
+// Open vs 3-Bet Boss — Counterplay Set (cyan theme)
+function _avHatBossO3BVisor() {
+  const R = _avRect; let s = '';
+  s += R(24, 7, 16, 1, '#2da8c4');
+  s += R(22, 8, 20, 1, '#2da8c4');
+  s += R(20, 9, 24, 1, '#2da8c4');
+  s += R(20, 10, 24, 1, '#1a6e80');
+  // Grid pattern: 3 dots
+  s += R(26, 9, 1, 1, '#1a2332');
+  s += R(31, 9, 1, 1, '#1a2332');
+  s += R(36, 9, 1, 1, '#1a2332');
+  return s;
+}
+function _avTopBossO3BJacket(bodyType) {
+  const body='#2da8c4', sh='#1a6e80', hl='#5fc8e0';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    s += R(28, 27, 8, 1, sh);
+    s += R(20, 32, 1, 9, hl); s += R(43, 32, 1, 9, sh);
+    s += R(31, 32, 2, 1, '#1a2332'); s += R(31, 36, 2, 1, '#1a2332');  // chest dots
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avBackBossO3BSatchel() {
+  const R = _avRect; let s = '';
+  s += R(43, 32, 6, 14, '#2da8c4');
+  s += R(43, 32, 6, 1, '#5fc8e0');
+  s += R(48, 32, 1, 14, '#1a6e80');
+  s += R(45, 36, 2, 1, '#1a2332');    // grid emblem
+  s += R(43, 30, 1, 2, '#1a6e80');    // strap
+  s += R(40, 34, 4, 2, '#1a6e80');
+  return s;
+}
+
+// Mixed Decision Boss — Prism Set (cyan + magenta two-tone theme)
+function _avHatBossMDPrismVisor() {
+  const R = _avRect; let s = '';
+  s += R(24, 7, 16, 1, '#2da8c4');
+  s += R(22, 8, 10, 1, '#2da8c4');    // L half cyan
+  s += R(32, 8, 10, 1, '#c4407a');    // R half magenta
+  s += R(20, 9, 12, 1, '#2da8c4');
+  s += R(32, 9, 12, 1, '#c4407a');
+  s += R(20, 10, 12, 1, '#1a6e80');
+  s += R(32, 10, 12, 1, '#7a2050');
+  return s;
+}
+function _avTopBossMDSplitCoat(bodyType) {
+  const cyan='#2da8c4', mag='#c4407a', cyanSh='#1a6e80', magSh='#7a2050';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 12, 2, cyan); s += R(32, 27, 12, 2, mag);
+    s += R(18, 29, 14, 1, cyan); s += R(32, 29, 14, 1, mag);
+    s += R(19, 30, 13, 1, cyan); s += R(32, 30, 13, 1, mag);
+    s += R(20, 31, 12, 10, cyan); s += R(32, 31, 12, 10, mag);
+    s += R(28, 27, 4, 1, cyanSh); s += R(32, 27, 4, 1, magSh);
+    s += R(45, 30, 1, 11, magSh);
+  } else {
+    s += R(22, 27, 10, 2, cyan); s += R(32, 27, 10, 2, mag);
+    s += R(22, 29, 10, 4, cyan); s += R(32, 29, 10, 4, mag);
+    s += R(23, 33, 9, 1, cyan); s += R(32, 33, 9, 1, mag);
+    s += R(24, 34, 8, 1, cyan); s += R(32, 34, 8, 1, mag);
+    s += R(25, 35, 7, 3, cyan); s += R(32, 35, 7, 3, mag);
+    s += R(24, 38, 8, 1, cyan); s += R(32, 38, 8, 1, mag);
+    s += R(22, 39, 10, 1, cyan); s += R(32, 39, 10, 1, mag);
+    s += R(21, 40, 11, 2, cyan); s += R(32, 40, 11, 2, mag);
+    s += R(21, 29, 2, 1, cyan); s += R(20, 30, 3, 1, cyan); s += R(19, 31, 4, 1, cyan); s += R(18, 32, 5, 5, cyan);
+    s += R(41, 29, 2, 1, mag); s += R(42, 30, 3, 1, mag); s += R(43, 31, 4, 1, mag); s += R(42, 32, 5, 5, mag);
+  }
+  return s;
+}
+function _avAccessoryBossMDDecisionMarker() {
+  const R = _avRect; let s = '';
+  s += R(15, 41, 2, 4, '#2da8c4');    // L half cyan
+  s += R(17, 41, 2, 4, '#c4407a');    // R half magenta
+  s += R(15, 41, 4, 1, '#5fc8e0');    // top highlight
+  s += R(15, 44, 4, 1, '#1a6e80');    // bottom shadow
+  return s;
+}
+
+// ----- ACHIEVEMENT PREVIEW SPRITES (5 items) -----
+
+function _avHatAchvStreak7Band() {
+  const R = _avRect; let s = '';
+  s += R(22, 8, 20, 2, '#ff8c1a');    // orange band
+  s += R(22, 8, 20, 1, '#ffb060');    // top highlight
+  // Small flame on right side
+  s += R(40, 7, 2, 1, '#ff4020');
+  s += R(40, 6, 1, 1, '#ffd060');
+  return s;
+}
+function _avBackAchvMarathonCape() {
+  const R = _avRect; let s = '';
+  // Long cape from shoulders to past hips
+  s += R(43, 28, 6, 22, '#3d5b8c');
+  s += R(43, 28, 6, 1, '#5d7bac');
+  s += R(48, 28, 1, 22, '#1d3b6c');
+  s += R(45, 32, 2, 14, '#5d7bac');   // center stripe
+  return s;
+}
+function _avAccessoryAchvNoCriticalPatch() {
+  const R = _avRect; let s = '';
+  s += R(15, 41, 4, 4, '#1a6e30');    // green patch
+  s += R(15, 41, 4, 1, '#3a8e50');
+  // Checkmark
+  s += R(16, 43, 1, 1, '#ffffff');
+  s += R(17, 44, 1, 1, '#ffffff');
+  s += R(18, 42, 1, 1, '#ffffff');
+  return s;
+}
+function _avFaceAchvScholarGlasses() {
+  const R = _avRect; let s = '';
+  // Round glasses frames
+  s += R(25, 14, 4, 3, '#1a1a26');    // L lens frame
+  s += R(35, 14, 4, 3, '#1a1a26');    // R lens frame
+  s += R(26, 15, 2, 1, '#5a8ab2');    // L lens shine
+  s += R(36, 15, 2, 1, '#5a8ab2');    // R lens shine
+  s += R(29, 15, 6, 1, '#1a1a26');    // bridge
+  return s;
+}
+function _avHatAchvPBCrown() {
+  const R = _avRect; let s = '';
+  // Small 3-point gold crown on top of head
+  s += R(25, 5, 2, 1, '#d4af37');
+  s += R(31, 4, 2, 2, '#f0d060');
+  s += R(37, 5, 2, 1, '#d4af37');
+  s += R(24, 6, 16, 2, '#d4af37');    // crown band
+  s += R(24, 6, 16, 1, '#f0d060');    // band highlight
+  s += R(31, 6, 2, 1, '#c41a2a');     // ruby center
+  return s;
+}
+
+// ----- RANK PREVIEW SPRITES (5 items) -----
+
+function _avAccessoryRankSquireInsignia() {
+  const R = _avRect; let s = '';
+  // Bronze 4-pointed star pin at chest
+  s += R(15, 42, 4, 1, '#cd7f32');
+  s += R(16, 41, 2, 3, '#cd7f32');
+  s += R(15, 43, 4, 1, '#a06628');    // bottom shadow
+  s += R(16, 42, 2, 1, '#e8a050');    // top highlight
+  return s;
+}
+function _avBackRankRangerMantle() {
+  const R = _avRect; let s = '';
+  // Silver shoulder mantle (covers right shoulder area)
+  s += R(40, 28, 8, 6, '#b8bcc8');
+  s += R(40, 28, 8, 1, '#e8eaf0');    // top highlight
+  s += R(40, 33, 8, 1, '#7a808a');    // bottom shadow
+  s += R(47, 28, 1, 6, '#7a808a');
+  return s;
+}
+function _avBackRankKnightCape() {
+  const R = _avRect; let s = '';
+  // Gold-trim cape behind body
+  s += R(43, 28, 6, 18, '#1a3a72');   // navy cape body
+  s += R(43, 28, 6, 1, '#d4af37');    // gold top trim
+  s += R(43, 45, 6, 1, '#d4af37');    // gold bottom trim
+  s += R(43, 28, 1, 18, '#d4af37');   // gold L edge
+  s += R(48, 28, 1, 18, '#9e7d20');   // gold R shadow
+  return s;
+}
+function _avTopRankChampionMantle(bodyType) {
+  const body='#a8acbc', sh='#7a808a', hl='#e8eaf0', gold='#d4af37';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(18, 30, 28, 2, body);     // shoulder mantle (wider)
+    s += R(20, 32, 24, 9, body);
+    s += R(18, 30, 28, 1, gold);     // gold top trim
+    s += R(20, 41, 24, 1, gold);
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(20, 29, 24, 2, body);     // wider shoulder mantle
+    s += R(22, 31, 20, 2, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(20, 29, 24, 1, gold);
+    s += R(21, 42, 22, 1, gold);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avFaceRankWarlordMark() {
+  const R = _avRect; let s = '';
+  // Diamond mark on right cheek
+  s += R(38, 16, 1, 1, '#a78bfa');
+  s += R(37, 17, 3, 1, '#a78bfa');
+  s += R(38, 18, 1, 1, '#a78bfa');
+  s += R(38, 17, 1, 1, '#e8d4ff');    // shine
   return s;
 }
 
@@ -16406,10 +17107,16 @@ function _wardrobeSetTab(tab) {
 }
 
 // Equip item: validate ownership + slot match, mutate profile.wardrobe.equipped, persist, re-render all surfaces.
+// v3.1.0: hard-blocks preview-only items (extra defense — they can never be in
+// ownedItemIds anyway, but guard explicitly so the contract is clear).
 function equipItem(itemId) {
   if (!App.state.profile) return;
   const item = WARDROBE_ITEM_BY_ID[itemId];
   if (!item) { console.warn('[equipItem] unknown item:', itemId); return; }
+  if (item.previewOnly) {
+    if (typeof showToast === 'function') showToast('Unlock this item first');
+    return;
+  }
   const profile = App.state.profile;
   if (!Array.isArray(profile.ownedItemIds) || profile.ownedItemIds.indexOf(itemId) === -1) {
     console.warn('[equipItem] item not owned:', itemId);
@@ -16486,29 +17193,49 @@ function renderShopOverlayBody() {
   const ownedSet = new Set(profile.ownedItemIds || []);
   const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
   const activeTab = window._shopActiveTab || 'all';
-  // Tabs: All + each slot that has shop items
-  const slotsWithItems = ['head', 'top', 'bottom', 'shoes', 'back', 'accessory'].filter(function (slot) {
-    return SHOP_WARDROBE_ITEMS.some(function (it) { return it.slot === slot; });
-  });
-  const tabs = ['all'].concat(slotsWithItems);
-  const tabsHtml = tabs.map(function (t) {
-    const label = (t === 'all') ? 'All' : WARDROBE_SLOT_LABELS[t];
-    const cls = (activeTab === t) ? ' active' : '';
-    return '<button class="shop-tab' + cls + '" onclick="_shopSetTab(\'' + t + '\')">' + label + '</button>';
+  // v3.1.0: Source filters replace slot filters. Catalog is now unified
+  // (Shop + Boss + Achievement + Rank previews).
+  const SOURCE_FILTERS = [
+    { key:'all',          label:'All' },
+    { key:'shop',         label:'Shop' },
+    { key:'boss',         label:'Boss' },
+    { key:'achievement',  label:'Achv' },
+    { key:'rank',         label:'Rank' },
+    { key:'owned',        label:'Owned' }
+  ];
+  const tabsHtml = SOURCE_FILTERS.map(function (f) {
+    const cls = (activeTab === f.key) ? ' active' : '';
+    return '<button class="shop-tab' + cls + '" onclick="_shopSetTab(\'' + f.key + '\')">' + f.label + '</button>';
   }).join('');
-  // Filter items
-  const filtered = (activeTab === 'all')
-    ? SHOP_WARDROBE_ITEMS.slice()
-    : SHOP_WARDROBE_ITEMS.filter(function (it) { return it.slot === activeTab; });
-  // Sort: not-owned-affordable first, then owned, then unaffordable
+  // Build pool: unified catalog + (for Owned filter) starter items too
+  const allCatalog = (typeof getCatalogItems === 'function') ? getCatalogItems() : SHOP_WARDROBE_ITEMS.slice();
+  let filtered;
+  if (activeTab === 'all') {
+    filtered = allCatalog.slice();
+  } else if (activeTab === 'owned') {
+    // All owned items across starter + shop (boss/achv/rank can never be owned in v3.1.0)
+    filtered = (profile.ownedItemIds || [])
+      .map(function (id) { return WARDROBE_ITEM_BY_ID[id]; })
+      .filter(function (it) { return !!it; });
+  } else {
+    filtered = allCatalog.filter(function (it) { return it.source === activeTab; });
+  }
+  // Sort: shop items first (affordable, owned, by price), then preview items by rarity
+  const RARITY_ORDER = { common:1, uncommon:2, rare:3, prestige:4, signature:5, starter:0 };
   filtered.sort(function (a, b) {
-    const aOwned = ownedSet.has(a.id);
-    const bOwned = ownedSet.has(b.id);
-    if (aOwned !== bOwned) return aOwned ? 1 : -1;
-    return a.price - b.price;
+    const aShop = (a.source === 'shop');
+    const bShop = (b.source === 'shop');
+    if (aShop !== bShop) return aShop ? -1 : 1;
+    if (aShop && bShop) {
+      const aOwned = ownedSet.has(a.id);
+      const bOwned = ownedSet.has(b.id);
+      if (aOwned !== bOwned) return aOwned ? 1 : -1;
+      return (a.price || 0) - (b.price || 0);
+    }
+    return (RARITY_ORDER[a.rarity] || 0) - (RARITY_ORDER[b.rarity] || 0);
   });
   const cardsHtml = filtered.length === 0
-    ? '<div class="shop-empty">No items in this category yet. More coming soon.</div>'
+    ? '<div class="shop-empty">No items in this view yet.</div>'
     : filtered.map(function (it) { return _shopRenderItemCard(it, ownedSet, equipped, profile, chips); }).join('');
   return '' +
     '<div class="shop-overlay-shell">' +
@@ -16517,13 +17244,13 @@ function renderShopOverlayBody() {
         '<button class="shop-close-btn" onclick="closeShopOverlay()" aria-label="Close Shop" title="Close">✕</button>' +
       '</div>' +
       '<div class="shop-title-row">' +
-        '<div class="shop-title">' + renderChipsIcon(22) + ' Shop</div>' +
+        '<div class="shop-title">' + renderChipsIcon(22) + ' Catalog</div>' +
         '<div class="shop-title-balance">' + renderChipsIcon(16) +
           '<span style="font-variant-numeric:tabular-nums">' + formatChips(chips) + '</span>' +
           '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.8px;opacity:0.75;text-transform:uppercase">Chips</span>' +
         '</div>' +
       '</div>' +
-      '<div class="shop-sub">Spend Chips on cosmetics. Items appear in your Wardrobe instantly after purchase.</div>' +
+      '<div class="shop-sub">Buy cosmetics with Chips. Preview exclusive rewards earned from Bosses, ranks, and achievements.</div>' +
       '<div class="shop-tabs">' + tabsHtml + '</div>' +
       '<div class="shop-grid">' + cardsHtml + '</div>' +
       '<div class="shop-cross-link">' +
@@ -16539,7 +17266,9 @@ function renderShopOverlayBody() {
 function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
   const isOwned = ownedSet.has(item.id);
   const isEquipped = (equipped[item.slot] === item.id);
-  const affordable = chips >= item.price;
+  const isPreviewOnly = !!item.previewOnly;
+  const isPurchasable = !isPreviewOnly && (item.price != null);
+  const affordable = isPurchasable && (chips >= item.price);
   // Mini character preview with this item equipped (override slot for preview)
   const previewEquipped = Object.assign({}, equipped);
   previewEquipped[item.slot] = item.id;
@@ -16563,17 +17292,26 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
     ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
     (RARITY_LABELS[item.rarity] || 'Common') + '</span>';
   const headerHtml = '<div class="shop-card-header">' + sourceTag + rarityPill + '</div>';
-  // State-specific action
+  // v3.1.0: card-state machine
   let actionHtml;
+  let priceHtml;
   let cardClass = 'shop-card';
   if (isOwned) {
     cardClass += isEquipped ? ' equipped' : ' owned';
+    priceHtml = '';   // owned items don't show price
     actionHtml = isEquipped
       ? '<div class="shop-owned-pill">✓ Equipped</div>'
       : '<div class="shop-owned-pill">✓ Owned</div>' +
         '<button class="shop-equip-btn" onclick="equipItem(\'' + item.id + '\')">Equip Now</button>';
+  } else if (isPreviewOnly) {
+    // PREVIEW-ONLY: Boss / Achievement / Rank items not yet unlocked
+    cardClass += ' preview-only preview-' + itemSource;
+    priceHtml = '<div class="shop-card-preview-label">Preview Only</div>';
+    actionHtml = '<button class="shop-unlock-btn" onclick="openHowToUnlockModal(\'' + item.id + '\')">How to Unlock</button>';
   } else {
+    // BUYABLE shop item
     cardClass += affordable ? ' affordable' : ' unaffordable';
+    priceHtml = '<div class="shop-card-price">' + renderChipsIcon(14) + formatChips(item.price) + '</div>';
     const btnLabel = affordable ? 'Buy' : 'Need ' + (item.price - chips) + ' more';
     const onclick = affordable ? 'buyShopItem(\'' + item.id + '\')' : 'void(0)';
     actionHtml = '<button class="shop-buy-btn ' + (affordable ? 'affordable' : 'unaffordable') +
@@ -16585,7 +17323,7 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
       '<div class="shop-card-thumb">' + previewSvg + '</div>' +
       '<div class="shop-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
       '<div class="shop-card-slot">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>' +
-      '<div class="shop-card-price">' + renderChipsIcon(14) + formatChips(item.price) + '</div>' +
+      priceHtml +
       actionHtml +
     '</div>';
 }
@@ -16596,10 +17334,17 @@ function _shopBackToWardrobe() {
 }
 
 // Buy flow: validate ownership + balance + item, deduct chips, add to ownedItemIds, save, toast.
+// v3.1.0: hard-blocks preview-only items (Boss/Achievement/Rank) — they are
+// catalog-visible but not purchasable; they unlock via gameplay later.
 function buyShopItem(itemId) {
   if (!App.state.profile) return;
   const item = WARDROBE_ITEM_BY_ID[itemId];
   if (!item) { console.warn('[buyShopItem] unknown item:', itemId); return; }
+  // v3.1.0 hard guard: preview-only items can never be purchased
+  if (item.previewOnly || item.purchasable === false) {
+    if (typeof showToast === 'function') showToast('This item is unlocked by gameplay, not Chips');
+    return;
+  }
   const profile = App.state.profile;
   if (!Array.isArray(profile.ownedItemIds)) profile.ownedItemIds = [];
   if (profile.ownedItemIds.indexOf(itemId) !== -1) {
@@ -16622,6 +17367,94 @@ function buyShopItem(itemId) {
   try { refreshAllWallets(); } catch (e) {}
   // Toast with Equip Now CTA
   if (typeof showToast === 'function') showToast('✓ Bought · ' + item.name + ' (-' + price + ' Chips)');
+}
+
+// ============================================================
+// HOW TO UNLOCK MODAL v3.1.0
+// ============================================================
+// Lightweight read-only modal. Shows item preview + source + rarity + unlock
+// requirement + safe CTA (home/drill navigation only). Does NOT mutate state.
+
+function openHowToUnlockModal(itemId) {
+  const item = WARDROBE_ITEM_BY_ID[itemId];
+  if (!item) return;
+  if (!item.previewOnly) {
+    if (typeof showToast === 'function') showToast('This item is already buyable from Shop');
+    return;
+  }
+  const overlay = document.getElementById('unlockModal');
+  if (!overlay) return;
+  const body = document.getElementById('unlockModalBody');
+  if (body) body.innerHTML = _renderHowToUnlockModalBody(item);
+  overlay.classList.remove('hidden');
+}
+
+function closeHowToUnlockModal() {
+  const overlay = document.getElementById('unlockModal');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+function _renderHowToUnlockModalBody(item) {
+  const profile = App.state.profile || {};
+  const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
+  // Build preview with this item equipped (same pattern as shop card)
+  const previewEquipped = Object.assign({}, equipped);
+  previewEquipped[item.slot] = item.id;
+  const previewOpts = {
+    bodyType: profile.avatarCharacter && profile.avatarCharacter.bodyType,
+    skin: profile.avatarCharacter && profile.avatarCharacter.skin,
+    hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
+    hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
+    equipped: previewEquipped
+  };
+  const previewSvg = renderCharacterSvg(previewOpts, 'stand');
+  const itemSource = item.source || 'shop';
+  const sourceColor = SOURCE_COLORS[itemSource] || SOURCE_COLORS.shop;
+  const rarityColor = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
+  const unlock = item.unlock || {};
+  // Compute progress if available (e.g. streak items)
+  let progressHtml = '';
+  if (unlock.progressKey === 'streaks.daily' && App.state.streaks) {
+    const cur = App.state.streaks.daily || 0;
+    const tgt = unlock.target || 0;
+    const pct = Math.min(100, Math.round((cur / tgt) * 100));
+    progressHtml =
+      '<div class="unlock-progress-row">' +
+        '<div class="unlock-progress-label">Progress: ' + cur + ' / ' + tgt + ' days</div>' +
+        '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
+      '</div>';
+  }
+  // Safe CTA — only home / drill navigation, no fragile deep routing
+  let ctaHtml = '';
+  if (unlock.ctaTarget && unlock.ctaLabel) {
+    let onclickAction = '';
+    if (unlock.ctaTarget === 'home') onclickAction = "closeHowToUnlockModal(); closeShopOverlay(); switchTab('mastery');";
+    else if (unlock.ctaTarget === 'drill') onclickAction = "closeHowToUnlockModal(); closeShopOverlay(); switchTab('drill');";
+    if (onclickAction) {
+      ctaHtml = '<button class="unlock-cta-btn" onclick="' + onclickAction + '">' + _trainerEscapeHtml(unlock.ctaLabel) + ' →</button>';
+    }
+  }
+  return '' +
+    '<div class="unlock-modal-shell">' +
+      '<div class="unlock-modal-header-row">' +
+        '<button class="unlock-close-btn" onclick="closeHowToUnlockModal()" aria-label="Close" title="Close">✕</button>' +
+      '</div>' +
+      '<div class="unlock-modal-preview">' + previewSvg + '</div>' +
+      '<div class="unlock-modal-tags">' +
+        '<span class="shop-card-source" style="background:' + sourceColor.bg + ';border:1px solid ' + sourceColor.border + ';color:' + sourceColor.text + '">' +
+          (SOURCE_LABELS[itemSource] || 'Shop') + '</span>' +
+        '<span class="shop-card-rarity" style="background:' + rarityColor.bg + ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
+          (RARITY_LABELS[item.rarity] || 'Common') + '</span>' +
+      '</div>' +
+      '<h2 class="unlock-modal-title">' + _trainerEscapeHtml(item.name) + '</h2>' +
+      '<p class="unlock-modal-desc">' + _trainerEscapeHtml(item.description || '') + '</p>' +
+      '<div class="unlock-modal-req">' +
+        '<div class="unlock-req-label">How to Unlock</div>' +
+        '<div class="unlock-req-text">' + _trainerEscapeHtml(unlock.requirement || 'Earn through gameplay.') + '</div>' +
+        progressHtml +
+      '</div>' +
+      ctaHtml +
+    '</div>';
 }
 
 // Unequip slot (only valid for optional slots: head, face, back, accessory)
@@ -19614,7 +20447,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.0.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -19725,7 +20558,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.0.1',
+    appVersion: '3.1.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
