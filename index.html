@@ -5281,6 +5281,197 @@
     }
 
     /* ========================================================================
+       v3.7.0 — Collection Completion Rewards UI (Next Rewards card,
+       milestone strips, claimed badges, Boss-set claim banner)
+       ======================================================================== */
+    /* "Next Collection Rewards" card on Overview */
+    .cc-next-rewards-card {
+      padding: 14px 14px 12px;
+      margin-bottom: 18px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.16) 0%, transparent 65%),
+        linear-gradient(180deg, #1a2030 0%, #0a0e16 100%);
+      border: 1px solid rgba(212,175,55,0.45);
+      border-radius: 12px;
+      box-shadow: inset 0 0 0 1px rgba(212,175,55,0.18);
+    }
+    .cc-next-rewards-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 800; letter-spacing: 1.4px;
+      color: #f0d060; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .cc-next-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; margin-bottom: 6px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .cc-next-row:hover { border-color: rgba(212,175,55,0.40); background: rgba(212,175,55,0.06); }
+    .cc-next-row:last-child { margin-bottom: 0; }
+    .cc-next-row.ready { border-color: rgba(110,231,183,0.50); background: rgba(110,231,183,0.06); }
+    .cc-next-icon {
+      width: 26px; height: 26px; flex-shrink: 0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #f0d060;
+      background: radial-gradient(circle, rgba(212,175,55,0.30) 0%, transparent 75%);
+      box-shadow: 0 0 6px rgba(212,175,55,0.25);
+    }
+    .cc-next-row.ready .cc-next-icon { color: #6ee7b7; box-shadow: 0 0 6px rgba(110,231,183,0.45); }
+    .cc-next-text { flex: 1; min-width: 0; }
+    .cc-next-name {
+      font-size: 12.5px; font-weight: 700; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .cc-next-meta {
+      font-size: 10px; color: var(--text-secondary);
+      letter-spacing: 0.4px; margin-top: 2px;
+    }
+    .cc-next-bar {
+      height: 3px; background: rgba(0,0,0,0.40);
+      border-radius: 999px; overflow: hidden;
+      margin-top: 4px;
+    }
+    .cc-next-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37 0%, #f0d060 100%);
+      border-radius: 999px;
+    }
+    .cc-next-row.ready .cc-next-bar-fill { background: linear-gradient(90deg, #6ee7b7 0%, #d4af37 100%); }
+    .cc-next-chips {
+      flex-shrink: 0; font-size: 11px; font-weight: 800;
+      color: #f0d060; letter-spacing: 0.4px;
+      padding: 3px 8px; border-radius: 999px;
+      background: rgba(212,175,55,0.12);
+      border: 1px solid rgba(212,175,55,0.40);
+      white-space: nowrap;
+    }
+
+    /* Per-tab milestone strip */
+    .cc-milestone-strip {
+      display: flex; gap: 8px; margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .cc-milestone-strip::-webkit-scrollbar { display: none; }
+    .cc-milestone-pill {
+      flex: 1; min-width: 80px;
+      padding: 8px 6px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 8px;
+      text-align: center;
+      transition: all 120ms ease;
+    }
+    .cc-milestone-pill.claimed {
+      border-color: rgba(212,175,55,0.55);
+      background: linear-gradient(135deg, rgba(212,175,55,0.14) 0%, rgba(0,0,0,0.10) 100%);
+    }
+    .cc-milestone-pill.ready {
+      border-color: rgba(110,231,183,0.55);
+      background: linear-gradient(135deg, rgba(110,231,183,0.14) 0%, rgba(0,0,0,0.10) 100%);
+      animation: cc-ready-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes cc-ready-pulse {
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(110,231,183,0.20), 0 0 0 0 rgba(110,231,183,0.0); }
+      50%      { box-shadow: inset 0 0 0 1px rgba(110,231,183,0.45), 0 0 12px rgba(110,231,183,0.30); }
+    }
+    .cc-milestone-pill-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.6px;
+      color: var(--text-secondary); text-transform: uppercase;
+    }
+    .cc-milestone-pill.claimed .cc-milestone-pill-label { color: #d4af37; }
+    .cc-milestone-pill-num {
+      font-size: 14px; font-weight: 800; color: var(--text);
+      margin-top: 2px;
+    }
+    .cc-milestone-pill-chips {
+      font-size: 10px; color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .cc-milestone-pill.claimed .cc-milestone-pill-chips { color: #f0d060; }
+    .cc-milestone-pill-state {
+      font-size: 9px; font-weight: 800; letter-spacing: 0.6px;
+      text-transform: uppercase; margin-top: 4px;
+    }
+    .cc-milestone-pill.claimed .cc-milestone-pill-state { color: #d4af37; }
+    .cc-milestone-pill.ready   .cc-milestone-pill-state { color: #6ee7b7; }
+
+    /* Boss Set summary card claim ribbon */
+    .boss-set-card-claim {
+      margin-top: 8px;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
+      padding: 5px 8px; border-radius: 6px;
+      text-align: center;
+    }
+    .boss-set-card-claim.unclaimed-progress {
+      background: rgba(255,255,255,0.03);
+      color: var(--text-secondary);
+      border: 1px dashed rgba(255,255,255,0.15);
+    }
+    .boss-set-card-claim.ready {
+      background: rgba(110,231,183,0.14);
+      border: 1px solid rgba(110,231,183,0.50);
+      color: #6ee7b7;
+    }
+    .boss-set-card-claim.claimed {
+      background: linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 100%);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #f0d060;
+    }
+    /* Boss Set detail claim banner */
+    .boss-set-detail-claim {
+      padding: 12px 14px; margin: 0 0 14px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 12px; letter-spacing: 0.4px;
+    }
+    .boss-set-detail-claim.unclaimed-progress {
+      background: rgba(232,74,94,0.06);
+      border: 1px solid rgba(232,74,94,0.30);
+      color: var(--text-secondary);
+    }
+    .boss-set-detail-claim.unclaimed-progress strong { color: #e84a5e; }
+    .boss-set-detail-claim.ready {
+      background: rgba(110,231,183,0.10);
+      border: 1px solid rgba(110,231,183,0.55);
+      color: #6ee7b7;
+    }
+    .boss-set-detail-claim.claimed {
+      background: linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(0,0,0,0.10) 100%);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #f0d060;
+    }
+    .boss-set-detail-claim strong { font-weight: 800; }
+
+    /* Rank ladder tier collection reward badge */
+    .rank-ladder-cc {
+      margin-top: 8px;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
+      padding: 5px 8px; border-radius: 6px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .rank-ladder-cc.unclaimed-progress {
+      background: rgba(167,139,250,0.06);
+      border: 1px dashed rgba(167,139,250,0.30);
+      color: var(--text-secondary);
+    }
+    .rank-ladder-cc.ready {
+      background: rgba(110,231,183,0.14);
+      border: 1px solid rgba(110,231,183,0.55);
+      color: #6ee7b7;
+    }
+    .rank-ladder-cc.claimed {
+      background: linear-gradient(135deg, rgba(212,175,55,0.20) 0%, rgba(212,175,55,0.06) 100%);
+      border: 1px solid rgba(212,175,55,0.60);
+      color: #f0d060;
+    }
+
+    /* ========================================================================
        v3.5.0 — Answer FX System (themed per-button press feedback)
        Each pack reads --fx-primary / --fx-secondary / --fx-glow / --fx-icon
        set inline at trigger time. Animations are short, GPU-friendly, and
@@ -8746,6 +8937,10 @@ const App = {
       // Renders around the trainer character on identity surfaces. Single equip.
       ownedAuraIds: [],
       equippedAuraId: null,
+      // v3.7.0: Collection completion reward history. Append-only, idempotent.
+      // Each entry: { key, type, group?, rewardName, chipsAwarded, marker, date, trigger }
+      // Used as the dedup ledger for one-shot collection milestone grants.
+      collectionRewardHistory: [],
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
       // v2.4.0: Personal Records ATH cache. Three keys, populated lazily
@@ -15981,6 +16176,451 @@ function showRewardSummaryToast(items) {
   }, 8000);
 }
 
+// ============================================================
+// v3.7.0 — COLLECTION COMPLETION REWARDS
+// ============================================================
+// Long-term motivation layer. When a player completes a Boss set, hits a
+// source-collection milestone (e.g. 5 FX owned), reaches a rank tier
+// collection (e.g. all rewards through Knight), or accumulates a total
+// non-starter collection size (25/50/100/all) — they get a one-shot Chips
+// bonus + a marker label recorded in profile.collectionRewardHistory.
+//
+// Reward grants are deterministic, idempotent, and never tied to chance.
+// Render functions never mutate state — checkCollectionCompletionRewards
+// runs only after ownership-changing events (purchases, grants, backfill).
+
+// ----- Helpers: ownership counts (read-only) -----
+function _ccOwned() {
+  const p = (App.state && App.state.profile) || {};
+  return new Set(
+    (p.ownedItemIds || [])
+      .concat(p.ownedAnswerFxIds || [])
+      .concat(p.ownedAuraIds || [])
+  );
+}
+
+// Predicate per spec section 12 — used for "total" milestones to avoid
+// counting the 6 free starter wardrobe items.
+function isCollectionEligibleItem(item) {
+  if (!item) return false;
+  if (item.source === 'starter') return false;
+  return true;
+}
+
+function _ccTotalNonStarterOwned() {
+  const owned = _ccOwned();
+  const all = (typeof getCatalogItems === 'function') ? getCatalogItems() : [];
+  let count = 0;
+  for (let i = 0; i < all.length; i++) {
+    if (owned.has(all[i].id) && isCollectionEligibleItem(all[i])) count++;
+  }
+  return count;
+}
+function _ccTotalNonStarterCatalog() {
+  const all = (typeof getCatalogItems === 'function') ? getCatalogItems() : [];
+  let count = 0;
+  for (let i = 0; i < all.length; i++) {
+    if (isCollectionEligibleItem(all[i])) count++;
+  }
+  return count;
+}
+
+// Count items that have a given source AND a given kind (kind optional).
+function _ccCountOwnedBySource(source, kindFilter) {
+  const owned = _ccOwned();
+  const all = (typeof getCatalogItems === 'function') ? getCatalogItems() : [];
+  let count = 0, total = 0;
+  for (let i = 0; i < all.length; i++) {
+    const it = all[i];
+    if (it.source !== source) continue;
+    if (kindFilter && it.kind !== kindFilter) continue;
+    total++;
+    if (owned.has(it.id)) count++;
+  }
+  return { owned: count, total: total };
+}
+
+// Source-pool count: counts ALL items with a given source across kinds
+// (wardrobe + answer_fx + aura). Used for Achievement Collector milestones.
+function _ccCountSourcePool(source) {
+  return _ccCountOwnedBySource(source, null);
+}
+
+// Kind-pool count: counts ALL items of a given kind across sources.
+// Used for FX/Aura collector milestones (Section 10 / 11 — counts both
+// shop-bought and earned exclusives but excludes still-locked previews).
+function _ccCountKindPool(kind) {
+  const owned = _ccOwned();
+  const all = (typeof getCatalogItems === 'function') ? getCatalogItems() : [];
+  let count = 0, total = 0;
+  for (let i = 0; i < all.length; i++) {
+    const it = all[i];
+    if (it.kind !== kind) continue;
+    total++;
+    if (owned.has(it.id)) count++;
+  }
+  return { owned: count, total: total };
+}
+
+// Boss set complete? ALL wardrobe items in the boss set must be owned.
+// Per spec section 7: v1 counts wardrobe only, FX/Aura are "Related Rewards".
+function _ccIsBossSetComplete(moduleKey) {
+  if (typeof getBossItemsForModule !== 'function') return false;
+  const items = getBossItemsForModule(moduleKey);
+  if (items.length === 0) return false;
+  const owned = _ccOwned();
+  for (let i = 0; i < items.length; i++) {
+    if (!owned.has(items[i].id)) return false;
+  }
+  return true;
+}
+function _ccBossSetProgress(moduleKey) {
+  if (typeof getBossItemsForModule !== 'function') return { owned: 0, total: 0 };
+  const items = getBossItemsForModule(moduleKey);
+  const owned = _ccOwned();
+  let n = 0;
+  for (let i = 0; i < items.length; i++) if (owned.has(items[i].id)) n++;
+  return { owned: n, total: items.length };
+}
+
+// Rank-tier collection: all items granted by RANK_GRANTS up to and including
+// a given target tier must be owned. Tiers below count too.
+const _CC_RANK_TIER_TARGETS = {
+  knight:   { tiers: ['Bronze', 'Silver', 'Gold'],                                 display: 'Knight'   },
+  champion: { tiers: ['Bronze', 'Silver', 'Gold', 'Platinum'],                     display: 'Champion' },
+  mythic:   { tiers: ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master'], display: 'Mythic'   }
+};
+function _ccRankTierItemIds(tierKey) {
+  const def = _CC_RANK_TIER_TARGETS[tierKey];
+  if (!def || typeof RANK_GRANTS === 'undefined') return [];
+  const ids = [];
+  RANK_GRANTS.forEach(function (t) {
+    if (def.tiers.indexOf(t.rank) === -1) return;
+    t.itemIds.forEach(function (id) { ids.push(id); });
+  });
+  return ids;
+}
+function _ccIsRankTierComplete(tierKey) {
+  const ids = _ccRankTierItemIds(tierKey);
+  if (ids.length === 0) return false;
+  const owned = _ccOwned();
+  for (let i = 0; i < ids.length; i++) if (!owned.has(ids[i])) return false;
+  return true;
+}
+function _ccRankTierProgress(tierKey) {
+  const ids = _ccRankTierItemIds(tierKey);
+  const owned = _ccOwned();
+  let n = 0;
+  for (let i = 0; i < ids.length; i++) if (owned.has(ids[i])) n++;
+  return { owned: n, total: ids.length };
+}
+
+// ----- Collection rewards registry -----
+// Each entry:
+//   { key, type, group?, rewardName, marker, chips, condition(profile)=>bool, progress(profile)=>{owned,total} }
+//
+// Boss set entries are generated from BOSS_NAME_TO_MODULE_KEY at boot so the
+// registry stays in sync with whatever boss content exists.
+const COLLECTION_REWARDS = [];
+
+(function () {
+  // Boss set completions (one per boss module)
+  if (typeof BOSS_NAME_TO_MODULE_KEY !== 'undefined') {
+    Object.keys(BOSS_NAME_TO_MODULE_KEY).forEach(function (bossName) {
+      const moduleKey = BOSS_NAME_TO_MODULE_KEY[bossName];
+      COLLECTION_REWARDS.push({
+        key: 'collection:boss_set:' + moduleKey,
+        type: 'boss_set',
+        group: moduleKey,
+        rewardName: bossName + ' Set Complete',
+        marker: 'Set Complete: ' + bossName,
+        chips: 500,
+        condition: function () { return _ccIsBossSetComplete(moduleKey); },
+        progress: function () { return _ccBossSetProgress(moduleKey); }
+      });
+    });
+  }
+  // Achievement source-pool milestones
+  COLLECTION_REWARDS.push(
+    { key: 'collection:achievement:3', type: 'achievement_milestone', threshold: 3,
+      rewardName: '3 Achievement Rewards', marker: 'Achievement Collector I', chips: 300,
+      condition: function () { return _ccCountSourcePool('achievement').owned >= 3; },
+      progress: function () { const s = _ccCountSourcePool('achievement'); return { owned: Math.min(3, s.owned), total: 3, raw: s }; } },
+    { key: 'collection:achievement:5', type: 'achievement_milestone', threshold: 5,
+      rewardName: '5 Achievement Rewards', marker: 'Achievement Collector II', chips: 500,
+      condition: function () { return _ccCountSourcePool('achievement').owned >= 5; },
+      progress: function () { const s = _ccCountSourcePool('achievement'); return { owned: Math.min(5, s.owned), total: 5, raw: s }; } },
+    { key: 'collection:achievement:all', type: 'achievement_milestone', threshold: -1,
+      rewardName: 'All Achievement Rewards', marker: 'Achievement Completionist', chips: 1000,
+      condition: function () { const s = _ccCountSourcePool('achievement'); return s.total > 0 && s.owned >= s.total; },
+      progress: function () { const s = _ccCountSourcePool('achievement'); return { owned: s.owned, total: s.total, raw: s }; } }
+  );
+  // Rank tier collection milestones
+  COLLECTION_REWARDS.push(
+    { key: 'collection:rank:knight',   type: 'rank_tier', group: 'knight',
+      rewardName: 'Knight Collection',   marker: 'Knight Collector',   chips: 500,
+      condition: function () { return _ccIsRankTierComplete('knight'); },
+      progress: function () { return _ccRankTierProgress('knight'); } },
+    { key: 'collection:rank:champion', type: 'rank_tier', group: 'champion',
+      rewardName: 'Champion Collection', marker: 'Champion Collector', chips: 800,
+      condition: function () { return _ccIsRankTierComplete('champion'); },
+      progress: function () { return _ccRankTierProgress('champion'); } },
+    { key: 'collection:rank:mythic',   type: 'rank_tier', group: 'mythic',
+      rewardName: 'Mythic Collection',   marker: 'Mythic Collector',   chips: 1500,
+      condition: function () { return _ccIsRankTierComplete('mythic'); },
+      progress: function () { return _ccRankTierProgress('mythic'); } }
+  );
+  // Answer FX kind-pool milestones (count owned packs across all sources)
+  COLLECTION_REWARDS.push(
+    { key: 'collection:answer_fx:5',   type: 'fx_milestone',   threshold: 5,
+      rewardName: '5 Answer FX',       marker: 'FX Collector I',  chips: 300,
+      condition: function () { return _ccCountKindPool('answer_fx').owned >= 5; },
+      progress: function () { const s = _ccCountKindPool('answer_fx'); return { owned: Math.min(5, s.owned), total: 5, raw: s }; } },
+    { key: 'collection:answer_fx:10',  type: 'fx_milestone',   threshold: 10,
+      rewardName: '10 Answer FX',      marker: 'FX Collector II', chips: 700,
+      condition: function () { return _ccCountKindPool('answer_fx').owned >= 10; },
+      progress: function () { const s = _ccCountKindPool('answer_fx'); return { owned: Math.min(10, s.owned), total: 10, raw: s }; } },
+    { key: 'collection:answer_fx:all', type: 'fx_milestone',   threshold: -1,
+      rewardName: 'All Answer FX',     marker: 'FX Completionist', chips: 1200,
+      condition: function () { const s = _ccCountKindPool('answer_fx'); return s.total > 0 && s.owned >= s.total; },
+      progress: function () { const s = _ccCountKindPool('answer_fx'); return { owned: s.owned, total: s.total, raw: s }; } }
+  );
+  // Aura kind-pool milestones
+  COLLECTION_REWARDS.push(
+    { key: 'collection:aura:3',   type: 'aura_milestone', threshold: 3,
+      rewardName: '3 Aura',       marker: 'Aura Collector I',   chips: 400,
+      condition: function () { return _ccCountKindPool('aura').owned >= 3; },
+      progress: function () { const s = _ccCountKindPool('aura'); return { owned: Math.min(3, s.owned), total: 3, raw: s }; } },
+    { key: 'collection:aura:6',   type: 'aura_milestone', threshold: 6,
+      rewardName: '6 Aura',       marker: 'Aura Collector II',  chips: 800,
+      condition: function () { return _ccCountKindPool('aura').owned >= 6; },
+      progress: function () { const s = _ccCountKindPool('aura'); return { owned: Math.min(6, s.owned), total: 6, raw: s }; } },
+    { key: 'collection:aura:all', type: 'aura_milestone', threshold: -1,
+      rewardName: 'All Aura',     marker: 'Aura Completionist', chips: 1500,
+      condition: function () { const s = _ccCountKindPool('aura'); return s.total > 0 && s.owned >= s.total; },
+      progress: function () { const s = _ccCountKindPool('aura'); return { owned: s.owned, total: s.total, raw: s }; } }
+  );
+  // Total collection milestones (non-starter only)
+  COLLECTION_REWARDS.push(
+    { key: 'collection:total:25',  type: 'total_milestone', threshold: 25,
+      rewardName: '25 Cosmetics Owned',  marker: 'Collector I',       chips: 500,
+      condition: function () { return _ccTotalNonStarterOwned() >= 25; },
+      progress: function () { return { owned: Math.min(25, _ccTotalNonStarterOwned()), total: 25 }; } },
+    { key: 'collection:total:50',  type: 'total_milestone', threshold: 50,
+      rewardName: '50 Cosmetics Owned',  marker: 'Collector II',      chips: 1000,
+      condition: function () { return _ccTotalNonStarterOwned() >= 50; },
+      progress: function () { return { owned: Math.min(50, _ccTotalNonStarterOwned()), total: 50 }; } },
+    { key: 'collection:total:100', type: 'total_milestone', threshold: 100,
+      rewardName: '100 Cosmetics Owned', marker: 'Master Collector',  chips: 2000,
+      condition: function () { return _ccTotalNonStarterOwned() >= 100; },
+      progress: function () { return { owned: Math.min(100, _ccTotalNonStarterOwned()), total: 100 }; } },
+    { key: 'collection:total:all', type: 'total_milestone', threshold: -1,
+      rewardName: '100% Collection',     marker: 'Completionist',     chips: 5000,
+      condition: function () { const t = _ccTotalNonStarterCatalog(); return t > 0 && _ccTotalNonStarterOwned() >= t; },
+      progress: function () { return { owned: _ccTotalNonStarterOwned(), total: _ccTotalNonStarterCatalog() }; } }
+  );
+})();
+
+// Lookup map for rewards by key (for replay / display).
+const COLLECTION_REWARD_BY_KEY = {};
+COLLECTION_REWARDS.forEach(function (r) { COLLECTION_REWARD_BY_KEY[r.key] = r; });
+
+// Has a given collection reward key already been claimed?
+function _ccIsClaimed(key) {
+  if (!App.state || !App.state.profile) return false;
+  const hist = App.state.profile.collectionRewardHistory || [];
+  for (let i = 0; i < hist.length; i++) {
+    if (hist[i].key === key) return true;
+  }
+  return false;
+}
+
+// Atomic single-reward grant. Records history, awards chips, returns the
+// granted reward (with chipsAwarded resolved) or null if no-op (already
+// claimed / state changed underneath / etc).
+function _grantCollectionReward(reward, opts) {
+  if (!App.state || !App.state.profile) return null;
+  if (!reward || !reward.key) return null;
+  const profile = App.state.profile;
+  if (!Array.isArray(profile.collectionRewardHistory)) profile.collectionRewardHistory = [];
+  // Dedup
+  if (_ccIsClaimed(reward.key)) return null;
+  // Award chips via the existing chips ledger (its own dedup key prefix
+  // namespaces collection awards so they never collide with drill/boss/etc.)
+  const chipsAwarded = (typeof reward.chips === 'number' && reward.chips > 0)
+    ? (typeof awardChips === 'function' ? awardChips(reward.chips, 'collection', 'chips:' + reward.key) : 0)
+    : 0;
+  // History entry
+  const entry = {
+    key: reward.key,
+    type: reward.type,
+    group: reward.group || null,
+    rewardName: reward.rewardName,
+    chipsAwarded: chipsAwarded,
+    marker: reward.marker,
+    date: new Date().toISOString(),
+    trigger: (opts && opts.trigger) || ''
+  };
+  profile.collectionRewardHistory.push(entry);
+  // Cap history at 200 entries (mirrors cosmeticGrantHistory cap)
+  if (profile.collectionRewardHistory.length > 200) {
+    profile.collectionRewardHistory = profile.collectionRewardHistory.slice(-200);
+  }
+  return Object.assign({}, reward, { chipsAwarded: chipsAwarded });
+}
+
+// Central check function. Returns array of newly-granted rewards. Caller
+// chooses whether to surface as reveal modal (interactive trigger) or
+// summary toast (silent backfill).
+//
+// Anti-loop safety: this evaluates current state ONCE per call. It does
+// not re-run after granting chips. If a player buys an item with their
+// new chips later, that next purchase will trigger its own check.
+function checkCollectionCompletionRewards(opts) {
+  if (!App.state || !App.state.profile) return [];
+  opts = opts || {};
+  const granted = [];
+  for (let i = 0; i < COLLECTION_REWARDS.length; i++) {
+    const r = COLLECTION_REWARDS[i];
+    if (_ccIsClaimed(r.key)) continue;
+    let met = false;
+    try { met = !!r.condition(App.state.profile); } catch (e) { met = false; }
+    if (!met) continue;
+    const result = _grantCollectionReward(r, { trigger: opts.trigger || 'check' });
+    if (result) granted.push(result);
+  }
+  if (granted.length > 0) {
+    try { App.saveProgress(); } catch (e) {}
+  }
+  return granted;
+}
+
+// Surface granted rewards. Single + interactive → reveal modal.
+// Multiple OR silent backfill → summary toast.
+function _ccSurfaceRewards(rewards, opts) {
+  if (!rewards || rewards.length === 0) return;
+  opts = opts || {};
+  // Backfill / silent → toast only
+  if (opts.silent) {
+    showCollectionRewardSummaryToast(rewards);
+    return;
+  }
+  // Interactive: 1 reward → reveal; 2+ → reveal first + summary toast
+  if (rewards.length === 1) {
+    setTimeout(function () { try { showCollectionRewardReveal(rewards[0]); } catch (e) {} }, opts.delay || 350);
+    return;
+  }
+  setTimeout(function () { try { showCollectionRewardReveal(rewards[0]); } catch (e) {} }, opts.delay || 350);
+  showCollectionRewardSummaryToast(rewards.slice(1));
+}
+
+// Convenience: run check + surface in one call (for use in buy/grant hooks).
+function _ccCheckAndSurface(opts) {
+  const granted = checkCollectionCompletionRewards(opts || {});
+  if (granted.length > 0) _ccSurfaceRewards(granted, opts || {});
+  return granted;
+}
+
+// Compact summary toast for backfill / multi-grant overflow.
+function showCollectionRewardSummaryToast(rewards) {
+  if (!rewards || rewards.length === 0) return;
+  // Idempotent: replace any existing collection summary toast
+  const existing = document.getElementById('collectionRewardSummary');
+  if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+  const totalChips = rewards.reduce(function (s, r) { return s + (r.chipsAwarded || 0); }, 0);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'reward-multi-summary';   // reuse v3.3.0 toast styling
+  wrapper.id = 'collectionRewardSummary';
+  const names = rewards.map(function (r) { return r.rewardName; }).slice(0, 3).join(', ');
+  const more = rewards.length > 3 ? ' +' + (rewards.length - 3) + ' more' : '';
+  const verb = rewards.length === 1 ? 'collection reward claimed' : 'collection rewards claimed';
+  wrapper.innerHTML =
+    '<span class="rms-icon">✦</span>' +
+    '<span class="rms-text"><strong>' + rewards.length + ' ' + verb + ' · +' + (typeof formatChips === 'function' ? formatChips(totalChips) : totalChips) + '</strong><br>' +
+      '<span style="color:var(--text-secondary);font-size:11px">' + _trainerEscapeHtml(names) + more + '</span>' +
+    '</span>' +
+    '<button class="rms-cta" onclick="(function(){var el=document.getElementById(\'collectionRewardSummary\');if(el)el.remove();openCollectionBook();})()">View</button>';
+  document.body.appendChild(wrapper);
+  setTimeout(function () { if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper); }, 9000);
+}
+
+// Reveal modal for a single collection reward — reuses the boss-drop overlay
+// shell with a new variant ('collection_reward'). Theme palette per type.
+function showCollectionRewardReveal(reward) {
+  if (!reward) return;
+  const overlay = document.getElementById('bossDropRevealOverlay');
+  const card = document.getElementById('bossDropRevealCard');
+  if (!overlay || !card) return;
+  // Source theming by reward.type
+  const typeToSource = {
+    boss_set:              'boss',
+    achievement_milestone: 'achievement',
+    rank_tier:             'rank',
+    fx_milestone:          'shop',         // cyan/gold via reuse
+    aura_milestone:        'rank',         // purple/gold reuse
+    total_milestone:       null            // gold-only set-complete look
+  };
+  const sourceTheme = typeToSource[reward.type] || null;
+  if (sourceTheme) {
+    card.setAttribute('data-source', sourceTheme);
+  } else {
+    card.removeAttribute('data-source');
+  }
+  // Total milestones use the gold "set-complete" look (chip-burst variant)
+  if (reward.type === 'total_milestone') {
+    card.classList.add('set-complete');
+  } else {
+    card.classList.remove('set-complete');
+  }
+  card.innerHTML = _renderCollectionRewardRevealBody(reward);
+  overlay.classList.remove('hidden');
+  setTimeout(function () {
+    const close = card.querySelector('.boss-drop-reveal-close');
+    if (close && typeof close.focus === 'function') close.focus({ preventScroll: true });
+  }, 320);
+  if (!window._bdrEscHandler) {
+    window._bdrEscHandler = function (e) { if (e.key === 'Escape') closeBossDropReveal(); };
+    document.addEventListener('keydown', window._bdrEscHandler);
+  }
+}
+
+function _renderCollectionRewardRevealBody(reward) {
+  const closeBtn = '<button class="boss-drop-reveal-close" onclick="closeBossDropReveal()" aria-label="Close" title="Close">✕</button>';
+  const chips = reward.chipsAwarded || 0;
+  // Sub-line varies by type
+  let subLine;
+  switch (reward.type) {
+    case 'boss_set':              subLine = 'Boss set complete'; break;
+    case 'achievement_milestone': subLine = 'Achievement milestone reached'; break;
+    case 'rank_tier':             subLine = 'Rank tier collection complete'; break;
+    case 'fx_milestone':          subLine = 'Answer FX milestone reached'; break;
+    case 'aura_milestone':        subLine = 'Aura milestone reached'; break;
+    case 'total_milestone':       subLine = 'Collection milestone reached'; break;
+    default:                      subLine = 'Collection milestone';
+  }
+  return '' +
+    closeBtn +
+    '<div class="boss-drop-reveal-badge-row">' +
+      '<div class="boss-drop-reveal-badge">★ Collection Reward ★</div>' +
+    '</div>' +
+    '<div class="boss-drop-reveal-boss-name">' + _trainerEscapeHtml(subLine) + '</div>' +
+    '<div class="boss-drop-reveal-stage">' +
+      '<div class="boss-drop-reveal-rays"></div>' +
+      '<div class="boss-drop-reveal-character" style="font-size:96px;color:#f0d060;filter:drop-shadow(0 0 18px rgba(212,175,55,0.65))">✦</div>' +
+      '<div class="boss-drop-reveal-sparkle s1"></div>' +
+      '<div class="boss-drop-reveal-sparkle s2"></div>' +
+      '<div class="boss-drop-reveal-sparkle s3"></div>' +
+      '<div class="boss-drop-reveal-sparkle s4"></div>' +
+    '</div>' +
+    '<div class="boss-drop-reveal-chips-burst">' +
+      '<div class="boss-drop-reveal-chips-amount">+' + (typeof formatChips === 'function' ? formatChips(chips) : chips) + '</div>' +
+      '<div class="boss-drop-reveal-chips-label">' + _trainerEscapeHtml(reward.marker || reward.rewardName) + ' · Chips</div>' +
+    '</div>' +
+    '<div class="boss-drop-reveal-flavor">' + _trainerEscapeHtml(reward.rewardName) + '</div>' +
+    '<button class="boss-drop-reveal-cta-primary" onclick="closeBossDropReveal(); openCollectionBook()">★ View Collection</button>' +
+    '<button class="boss-drop-reveal-cta-secondary" onclick="closeBossDropReveal()">Continue</button>';
+}
+
 // ----- Backfill on app load -----
 // Walks current profile state and grants any missing rewards the player
 // already qualifies for (existing user has 30-day streak → grant streak items;
@@ -16033,6 +16673,17 @@ function backfillRewardsOnBoot() {
     // Silent: just show summary, no reveal modal flood
     queueRewardReveals(granted, { silent: true });
   }
+  // v3.7.0 — Collection completion check after primary backfill. Runs in
+  // silent mode (compact summary toast only — no modal flood). Idempotent.
+  try {
+    const ccGranted = checkCollectionCompletionRewards({ trigger: 'backfill' });
+    if (ccGranted.length > 0) {
+      // Slight delay so the primary backfill toast (if any) doesn't collide
+      setTimeout(function () {
+        try { _ccSurfaceRewards(ccGranted, { silent: true }); } catch (e) {}
+      }, granted.length > 0 ? 1500 : 800);
+    }
+  } catch (e) { console.warn('[backfill] collection check failed:', e); }
 }
 
 // ============================================================
@@ -16205,6 +16856,108 @@ function _renderCollectionTabs() {
   '</div>';
 }
 
+// ----- v3.7.0 — Collection completion UI helpers -----
+
+// "Next Collection Rewards" — picks the 3 closest unclaimed rewards by
+// (1 - progress%). Skips already-claimed entries. Returns full HTML
+// including header. Returns '' if all rewards claimed.
+function _renderCollectionNextRewardsCard() {
+  if (typeof COLLECTION_REWARDS === 'undefined') return '';
+  // Score every unclaimed reward by completion fraction (closer = higher)
+  const candidates = [];
+  for (let i = 0; i < COLLECTION_REWARDS.length; i++) {
+    const r = COLLECTION_REWARDS[i];
+    if (_ccIsClaimed(r.key)) continue;
+    let prog = { owned: 0, total: 1 };
+    try { prog = r.progress(); } catch (e) {}
+    const total = prog.total || 0;
+    const owned = prog.owned || 0;
+    const frac = total > 0 ? owned / total : 0;
+    candidates.push({ reward: r, owned: owned, total: total, frac: frac, ready: total > 0 && owned >= total });
+  }
+  if (candidates.length === 0) {
+    return '<div class="cc-next-rewards-card">' +
+      '<div class="cc-next-rewards-title"><span style="font-size:14px">★</span> Collection Rewards · All Claimed</div>' +
+      '<div style="font-size:11px;color:var(--text-secondary);text-align:center;padding:8px 0">' +
+        'Every collection reward earned. Master Collectionist.' +
+      '</div>' +
+    '</div>';
+  }
+  // Sort: ready first, then by closeness (descending fraction)
+  candidates.sort(function (a, b) {
+    if (a.ready !== b.ready) return a.ready ? -1 : 1;
+    return b.frac - a.frac;
+  });
+  const picks = candidates.slice(0, 3);
+  const rowsHtml = picks.map(function (c) {
+    const r = c.reward;
+    const cls = c.ready ? ' ready' : '';
+    const onclick = _ccRewardClickTarget(r);
+    const meta = c.total > 0 ? c.owned + ' / ' + c.total : '—';
+    const pct = c.total > 0 ? Math.round((c.owned / c.total) * 100) : 0;
+    const stateLabel = c.ready ? 'READY · earn next ownership' : meta;
+    return '' +
+      '<div class="cc-next-row' + cls + '" onclick="' + onclick + '">' +
+        '<div class="cc-next-icon">' + (c.ready ? '✓' : '★') + '</div>' +
+        '<div class="cc-next-text">' +
+          '<div class="cc-next-name">' + _trainerEscapeHtml(r.rewardName) + '</div>' +
+          '<div class="cc-next-meta">' + _trainerEscapeHtml(stateLabel) + '</div>' +
+          '<div class="cc-next-bar"><div class="cc-next-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="cc-next-chips">+' + (typeof formatChips === 'function' ? formatChips(r.chips) : r.chips) + '</div>' +
+      '</div>';
+  }).join('');
+  return '<div class="cc-next-rewards-card">' +
+    '<div class="cc-next-rewards-title"><span style="font-size:14px">★</span> Next Collection Rewards</div>' +
+    rowsHtml +
+  '</div>';
+}
+
+// Map a reward to the appropriate tab/drill-down click target (tap-to-jump).
+function _ccRewardClickTarget(r) {
+  switch (r.type) {
+    case 'boss_set':              return "_collectionOpenBossSet('" + r.group + "')";
+    case 'achievement_milestone': return "_collectionSetTab('achievement')";
+    case 'rank_tier':             return "_collectionSetTab('rank')";
+    case 'fx_milestone':          return "_collectionSetTab('fx')";
+    case 'aura_milestone':        return "_collectionSetTab('aura')";
+    case 'total_milestone':       return "_collectionSetTab('overview')";
+    default:                       return 'void(0)';
+  }
+}
+
+// Milestone strip — used by Achievement / FX / Aura tabs. Takes an array of
+// reward keys + optional currentOwned count for live progress display.
+function _renderCollectionMilestoneStrip(keys, currentOwned, totalPool) {
+  let pillsHtml = '';
+  for (let i = 0; i < keys.length; i++) {
+    const r = COLLECTION_REWARD_BY_KEY[keys[i]];
+    if (!r) continue;
+    const claimed = _ccIsClaimed(r.key);
+    let prog = { owned: 0, total: 1 };
+    try { prog = r.progress(); } catch (e) {}
+    const ready = !claimed && prog.total > 0 && prog.owned >= prog.total;
+    let cls = '';
+    if (claimed) cls = ' claimed';
+    else if (ready) cls = ' ready';
+    // Label: "3" for threshold, "All" for -1 threshold
+    const label = (typeof r.threshold === 'number' && r.threshold > 0)
+      ? String(r.threshold)
+      : 'All';
+    let stateText;
+    if (claimed) stateText = '✓ CLAIMED';
+    else if (ready) stateText = 'READY';
+    else stateText = '+' + (typeof formatChips === 'function' ? formatChips(r.chips) : r.chips);
+    pillsHtml += '<div class="cc-milestone-pill' + cls + '">' +
+      '<div class="cc-milestone-pill-label">' + r.marker.split(/\s+/).pop() + '</div>' +
+      '<div class="cc-milestone-pill-num">' + label + '</div>' +
+      '<div class="cc-milestone-pill-chips">+' + (typeof formatChips === 'function' ? formatChips(r.chips) : r.chips) + ' chips</div>' +
+      '<div class="cc-milestone-pill-state">' + stateText + '</div>' +
+    '</div>';
+  }
+  return '<div class="cc-milestone-strip">' + pillsHtml + '</div>';
+}
+
 // ----- OVERVIEW tab -----
 function _renderCollectionOverview() {
   const stats = _collectionComputeStats();
@@ -16268,6 +17021,8 @@ function _renderCollectionOverview() {
       '<div class="collection-overview-sub">' + stats.pct + '% complete · ' + stats.bossSetsStarted + ' / ' + stats.bossSetsTotal + ' Boss Sets started</div>' +
       '<div class="collection-overview-bar"><div class="collection-overview-bar-fill" style="width:' + stats.pct + '%"></div></div>' +
     '</div>' +
+    // v3.7.0 — Next Collection Rewards card (3 closest unclaimed milestones)
+    _renderCollectionNextRewardsCard() +
     // Source breakdown grid
     '<div class="collection-source-grid">' + sourceCards + fxCard + auraCard + '</div>' +
     // Helper copy
@@ -16308,6 +17063,25 @@ function _renderCollectionBossSets() {
       return '<div class="boss-set-card-thumb' + cls + '">' + partSvg + '</div>';
     }).join('');
     const more = items.length > 6 ? '<div class="boss-set-card-thumb" style="font-size:9px;color:var(--text-secondary)">+' + (items.length - 6) + '</div>' : '';
+    // v3.7.0 — Set Completion reward ribbon (claimed / ready / progress)
+    const ccKey = 'collection:boss_set:' + moduleKey;
+    const ccReward = COLLECTION_REWARD_BY_KEY[ccKey];
+    let claimRibbon = '';
+    if (ccReward) {
+      const claimed = _ccIsClaimed(ccKey);
+      let ribbonCls, ribbonText;
+      if (claimed) {
+        ribbonCls = 'claimed';
+        ribbonText = '✓ SET REWARD CLAIMED · +' + (typeof formatChips === 'function' ? formatChips(ccReward.chips) : ccReward.chips) + ' Chips';
+      } else if (isComplete) {
+        ribbonCls = 'ready';
+        ribbonText = 'SET COMPLETE · +' + (typeof formatChips === 'function' ? formatChips(ccReward.chips) : ccReward.chips) + ' Chips ready';
+      } else {
+        ribbonCls = 'unclaimed-progress';
+        ribbonText = 'Complete set to claim +' + (typeof formatChips === 'function' ? formatChips(ccReward.chips) : ccReward.chips) + ' Chips';
+      }
+      claimRibbon = '<div class="boss-set-card-claim ' + ribbonCls + '">' + ribbonText + '</div>';
+    }
     return '' +
       '<button class="boss-set-card' + (isComplete ? ' complete' : '') + '" onclick="_collectionOpenBossSet(\'' + moduleKey + '\')">' +
         '<div class="boss-set-card-row">' +
@@ -16317,6 +17091,7 @@ function _renderCollectionBossSets() {
         '</div>' +
         '<div class="boss-set-card-bar"><div class="boss-set-card-bar-fill" style="width:' + pct + '%"></div></div>' +
         '<div class="boss-set-card-thumbs">' + thumbsHtml + more + '</div>' +
+        claimRibbon +
       '</button>';
   }).join('');
   return '' +
@@ -16339,12 +17114,34 @@ function _renderCollectionBossSetDetail(moduleKey) {
   const itemsHtml = items.map(function (it) {
     return _renderCollectionItemRow(it, owned, equipped);
   }).join('');
+  // v3.7.0 — Set completion reward banner
+  const ccKey = 'collection:boss_set:' + moduleKey;
+  const ccReward = COLLECTION_REWARD_BY_KEY[ccKey];
+  let claimBanner = '';
+  if (ccReward) {
+    const claimed = _ccIsClaimed(ccKey);
+    const chipsLabel = '+' + (typeof formatChips === 'function' ? formatChips(ccReward.chips) : ccReward.chips) + ' Chips';
+    if (claimed) {
+      claimBanner = '<div class="boss-set-detail-claim claimed">' +
+        '<strong>★ SET COMPLETE</strong> · Reward claimed: ' + chipsLabel +
+      '</div>';
+    } else if (isComplete) {
+      claimBanner = '<div class="boss-set-detail-claim ready">' +
+        '<strong>SET COMPLETE</strong> · ' + chipsLabel + ' ready to claim' +
+      '</div>';
+    } else {
+      claimBanner = '<div class="boss-set-detail-claim unclaimed-progress">' +
+        'Set Completion Reward: <strong>' + chipsLabel + '</strong> when all ' + total + ' items owned' +
+      '</div>';
+    }
+  }
   return '' +
     '<div class="boss-set-detail-hero' + (isComplete ? ' complete' : '') + '">' +
       '<div class="boss-set-detail-name">' + _trainerEscapeHtml(bossName) + (isComplete ? ' ✓' : '') + '</div>' +
       '<div class="boss-set-detail-progress"><strong>' + ownedCount + ' / ' + total + '</strong> owned · ' + pct + '%</div>' +
       '<div class="collection-overview-bar" style="margin-top:10px"><div class="collection-overview-bar-fill" style="width:' + pct + '%;background:linear-gradient(90deg,#e84a5e 0%,#d4af37 100%)"></div></div>' +
     '</div>' +
+    claimBanner +
     '<div class="collection-section-title"><span class="accent-bar"></span>Items in Set</div>' +
     (items.length === 0 ? '<div class="collection-empty">No items in this set.</div>' : itemsHtml);
 }
@@ -16371,6 +17168,8 @@ function _renderCollectionAchievements() {
     return _renderCollectionItemRow(it, owned, equipped, { showProgress: true });
   }).join('');
   return '' +
+    // v3.7.0 — Achievement Collection milestones (3 / 5 / All)
+    _renderCollectionMilestoneStrip(['collection:achievement:3', 'collection:achievement:5', 'collection:achievement:all']) +
     '<div class="collection-section-title"><span class="accent-bar"></span>Achievement Rewards <span class="section-meta">' + ownedCount + ' / ' + total + ' earned</span></div>' +
     (items.length === 0 ? '<div class="collection-empty">No achievement items defined.</div>' : itemsHtml);
 }
@@ -16445,6 +17244,32 @@ function _renderCollectionRankLadder() {
     const itemsHtml = items.map(function (it) {
       return _renderCollectionItemRow(it, owned, equipped);
     }).join('');
+    // v3.7.0 — Tier collection reward badge (Knight / Champion / Mythic only)
+    const tierToCcKey = { Gold: 'collection:rank:knight', Platinum: 'collection:rank:champion', Master: 'collection:rank:mythic' };
+    const ccKey = tierToCcKey[tier.rank];
+    let ccBadge = '';
+    if (ccKey) {
+      const ccReward = COLLECTION_REWARD_BY_KEY[ccKey];
+      if (ccReward) {
+        const claimed = _ccIsClaimed(ccKey);
+        const tierKey = ccKey.split(':')[2];
+        const prog = _ccRankTierProgress(tierKey);
+        const tierComplete = prog.total > 0 && prog.owned >= prog.total;
+        const chipsLabel = '+' + (typeof formatChips === 'function' ? formatChips(ccReward.chips) : ccReward.chips) + ' Chips';
+        let badgeCls, badgeText;
+        if (claimed) {
+          badgeCls = 'claimed';
+          badgeText = '★ ' + ccReward.marker.toUpperCase() + ' · ' + chipsLabel + ' claimed';
+        } else if (tierComplete) {
+          badgeCls = 'ready';
+          badgeText = ccReward.marker + ' READY · ' + chipsLabel;
+        } else {
+          badgeCls = 'unclaimed-progress';
+          badgeText = 'Tier Reward: ' + chipsLabel + ' · ' + prog.owned + ' / ' + prog.total + ' items owned';
+        }
+        ccBadge = '<div class="rank-ladder-cc ' + badgeCls + '" style="margin-top:8px">' + badgeText + '</div>';
+      }
+    }
     return '' +
       '<div class="rank-ladder-tier' + cls + '">' +
         '<div class="rank-ladder-header">' +
@@ -16452,6 +17277,7 @@ function _renderCollectionRankLadder() {
           '<div class="rank-ladder-status">' + status + '</div>' +
         '</div>' +
         '<div class="rank-ladder-items">' + itemsHtml + '</div>' +
+        ccBadge +
       '</div>';
   }).join('');
   // Owned/total summary
@@ -16539,6 +17365,8 @@ function _renderCollectionAnswerFx() {
   }
   return '' +
     equippedHtml +
+    // v3.7.0 — FX Collection milestones (5 / 10 / All)
+    _renderCollectionMilestoneStrip(['collection:answer_fx:5', 'collection:answer_fx:10', 'collection:answer_fx:all']) +
     '<div class="collection-section-title"><span class="accent-bar"></span>Answer FX <span class="section-meta">' + ownedCount + ' / ' + total + ' owned</span></div>' +
     (packs.length === 0 ? '<div class="collection-empty">No FX packs defined.</div>' : rowsHtml);
 }
@@ -16615,6 +17443,8 @@ function _renderCollectionAura() {
   }
   return '' +
     equippedHtml +
+    // v3.7.0 — Aura Collection milestones (3 / 6 / All)
+    _renderCollectionMilestoneStrip(['collection:aura:3', 'collection:aura:6', 'collection:aura:all']) +
     '<div class="collection-section-title"><span class="accent-bar"></span>Aura <span class="section-meta">' + ownedCount + ' / ' + total + ' owned</span></div>' +
     (packs.length === 0 ? '<div class="collection-empty">No Aura packs defined.</div>' : rowsHtml);
 }
@@ -16811,6 +17641,8 @@ function buyAnswerFxPack(packId) {
   if (!profile.equippedAnswerFxId) profile.equippedAnswerFxId = packId;
   try { App.saveProgress(); } catch (e) {}
   if (typeof showToast === 'function') showToast('✓ ' + pack.name + ' purchased!');
+  // v3.7.0 — check for collection completion rewards triggered by this purchase
+  try { _ccCheckAndSurface({ trigger: 'buy_fx' }); } catch (e) {}
 }
 
 // Build the inner HTML for a given pack + kind (tap | correct | wrong).
@@ -17086,6 +17918,8 @@ function buyAuraPack(packId) {
   try { App.saveProgress(); } catch (e) {}
   if (typeof showToast === 'function') showToast('✓ ' + pack.name + ' purchased!');
   _auraRefreshSurfaces();
+  // v3.7.0 — check for collection completion rewards triggered by this purchase
+  try { _ccCheckAndSurface({ trigger: 'buy_aura' }); } catch (e) {}
 }
 
 // Re-render visible character surfaces so the new aura takes effect immediately.
@@ -24432,6 +25266,8 @@ function buyShopItem(itemId) {
   try { refreshAllWallets(); } catch (e) {}
   // Toast with Equip Now CTA
   if (typeof showToast === 'function') showToast('✓ Bought · ' + item.name + ' (-' + price + ' Chips)');
+  // v3.7.0 — check for collection completion rewards triggered by this purchase
+  try { _ccCheckAndSurface({ trigger: 'buy_shop_item' }); } catch (e) {}
 }
 
 // ============================================================
@@ -25965,6 +26801,12 @@ function showOverallExamResult() {
       const grantedRank = checkRankUnlocks(oe.targetRank, { trigger: 'overall_exam_pass' });
       if (grantedRank.length > 0) App.state.drill._pendingRankReveals = grantedRank;
     } catch (e) { console.warn('[v3.3.0] post-overall-exam rank check failed:', e); }
+    // v3.7.0 — Collection completion check after rank grants (rank tier
+    // collection rewards may now be eligible). Stash for the result screen.
+    try {
+      const ccRewards = checkCollectionCompletionRewards({ trigger: 'post_overall_exam' });
+      if (ccRewards.length > 0) App.state.drill._pendingCollectionRewards = ccRewards;
+    } catch (e) { console.warn('[v3.7.0] post-overall-exam collection check failed:', e); }
   }
 
   // v2.9.0: Chips award for passed Overall Exam. Single-fire via dedup key
@@ -26124,6 +26966,14 @@ function renderOverallExamResult(oe, result, oldRank) {
         const rankItems = d._pendingRankReveals;
         d._pendingRankReveals = null;
         setTimeout(function () { try { queueRewardReveals(rankItems, { delay: 0 }); } catch (e) {} }, 700);
+      }
+      // v3.7.0 — Collection rewards from rank tier completion. Defer until
+      // after rank reveals dismiss so they don't overlap.
+      if (d && d._pendingCollectionRewards && d._pendingCollectionRewards.length > 0) {
+        const cc = d._pendingCollectionRewards;
+        d._pendingCollectionRewards = null;
+        const ccDelay = (d._pendingRankReveals && d._pendingRankReveals.length > 0) ? 8000 : 1200;
+        setTimeout(function () { try { _ccSurfaceRewards(cc, { delay: 0 }); } catch (e) {} }, ccDelay);
       }
     } catch (e) { /* non-fatal */ }
   } else {
@@ -26965,6 +27815,19 @@ function showChallengeResult() {
     } catch (e) { console.warn('[v3.6.0] post-boss Aura grant failed:', e); }
   }
 
+  // v3.7.0 — Collection completion check after ALL boss grants (wardrobe + FX
+  // + Aura) have settled. Stash any granted collection rewards alongside the
+  // existing achievement reveals queue so they animate in after the boss
+  // reveals close.
+  if (result.passed) {
+    try {
+      const ccRewards = checkCollectionCompletionRewards({ trigger: 'post_boss' });
+      if (ccRewards.length > 0) {
+        App.state.drill._pendingCollectionRewards = ccRewards;
+      }
+    } catch (e) { console.warn('[v3.7.0] post-boss collection check failed:', e); }
+  }
+
   App.saveProgress();
   // v2.0.0: dailyPlan must rebuild — Boss result changed module rank /
   // Mastery Score / boss-fail cooldown state.
@@ -27191,6 +28054,15 @@ function renderChallengeResultScreen(ch, result, rankUp) {
       const ach = d._pendingAchievementReveals;
       d._pendingAchievementReveals = null;
       try { queueRewardReveals(ach, { delay: 600 }); } catch (e) {}
+    }
+    // v3.7.0 — Collection completion rewards. Fire AFTER any item reveals
+    // have had time to dismiss (8 seconds buffer). For multi-grant scenarios,
+    // shows first as reveal + summary toast for the rest.
+    if (d && d._pendingCollectionRewards && d._pendingCollectionRewards.length > 0) {
+      const cc = d._pendingCollectionRewards;
+      d._pendingCollectionRewards = null;
+      const ccDelay = (d._bossDrop || (d._pendingAchievementReveals && d._pendingAchievementReveals.length > 0)) ? 8000 : 1000;
+      setTimeout(function () { try { _ccSurfaceRewards(cc, { delay: 0 }); } catch (e) {} }, ccDelay);
     }
   } catch (e) { /* non-fatal */ }
 }
@@ -28691,6 +29563,8 @@ function confirmReset() {
     // v3.6.0: reset Aura cosmetic channel.
     ownedAuraIds: [],
     equippedAuraId: null,
+    // v3.7.0: reset Collection completion reward history.
+    collectionRewardHistory: [],
     // v2.4.0: reset wipes Personal Records ATH cache so a brand-new identity
     // starts fresh (no stale records from the previous trainer).
     records: {
