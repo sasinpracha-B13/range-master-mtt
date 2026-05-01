@@ -8793,8 +8793,6 @@ function showDrillComplete() {
           if (awarded > 0) {
             d._sessionChips = { total: awarded, breakdown: reward.breakdown, source: reward.source };
           }
-        } else if (reward.tooShort) {
-          d._sessionChips = { total: 0, breakdown: [], tooShort: true };
         }
       }
     } catch (e) { console.warn('[chips] drill award failed:', e); }
@@ -8885,15 +8883,13 @@ function showDrillComplete() {
   const sessionTitle = moduleInfo ? `${moduleCleanLabel(d.moduleFilter)} Mission Complete` : 'Drill Complete!';
   const xpInfo = d._sessionXP || null;
   // v2.9.0: Chips earned this session (drill/mission/recovery) — render block.
+  // v3.1.1: tooShort branch removed — every drill now earns base Chips via tiered formula.
   // _sessionChips is set in showDrillComplete after the XP block, single-fire via dedup.
   // _sessionChipsPB is set in showPersonalBestToasts (single +50 bonus per PB drain).
   const chipsHtml = (() => {
     const cs = d._sessionChips;
     const pb = d._sessionChipsPB;
     if (!cs && !pb) return '';
-    if (cs && cs.tooShort) {
-      return '<div class="chips-reward-block"><div class="chips-reward-header">✦ No Chips earned <strong>+0</strong></div><div class="chips-reward-lines"><div class="chips-reward-line"><span class="chips-reward-label">Drills under 30 hands don\'t earn Chips</span><span class="chips-reward-amount">—</span></div></div></div>';
-    }
     let items = (cs && cs.breakdown) ? cs.breakdown.slice() : [];
     let total = (cs && cs.total) || 0;
     if (pb) { items.push({ label: pb.label, amount: pb.total }); total += pb.total; }
@@ -12774,7 +12770,21 @@ const WARDROBE_DEFAULT_EQUIPPED = {
 // and Chips do NOT affect any gameplay logic (no scoring, no SRS, no rank).
 
 const CHIPS_REWARDS = {
-  drill:        { base: 10, accuracyBonus: 5, cleanBonus: 5, max: 20, minHands: 30 },
+  // v3.1.1: Tiered drill base — every session earns SOMETHING. Quality bonuses
+  // require minimum hand counts so 1-hand 100% drills don't farm full reward.
+  drill: {
+    // Base by hand count tier
+    baseTiers: [
+      { minHands: 30, base: 10 },   // 30+ hands: +10
+      { minHands: 20, base: 8 },    // 20-29 hands: +8
+      { minHands: 10, base: 5 },    // 10-19 hands: +5
+      { minHands: 1,  base: 2 }     // 1-9 hands: +2
+    ],
+    // Quality bonuses (require minimum thresholds — anti-spam)
+    accuracyBonus: 5, accuracyMinPct: 85, accuracyMinHands: 10,
+    cleanBonus: 5,    cleanMinHands: 5,
+    max: 20
+  },
   mission:      { base: 25, perfectBonus: 10 },
   recovery:     { base: 20, cleanBonus: 5 },
   boss:         { base: 100, firstClear: 50, accuracy: 25, clean: 25 },
@@ -12839,17 +12849,24 @@ function awardChips(amount, source, dedupKey) {
 }
 
 // Compute Chips reward for a finalized drill/mission/recovery session.
-// Returns { total, breakdown: { base, accuracyBonus, cleanBonus, perfectBonus, source } }.
-// Does NOT call awardChips — caller does that with the returned total.
+// Returns { total, breakdown: [...], source }. Does NOT call awardChips.
+//
+// v3.1.1: Drills no longer require 30 hands. Every session earns SOMETHING:
+//   - 1-9 hands: +2 base
+//   - 10-19 hands: +5 base
+//   - 20-29 hands: +8 base
+//   - 30+ hands: +10 base
+// Quality bonuses (anti-spam):
+//   - Accuracy >=85% bonus +5: requires hands >=10
+//   - Clean run (0 critical) bonus +5: requires hands >=5
+// Hard cap: 20 chips per drill session.
 function computeDrillChipsReward(d, accuracyPct, criticalCount) {
   const total = (d.answers || []).length;
-  if (total < CHIPS_REWARDS.drill.minHands) {
-    return { total: 0, breakdown: [], source: 'drill', tooShort: true };
-  }
+  if (total < 1) return { total: 0, breakdown: [], source: 'drill' };
   const breakdown = [];
   let amount = 0;
   let source = 'drill';
-  // Mission takes precedence over drill base
+  // Mission/Recovery take precedence over drill tiered formula
   if (d.recoveryContext) {
     source = 'recovery';
     amount += CHIPS_REWARDS.recovery.base;
@@ -12862,7 +12879,6 @@ function computeDrillChipsReward(d, accuracyPct, criticalCount) {
     source = 'mission';
     amount += CHIPS_REWARDS.mission.base;
     breakdown.push({ label: 'Mission Clear', amount: CHIPS_REWARDS.mission.base });
-    // Perfect = all objectives passed (computed in showDrillComplete; we replicate)
     const objectives = (typeof evaluateMissionObjectives === 'function')
       ? evaluateMissionObjectives(d.mission, d.answers) : [];
     const perfect = objectives.length > 0 && objectives.every(function (o) { return o.passed; });
@@ -12871,15 +12887,32 @@ function computeDrillChipsReward(d, accuracyPct, criticalCount) {
       breakdown.push({ label: 'Perfect Mission', amount: CHIPS_REWARDS.mission.perfectBonus });
     }
   } else {
-    // Direct drill — base + accuracy + clean (capped at max)
+    // Direct drill — tiered base (v3.1.1) + qualified bonuses
     const r = CHIPS_REWARDS.drill;
-    amount += r.base;
-    breakdown.push({ label: 'Drill Complete', amount: r.base });
-    if (accuracyPct >= 85) {
+    // Base by tier (first matching tier wins; tiers are sorted desc by minHands)
+    let baseAmount = 0;
+    let baseLabel = '';
+    for (let i = 0; i < r.baseTiers.length; i++) {
+      const tier = r.baseTiers[i];
+      if (total >= tier.minHands) {
+        baseAmount = tier.base;
+        // Friendly label per tier
+        baseLabel = (tier.minHands >= 30) ? 'Drill (30+ hands)'
+                  : (tier.minHands >= 20) ? 'Drill (20-29 hands)'
+                  : (tier.minHands >= 10) ? 'Drill (10-19 hands)'
+                  : 'Quick Drill (1-9 hands)';
+        break;
+      }
+    }
+    amount += baseAmount;
+    breakdown.push({ label: baseLabel, amount: baseAmount });
+    // Accuracy bonus — requires hands >= accuracyMinHands AND accuracy >= threshold
+    if (total >= r.accuracyMinHands && accuracyPct >= r.accuracyMinPct) {
       amount += r.accuracyBonus;
       breakdown.push({ label: 'High Accuracy', amount: r.accuracyBonus });
     }
-    if (criticalCount === 0) {
+    // Clean run bonus — requires hands >= cleanMinHands AND no critical mistakes
+    if (total >= r.cleanMinHands && criticalCount === 0) {
       amount += r.cleanBonus;
       breakdown.push({ label: 'Clean Run', amount: r.cleanBonus });
     }
@@ -20447,7 +20480,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -20558,7 +20591,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.1.0',
+    appVersion: '3.1.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
