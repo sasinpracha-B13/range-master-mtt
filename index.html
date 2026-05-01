@@ -4017,6 +4017,227 @@
       font-size: 12.5px;
     }
 
+    /* ============================================================ */
+    /* GLOBAL UTILITY ZONE v3.0.0 — Wallet Pill + Shop Overlay      */
+    /* ============================================================ */
+    /* Reusable wallet pill for top-right of every tab. Compact, premium,
+       tappable. Opens Shop on click. Updates live via refreshAllWallets(). */
+    .chips-wallet-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px 4px 6px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.10) 0%, rgba(26,35,50,0.85) 60%);
+      border: 1px solid rgba(212,175,55,0.45);
+      color: #f0d060;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.4px;
+      line-height: 1; cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.18s, box-shadow 0.18s;
+      box-shadow:
+        0 1px 4px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .chips-wallet-pill:hover {
+      transform: translateY(-1px);
+      border-color: rgba(212,175,55,0.75);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.45), 0 0 0 1px rgba(212,175,55,0.25);
+    }
+    .chips-wallet-pill:active { transform: scale(0.96); }
+    .chips-wallet-amount { font-variant-numeric: tabular-nums; line-height: 1; }
+    .chips-wallet-suffix {
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px;
+      opacity: 0.7; text-transform: uppercase; margin-left: 2px;
+    }
+    .chips-wallet-sm { padding: 3px 8px 3px 4px; font-size: 11.5px; gap: 4px; }
+    .chips-wallet-lg { padding: 6px 14px 6px 8px; font-size: 15px; gap: 8px; }
+
+    /* Generic page-header-with-utility — like page-header-with-avatar but for
+       tabs that only show the wallet (no avatar). */
+    .page-header-with-utility {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px;
+      padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    }
+    .page-header-with-utility .page-header-text { min-width: 0; flex: 1 1 auto; }
+    .page-header-with-utility .page-header-actions {
+      flex: 0 0 auto;
+      display: flex; align-items: center; gap: 8px;
+      padding-top: 4px;
+    }
+
+    /* Drill setup utility bar — slim top strip with wallet only. Hidden during
+       active drill / result so nothing distracts during study. */
+    .drill-utility-bar {
+      display: flex; justify-content: flex-end; align-items: center;
+      padding: 12px 16px 0;
+      max-width: 760px; margin: 0 auto;
+    }
+
+    /* ============================================================ */
+    /* SHOP OVERLAY v3.0.0                                          */
+    /* ============================================================ */
+    .shop-overlay-shell { padding: 20px 16px 60px; max-width: 760px; margin: 0 auto; }
+    .shop-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 4px;
+    }
+    .shop-back-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary, #94a3b8); padding: 6px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+    }
+    .shop-back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .shop-close-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text-secondary); width: 32px; height: 32px; border-radius: 6px;
+      font-size: 16px; cursor: pointer; line-height: 1;
+    }
+    .shop-close-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.20); }
+    .shop-title-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; margin-bottom: 6px; padding-top: 10px; flex-wrap: wrap;
+    }
+    .shop-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .shop-title-balance {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 800; color: #d4af37;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.40);
+    }
+    .shop-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.5; }
+    .shop-tabs {
+      display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+      padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .shop-tab {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-secondary); padding: 6px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .shop-tab:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .shop-tab.active {
+      background: rgba(212,175,55,0.15); border-color: rgba(212,175,55,0.40);
+      color: #d4af37;
+    }
+    .shop-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .shop-card {
+      background: rgba(0,0,0,0.20); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 10px; display: flex; flex-direction: column;
+      align-items: center; text-align: center; position: relative;
+    }
+    .shop-card.owned {
+      border-color: rgba(110,231,183,0.40); background: rgba(110,231,183,0.04);
+    }
+    .shop-card.equipped {
+      border-color: rgba(212,175,55,0.50); background: rgba(212,175,55,0.06);
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.20);
+    }
+    .shop-card.affordable .shop-buy-btn {
+      background: rgba(212,175,55,0.15);
+      border-color: rgba(212,175,55,0.50);
+      color: #d4af37;
+    }
+    .shop-card.unaffordable .shop-buy-btn {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.10);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+    }
+    .shop-card-rarity-pill {
+      position: absolute; top: 6px; right: 6px;
+      font-size: 8.5px; font-weight: 800; letter-spacing: 0.8px;
+      padding: 2px 6px; border-radius: 999px; text-transform: uppercase;
+    }
+    .shop-card-thumb {
+      width: 96px; height: 96px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.10) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2332 0%, #0a0e16 100%);
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 4px; overflow: hidden; position: relative; margin-bottom: 8px;
+    }
+    .shop-card-thumb svg { width: 90%; height: 90%; image-rendering: pixelated; }
+    .shop-card-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .shop-card-slot {
+      font-size: 9.5px; color: var(--text-secondary); letter-spacing: 0.8px;
+      text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+    }
+    .shop-card-price {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; font-weight: 800; color: #d4af37; margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .shop-buy-btn {
+      width: 100%; padding: 6px 8px; border-radius: 6px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.12s ease;
+      border: 1px solid;
+    }
+    .shop-buy-btn.affordable:hover { background: rgba(212,175,55,0.25); }
+    .shop-owned-pill {
+      width: 100%; text-align: center; padding: 6px 8px;
+      background: rgba(110,231,183,0.12); border: 1px solid rgba(110,231,183,0.50);
+      border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.8px;
+      color: #6ee7b7; text-transform: uppercase;
+    }
+    .shop-equip-btn {
+      width: 100%; padding: 6px 8px; border-radius: 6px;
+      background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.40);
+      color: #d4af37; font-size: 10px; font-weight: 800; letter-spacing: 0.8px;
+      text-transform: uppercase; cursor: pointer; margin-top: 4px;
+    }
+    .shop-equip-btn:hover { background: rgba(212,175,55,0.22); }
+    .shop-empty {
+      grid-column: 1 / -1; padding: 28px 16px; text-align: center;
+      background: rgba(0,0,0,0.15); border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 10px; color: var(--text-secondary);
+    }
+    .shop-cross-link {
+      margin-top: 24px; padding: 14px 16px;
+      background: var(--surface, #161d2a); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .shop-cross-link-text { font-size: 12.5px; color: var(--text); }
+    .shop-cross-link-text strong { display: block; margin-bottom: 2px; font-size: 13.5px; font-weight: 700; }
+    .shop-cross-link-btn {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text); padding: 7px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .shop-cross-link-btn:hover { border-color: rgba(212,175,55,0.40); color: #d4af37; }
+    /* Shop entry button on Profile + Wardrobe */
+    .shop-entry-card {
+      background: var(--surface, #161d2a);
+      border: 1px solid rgba(212,175,55,0.30);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .shop-entry-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shop-entry-text { flex: 1; min-width: 0; }
+    .shop-entry-title {
+      font-size: 12px; font-weight: 800; letter-spacing: 1.4px;
+      color: #d4af37; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .shop-entry-sub { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
+    .shop-entry-btn {
+      background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.40);
+      color: #d4af37; padding: 7px 12px; border-radius: 6px; font-size: 11px;
+      font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .shop-entry-btn:hover { background: rgba(212,175,55,0.22); }
+
     /* Home top-right Wardrobe shortcut (v2.9.0 UX) */
     .header-wardrobe-btn {
       position: relative;
@@ -6213,6 +6434,11 @@
   <div class="profile-overlay-body" id="wardrobeOverlayBody"></div>
 </div>
 
+<!-- v3.0.0 Shop overlay — full-screen modal where Chips become cosmetics -->
+<div class="profile-overlay hidden" id="shopOverlay" role="dialog" aria-label="Shop">
+  <div class="profile-overlay-body" id="shopOverlayBody"></div>
+</div>
+
 <div class="profile-overlay hidden" id="recordsOverlay" role="dialog" aria-label="Personal Records">
   <!-- Reuses .profile-overlay layout (full-screen mobile, scroll body, etc.).
        Close button lives inside the records card frame at top-right. -->
@@ -6313,6 +6539,11 @@
 <div class="main-content" id="mainContent">
   <!-- DRILL TAB -->
   <div class="tab-panel" id="tab-drill">
+    <!-- v3.0.0: slim utility bar at top of drill setup — wallet only, no avatar.
+         Shown only on the setup screen; hidden during active drill / result. -->
+    <div class="drill-utility-bar" id="drillSetupUtilityBar">
+      <span class="global-wallet-mount" data-wallet-size="md"></span>
+    </div>
     <div id="drillSetup" class="container">
       <!-- v1.8.3: training preset banner (shown when applyDrillPreset has been called) -->
       <div id="drillPresetBanner" style="display:none"></div>
@@ -6416,9 +6647,14 @@
 
   <!-- PROGRESS TAB -->
   <div class="tab-panel" id="tab-progress">
-    <div class="page-header">
-      <h1>📊 Progress</h1>
-      <p>Your study stats and performance trends</p>
+    <div class="page-header page-header-with-utility">
+      <div class="page-header-text">
+        <h1>📊 Progress</h1>
+        <p>Your study stats and performance trends</p>
+      </div>
+      <div class="page-header-actions">
+        <span class="global-wallet-mount" data-wallet-size="md"></span>
+      </div>
     </div>
     <div class="container" style="padding-top:12px" id="progressContent">
       <!-- Filled by JS -->
@@ -6427,9 +6663,14 @@
 
   <!-- BROWSE TAB -->
   <div class="tab-panel" id="tab-browse">
-    <div class="page-header">
-      <h1>📚 Browse Ranges</h1>
-      <p>Explore GTO preflop charts</p>
+    <div class="page-header page-header-with-utility">
+      <div class="page-header-text">
+        <h1>📚 Browse Ranges</h1>
+        <p>Explore GTO preflop charts</p>
+      </div>
+      <div class="page-header-actions">
+        <span class="global-wallet-mount" data-wallet-size="md"></span>
+      </div>
     </div>
     <div class="container" style="padding-top:12px" id="browseContent">
       <!-- Filled by JS -->
@@ -6438,8 +6679,13 @@
 
   <!-- SETTINGS TAB -->
   <div class="tab-panel" id="tab-settings">
-    <div class="page-header">
-      <h1>⚙️ Settings</h1>
+    <div class="page-header page-header-with-utility">
+      <div class="page-header-text">
+        <h1>⚙️ Settings</h1>
+      </div>
+      <div class="page-header-actions">
+        <span class="global-wallet-mount" data-wallet-size="md"></span>
+      </div>
     </div>
     <div class="container" style="padding-top:12px" id="settingsContent">
       <!-- Filled by JS -->
@@ -6994,6 +7240,18 @@ function switchTab(tab) {
       setup.style.display = 'block';
       // No mission active → make sure preset banner reflects current state
       if (typeof renderDrillPresetBanner === 'function') renderDrillPresetBanner();
+    }
+  }
+  // v3.0.0: refresh wallets in any newly-active tab so the Global Utility Zone
+  // always shows the live chips balance.
+  if (typeof refreshAllWallets === 'function') refreshAllWallets();
+  // Hide drillSetupUtilityBar when not on setup screen (mid-drill / result)
+  if (tab === 'drill') {
+    var setup2 = document.getElementById('drillSetup');
+    var bar = document.getElementById('drillSetupUtilityBar');
+    if (bar) {
+      var setupVisible = setup2 && (!setup2.style.display || setup2.style.display !== 'none');
+      bar.style.display = setupVisible ? 'flex' : 'none';
     }
   }
   document.getElementById('mainContent').scrollTo(0, 0);
@@ -12161,8 +12419,40 @@ const STARTER_WARDROBE_ITEMS = [
   { id:'starter_training_shoes',    slot:'shoes',  name:'Training Shoes',    rarity:'starter', ownedByDefault:true, description:'White sneakers with a red sole.' }
 ];
 const STARTER_OWNED_ITEM_IDS = STARTER_WARDROBE_ITEMS.map(function (it) { return it.id; });
+// v3.0.0: SHOP catalog — 12 purchasable cosmetics with Chips pricing.
+// Pricing tiers calibrated to v2.9.0 earn rates (~50-100 chips/day casual).
+// Common = 1-2 days · Uncommon = 3-5 days · Rare = 1-2 weeks · Prestige = month
+const SHOP_WARDROBE_ITEMS = [
+  // ----- COMMON tier (5 items, 100-150) -----
+  { id:'shop_simple_visor',    slot:'head',      name:'Sun Visor',         rarity:'common',    price:100,  description:'A bright green sun visor with curved brim.' },
+  { id:'shop_pocket_tee',      slot:'top',       name:'Pocket Tee',        rarity:'common',    price:150,  description:'Heather-gray tee with a small chest pocket.' },
+  { id:'shop_running_shorts',  slot:'bottom',    name:'Running Shorts',    rarity:'common',    price:120,  description:'Athletic dark-blue shorts.' },
+  { id:'shop_canvas_sneakers', slot:'shoes',     name:'Canvas Sneakers',   rarity:'common',    price:100,  description:'Bright red canvas sneakers.' },
+  { id:'shop_messenger_bag',   slot:'back',      name:'Messenger Bag',     rarity:'common',    price:130,  description:'Dark canvas messenger bag with shoulder strap.' },
+  // ----- UNCOMMON tier (3 items, 240-320) -----
+  { id:'shop_track_jacket',    slot:'top',       name:'Track Jacket',      rarity:'uncommon',  price:320,  description:'Black track jacket with bold white stripes.' },
+  { id:'shop_cargo_pants',     slot:'bottom',    name:'Cargo Pants',       rarity:'uncommon',  price:280,  description:'Olive cargo pants with side pockets.' },
+  { id:'shop_pocket_watch',    slot:'accessory', name:'Pocket Watch',      rarity:'uncommon',  price:240,  description:'A polished gold pocket watch on a chain.' },
+  // ----- RARE tier (3 items, 580-650) -----
+  { id:'shop_aviator_hat',     slot:'head',      name:'Aviator Cap',       rarity:'rare',      price:600,  description:'Brown leather pilot cap with goggles.' },
+  { id:'shop_combat_boots',    slot:'shoes',     name:'Combat Boots',      rarity:'rare',      price:650,  description:'Tall black combat boots, laced tight.' },
+  { id:'shop_satchel_studded', slot:'back',      name:'Studded Satchel',   rarity:'rare',      price:580,  description:'Dark satchel with metal stud trim.' },
+  // ----- PRESTIGE tier (1 item, 1500) -----
+  { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  price:1500, description:'Gold-trimmed championship jacket with crest.' }
+];
+// Combined item map (starter + shop). Renderer dispatchers look up here.
 const WARDROBE_ITEM_BY_ID = {};
 STARTER_WARDROBE_ITEMS.forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
+SHOP_WARDROBE_ITEMS.forEach(function (it) { WARDROBE_ITEM_BY_ID[it.id] = it; });
+// Rarity color tokens (matches Cosmetic Content System taxonomy)
+const RARITY_COLORS = {
+  starter:  { bg:'rgba(148,163,184,0.10)', border:'rgba(148,163,184,0.40)', text:'#94a3b8' },
+  common:   { bg:'rgba(255,255,255,0.06)', border:'rgba(255,255,255,0.30)', text:'#e8ecf4' },
+  uncommon: { bg:'rgba(96,165,250,0.10)',  border:'rgba(96,165,250,0.45)',  text:'#60a5fa' },
+  rare:     { bg:'rgba(167,139,250,0.10)', border:'rgba(167,139,250,0.50)', text:'#a78bfa' },
+  prestige: { bg:'rgba(212,175,55,0.12)',  border:'rgba(212,175,55,0.60)',  text:'#d4af37' }
+};
+const RARITY_LABELS = { starter:'Starter', common:'Common', uncommon:'Uncommon', rare:'Rare', prestige:'Prestige' };
 // Default equipped on first v2.8.0 load — clean baseline (Plain Tee + Training
 // Pants + Training Shoes). No continuity with v2.7.5 teal jacket — by design,
 // to make the dress-up loop feel intentional and beginner-friendly.
@@ -12251,6 +12541,8 @@ function awardChips(amount, source, dedupKey) {
   if (profile.chipsAwardedKeys.length > 200) {
     profile.chipsAwardedKeys = profile.chipsAwardedKeys.slice(-200);
   }
+  // v3.0.0: Refresh all Wallet Pills mounted in DOM (Global Utility Zone)
+  try { if (typeof refreshAllWallets === 'function') refreshAllWallets(); } catch (e) {}
   return amount;
 }
 
@@ -12348,8 +12640,8 @@ function computeOverallExamChipsReward(result, firstRankPass) {
   return { total: amount, breakdown: breakdown };
 }
 
-// Render a small inline reward line for result screens.
-// Items: array of { label, amount }. If single item, show simply.
+// Render a small inline reward line for result screens. Uses the v3.0.0
+// original Chips icon (renderChipsIcon) instead of the legacy ✦ glyph.
 function renderChipsRewardBlock(items, totalAmount) {
   if (!items || items.length === 0 || totalAmount <= 0) return '';
   const lines = items.map(function (it) {
@@ -12357,7 +12649,12 @@ function renderChipsRewardBlock(items, totalAmount) {
   }).join('');
   return '' +
     '<div class="chips-reward-block">' +
-      '<div class="chips-reward-header">✦ Chips Earned <strong>+' + totalAmount + '</strong></div>' +
+      '<div class="chips-reward-header">' +
+        '<span style="display:inline-flex;align-items:center;gap:6px">' +
+          renderChipsIcon(16) + ' Chips Earned' +
+        '</span>' +
+        '<strong>+' + formatChips(totalAmount) + '</strong>' +
+      '</div>' +
       '<div class="chips-reward-lines">' + lines + '</div>' +
     '</div>';
 }
@@ -12365,6 +12662,84 @@ function renderChipsRewardBlock(items, totalAmount) {
 // Format chips count for display (e.g. 1234 → "1,234")
 function formatChips(n) {
   return (n || 0).toLocaleString('en-US');
+}
+
+// v3.0.0: Compact format for Wallet Pill — 999 / 1.2K / 12.4K / 100K+
+function formatChipsCompact(n) {
+  n = n || 0;
+  if (n < 1000) return String(n);
+  if (n < 100000) {
+    const v = n / 1000;
+    return (v >= 10 ? v.toFixed(1).replace(/\.0$/, '') : v.toFixed(1)) + 'K';
+  }
+  return '100K+';
+}
+
+// v3.0.0: ORIGINAL Range Master Chips icon — gold ring + edge notches +
+// navy face + 4-pointed Mastery Spark + shine accent. Original design,
+// NOT a generic casino chip. Scales 14-48px crisp.
+function renderChipsIcon(size, opts) {
+  size = size || 20;
+  opts = opts || {};
+  const dim = (opts.dim ? ' opacity="0.55"' : '');
+  return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '"' + dim +
+    ' xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:inline-block;vertical-align:middle;flex-shrink:0">' +
+    '<defs><radialGradient id="rmChipsRing" cx="35%" cy="30%" r="75%">' +
+      '<stop offset="0%" stop-color="#f0d060"/>' +
+      '<stop offset="55%" stop-color="#d4af37"/>' +
+      '<stop offset="100%" stop-color="#9e7d20"/>' +
+    '</radialGradient></defs>' +
+    // Outer gold ring with subtle radial gradient
+    '<circle cx="12" cy="12" r="11" fill="url(#rmChipsRing)"/>' +
+    // 4 chip-edge notches (north/south/east/west) — defines as currency token
+    '<rect x="11" y="0.5" width="2" height="2" fill="#7a5f15"/>' +
+    '<rect x="11" y="21.5" width="2" height="2" fill="#7a5f15"/>' +
+    '<rect x="0.5" y="11" width="2" height="2" fill="#7a5f15"/>' +
+    '<rect x="21.5" y="11" width="2" height="2" fill="#7a5f15"/>' +
+    // Inner deep-navy face (matches app brand bg)
+    '<circle cx="12" cy="12" r="8.5" fill="#1a2332"/>' +
+    // Subtle inner gold ring (defines face / chip groove)
+    '<circle cx="12" cy="12" r="8.5" fill="none" stroke="#d4af37" stroke-width="0.5" opacity="0.6"/>' +
+    // 4-pointed MASTERY SPARK — diamond/star centerpiece
+    '<path d="M 12 5 L 13.4 11 L 19 12 L 13.4 13 L 12 19 L 10.6 13 L 5 12 L 10.6 11 Z" fill="#f0d060"/>' +
+    // Inner spark core (small bright dot — gives the star a center jewel feel)
+    '<circle cx="12" cy="12" r="1.1" fill="#ffffff" opacity="0.6"/>' +
+    // Top-left shine accent (3D feel)
+    '<circle cx="9" cy="9" r="1.2" fill="#ffffff" opacity="0.32"/>' +
+  '</svg>';
+}
+
+// v3.0.0: Chips Wallet Pill — compact tappable component for Global Utility Zone.
+// Renders: [icon] [amount] (no "Chips" label to keep tight). Tap → opens Shop.
+// opts.size: 'sm' (24px icon, default 28px height) | 'md' (default, 18px icon, 32px height) | 'lg' (22px icon, 36px height)
+// opts.label: optional 'Chips' suffix for places where space allows
+function renderChipsWalletPill(opts) {
+  opts = opts || {};
+  const profile = (App.state && App.state.profile) || {};
+  const chips = profile.chips || 0;
+  const sizeKey = opts.size || 'md';
+  const iconSize = sizeKey === 'sm' ? 14 : sizeKey === 'lg' ? 22 : 18;
+  const labelHtml = opts.label ? '<span class="chips-wallet-suffix">Chips</span>' : '';
+  return '<button class="chips-wallet-pill chips-wallet-' + sizeKey + '"' +
+    ' onclick="openShopOverlay()"' +
+    ' aria-label="Open Shop · ' + chips + ' Chips"' +
+    ' title="' + chips + ' Chips · Tap to open Shop">' +
+    renderChipsIcon(iconSize) +
+    '<span class="chips-wallet-amount">' + formatChipsCompact(chips) + '</span>' +
+    labelHtml +
+  '</button>';
+}
+
+// v3.0.0: Re-render every Wallet Pill in the DOM after a chips change.
+// Mounted via .global-wallet-mount spans on each tab header. Idempotent.
+function refreshAllWallets() {
+  try {
+    document.querySelectorAll('.global-wallet-mount').forEach(function (el) {
+      const sizeKey = el.getAttribute('data-wallet-size') || 'md';
+      const labelAttr = el.hasAttribute('data-wallet-label');
+      el.innerHTML = renderChipsWalletPill({ size: sizeKey, label: labelAttr });
+    });
+  } catch (e) { /* non-fatal */ }
 }
 
 // ---- Color math helpers (used for skin shading + hair 3-tone) ----
@@ -12482,6 +12857,9 @@ function _avPartsTop(bodyType, itemId) {
   switch (itemId) {
     case 'starter_plain_tee':       return _avTopPlainTee(bodyType);
     case 'starter_trainer_jacket':  return _avTopTrainerJacket(bodyType);
+    case 'shop_pocket_tee':         return _avTopPocketTee(bodyType);
+    case 'shop_track_jacket':       return _avTopTrackJacket(bodyType);
+    case 'shop_champion_jacket':    return _avTopChampionJacket(bodyType);
     default:                        return _avTopTrainerJacket(bodyType);  // safe fallback
   }
 }
@@ -12490,6 +12868,8 @@ function _avPartsBottom(bodyType, itemId) {
     case 'starter_training_pants':   return _avBottomTrainingPants(bodyType);
     case 'starter_shorts':           return _avBottomShorts(bodyType);
     case 'starter_trainer_trousers': return _avBottomTrainerTrousers(bodyType);
+    case 'shop_running_shorts':      return _avBottomRunningShorts(bodyType);
+    case 'shop_cargo_pants':         return _avBottomCargoPants(bodyType);
     default:                         return _avBottomTrainerTrousers(bodyType);
   }
 }
@@ -12497,6 +12877,8 @@ function _avPartsShoes(bodyType, itemId) {
   switch (itemId) {
     case 'starter_training_shoes': return _avShoesTrainingShoes(bodyType);
     case 'starter_brown_boots':    return _avShoesTrainerBoots(bodyType);
+    case 'shop_canvas_sneakers':   return _avShoesCanvasSneakers(bodyType);
+    case 'shop_combat_boots':      return _avShoesCombatBoots(bodyType);
     default:                       return _avShoesTrainerBoots(bodyType);
   }
 }
@@ -12504,20 +12886,27 @@ function _avPartsHat(itemId) {
   switch (itemId) {
     case 'starter_basic_cap':         return _avHatBasicCap();
     case 'starter_training_headband': return _avHatTrainingHeadband();
+    case 'shop_simple_visor':         return _avHatSunVisor();
+    case 'shop_aviator_hat':          return _avHatAviatorCap();
     default: return '';
   }
 }
 function _avPartsFaceMask(itemId) {
-  // v2.8.0: no starter face items (slot intentionally empty, populated v2.8.1+)
+  // v3.0.0: no shop face items yet — slot reserved for future
   return '';
 }
 function _avPartsBack(itemId) {
-  // v2.8.0: no starter back items
-  return '';
+  switch (itemId) {
+    case 'shop_messenger_bag':   return _avBackMessengerBag();
+    case 'shop_satchel_studded': return _avBackStuddedSatchel();
+    default: return '';
+  }
 }
 function _avPartsAccessory(itemId) {
-  // v2.8.0: no starter accessory items
-  return '';
+  switch (itemId) {
+    case 'shop_pocket_watch': return _avAccessoryPocketWatch();
+    default: return '';
+  }
 }
 
 // Belt always renders (between top + bottom); not slot-controlled in v2.8.0.
@@ -13016,6 +13405,529 @@ function _avHatTrainingHeadband() {
   s += R(22, 9, 20, 1, bandSh);    // bottom shadow
   // Red center accent stripe
   s += R(31, 8, 2, 1, accent);
+  return s;
+}
+
+// ============================================================
+// v3.0.0 SHOP ITEM SPRITES (12 items)
+// ============================================================
+
+// === HEAD: shop_simple_visor — green sun visor with curved brim, open top ===
+function _avHatSunVisor() {
+  const visor   = '#3a7a4a';
+  const visorSh = '#1f5230';
+  const visorHl = '#5fa86e';
+  const R = _avRect;
+  let s = '';
+  // Headband strap (top of head, narrow)
+  s += R(24, 7, 16, 1, visor);
+  s += R(24, 7, 16, 1, visorHl);
+  // Brim (extends forward over forehead)
+  s += R(22, 8, 20, 1, visor);
+  s += R(20, 9, 24, 1, visor);
+  s += R(20, 10, 24, 1, visorSh);
+  // Center logo accent
+  s += R(31, 7, 2, 1, '#d4af37');
+  return s;
+}
+
+// === HEAD: shop_aviator_hat — brown leather pilot cap with goggles ===
+function _avHatAviatorCap() {
+  const leather   = '#5e3a1f';
+  const leatherSh = '#3a1f10';
+  const leatherHl = '#8b6534';
+  const goggle    = '#1a1a26';
+  const lens      = '#3a4a72';
+  const lensHl    = '#6a8ab2';
+  const strap     = '#3a1f10';
+  const R = _avRect;
+  let s = '';
+  // Cap dome (covers hair top)
+  s += R(24, 4, 16, 1, leather);
+  s += R(22, 5, 20, 4, leather);
+  // Top highlight
+  s += R(23, 5, 8, 1, leatherHl);
+  s += R(22, 6, 4, 1, leatherHl);
+  // Right shadow
+  s += R(40, 6, 2, 3, leatherSh);
+  // Cap brim
+  s += R(22, 9, 20, 1, leather);
+  s += R(22, 10, 20, 1, leatherSh);
+  // Strap going down sides (chin strap hint)
+  s += R(22, 11, 1, 4, strap);
+  s += R(41, 11, 1, 4, strap);
+  // GOGGLES on forehead — 2 small lens circles (square pixel approximation)
+  s += R(24, 7, 4, 2, goggle);     // L lens frame
+  s += R(36, 7, 4, 2, goggle);     // R lens frame
+  s += R(25, 7, 2, 1, lensHl);     // L lens highlight
+  s += R(37, 7, 2, 1, lensHl);     // R lens highlight
+  s += R(25, 8, 2, 1, lens);       // L lens
+  s += R(37, 8, 2, 1, lens);       // R lens
+  s += R(28, 7, 8, 1, goggle);     // bridge connecting goggles
+  return s;
+}
+
+// === TOP: shop_pocket_tee — heather gray tee with chest pocket ===
+function _avTopPocketTee(bodyType) {
+  const tee   = '#7a8a9a';      // heather gray
+  const teeSh = '#4a5664';
+  const teeHl = '#9aa6b8';
+  const trim  = '#3a4654';
+  const pocket = '#4a5664';
+  const R = _avRect;
+  let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, tee);
+    s += R(18, 29, 28, 1, tee);
+    s += R(19, 30, 26, 1, tee);
+    s += R(19, 31, 26, 1, tee);
+    s += R(20, 32, 24, 9, tee);
+    // Round collar (no V — crew neck)
+    s += R(28, 27, 8, 1, trim);
+    s += R(29, 28, 6, 1, trim);
+    s += R(20, 32, 1, 9, teeHl);
+    s += R(43, 32, 1, 9, teeSh);
+    // Chest pocket on left
+    s += R(22, 33, 4, 4, pocket);
+    s += R(22, 33, 4, 1, teeHl);   // pocket top trim
+    // Sleeve hem
+    s += R(18, 37, 4, 1, trim);
+    s += R(42, 37, 4, 1, trim);
+    s += R(18, 38, 4, 1, tee);
+    s += R(42, 38, 4, 1, tee);
+    s += R(18, 39, 1, 4, teeSh);
+    s += R(45, 39, 1, 4, teeSh);
+    s += R(20, 41, 24, 1, trim);
+  } else {
+    s += R(22, 27, 20, 2, tee);
+    s += R(28, 27, 8, 1, trim);
+    s += R(29, 28, 6, 1, trim);
+    s += R(22, 29, 20, 4, tee);
+    s += R(23, 33, 18, 1, tee);
+    s += R(24, 34, 16, 1, tee);
+    s += R(25, 35, 14, 3, tee);
+    s += R(24, 38, 16, 1, tee);
+    s += R(22, 39, 20, 1, tee);
+    s += R(21, 40, 22, 2, tee);
+    s += R(22, 28, 1, 5, teeHl);
+    s += R(41, 28, 1, 5, teeSh);
+    s += R(38, 35, 2, 3, teeSh);
+    // Female arms
+    s += R(21, 29, 2, 1, tee);
+    s += R(20, 30, 3, 1, tee);
+    s += R(19, 31, 4, 1, tee);
+    s += R(18, 32, 5, 5, tee);
+    s += R(18, 32, 1, 5, teeHl);
+    s += R(22, 32, 1, 5, teeSh);
+    s += R(41, 29, 2, 1, tee);
+    s += R(42, 30, 3, 1, tee);
+    s += R(43, 31, 4, 1, tee);
+    s += R(42, 32, 5, 5, tee);
+    s += R(42, 32, 1, 5, teeHl);
+    s += R(46, 32, 1, 5, teeSh);
+    // Chest pocket
+    s += R(24, 33, 4, 4, pocket);
+    s += R(24, 33, 4, 1, teeHl);
+    s += R(18, 37, 4, 1, trim);
+    s += R(42, 37, 4, 1, trim);
+    s += R(18, 38, 4, 1, tee);
+    s += R(42, 38, 4, 1, tee);
+    s += R(18, 39, 1, 4, teeSh);
+    s += R(45, 39, 1, 4, teeSh);
+    s += R(21, 42, 22, 1, trim);
+  }
+  return s;
+}
+
+// === TOP: shop_track_jacket — black with bold white side stripes ===
+function _avTopTrackJacket(bodyType) {
+  const jkt    = '#1a1a26';
+  const jktSh  = '#0a0a14';
+  const jktHl  = '#3a3a4a';
+  const stripe = '#f0f0f8';
+  const zipper = '#5a5a6a';
+  const collar = '#0a0a14';
+  const R = _avRect;
+  let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, collar);
+    s += R(18, 27, 28, 1, collar);
+    s += R(16, 28, 32, 1, collar);
+    s += R(17, 29, 30, 1, collar);
+    s += R(18, 30, 28, 1, collar);
+    // Body
+    s += R(19, 31, 26, 1, jkt);
+    s += R(20, 32, 24, 9, jkt);
+    // CENTER ZIPPER (key feature)
+    s += R(31, 28, 2, 13, zipper);
+    s += R(31, 28, 1, 13, '#7a7a8a');
+    // White side stripes (running down both shoulders)
+    s += R(20, 30, 1, 11, stripe);
+    s += R(43, 30, 1, 11, stripe);
+    // Sleeve cuffs
+    s += R(18, 37, 4, 2, jkt);
+    s += R(18, 37, 4, 1, jktHl);
+    s += R(42, 37, 4, 2, jkt);
+    s += R(42, 37, 4, 1, jktHl);
+    // White stripe extends down sleeves
+    s += R(18, 32, 1, 5, stripe);
+    s += R(45, 32, 1, 5, stripe);
+    s += R(18, 39, 1, 4, jktSh);
+    s += R(45, 39, 1, 4, jktSh);
+    s += R(20, 41, 24, 1, jktSh);
+  } else {
+    s += R(24, 25, 16, 1, collar);
+    s += R(23, 26, 18, 1, collar);
+    s += R(22, 27, 20, 2, collar);
+    s += R(22, 29, 20, 4, jkt);
+    s += R(23, 33, 18, 1, jkt);
+    s += R(24, 34, 16, 1, jkt);
+    s += R(25, 35, 14, 3, jkt);
+    s += R(24, 38, 16, 1, jkt);
+    s += R(22, 39, 20, 1, jkt);
+    s += R(21, 40, 22, 2, jkt);
+    // Zipper
+    s += R(31, 28, 2, 13, zipper);
+    s += R(31, 28, 1, 13, '#7a7a8a');
+    // Stripes (follow hourglass)
+    s += R(22, 30, 1, 3, stripe);
+    s += R(41, 30, 1, 3, stripe);
+    s += R(25, 35, 1, 3, stripe);
+    s += R(38, 35, 1, 3, stripe);
+    s += R(21, 40, 1, 2, stripe);
+    s += R(42, 40, 1, 2, stripe);
+    // Female arms
+    s += R(21, 29, 2, 1, jkt);
+    s += R(20, 30, 3, 1, jkt);
+    s += R(19, 31, 4, 1, jkt);
+    s += R(18, 32, 5, 5, jkt);
+    s += R(18, 32, 1, 5, stripe);
+    s += R(22, 32, 1, 5, jktSh);
+    s += R(41, 29, 2, 1, jkt);
+    s += R(42, 30, 3, 1, jkt);
+    s += R(43, 31, 4, 1, jkt);
+    s += R(42, 32, 5, 5, jkt);
+    s += R(46, 32, 1, 5, stripe);
+    // Sleeve cuffs
+    s += R(18, 37, 4, 2, jkt);
+    s += R(18, 37, 4, 1, jktHl);
+    s += R(42, 37, 4, 2, jkt);
+    s += R(42, 37, 4, 1, jktHl);
+    s += R(18, 39, 1, 4, jktSh);
+    s += R(45, 39, 1, 4, jktSh);
+    s += R(21, 42, 22, 1, jktSh);
+  }
+  return s;
+}
+
+// === TOP: shop_champion_jacket — gold-trimmed prestige jacket with crest ===
+function _avTopChampionJacket(bodyType) {
+  const jkt    = '#1a1f3a';        // deep royal navy
+  const jktSh  = '#0a0e20';
+  const jktHl  = '#2a3260';
+  const goldTrim = '#d4af37';
+  const goldHl   = '#f0d060';
+  const goldSh   = '#9e7d20';
+  const crest    = '#c41a2a';      // red crest on chest
+  const crestHl  = '#e84050';
+  const collar   = '#0a0e20';
+  const R = _avRect;
+  let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, collar);
+    s += R(18, 27, 28, 1, collar);
+    s += R(16, 28, 32, 1, collar);
+    s += R(17, 29, 30, 1, collar);
+    s += R(18, 30, 28, 1, collar);
+    // Gold collar trim (signature)
+    s += R(20, 30, 24, 1, goldTrim);
+    // Body
+    s += R(19, 31, 26, 1, jkt);
+    s += R(20, 32, 24, 9, jkt);
+    // Gold side seam stripes (full length)
+    s += R(20, 32, 1, 9, goldTrim);
+    s += R(43, 32, 1, 9, goldTrim);
+    // Gold central buttons (4 down center, prestige look)
+    s += R(31, 32, 1, 1, goldHl); s += R(32, 32, 1, 1, goldSh);
+    s += R(31, 34, 1, 1, goldHl); s += R(32, 34, 1, 1, goldSh);
+    s += R(31, 36, 1, 1, goldHl); s += R(32, 36, 1, 1, goldSh);
+    s += R(31, 38, 1, 1, goldHl); s += R(32, 38, 1, 1, goldSh);
+    // RED CREST on left chest (signature feature)
+    s += R(22, 33, 4, 5, crest);
+    s += R(22, 33, 4, 1, goldTrim);  // gold top trim
+    s += R(22, 34, 1, 4, crestHl);
+    s += R(23, 34, 2, 1, goldHl);    // tiny gold detail in crest
+    // Shadow + highlight
+    s += R(46, 28, 1, 1, jktSh);
+    s += R(45, 29, 1, 1, jktSh);
+    s += R(44, 30, 2, 11, jktSh);
+    s += R(16, 28, 1, 1, jktHl);
+    s += R(18, 30, 1, 11, jktHl);
+    // Gold-trimmed cuffs
+    s += R(18, 37, 4, 2, goldTrim);
+    s += R(18, 37, 4, 1, goldHl);
+    s += R(18, 38, 4, 1, goldSh);
+    s += R(42, 37, 4, 2, goldTrim);
+    s += R(42, 37, 4, 1, goldHl);
+    s += R(42, 38, 4, 1, goldSh);
+    s += R(18, 39, 1, 4, jktSh);
+    s += R(45, 39, 1, 4, jktSh);
+    // Gold hem
+    s += R(20, 41, 24, 1, goldTrim);
+    s += R(20, 42, 24, 1, goldSh);
+  } else {
+    s += R(24, 25, 16, 1, collar);
+    s += R(23, 26, 18, 1, collar);
+    s += R(22, 27, 20, 2, collar);
+    s += R(22, 29, 20, 1, goldTrim);
+    s += R(22, 30, 20, 3, jkt);
+    s += R(23, 33, 18, 1, jkt);
+    s += R(24, 34, 16, 1, jkt);
+    s += R(25, 35, 14, 3, jkt);
+    s += R(24, 38, 16, 1, jkt);
+    s += R(22, 39, 20, 1, jkt);
+    s += R(21, 40, 22, 2, jkt);
+    // Gold side seam stripes (follow hourglass)
+    s += R(22, 30, 1, 3, goldTrim);
+    s += R(41, 30, 1, 3, goldTrim);
+    s += R(25, 35, 1, 3, goldTrim);
+    s += R(38, 35, 1, 3, goldTrim);
+    s += R(21, 40, 1, 2, goldTrim);
+    s += R(42, 40, 1, 2, goldTrim);
+    // Center buttons
+    s += R(31, 31, 1, 1, goldHl); s += R(32, 31, 1, 1, goldSh);
+    s += R(31, 34, 1, 1, goldHl); s += R(32, 34, 1, 1, goldSh);
+    s += R(31, 37, 1, 1, goldHl); s += R(32, 37, 1, 1, goldSh);
+    // Red crest
+    s += R(24, 33, 4, 4, crest);
+    s += R(24, 33, 4, 1, goldTrim);
+    s += R(25, 34, 2, 1, goldHl);
+    // Female arms (gold-trimmed)
+    s += R(21, 29, 2, 1, jkt);
+    s += R(20, 30, 3, 1, jkt);
+    s += R(19, 31, 4, 1, jkt);
+    s += R(18, 32, 5, 5, jkt);
+    s += R(18, 32, 1, 5, goldTrim);
+    s += R(22, 32, 1, 5, jktSh);
+    s += R(41, 29, 2, 1, jkt);
+    s += R(42, 30, 3, 1, jkt);
+    s += R(43, 31, 4, 1, jkt);
+    s += R(42, 32, 5, 5, jkt);
+    s += R(46, 32, 1, 5, goldTrim);
+    // Gold-trimmed cuffs
+    s += R(18, 37, 4, 2, goldTrim);
+    s += R(18, 37, 4, 1, goldHl);
+    s += R(42, 37, 4, 2, goldTrim);
+    s += R(42, 37, 4, 1, goldHl);
+    s += R(18, 39, 1, 4, jktSh);
+    s += R(45, 39, 1, 4, jktSh);
+    s += R(21, 42, 22, 1, goldTrim);
+  }
+  return s;
+}
+
+// === BOTTOM: shop_running_shorts — dark blue athletic shorts ===
+function _avBottomRunningShorts(bodyType) {
+  const shorts   = '#1a3a72';
+  const shortsSh = '#0a1f4a';
+  const shortsHl = '#3a5a92';
+  const stripe   = '#f0f0f8';
+  const R = _avRect;
+  let s = '';
+  s += R(22, 46, 20, 1, shorts);
+  s += R(25, 47, 6, 4, shorts);
+  s += R(33, 47, 6, 4, shorts);
+  s += R(25, 47, 1, 4, shortsHl);
+  s += R(38, 47, 1, 4, shortsHl);
+  s += R(30, 47, 1, 4, shortsSh);
+  s += R(33, 47, 1, 4, shortsSh);
+  s += R(31, 47, 2, 4, _avDarken(shorts, 0.40));
+  // White side stripes (athletic detail)
+  s += R(26, 47, 1, 4, stripe);
+  s += R(37, 47, 1, 4, stripe);
+  // Hem trim
+  s += R(25, 50, 6, 1, shortsSh);
+  s += R(33, 50, 6, 1, shortsSh);
+  return s;
+}
+
+// === BOTTOM: shop_cargo_pants — olive with side pockets ===
+function _avBottomCargoPants(bodyType) {
+  const pants    = '#5a6235';
+  const pantsSh  = '#3a4220';
+  const pantsHl  = '#7a8255';
+  const pocket   = '#3a4220';
+  const pocketHl = '#7a8255';
+  const R = _avRect;
+  let s = '';
+  s += R(22, 46, 20, 1, pants);
+  s += R(25, 47, 6, 7, pants);
+  s += R(33, 47, 6, 7, pants);
+  s += R(25, 47, 1, 7, pantsHl);
+  s += R(38, 47, 1, 7, pantsHl);
+  s += R(30, 47, 1, 7, pantsSh);
+  s += R(33, 47, 1, 7, pantsSh);
+  s += R(31, 47, 2, 7, _avDarken(pants, 0.40));
+  // SIDE POCKETS (key feature)
+  s += R(25, 49, 3, 2, pocket);    // L thigh pocket
+  s += R(25, 49, 3, 1, pocketHl);  // pocket top
+  s += R(36, 49, 3, 2, pocket);    // R thigh pocket
+  s += R(36, 49, 3, 1, pocketHl);
+  return s;
+}
+
+// === SHOES: shop_canvas_sneakers — bright red canvas, white sole ===
+function _avShoesCanvasSneakers(bodyType) {
+  const body    = '#c41a2a';        // red
+  const bodySh  = '#8e1a26';
+  const bodyHl  = '#e84050';
+  const sole    = '#f0f0f8';        // white
+  const soleSh  = '#a8a8b8';
+  const lace    = '#f0f0f8';
+  const R = _avRect;
+  let s = '';
+  // L sneaker
+  s += R(23, 54, 8, 2, body);
+  s += R(23, 56, 8, 4, body);
+  s += R(23, 54, 1, 6, bodyHl);
+  s += R(30, 54, 1, 6, bodySh);
+  s += R(27, 56, 1, 3, lace);
+  s += R(26, 55, 1, 1, lace);
+  s += R(28, 57, 1, 1, lace);
+  s += R(23, 60, 9, 1, sole);
+  s += R(22, 61, 10, 1, soleSh);
+  // R sneaker
+  s += R(33, 54, 8, 2, body);
+  s += R(33, 56, 8, 4, body);
+  s += R(40, 54, 1, 6, bodySh);
+  s += R(33, 54, 1, 6, bodyHl);
+  s += R(37, 56, 1, 3, lace);
+  s += R(36, 55, 1, 1, lace);
+  s += R(38, 57, 1, 1, lace);
+  s += R(33, 60, 9, 1, sole);
+  s += R(32, 61, 10, 1, soleSh);
+  return s;
+}
+
+// === SHOES: shop_combat_boots — tall black combat boots, laced tight ===
+function _avShoesCombatBoots(bodyType) {
+  const body    = '#0a0a10';
+  const bodyHl  = '#2a2a36';
+  const cuff    = '#1a1a26';
+  const lace    = '#5a4520';        // brown laces (contrast)
+  const sole    = '#0a0805';
+  const soleHl  = '#1a1410';
+  const R = _avRect;
+  let s = '';
+  // L boot — taller (extends from y=51 up into shorts territory)
+  s += R(23, 51, 8, 2, body);       // upper shaft (extends UP — tall boot)
+  s += R(23, 53, 8, 1, cuff);       // top cuff edge
+  s += R(23, 54, 8, 6, body);       // main shaft
+  // Vertical laces (4 cross-laces visible)
+  s += R(26, 52, 1, 1, lace);
+  s += R(28, 52, 1, 1, lace);
+  s += R(26, 54, 1, 1, lace);
+  s += R(28, 54, 1, 1, lace);
+  s += R(26, 56, 1, 1, lace);
+  s += R(28, 56, 1, 1, lace);
+  s += R(26, 58, 1, 1, lace);
+  s += R(28, 58, 1, 1, lace);
+  // L highlight + sole
+  s += R(23, 51, 1, 9, bodyHl);
+  s += R(22, 60, 10, 2, sole);
+  s += R(22, 60, 10, 1, soleHl);
+  // R boot — mirror
+  s += R(33, 51, 8, 2, body);
+  s += R(33, 53, 8, 1, cuff);
+  s += R(33, 54, 8, 6, body);
+  s += R(36, 52, 1, 1, lace);
+  s += R(38, 52, 1, 1, lace);
+  s += R(36, 54, 1, 1, lace);
+  s += R(38, 54, 1, 1, lace);
+  s += R(36, 56, 1, 1, lace);
+  s += R(38, 56, 1, 1, lace);
+  s += R(36, 58, 1, 1, lace);
+  s += R(38, 58, 1, 1, lace);
+  s += R(33, 51, 1, 9, bodyHl);
+  s += R(32, 60, 10, 2, sole);
+  s += R(32, 60, 10, 1, soleHl);
+  return s;
+}
+
+// === BACK: shop_messenger_bag — dark canvas with shoulder strap ===
+function _avBackMessengerBag() {
+  const bag     = '#3a4654';
+  const bagSh   = '#1a2632';
+  const bagHl   = '#5a6674';
+  const strap   = '#1a1a26';
+  const buckle  = '#a88040';
+  const R = _avRect;
+  let s = '';
+  // Bag body (right side, hangs from shoulder)
+  s += R(43, 32, 6, 14, bag);
+  s += R(43, 32, 6, 1, bagHl);     // top trim
+  s += R(43, 45, 6, 1, bagSh);     // bottom shadow
+  s += R(48, 32, 1, 14, bagSh);    // outer right shadow
+  s += R(43, 32, 1, 14, bagHl);    // inner left highlight
+  // Strap diagonal across torso (shoulder to opposite hip)
+  s += R(43, 30, 1, 2, strap);
+  s += R(42, 32, 1, 2, strap);
+  s += R(40, 34, 2, 2, strap);
+  s += R(38, 36, 2, 2, strap);
+  // Buckle
+  s += R(45, 38, 2, 1, buckle);
+  return s;
+}
+
+// === BACK: shop_satchel_studded — dark satchel with metal studs ===
+function _avBackStuddedSatchel() {
+  const bag     = '#1a1410';
+  const bagHl   = '#3a2515';
+  const bagSh   = '#0a0805';
+  const strap   = '#0a0805';
+  const stud    = '#a8a8b8';
+  const studHl  = '#e8e8f0';
+  const R = _avRect;
+  let s = '';
+  s += R(43, 32, 6, 14, bag);
+  s += R(43, 32, 6, 1, bagHl);
+  s += R(43, 45, 6, 1, bagSh);
+  s += R(48, 32, 1, 14, bagSh);
+  s += R(43, 32, 1, 14, bagHl);
+  // METAL STUDS (3x2 grid on bag face — signature feature)
+  s += R(44, 35, 1, 1, stud); s += R(46, 35, 1, 1, stud); s += R(48, 35, 1, 1, stud);
+  s += R(44, 35, 1, 1, studHl); s += R(46, 35, 1, 1, studHl); s += R(48, 35, 1, 1, studHl);
+  s += R(44, 38, 1, 1, stud); s += R(46, 38, 1, 1, stud); s += R(48, 38, 1, 1, stud);
+  s += R(44, 41, 1, 1, stud); s += R(46, 41, 1, 1, stud); s += R(48, 41, 1, 1, stud);
+  // Strap
+  s += R(43, 30, 1, 2, strap);
+  s += R(42, 32, 1, 2, strap);
+  s += R(40, 34, 2, 2, strap);
+  s += R(38, 36, 2, 2, strap);
+  return s;
+}
+
+// === ACCESSORY: shop_pocket_watch — gold watch on chain at hip ===
+function _avAccessoryPocketWatch() {
+  const gold    = '#d4af37';
+  const goldHl  = '#f0d060';
+  const goldSh  = '#9e7d20';
+  const face    = '#f0f0f8';
+  const facetxt = '#1a1a26';
+  const chain   = '#a88040';
+  const R = _avRect;
+  let s = '';
+  // Watch body (small circle at left hip)
+  s += R(15, 41, 4, 4, gold);
+  s += R(15, 41, 4, 1, goldHl);    // top highlight
+  s += R(15, 44, 4, 1, goldSh);    // bottom shadow
+  s += R(16, 42, 2, 2, face);      // white watch face
+  s += R(16, 42, 2, 1, facetxt);   // tiny dot for "12" indicator
+  // Chain going up to belt
+  s += R(19, 40, 1, 1, chain);
+  s += R(20, 39, 1, 1, chain);
+  s += R(21, 39, 1, 1, chain);
+  s += R(22, 40, 1, 1, chain);
   return s;
 }
 
@@ -15176,11 +16088,13 @@ function renderHomeHeaderAvatar() {
       renderCharacterSvg(_avBuildOptsFromProfile(profile), 'bust') +
     '</span>';
   }
-  // v2.9.0: Home top-right now hosts BOTH a Wardrobe shortcut and the Avatar.
-  // Wardrobe button is compact (36px) and visually secondary to the 46px avatar.
-  // Layout: [👕 Wardrobe] [Avatar]  (avatar rightmost = identity anchor)
+  // v3.0.0: Home top-right Global Utility Zone — Wallet + Wardrobe + Avatar.
+  // Layout: [Wallet Pill] [👕 Wardrobe] [Avatar]
+  // Avatar = identity anchor (rightmost). Wardrobe = secondary cosmetic action.
+  // Wallet = currency status (leftmost = read-first in LTR).
   mount.innerHTML =
     '<div class="header-actions-row">' +
+      '<span class="global-wallet-mount" data-wallet-size="md"></span>' +
       '<button class="header-wardrobe-btn" onclick="openWardrobeOverlay()" ' +
         'aria-label="Open Wardrobe" title="Wardrobe">👕</button>' +
       '<button class="header-avatar-btn' + pulseCls + '" ' +
@@ -15191,6 +16105,8 @@ function renderHomeHeaderAvatar() {
         cueLabel +
       '</button>' +
     '</div>';
+  // Now hydrate the wallet pill into the just-mounted span
+  if (typeof refreshAllWallets === 'function') refreshAllWallets();
 }
 
 // Build the Profile overlay body (Trainer Dossier + My Journey + Honor Roll
@@ -15207,6 +16123,8 @@ function renderTrainerProfileBody() {
     renderTrainerCard() +
     // v2.8.0: Wardrobe entry point — small card between Trainer card and Journey
     (typeof renderWardrobeEntryCard === 'function' ? renderWardrobeEntryCard() : '') +
+    // v3.0.0: Shop entry — sits next to Wardrobe so identity → wear → spend stays grouped
+    (typeof renderShopEntryCard === 'function' ? renderShopEntryCard() : '') +
     // v2.3.0: Journey is read-only (no schema delta) and computed fresh on
     // each render so it always reflects the latest history.
     (typeof renderJourneyCard === 'function' ? renderJourneyCard() : '') +
@@ -15236,16 +16154,12 @@ window._wardrobeActiveTab = 'all';   // 'all' | 'head' | 'face' | 'top' | 'botto
 function renderWardrobeEntryCard() {
   const profile = App.state.profile || {};
   const ownedCount = (profile.ownedItemIds || []).length;
-  const chipsCount = profile.chips || 0;
   return '' +
     '<div class="wardrobe-entry-card">' +
       '<div class="wardrobe-entry-icon">✦</div>' +
       '<div class="wardrobe-entry-text">' +
         '<div class="wardrobe-entry-title">Wardrobe</div>' +
-        '<div class="wardrobe-entry-sub">' + ownedCount + ' item' + (ownedCount === 1 ? '' : 's') +
-          ' · <span class="chips-pill" style="vertical-align:middle">' + formatChips(chipsCount) + ' Chips</span>' +
-        '</div>' +
-        '<div class="wardrobe-entry-sub" style="font-size:10.5px;opacity:0.8;margin-top:3px">Earned by training. Spendable in future Shop.</div>' +
+        '<div class="wardrobe-entry-sub">' + ownedCount + ' item' + (ownedCount === 1 ? '' : 's') + ' owned · what you wear</div>' +
       '</div>' +
       '<button class="wardrobe-entry-btn" onclick="openWardrobeOverlay()">Open</button>' +
     '</div>';
@@ -15330,8 +16244,12 @@ function renderWardrobeOverlayBody() {
       '</div>' +
       '<div class="wardrobe-title-row">' +
         '<div class="wardrobe-title">Wardrobe</div>' +
-        '<div class="wardrobe-count">' + owned.length + ' item' + (owned.length === 1 ? '' : 's') +
-          ' · <span class="chips-pill">' + formatChips(profile.chips || 0) + ' Chips</span>' +
+        '<div class="wardrobe-count" style="display:inline-flex;align-items:center;gap:6px">' +
+          '<span>' + owned.length + ' item' + (owned.length === 1 ? '' : 's') + '</span>' +
+          '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:rgba(212,175,55,0.10);border:1px solid rgba(212,175,55,0.40);color:#d4af37;font-size:11px;font-weight:800">' +
+            renderChipsIcon(13) +
+            '<span style="font-variant-numeric:tabular-nums">' + formatChips(profile.chips || 0) + '</span>' +
+          '</span>' +
         '</div>' +
       '</div>' +
       '<div class="wardrobe-sub">Customize your trainer\'s outfit. Tap an item to equip.</div>' +
@@ -15341,9 +16259,12 @@ function renderWardrobeOverlayBody() {
       '<div class="wardrobe-equipped-summary">' + summaryText + '</div>' +
       '<div class="wardrobe-tabs">' + tabsHtml + '</div>' +
       '<div class="wardrobe-grid">' + gridHtml + '</div>' +
-      '<div class="wardrobe-shop-teaser">' +
-        '<strong>More outfit pieces will be unlockable with Chips soon.</strong>' +
-        'You\'re earning Chips already from training — Shop and Boss Drops arrive in v3.0+.' +
+      '<div class="shop-cross-link">' +
+        '<div class="shop-cross-link-text">' +
+          '<strong>Want more cosmetics?</strong>' +
+          'Spend your ' + formatChips(profile.chips || 0) + ' Chips at the Shop.' +
+        '</div>' +
+        '<button class="shop-cross-link-btn" onclick="closeWardrobeOverlay(); openShopOverlay();">Open Shop →</button>' +
       '</div>' +
     '</div>';
 }
@@ -15411,6 +16332,193 @@ function equipItem(itemId) {
   try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
   try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
   if (typeof showToast === 'function') showToast('✓ Equipped · ' + item.name);
+}
+
+// ============================================================
+// SHOP OVERLAY v3.0.0
+// ============================================================
+// Where Chips become cosmetics. Pattern follows Wardrobe overlay (full-screen
+// modal, .profile-overlay reused for layout). Tab filter + grid of shop items
+// with Buy/Owned/Equip states. Buying deducts from profile.chips and adds to
+// profile.ownedItemIds.
+
+window._shopActiveTab = 'all';
+
+function renderShopEntryCard() {
+  const profile = App.state.profile || {};
+  const chips = profile.chips || 0;
+  // Count items NOT yet owned
+  const ownedSet = new Set(profile.ownedItemIds || []);
+  const purchasable = SHOP_WARDROBE_ITEMS.filter(function (it) { return !ownedSet.has(it.id); }).length;
+  return '' +
+    '<div class="shop-entry-card">' +
+      '<div class="shop-entry-icon">' + renderChipsIcon(28) + '</div>' +
+      '<div class="shop-entry-text">' +
+        '<div class="shop-entry-title">Shop</div>' +
+        '<div class="shop-entry-sub">' + purchasable + ' item' + (purchasable === 1 ? '' : 's') +
+          ' available · You have ' + formatChips(chips) + ' Chips</div>' +
+      '</div>' +
+      '<button class="shop-entry-btn" onclick="openShopOverlay()">Browse</button>' +
+    '</div>';
+}
+
+function openShopOverlay() {
+  const overlay = document.getElementById('shopOverlay');
+  if (!overlay) return;
+  window._shopActiveTab = 'all';
+  document.getElementById('shopOverlayBody').innerHTML = renderShopOverlayBody();
+  overlay.classList.remove('hidden');
+  document.body.classList.add('profile-overlay-open');
+  const body = document.getElementById('shopOverlayBody');
+  if (body) body.scrollTop = 0;
+}
+
+function closeShopOverlay() {
+  const overlay = document.getElementById('shopOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  document.body.classList.remove('profile-overlay-open');
+}
+
+function _shopSetTab(tab) {
+  window._shopActiveTab = tab;
+  const body = document.getElementById('shopOverlayBody');
+  if (body) body.innerHTML = renderShopOverlayBody();
+}
+
+function renderShopOverlayBody() {
+  const profile = App.state.profile || {};
+  const chips = profile.chips || 0;
+  const ownedSet = new Set(profile.ownedItemIds || []);
+  const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
+  const activeTab = window._shopActiveTab || 'all';
+  // Tabs: All + each slot that has shop items
+  const slotsWithItems = ['head', 'top', 'bottom', 'shoes', 'back', 'accessory'].filter(function (slot) {
+    return SHOP_WARDROBE_ITEMS.some(function (it) { return it.slot === slot; });
+  });
+  const tabs = ['all'].concat(slotsWithItems);
+  const tabsHtml = tabs.map(function (t) {
+    const label = (t === 'all') ? 'All' : WARDROBE_SLOT_LABELS[t];
+    const cls = (activeTab === t) ? ' active' : '';
+    return '<button class="shop-tab' + cls + '" onclick="_shopSetTab(\'' + t + '\')">' + label + '</button>';
+  }).join('');
+  // Filter items
+  const filtered = (activeTab === 'all')
+    ? SHOP_WARDROBE_ITEMS.slice()
+    : SHOP_WARDROBE_ITEMS.filter(function (it) { return it.slot === activeTab; });
+  // Sort: not-owned-affordable first, then owned, then unaffordable
+  filtered.sort(function (a, b) {
+    const aOwned = ownedSet.has(a.id);
+    const bOwned = ownedSet.has(b.id);
+    if (aOwned !== bOwned) return aOwned ? 1 : -1;
+    return a.price - b.price;
+  });
+  const cardsHtml = filtered.length === 0
+    ? '<div class="shop-empty">No items in this category yet. More coming soon.</div>'
+    : filtered.map(function (it) { return _shopRenderItemCard(it, ownedSet, equipped, profile, chips); }).join('');
+  return '' +
+    '<div class="shop-overlay-shell">' +
+      '<div class="shop-header-row">' +
+        '<button class="shop-back-btn" onclick="_shopBackToWardrobe()">← Wardrobe</button>' +
+        '<button class="shop-close-btn" onclick="closeShopOverlay()" aria-label="Close Shop" title="Close">✕</button>' +
+      '</div>' +
+      '<div class="shop-title-row">' +
+        '<div class="shop-title">' + renderChipsIcon(22) + ' Shop</div>' +
+        '<div class="shop-title-balance">' + renderChipsIcon(16) +
+          '<span style="font-variant-numeric:tabular-nums">' + formatChips(chips) + '</span>' +
+          '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.8px;opacity:0.75;text-transform:uppercase">Chips</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="shop-sub">Spend Chips on cosmetics. Items appear in your Wardrobe instantly after purchase.</div>' +
+      '<div class="shop-tabs">' + tabsHtml + '</div>' +
+      '<div class="shop-grid">' + cardsHtml + '</div>' +
+      '<div class="shop-cross-link">' +
+        '<div class="shop-cross-link-text">' +
+          '<strong>Already bought something?</strong>' +
+          'Open Wardrobe to equip your items.' +
+        '</div>' +
+        '<button class="shop-cross-link-btn" onclick="_shopBackToWardrobe()">Wardrobe</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
+  const isOwned = ownedSet.has(item.id);
+  const isEquipped = (equipped[item.slot] === item.id);
+  const affordable = chips >= item.price;
+  // Mini character preview with this item equipped (override slot for preview)
+  const previewEquipped = Object.assign({}, equipped);
+  previewEquipped[item.slot] = item.id;
+  const previewOpts = {
+    bodyType: profile.avatarCharacter && profile.avatarCharacter.bodyType,
+    skin: profile.avatarCharacter && profile.avatarCharacter.skin,
+    hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
+    hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
+    equipped: previewEquipped
+  };
+  const previewSvg = renderCharacterSvg(previewOpts, 'stand');
+  // Rarity pill
+  const rarityColor = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
+  const rarityPill = '<span class="shop-card-rarity-pill" style="background:' + rarityColor.bg + ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' + RARITY_LABELS[item.rarity] + '</span>';
+  // State-specific action
+  let actionHtml;
+  let cardClass = 'shop-card';
+  if (isOwned) {
+    cardClass += isEquipped ? ' equipped' : ' owned';
+    actionHtml = isEquipped
+      ? '<div class="shop-owned-pill">✓ Equipped</div>'
+      : '<div class="shop-owned-pill">✓ Owned</div>' +
+        '<button class="shop-equip-btn" onclick="equipItem(\'' + item.id + '\')">Equip Now</button>';
+  } else {
+    cardClass += affordable ? ' affordable' : ' unaffordable';
+    const btnLabel = affordable ? 'Buy' : 'Need ' + (item.price - chips) + ' more';
+    const onclick = affordable ? 'buyShopItem(\'' + item.id + '\')' : 'void(0)';
+    actionHtml = '<button class="shop-buy-btn ' + (affordable ? 'affordable' : 'unaffordable') +
+      '"' + (affordable ? '' : ' disabled') + ' onclick="' + onclick + '">' + btnLabel + '</button>';
+  }
+  return '' +
+    '<div class="' + cardClass + '">' +
+      rarityPill +
+      '<div class="shop-card-thumb">' + previewSvg + '</div>' +
+      '<div class="shop-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
+      '<div class="shop-card-slot">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>' +
+      '<div class="shop-card-price">' + renderChipsIcon(14) + formatChips(item.price) + '</div>' +
+      actionHtml +
+    '</div>';
+}
+
+function _shopBackToWardrobe() {
+  closeShopOverlay();
+  if (typeof openWardrobeOverlay === 'function') openWardrobeOverlay();
+}
+
+// Buy flow: validate ownership + balance + item, deduct chips, add to ownedItemIds, save, toast.
+function buyShopItem(itemId) {
+  if (!App.state.profile) return;
+  const item = WARDROBE_ITEM_BY_ID[itemId];
+  if (!item) { console.warn('[buyShopItem] unknown item:', itemId); return; }
+  const profile = App.state.profile;
+  if (!Array.isArray(profile.ownedItemIds)) profile.ownedItemIds = [];
+  if (profile.ownedItemIds.indexOf(itemId) !== -1) {
+    if (typeof showToast === 'function') showToast('Already owned · ' + item.name);
+    return;
+  }
+  const price = item.price || 0;
+  const chips = profile.chips || 0;
+  if (chips < price) {
+    if (typeof showToast === 'function') showToast('Not enough Chips · need ' + (price - chips) + ' more');
+    return;
+  }
+  // Deduct + add ownership
+  profile.chips = chips - price;
+  profile.ownedItemIds.push(itemId);
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  // Refresh shop overlay + wallets
+  const body = document.getElementById('shopOverlayBody');
+  if (body) body.innerHTML = renderShopOverlayBody();
+  try { refreshAllWallets(); } catch (e) {}
+  // Toast with Equip Now CTA
+  if (typeof showToast === 'function') showToast('✓ Bought · ' + item.name + ' (-' + price + ' Chips)');
 }
 
 // Unequip slot (only valid for optional slots: head, face, back, accessory)
@@ -18403,7 +19511,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.9.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.0.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -18514,7 +19622,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.9.0',
+    appVersion: '3.0.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
