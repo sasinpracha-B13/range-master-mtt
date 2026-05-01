@@ -4344,6 +4344,10 @@
     .unlock-req-text {
       font-size: 14px; color: var(--text); font-weight: 600; line-height: 1.45;
     }
+    .unlock-req-subtext {
+      font-size: 11.5px; color: var(--text-secondary); margin-top: 6px;
+      font-style: italic; line-height: 1.4;
+    }
     .unlock-progress-row { margin-top: 10px; }
     .unlock-progress-label {
       font-size: 11px; color: var(--text-secondary); margin-bottom: 5px;
@@ -4359,6 +4363,79 @@
       border-radius: 999px;
       transition: width 0.3s ease;
     }
+    /* v3.2.0 Boss Drop Earned block on boss result screen */
+    .boss-drop-card {
+      margin-top: 16px; padding: 16px;
+      background: linear-gradient(135deg, rgba(232,74,94,0.10) 0%, rgba(26,35,50,0.85) 100%);
+      border: 1.5px solid rgba(232,74,94,0.55);
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(232,74,94,0.20), 0 4px 14px rgba(232,74,94,0.20);
+      position: relative;
+    }
+    .boss-drop-eyebrow {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.6px;
+      color: #e84a5e; text-transform: uppercase; margin-bottom: 8px; text-align: center;
+    }
+    .boss-drop-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .boss-drop-thumb {
+      width: 80px; height: 80px; flex-shrink: 0;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(232,74,94,0.18) 0%, transparent 70%),
+        linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
+      border-radius: 8px; border: 1px solid rgba(232,74,94,0.40);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 4px; overflow: hidden;
+    }
+    .boss-drop-thumb svg { width: 90%; height: 90%; image-rendering: pixelated; }
+    .boss-drop-text { flex: 1; min-width: 0; }
+    .boss-drop-name {
+      font-size: 16px; font-weight: 800; color: var(--text);
+      letter-spacing: 0.2px; margin-bottom: 2px;
+    }
+    .boss-drop-meta {
+      font-size: 11px; color: var(--text-secondary);
+      letter-spacing: 0.4px; line-height: 1.4;
+    }
+    .boss-drop-meta strong { color: #e84a5e; }
+    .boss-drop-progress {
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px dashed rgba(232,74,94,0.20);
+      font-size: 11px; color: var(--text-secondary);
+    }
+    .boss-drop-progress-bar {
+      width: 100%; height: 4px; border-radius: 999px;
+      background: rgba(255,255,255,0.05); overflow: hidden; margin-top: 5px;
+    }
+    .boss-drop-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e84a5e 0%, #d4af37 100%);
+      border-radius: 999px;
+    }
+    .boss-drop-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .boss-drop-equip-btn {
+      flex: 1; padding: 8px; border-radius: 6px;
+      background: rgba(232,74,94,0.18); border: 1px solid rgba(232,74,94,0.55);
+      color: #e84a5e; font-size: 11px; font-weight: 800; letter-spacing: 0.6px;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .boss-drop-equip-btn:hover { background: rgba(232,74,94,0.28); }
+    .boss-drop-wardrobe-btn {
+      flex: 1; padding: 8px; border-radius: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text); font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+      text-transform: uppercase; cursor: pointer;
+    }
+    .boss-drop-wardrobe-btn:hover { border-color: rgba(212,175,55,0.40); color: #d4af37; }
+    /* set complete bonus variant — chip-themed */
+    .boss-drop-card.set-complete {
+      background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(26,35,50,0.85) 100%);
+      border-color: rgba(212,175,55,0.55);
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.20), 0 4px 14px rgba(212,175,55,0.20);
+    }
+    .boss-drop-card.set-complete .boss-drop-eyebrow { color: #d4af37; }
+
     .unlock-cta-btn {
       width: 100%; padding: 12px; border-radius: 10px;
       background: linear-gradient(135deg, rgba(212,175,55,0.20) 0%, rgba(212,175,55,0.10) 100%);
@@ -7072,6 +7149,9 @@ const App = {
       chipsLifetime: 0,
       chipsHistory: {},        // 'YYYY-MM-DD': { earned, drillEarned, missionEarned, bossEarned, examEarned, personalBestEarned, streakEarned }
       chipsAwardedKeys: [],    // ['drill:<startTime>', 'boss:<resultDate>', 'exam:<resultDate>', 'streak:<date>']
+      // v3.2.0: Cosmetic grant history (Boss Drops). Append-only. Used for
+      // backup clarity + dedup guard. Each entry: { key, itemId, source, bossKey, date }
+      cosmeticGrantHistory: [],
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
       // v2.4.0: Personal Records ATH cache. Three keys, populated lazily
@@ -12135,6 +12215,8 @@ function ensureTrainerIdentity() {
   if (typeof profile.chipsLifetime !== 'number') { profile.chipsLifetime = 0; mutated = true; }
   if (!profile.chipsHistory || typeof profile.chipsHistory !== 'object') { profile.chipsHistory = {}; mutated = true; }
   if (!Array.isArray(profile.chipsAwardedKeys)) { profile.chipsAwardedKeys = []; mutated = true; }
+  // v3.2.0: Cosmetic grant history migration (additive)
+  if (!Array.isArray(profile.cosmeticGrantHistory)) { profile.cosmeticGrantHistory = []; mutated = true; }
   if (mutated) {
     try { App.saveProgress(); } catch (e) { /* non-fatal */ }
   }
@@ -13230,6 +13312,176 @@ function renderChipsRewardBlock(items, totalAmount) {
 // Format chips count for display (e.g. 1234 → "1,234")
 function formatChips(n) {
   return (n || 0).toLocaleString('en-US');
+}
+
+// ============================================================
+// BOSS DROP UNLOCK LOGIC v3.2.0
+// ============================================================
+// Maps boss display names (used in BOSS_PREVIEW_ITEMS unlock metadata) to
+// the internal module key (e.g. ch.module from showChallengeResult).
+// This is the bridge between catalog metadata and the existing boss/challenge system.
+const BOSS_NAME_TO_MODULE_KEY = {
+  'Push/Fold Boss':       'push_fold',
+  'Call vs Jam Boss':     'call_vs_jam',
+  'BB Defense Boss':      'bb_defense',
+  'Blind Battle Boss':    'blind_battle',
+  'Rejam Boss':           'rejam',
+  'Open vs 3-Bet Boss':   'open_vs_3bet',
+  'Mixed Decision Boss':  'mixed_decision'
+};
+const MODULE_KEY_TO_BOSS_NAME = {};
+Object.keys(BOSS_NAME_TO_MODULE_KEY).forEach(function (name) {
+  MODULE_KEY_TO_BOSS_NAME[BOSS_NAME_TO_MODULE_KEY[name]] = name;
+});
+
+// Set-complete bonus when all boss items already owned
+const BOSS_SET_COMPLETE_BONUS_CHIPS = 150;
+
+// Get all boss preview items belonging to a given module key.
+// Excludes any items flagged as aura/effect (currently none in v3.2.0).
+function getBossItemsForModule(moduleKey) {
+  const bossName = MODULE_KEY_TO_BOSS_NAME[moduleKey];
+  if (!bossName) return [];
+  return BOSS_PREVIEW_ITEMS.filter(function (it) {
+    if (!it.unlock || it.unlock.boss !== bossName) return false;
+    // v3.2.0: exclude aura items if any (none yet, but defensive for v3.3+)
+    if (it.kind === 'aura') return false;
+    return true;
+  });
+}
+
+// Get unowned boss items for a module (filters by current profile.ownedItemIds)
+function getUnownedBossItems(moduleKey, profile) {
+  const owned = new Set((profile && profile.ownedItemIds) || []);
+  return getBossItemsForModule(moduleKey).filter(function (it) { return !owned.has(it.id); });
+}
+
+// Get owned boss items for a module
+function getOwnedBossItems(moduleKey, profile) {
+  const owned = new Set((profile && profile.ownedItemIds) || []);
+  return getBossItemsForModule(moduleKey).filter(function (it) { return owned.has(it.id); });
+}
+
+// Render the Boss Drop Earned block for the boss result screen.
+// Displays either the granted item (with preview + Equip CTA) or the
+// set-complete chips bonus message.
+function renderBossDropBlock(drop, ch) {
+  if (!drop) return '';
+  const profile = App.state.profile || {};
+  if (drop.type === 'set_complete_bonus') {
+    return '' +
+      '<div class="boss-drop-card set-complete">' +
+        '<div class="boss-drop-eyebrow">★ Boss Set Complete ★</div>' +
+        '<div class="boss-drop-row">' +
+          '<div class="boss-drop-thumb" style="display:flex;align-items:center;justify-content:center;font-size:32px;color:#d4af37">✦</div>' +
+          '<div class="boss-drop-text">' +
+            '<div class="boss-drop-name">+' + (drop.chipsAwarded || 0) + ' Chips</div>' +
+            '<div class="boss-drop-meta">All <strong>' + drop.setSize + '</strong> ' + ((MODULE_KEY_TO_BOSS_NAME[ch && ch.module] || 'Boss')) + ' items already owned. Set Complete Bonus awarded.</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+  // type === 'item' — granted a new boss item
+  const item = drop.item;
+  if (!item) return '';
+  const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
+  const previewEquipped = Object.assign({}, equipped);
+  previewEquipped[item.slot] = item.id;
+  const previewSvg = renderCharacterSvg({
+    bodyType: profile.avatarCharacter && profile.avatarCharacter.bodyType,
+    skin: profile.avatarCharacter && profile.avatarCharacter.skin,
+    hairStyle: profile.avatarCharacter && profile.avatarCharacter.hairStyle,
+    hairColor: profile.avatarCharacter && profile.avatarCharacter.hairColor,
+    equipped: previewEquipped
+  }, 'stand');
+  const setProg = drop.setProgress || { owned: 0, total: 0 };
+  const pct = setProg.total > 0 ? Math.round((setProg.owned / setProg.total) * 100) : 0;
+  const bossName = (item.unlock && item.unlock.boss) || 'Boss';
+  return '' +
+    '<div class="boss-drop-card">' +
+      '<div class="boss-drop-eyebrow">★ Boss Drop Earned ★</div>' +
+      '<div class="boss-drop-row">' +
+        '<div class="boss-drop-thumb">' + previewSvg + '</div>' +
+        '<div class="boss-drop-text">' +
+          '<div class="boss-drop-name">' + _trainerEscapeHtml(item.name) + '</div>' +
+          '<div class="boss-drop-meta">Earned from <strong>' + _trainerEscapeHtml(bossName) + '</strong></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="boss-drop-progress">' +
+        'Boss Set: ' + setProg.owned + ' / ' + setProg.total + ' owned' +
+        '<div class="boss-drop-progress-bar"><div class="boss-drop-progress-fill" style="width:' + pct + '%"></div></div>' +
+      '</div>' +
+      '<div class="boss-drop-actions">' +
+        '<button class="boss-drop-equip-btn" onclick="equipItem(\'' + item.id + '\')">Equip Now</button>' +
+        '<button class="boss-drop-wardrobe-btn" onclick="openWardrobeOverlay()">Wardrobe</button>' +
+      '</div>' +
+    '</div>';
+}
+
+// Grant a boss cosmetic reward for a passed boss clear.
+// Returns one of:
+//   { type:'item', item, setProgress:{owned, total} }   — granted a new item
+//   { type:'set_complete_bonus', chipsAwarded, setSize } — all owned, granted chips
+//   null — already granted for this dedup key (no-op)
+//
+// Uses dedup key 'bossDrop:<moduleKey>:<resultRecord.date>' so re-render is safe.
+function grantBossCosmeticReward(moduleKey, resultRecord) {
+  if (!App.state.profile) return null;
+  if (!moduleKey || !resultRecord) return null;
+  const profile = App.state.profile;
+  if (!Array.isArray(profile.cosmeticGrantHistory)) profile.cosmeticGrantHistory = [];
+  const dedupKey = 'bossDrop:' + moduleKey + ':' + resultRecord.date;
+  // Dedup check
+  for (let i = 0; i < profile.cosmeticGrantHistory.length; i++) {
+    if (profile.cosmeticGrantHistory[i].key === dedupKey) {
+      return null;
+    }
+  }
+  const allItems = getBossItemsForModule(moduleKey);
+  if (allItems.length === 0) return null;
+  const unowned = getUnownedBossItems(moduleKey, profile);
+  if (unowned.length > 0) {
+    // Grant the FIRST unowned item (deterministic order = order in BOSS_PREVIEW_ITEMS)
+    const item = unowned[0];
+    if (!Array.isArray(profile.ownedItemIds)) profile.ownedItemIds = [];
+    profile.ownedItemIds.push(item.id);
+    profile.cosmeticGrantHistory.push({
+      key: dedupKey,
+      itemId: item.id,
+      source: 'boss',
+      bossKey: moduleKey,
+      date: resultRecord.date
+    });
+    // Cap history at 200 entries (drop oldest)
+    if (profile.cosmeticGrantHistory.length > 200) {
+      profile.cosmeticGrantHistory = profile.cosmeticGrantHistory.slice(-200);
+    }
+    const ownedCount = getOwnedBossItems(moduleKey, profile).length;
+    return {
+      type: 'item',
+      item: item,
+      setProgress: { owned: ownedCount, total: allItems.length }
+    };
+  }
+  // All owned → grant set-complete bonus chips
+  const chipsAwarded = awardChips(BOSS_SET_COMPLETE_BONUS_CHIPS, 'boss', dedupKey + ':bonus');
+  // Record in grant history regardless (for dedup safety on this boss clear)
+  profile.cosmeticGrantHistory.push({
+    key: dedupKey,
+    itemId: null,
+    source: 'boss',
+    bossKey: moduleKey,
+    date: resultRecord.date,
+    setCompleteBonus: chipsAwarded
+  });
+  if (profile.cosmeticGrantHistory.length > 200) {
+    profile.cosmeticGrantHistory = profile.cosmeticGrantHistory.slice(-200);
+  }
+  return {
+    type: 'set_complete_bonus',
+    chipsAwarded: chipsAwarded || BOSS_SET_COMPLETE_BONUS_CHIPS,
+    setSize: allItems.length
+  };
 }
 
 // v3.0.0: Compact format for Wallet Pill — 999 / 1.2K / 12.4K / 100K+
@@ -19511,7 +19763,9 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
     ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
     (RARITY_LABELS[item.rarity] || 'Common') + '</span>';
   const headerHtml = '<div class="shop-card-header">' + sourceTag + rarityPill + '</div>';
-  // v3.1.0: card-state machine
+  // v3.1.0 + v3.2.0: card-state machine
+  // v3.2.0: Owned takes precedence over previewOnly so earned Boss Drops show
+  // as Owned/Equip rather than How to Unlock.
   let actionHtml;
   let priceHtml;
   let cardClass = 'shop-card';
@@ -19645,6 +19899,20 @@ function _renderHowToUnlockModalBody(item) {
         '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
       '</div>';
   }
+  // v3.2.0: Boss set progress for boss items — show "Boss Set: X / Y owned"
+  if (item.source === 'boss' && unlock.boss) {
+    const moduleKey = BOSS_NAME_TO_MODULE_KEY[unlock.boss];
+    if (moduleKey) {
+      const setItems = getBossItemsForModule(moduleKey);
+      const ownedCount = getOwnedBossItems(moduleKey, profile).length;
+      const pct = setItems.length > 0 ? Math.round((ownedCount / setItems.length) * 100) : 0;
+      progressHtml +=
+        '<div class="unlock-progress-row">' +
+          '<div class="unlock-progress-label">Boss Set: ' + ownedCount + ' / ' + setItems.length + ' owned</div>' +
+          '<div class="unlock-progress-bar"><div class="unlock-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>';
+    }
+  }
   // Safe CTA — only home / drill navigation, no fragile deep routing
   let ctaHtml = '';
   if (unlock.ctaTarget && unlock.ctaLabel) {
@@ -19672,6 +19940,7 @@ function _renderHowToUnlockModalBody(item) {
       '<div class="unlock-modal-req">' +
         '<div class="unlock-req-label">How to Unlock</div>' +
         '<div class="unlock-req-text">' + _trainerEscapeHtml(unlock.requirement || 'Earn through gameplay.') + '</div>' +
+        (item.source === 'boss' ? '<div class="unlock-req-subtext">Each Boss clear grants one unowned item from this set.</div>' : '') +
         progressHtml +
       '</div>' +
       ctaHtml +
@@ -21686,6 +21955,15 @@ function showChallengeResult() {
   // Stash on drill state so result screen can render breakdown
   if (chipsResult) App.state.drill._sessionChips = chipsResult;
 
+  // v3.2.0: Grant boss cosmetic reward (single-fire via grantBossCosmeticReward dedup).
+  // Returns { type:'item', item, setProgress } | { type:'set_complete_bonus', chipsAwarded } | null
+  if (result.passed) {
+    try {
+      const drop = grantBossCosmeticReward(ch.module, resultRecord);
+      if (drop) App.state.drill._bossDrop = drop;
+    } catch (e) { console.warn('[boss-drop] grant failed:', e); }
+  }
+
   App.saveProgress();
   // v2.0.0: dailyPlan must rebuild — Boss result changed module rank /
   // Mastery Score / boss-fail cooldown state.
@@ -21801,6 +22079,7 @@ function renderChallengeResultScreen(ch, result, rankUp) {
           `).join('')}
           ` : ''}
         </div>
+        ${App.state.drill && App.state.drill._bossDrop ? renderBossDropBlock(App.state.drill._bossDrop, ch) : ''}
 
         ${renderCertificationSealBlock({
           variant: 'module',
@@ -22668,7 +22947,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.5</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.2.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -22779,7 +23058,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.1.5',
+    appVersion: '3.2.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -23287,6 +23566,8 @@ function confirmReset() {
     chipsLifetime: 0,
     chipsHistory: {},
     chipsAwardedKeys: [],
+    // v3.2.0: reset cosmetic grant history (fresh trainer = no boss drops yet).
+    cosmeticGrantHistory: [],
     // v2.4.0: reset wipes Personal Records ATH cache so a brand-new identity
     // starts fresh (no stale records from the previous trainer).
     records: {
