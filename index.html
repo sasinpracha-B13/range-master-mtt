@@ -4148,11 +4148,34 @@
       color: var(--text-secondary);
       cursor: not-allowed;
     }
-    .shop-card-rarity-pill {
-      position: absolute; top: 6px; right: 6px;
-      font-size: 8.5px; font-weight: 800; letter-spacing: 0.8px;
-      padding: 2px 6px; border-radius: 999px; text-transform: uppercase;
+    /* v3.0.1: Card header row — dedicated zone for source tag + rarity pill.
+       Replaces the v3.0.0 absolute-positioned rarity pill which was being
+       hidden behind the preview thumb. Header now lives in normal document
+       flow ABOVE the thumb so badges are always fully visible. */
+    .shop-card-header {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 6px;
+      padding: 0 2px 6px;
+      margin-bottom: 4px;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+      min-height: 18px;
     }
+    .shop-card-source {
+      font-size: 8.5px; font-weight: 800; letter-spacing: 0.8px;
+      padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .shop-card-rarity {
+      font-size: 8.5px; font-weight: 800; letter-spacing: 0.8px;
+      padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    /* Legacy class — kept as no-op so any leftover code that references it
+       doesn't break. The new card never uses absolute positioning. */
+    .shop-card-rarity-pill { display: none; }
     .shop-card-thumb {
       width: 96px; height: 96px;
       background:
@@ -12410,35 +12433,63 @@ const WARDROBE_SLOT_LABELS = {
   head:'Head', face:'Face', top:'Top', bottom:'Bottom',
   shoes:'Shoes', back:'Back', accessory:'Accessory'
 };
+// v3.0.1: Source taxonomy — every cosmetic item declares its origin so the
+// catalog UI can communicate Shop / Boss Drop / Achievement / Rank Reward
+// distinctly. Currently only 'starter' and 'shop' are populated; the others
+// are reserved for v3.1.0+ (preview-only catalog) and v3.2.0+ (unlock logic).
+const ITEM_SOURCES = ['starter', 'shop', 'boss', 'achievement', 'rank', 'event'];
+const SOURCE_LABELS = {
+  starter:     'Starter',
+  shop:        'Shop',
+  boss:        'Boss Drop',
+  achievement: 'Achievement',
+  rank:        'Rank Reward',
+  event:       'Event'
+};
+const SOURCE_COLORS = {
+  starter:     { bg:'rgba(148,163,184,0.10)', border:'rgba(148,163,184,0.40)', text:'#94a3b8' },
+  shop:        { bg:'rgba(212,175,55,0.10)',  border:'rgba(212,175,55,0.45)',  text:'#d4af37' },
+  boss:        { bg:'rgba(232,74,94,0.10)',   border:'rgba(232,74,94,0.50)',   text:'#e84a5e' },
+  achievement: { bg:'rgba(110,231,183,0.10)', border:'rgba(110,231,183,0.45)', text:'#6ee7b7' },
+  rank:        { bg:'rgba(167,139,250,0.10)', border:'rgba(167,139,250,0.50)', text:'#a78bfa' },
+  event:       { bg:'rgba(255,200,80,0.10)',  border:'rgba(255,200,80,0.50)',  text:'#ffc850' }
+};
+
 const STARTER_WARDROBE_ITEMS = [
-  { id:'starter_basic_cap',         slot:'head',   name:'Basic Cap',         rarity:'starter', ownedByDefault:true, description:'A plain dark-blue baseball cap.' },
-  { id:'starter_training_headband', slot:'head',   name:'Training Headband', rarity:'starter', ownedByDefault:true, description:'A soft white sweatband for focused sessions.' },
-  { id:'starter_plain_tee',         slot:'top',    name:'Plain Tee',         rarity:'starter', ownedByDefault:true, description:'A clean white tee for daily training.' },
-  { id:'starter_training_pants',    slot:'bottom', name:'Training Pants',    rarity:'starter', ownedByDefault:true, description:'Gray track pants with side stripes.' },
-  { id:'starter_shorts',            slot:'bottom', name:'Shorts',            rarity:'starter', ownedByDefault:true, description:'Khaki training shorts.' },
-  { id:'starter_training_shoes',    slot:'shoes',  name:'Training Shoes',    rarity:'starter', ownedByDefault:true, description:'White sneakers with a red sole.' }
+  { id:'starter_basic_cap',         slot:'head',   name:'Basic Cap',         rarity:'starter', source:'starter', ownedByDefault:true, description:'A plain dark-blue baseball cap.' },
+  { id:'starter_training_headband', slot:'head',   name:'Training Headband', rarity:'starter', source:'starter', ownedByDefault:true, description:'A soft white sweatband for focused sessions.' },
+  { id:'starter_plain_tee',         slot:'top',    name:'Plain Tee',         rarity:'starter', source:'starter', ownedByDefault:true, description:'A clean white tee for daily training.' },
+  { id:'starter_training_pants',    slot:'bottom', name:'Training Pants',    rarity:'starter', source:'starter', ownedByDefault:true, description:'Gray track pants with side stripes.' },
+  { id:'starter_shorts',            slot:'bottom', name:'Shorts',            rarity:'starter', source:'starter', ownedByDefault:true, description:'Khaki training shorts.' },
+  { id:'starter_training_shoes',    slot:'shoes',  name:'Training Shoes',    rarity:'starter', source:'starter', ownedByDefault:true, description:'White sneakers with a red sole.' }
 ];
 const STARTER_OWNED_ITEM_IDS = STARTER_WARDROBE_ITEMS.map(function (it) { return it.id; });
 // v3.0.0: SHOP catalog — 12 purchasable cosmetics with Chips pricing.
 // Pricing tiers calibrated to v2.9.0 earn rates (~50-100 chips/day casual).
 // Common = 1-2 days · Uncommon = 3-5 days · Rare = 1-2 weeks · Prestige = month
+// v3.0.1: + 2 entry-tier items (60, 80) to improve first-purchase motivation
+//         and fill underrepresented face/accessory slots.
+//         + source field added (all 'shop') — taxonomy infrastructure.
 const SHOP_WARDROBE_ITEMS = [
+  // ----- ENTRY tier v3.0.1 (2 items, 60-80) — first-purchase motivation -----
+  { id:'shop_silver_band',     slot:'accessory', name:'Silver Band',       rarity:'common',    source:'shop', price:60,   description:'A simple polished silver wristband.' },
+  { id:'shop_red_bandana',     slot:'face',      name:'Red Bandana',       rarity:'common',    source:'shop', price:80,   description:'Bright red bandana tied across the forehead.' },
   // ----- COMMON tier (5 items, 100-150) -----
-  { id:'shop_simple_visor',    slot:'head',      name:'Sun Visor',         rarity:'common',    price:100,  description:'A bright green sun visor with curved brim.' },
-  { id:'shop_pocket_tee',      slot:'top',       name:'Pocket Tee',        rarity:'common',    price:150,  description:'Heather-gray tee with a small chest pocket.' },
-  { id:'shop_running_shorts',  slot:'bottom',    name:'Running Shorts',    rarity:'common',    price:120,  description:'Athletic dark-blue shorts.' },
-  { id:'shop_canvas_sneakers', slot:'shoes',     name:'Canvas Sneakers',   rarity:'common',    price:100,  description:'Bright red canvas sneakers.' },
-  { id:'shop_messenger_bag',   slot:'back',      name:'Messenger Bag',     rarity:'common',    price:130,  description:'Dark canvas messenger bag with shoulder strap.' },
+  { id:'shop_simple_visor',    slot:'head',      name:'Sun Visor',         rarity:'common',    source:'shop', price:100,  description:'A bright green sun visor with curved brim.' },
+  { id:'shop_pocket_tee',      slot:'top',       name:'Pocket Tee',        rarity:'common',    source:'shop', price:150,  description:'Heather-gray tee with a small chest pocket.' },
+  { id:'shop_running_shorts',  slot:'bottom',    name:'Running Shorts',    rarity:'common',    source:'shop', price:120,  description:'Athletic dark-blue shorts.' },
+  { id:'shop_canvas_sneakers', slot:'shoes',     name:'Canvas Sneakers',   rarity:'common',    source:'shop', price:100,  description:'Bright red canvas sneakers.' },
+  { id:'shop_messenger_bag',   slot:'back',      name:'Messenger Bag',     rarity:'common',    source:'shop', price:130,  description:'Dark canvas messenger bag with shoulder strap.' },
   // ----- UNCOMMON tier (3 items, 240-320) -----
-  { id:'shop_track_jacket',    slot:'top',       name:'Track Jacket',      rarity:'uncommon',  price:320,  description:'Black track jacket with bold white stripes.' },
-  { id:'shop_cargo_pants',     slot:'bottom',    name:'Cargo Pants',       rarity:'uncommon',  price:280,  description:'Olive cargo pants with side pockets.' },
-  { id:'shop_pocket_watch',    slot:'accessory', name:'Pocket Watch',      rarity:'uncommon',  price:240,  description:'A polished gold pocket watch on a chain.' },
+  { id:'shop_track_jacket',    slot:'top',       name:'Track Jacket',      rarity:'uncommon',  source:'shop', price:320,  description:'Black track jacket with bold white stripes.' },
+  { id:'shop_cargo_pants',     slot:'bottom',    name:'Cargo Pants',       rarity:'uncommon',  source:'shop', price:280,  description:'Olive cargo pants with side pockets.' },
+  { id:'shop_pocket_watch',    slot:'accessory', name:'Pocket Watch',      rarity:'uncommon',  source:'shop', price:240,  description:'A polished gold pocket watch on a chain.' },
   // ----- RARE tier (3 items, 580-650) -----
-  { id:'shop_aviator_hat',     slot:'head',      name:'Aviator Cap',       rarity:'rare',      price:600,  description:'Brown leather pilot cap with goggles.' },
-  { id:'shop_combat_boots',    slot:'shoes',     name:'Combat Boots',      rarity:'rare',      price:650,  description:'Tall black combat boots, laced tight.' },
-  { id:'shop_satchel_studded', slot:'back',      name:'Studded Satchel',   rarity:'rare',      price:580,  description:'Dark satchel with metal stud trim.' },
+  { id:'shop_aviator_hat',     slot:'head',      name:'Aviator Cap',       rarity:'rare',      source:'shop', price:600,  description:'Brown leather pilot cap with goggles.' },
+  { id:'shop_combat_boots',    slot:'shoes',     name:'Combat Boots',      rarity:'rare',      source:'shop', price:650,  description:'Tall black combat boots, laced tight.' },
+  { id:'shop_satchel_studded', slot:'back',      name:'Studded Satchel',   rarity:'rare',      source:'shop', price:580,  description:'Dark satchel with metal stud trim.' },
   // ----- PRESTIGE tier (1 item, 1500) -----
-  { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  price:1500, description:'Gold-trimmed championship jacket with crest.' }
+  { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  source:'shop', price:1500, description:'Gold-trimmed championship jacket with crest.' }
 ];
 // Combined item map (starter + shop). Renderer dispatchers look up here.
 const WARDROBE_ITEM_BY_ID = {};
@@ -12892,8 +12943,10 @@ function _avPartsHat(itemId) {
   }
 }
 function _avPartsFaceMask(itemId) {
-  // v3.0.0: no shop face items yet — slot reserved for future
-  return '';
+  switch (itemId) {
+    case 'shop_red_bandana': return _avFaceRedBandana();
+    default: return '';
+  }
 }
 function _avPartsBack(itemId) {
   switch (itemId) {
@@ -12905,6 +12958,7 @@ function _avPartsBack(itemId) {
 function _avPartsAccessory(itemId) {
   switch (itemId) {
     case 'shop_pocket_watch': return _avAccessoryPocketWatch();
+    case 'shop_silver_band':  return _avAccessorySilverBand();
     default: return '';
   }
 }
@@ -13928,6 +13982,44 @@ function _avAccessoryPocketWatch() {
   s += R(20, 39, 1, 1, chain);
   s += R(21, 39, 1, 1, chain);
   s += R(22, 40, 1, 1, chain);
+  return s;
+}
+
+// === ACCESSORY: shop_silver_band — simple polished silver wristband (entry tier) ===
+function _avAccessorySilverBand() {
+  const silver   = '#c0c4d0';
+  const silverHl = '#e8eaf0';
+  const silverSh = '#7a808a';
+  const R = _avRect;
+  let s = '';
+  // Wristband on left wrist (over hand area at y=39-40)
+  s += R(18, 39, 4, 2, silver);    // 2-row band
+  s += R(18, 39, 4, 1, silverHl);  // top highlight (chrome shine)
+  s += R(18, 40, 4, 1, silverSh);  // bottom shadow
+  // Tiny gold accent dot (premium touch)
+  s += R(20, 39, 1, 1, '#d4af37');
+  return s;
+}
+
+// === FACE: shop_red_bandana — red bandana tied across forehead with side knot ===
+function _avFaceRedBandana() {
+  const red    = '#c41a2a';
+  const redSh  = '#8e1a26';
+  const redHl  = '#e84050';
+  const knot   = '#8e1a26';
+  const R = _avRect;
+  let s = '';
+  // Main band across forehead (sits at y=8-9, between hair and brows)
+  s += R(22, 8, 20, 2, red);
+  s += R(22, 8, 20, 1, redHl);     // top highlight
+  s += R(22, 9, 20, 1, redSh);     // bottom shadow
+  // Knot tied on right side (small bump)
+  s += R(40, 7, 3, 1, red);        // knot top
+  s += R(40, 8, 3, 2, knot);       // knot body (slightly darker)
+  s += R(43, 9, 1, 1, redSh);      // knot edge shadow
+  // Tail draping down right side (2-px tail)
+  s += R(42, 10, 1, 2, red);       // tail upper
+  s += R(43, 11, 1, 1, redSh);     // tail tip shadow
   return s;
 }
 
@@ -16092,9 +16184,11 @@ function renderHomeHeaderAvatar() {
   // Layout: [Wallet Pill] [👕 Wardrobe] [Avatar]
   // Avatar = identity anchor (rightmost). Wardrobe = secondary cosmetic action.
   // Wallet = currency status (leftmost = read-first in LTR).
+  // v3.0.1: Mastery uses sm wallet so the 46px avatar stays the dominant
+  // identity anchor. Other tabs use md wallet (where it's the only utility).
   mount.innerHTML =
     '<div class="header-actions-row">' +
-      '<span class="global-wallet-mount" data-wallet-size="md"></span>' +
+      '<span class="global-wallet-mount" data-wallet-size="sm"></span>' +
       '<button class="header-wardrobe-btn" onclick="openWardrobeOverlay()" ' +
         'aria-label="Open Wardrobe" title="Wardrobe">👕</button>' +
       '<button class="header-avatar-btn' + pulseCls + '" ' +
@@ -16457,9 +16551,18 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
     equipped: previewEquipped
   };
   const previewSvg = renderCharacterSvg(previewOpts, 'stand');
-  // Rarity pill
+  // v3.0.1: Header row — source tag (left) + rarity pill (right). Lives ABOVE
+  // the preview thumb so badges are never blocked by the preview frame.
+  const itemSource = item.source || 'shop';
+  const sourceColor = SOURCE_COLORS[itemSource] || SOURCE_COLORS.shop;
+  const sourceTag = '<span class="shop-card-source" style="background:' + sourceColor.bg +
+    ';border:1px solid ' + sourceColor.border + ';color:' + sourceColor.text + '">' +
+    (SOURCE_LABELS[itemSource] || 'Shop') + '</span>';
   const rarityColor = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
-  const rarityPill = '<span class="shop-card-rarity-pill" style="background:' + rarityColor.bg + ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' + RARITY_LABELS[item.rarity] + '</span>';
+  const rarityPill = '<span class="shop-card-rarity" style="background:' + rarityColor.bg +
+    ';border:1px solid ' + rarityColor.border + ';color:' + rarityColor.text + '">' +
+    (RARITY_LABELS[item.rarity] || 'Common') + '</span>';
+  const headerHtml = '<div class="shop-card-header">' + sourceTag + rarityPill + '</div>';
   // State-specific action
   let actionHtml;
   let cardClass = 'shop-card';
@@ -16478,7 +16581,7 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
   }
   return '' +
     '<div class="' + cardClass + '">' +
-      rarityPill +
+      headerHtml +
       '<div class="shop-card-thumb">' + previewSvg + '</div>' +
       '<div class="shop-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
       '<div class="shop-card-slot">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>' +
@@ -19511,7 +19614,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.0.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.0.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -19622,7 +19725,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.0.0',
+    appVersion: '3.0.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
