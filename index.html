@@ -6028,7 +6028,7 @@
     </div>
     <!-- Tab strip -->
     <div class="character-picker-tabs" id="characterPickerTabs">
-      <button class="cp-tab" data-cp-tab="bodyType">Body</button>
+      <button class="cp-tab" data-cp-tab="bodyType">Gender</button>
       <button class="cp-tab" data-cp-tab="skin">Skin</button>
       <button class="cp-tab" data-cp-tab="hairStyle">Hair</button>
       <button class="cp-tab" data-cp-tab="hairColor">Color</button>
@@ -11771,7 +11771,9 @@ const AVATAR_HAIR_STYLE_LABELS = {
 };
 
 const AVATAR_BODY_TYPES_LIST = ['masc', 'fem'];
-const AVATAR_BODY_TYPE_LABELS = { masc: 'Masculine', fem: 'Feminine' };
+// v2.7.1: clearer "gender"-style labels per user feedback ("ไม่มีให้เลือกเพศ").
+// Internal IDs stay 'masc'/'fem' for code stability; only display labels change.
+const AVATAR_BODY_TYPE_LABELS = { masc: 'Male', fem: 'Female' };
 
 // ---- Color math helpers (used for skin shading + hair 3-tone) ----
 function _avHex2rgb(h) { return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
@@ -11802,25 +11804,57 @@ function _avPartsBody(bodyType, skinHex) {
   // Neck
   s += R(28, 22, 8, 4, skinHex);
   s += R(34, 22, 2, 4, sh);
-  // Body (skin under outfit; outfit covers most)
+  // v2.7.1: amplified body type differentiation
   if (bodyType === 'masc') {
-    s += R(20, 26, 24, 1, skinHex);
-    s += R(19, 27, 26, 1, skinHex);
-    s += R(18, 28, 28, 2, skinHex);
-    s += R(20, 30, 24, 14, skinHex);
-    s += R(43, 28, 2, 16, sh);
-    s += R(43, 30, 2, 14, sh);
+    // MALE — broad shoulders (32w peak), straight V-tapered torso
+    s += R(22, 25, 20, 1, skinHex);   // shoulder slope start
+    s += R(20, 26, 24, 1, skinHex);   // 24w
+    s += R(18, 27, 28, 1, skinHex);   // 28w
+    s += R(16, 28, 32, 1, skinHex);   // 32w PEAK (broadest)
+    s += R(17, 29, 30, 1, skinHex);   // 30w slope down
+    s += R(18, 30, 28, 1, skinHex);   // 28w upper torso
+    s += R(19, 31, 26, 1, skinHex);   // 26w
+    s += R(20, 32, 24, 12, skinHex);  // 24w straight torso
+    // V-shape shadows on right
+    s += R(45, 28, 2, 1, sh);
+    s += R(44, 29, 2, 1, sh);
+    s += R(45, 30, 1, 2, sh);
+    s += R(43, 31, 2, 1, sh);
+    s += R(43, 32, 2, 12, sh);
+    // Highlight on left side
+    s += R(16, 28, 1, 1, hl);
+    s += R(18, 30, 1, 4, hl);
+    s += R(20, 32, 1, 10, hl);
+    // Hips (slight narrower than torso = natural V)
     s += R(22, 44, 20, 2, skinHex);
   } else {
-    s += R(22, 26, 20, 1, skinHex);
-    s += R(21, 27, 22, 1, skinHex);
-    s += R(20, 28, 24, 2, skinHex);
-    s += R(22, 30, 20, 6, skinHex);
-    s += R(23, 36, 18, 4, skinHex);
-    s += R(22, 40, 20, 4, skinHex);
-    s += R(41, 28, 2, 12, sh);
-    s += R(40, 36, 1, 4, sh);
-    s += R(41, 40, 1, 4, sh);
+    // FEMALE — narrower shoulders (20w), waist taper to 14w, hip flare to 22w
+    s += R(24, 25, 16, 1, skinHex);   // narrowest top
+    s += R(23, 26, 18, 1, skinHex);
+    s += R(22, 27, 20, 2, skinHex);   // 20w shoulder peak (narrow)
+    s += R(22, 29, 20, 4, skinHex);   // 20w upper torso
+    s += R(23, 33, 18, 1, skinHex);   // start to taper
+    s += R(24, 34, 16, 1, skinHex);
+    s += R(25, 35, 14, 3, skinHex);   // 14w NARROWEST waist (y=35-37)
+    s += R(24, 38, 16, 1, skinHex);   // start hip flare
+    s += R(22, 39, 20, 1, skinHex);
+    s += R(21, 40, 22, 2, skinHex);   // 22w HIP PEAK (wider than shoulders)
+    s += R(22, 42, 20, 2, skinHex);   // taper toward legs
+    // Curved shadow on right (follows hourglass)
+    s += R(41, 28, 1, 5, sh);         // shoulder
+    s += R(40, 33, 1, 1, sh);
+    s += R(39, 34, 1, 1, sh);
+    s += R(38, 35, 2, 3, sh);         // waist shadow
+    s += R(40, 38, 1, 1, sh);
+    s += R(41, 39, 1, 1, sh);
+    s += R(42, 40, 1, 2, sh);         // hip shadow
+    s += R(41, 42, 1, 2, sh);
+    // Highlight on left
+    s += R(22, 28, 1, 5, hl);
+    s += R(25, 35, 1, 3, hl);
+    s += R(21, 40, 1, 2, hl);
+    // Hips final
+    s += R(22, 44, 20, 2, skinHex);
   }
   // Hands
   s += R(18, 39, 4, 4, skinHex);
@@ -11855,57 +11889,83 @@ function _avPartsOutfit(bodyType) {
   const bootLace = '#54593b';
   const R = _avRect;
   let s = '';
+  // v2.7.1: jacket now follows the amplified body shapes
   if (bodyType === 'masc') {
+    // MALE — broad shoulder collar, straight torso
     s += R(20, 26, 24, 1, collar);
-    s += R(19, 27, 26, 1, collar);
-    s += R(18, 28, 28, 1, collar);
-    s += R(20, 28, 4, 1, jacket);
-    s += R(40, 28, 4, 1, jacket);
+    s += R(18, 27, 28, 1, collar);
+    s += R(16, 28, 32, 1, collar);    // matches 32w shoulder peak
+    s += R(17, 29, 30, 1, collar);
+    s += R(18, 30, 28, 1, collar);
+    // V notch
     s += R(28, 27, 8, 1, lapel);
     s += R(29, 28, 6, 1, lapel);
     s += R(30, 29, 4, 1, lapel);
-    s += R(20, 29, 4, 12, jacket);
-    s += R(40, 29, 4, 12, jacket);
-    s += R(24, 29, 16, 12, jacket);
+    // Jacket main body (V-tapered from broad shoulders to torso)
+    s += R(19, 31, 26, 1, jacket);
+    s += R(20, 32, 24, 9, jacket);
+    // Lapel V edges
     s += R(27, 28, 1, 2, collarHl);
     s += R(36, 28, 1, 2, collarHl);
-    s += R(42, 28, 2, 14, jacketSh);
-    s += R(20, 28, 1, 12, jacketHl);
+    // Shadow on broad-shoulder right side
+    s += R(46, 28, 1, 1, jacketSh);
+    s += R(45, 29, 1, 1, jacketSh);
+    s += R(44, 30, 2, 11, jacketSh);
+    // Highlight on broad-shoulder left side
+    s += R(16, 28, 1, 1, jacketHl);
+    s += R(18, 30, 1, 11, jacketHl);
+    // Center seam
     s += R(31, 30, 2, 11, lapel);
+    // Sleeve cuffs (at hand position)
     s += R(18, 37, 4, 2, cuff);
     s += R(42, 37, 4, 2, cuff);
     s += R(18, 37, 4, 1, cuffHl);
     s += R(42, 37, 4, 1, cuffHl);
     s += R(18, 39, 1, 4, jacketSh);
     s += R(45, 39, 1, 4, jacketSh);
+    // Lower hem
     s += R(20, 41, 24, 1, hem);
   } else {
-    s += R(22, 26, 20, 1, collar);
-    s += R(21, 27, 22, 1, collar);
-    s += R(20, 28, 24, 1, collar);
-    s += R(22, 28, 4, 1, jacket);
-    s += R(38, 28, 4, 1, jacket);
+    // FEMALE — narrow shoulders, dramatic waist taper, hip flare
+    s += R(24, 25, 16, 1, collar);
+    s += R(23, 26, 18, 1, collar);
+    s += R(22, 27, 20, 2, collar);
+    // V notch
     s += R(28, 27, 8, 1, lapel);
     s += R(29, 28, 6, 1, lapel);
     s += R(30, 29, 4, 1, lapel);
-    s += R(22, 29, 4, 7, jacket);
-    s += R(38, 29, 4, 7, jacket);
-    s += R(24, 29, 14, 7, jacket);
-    s += R(23, 36, 18, 4, jacket);
-    s += R(22, 40, 20, 1, jacket);
+    // Jacket upper body (20w shoulders down to bust)
+    s += R(22, 29, 20, 4, jacket);
+    // Waist taper (jacket follows body curve)
+    s += R(23, 33, 18, 1, jacket);
+    s += R(24, 34, 16, 1, jacket);
+    s += R(25, 35, 14, 3, jacket);    // narrowest waist
+    // Hip flare back out
+    s += R(24, 38, 16, 1, jacket);
+    s += R(22, 39, 20, 1, jacket);
+    s += R(21, 40, 22, 2, jacket);    // hip peak (wider than shoulders!)
+    // Lapel V edges
     s += R(27, 28, 1, 2, collarHl);
     s += R(36, 28, 1, 2, collarHl);
-    s += R(41, 28, 1, 12, jacketSh);
-    s += R(40, 36, 1, 4, jacketSh);
-    s += R(22, 28, 1, 12, jacketHl);
+    // Curved shadow + highlight (hourglass)
+    s += R(41, 28, 1, 5, jacketSh);   // shoulder
+    s += R(40, 33, 1, 1, jacketSh);
+    s += R(38, 35, 2, 3, jacketSh);   // waist shadow
+    s += R(41, 40, 2, 2, jacketSh);   // hip shadow
+    s += R(22, 28, 1, 5, jacketHl);
+    s += R(25, 35, 1, 3, jacketHl);
+    s += R(21, 40, 1, 2, jacketHl);
+    // Center seam
     s += R(31, 30, 2, 10, lapel);
+    // Sleeve cuffs
     s += R(18, 37, 4, 2, cuff);
     s += R(42, 37, 4, 2, cuff);
     s += R(18, 37, 4, 1, cuffHl);
     s += R(42, 37, 4, 1, cuffHl);
     s += R(18, 39, 1, 4, jacketSh);
     s += R(45, 39, 1, 4, jacketSh);
-    s += R(22, 40, 20, 1, hem);
+    // Lower hem (follows hip width)
+    s += R(21, 42, 22, 1, hem);
   }
   // Belt
   s += R(22, 42, 20, 2, beltBrn);
@@ -16842,7 +16902,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.1</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -16953,7 +17013,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.7.0',
+    appVersion: '2.7.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
