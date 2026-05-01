@@ -6335,6 +6335,167 @@
       100% { opacity: 0; transform: translateY(calc(-44px * var(--fx-scale, 1))) translateX(var(--fx-ascend-drift, 0)) scale(0.4); }
     }
 
+    /* ========================================================================
+       v3.8.0 — FIELD FX (persistent battle-theme atmosphere)
+       Pivot from button-burst to ambient field. The equipped FX pack now
+       paints a themed atmosphere over the drill answer area + summary
+       screen via body[data-field-fx="<pack-id>"] cascading. Per-pack rules
+       set --field-* palette vars; shared rules paint ambient layers.
+       ======================================================================== */
+
+    /* Field theme palette per pack (palette only — shared rules below paint) */
+    body[data-field-fx="fx_fire"]            { --field-primary:#ff8c1a; --field-secondary:#c41a2a; --field-glow:#ffd060; }
+    body[data-field-fx="fx_water"]           { --field-primary:#60a5fa; --field-secondary:#3b82f6; --field-glow:#b8e0ff; }
+    body[data-field-fx="fx_wind"]            { --field-primary:#86efac; --field-secondary:#a3e635; --field-glow:#dcfce7; }
+    body[data-field-fx="fx_earth"]           { --field-primary:#a87850; --field-secondary:#7a5535; --field-glow:#d4af37; }
+    body[data-field-fx="fx_lightning"]       { --field-primary:#fbbf24; --field-secondary:#facc15; --field-glow:#fef9c3; }
+    body[data-field-fx="fx_ice"]             { --field-primary:#a5d8ff; --field-secondary:#4dabf7; --field-glow:#e7f5ff; }
+    body[data-field-fx="fx_heart"]           { --field-primary:#fb7185; --field-secondary:#e11d48; --field-glow:#fecdd3; }
+    body[data-field-fx="fx_lava"]            { --field-primary:#f97316; --field-secondary:#dc2626; --field-glow:#fed7aa; }
+    body[data-field-fx="fx_card"]            { --field-primary:#d4af37; --field-secondary:#0f1729; --field-glow:#f0d060; }
+    body[data-field-fx="fx_neon"]            { --field-primary:#22d3ee; --field-secondary:#a855f7; --field-glow:#67e8f9; }
+    body[data-field-fx="fx_boss_inferno"]    { --field-primary:#dc2626; --field-secondary:#7c2d12; --field-glow:#fbbf24; }
+    body[data-field-fx="fx_boss_storm"]      { --field-primary:#a78bfa; --field-secondary:#3b82f6; --field-glow:#e0e7ff; }
+    body[data-field-fx="fx_boss_shadow"]     { --field-primary:#7c3aed; --field-secondary:#0f0f1f; --field-glow:#a78bfa; }
+    body[data-field-fx="fx_achv_emerald"]    { --field-primary:#10b981; --field-secondary:#059669; --field-glow:#d4af37; }
+    body[data-field-fx="fx_rank_royal"]      { --field-primary:#a78bfa; --field-secondary:#7c3aed; --field-glow:#d4af37; }
+    body[data-field-fx="fx_rank_mythic"]     { --field-primary:#fbbf24; --field-secondary:#ffffff; --field-glow:#fef3c7; }
+
+    /* ----- Question screen: themed ambient backdrop on .action-buttons frame ----- */
+    body[data-field-fx] #drillScreen .action-buttons {
+      position: relative;
+      z-index: 1;
+      border-radius: 14px;
+      padding: 12px;
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--field-primary, transparent) 6%, transparent) 0%,
+        transparent 100%);
+      border: 1px solid color-mix(in srgb, var(--field-primary, transparent) 28%, transparent);
+      box-shadow:
+        inset 0 0 18px color-mix(in srgb, var(--field-primary, transparent) 12%, transparent),
+        0 0 12px color-mix(in srgb, var(--field-primary, transparent) 14%, transparent);
+      transition: box-shadow 320ms ease, border-color 320ms ease;
+    }
+    /* Soft ambient halo BEHIND the action-buttons frame */
+    body[data-field-fx] #drillScreen .action-buttons::before {
+      content: '';
+      position: absolute; inset: -10px;
+      border-radius: 16px;
+      background: radial-gradient(ellipse at 50% 50%,
+        color-mix(in srgb, var(--field-primary, transparent) 18%, transparent) 0%,
+        transparent 70%);
+      filter: blur(8px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: -1;
+      animation: field-ambient-pulse 4s ease-in-out infinite;
+    }
+    @keyframes field-ambient-pulse {
+      0%, 100% { opacity: 0.40; }
+      50%      { opacity: 0.70; }
+    }
+    /* Subtle button border accent — preserves semantic action-btn colors */
+    body[data-field-fx] #drillScreen .action-btn {
+      box-shadow: 0 0 8px color-mix(in srgb, var(--field-primary, transparent) 18%, transparent);
+      transition: box-shadow 200ms ease;
+    }
+    /* Brief intensity bump on correct/wrong (transient body class set by triggerAnswerFx) */
+    body.field-fx-correct[data-field-fx] #drillScreen .action-buttons {
+      box-shadow:
+        inset 0 0 24px color-mix(in srgb, var(--field-primary, transparent) 24%, transparent),
+        0 0 24px color-mix(in srgb, var(--field-primary, transparent) 32%, transparent);
+      border-color: color-mix(in srgb, var(--field-primary, transparent) 55%, transparent);
+    }
+    body.field-fx-correct[data-field-fx] #drillScreen .action-buttons::before {
+      opacity: 0.85;
+      animation-duration: 0.8s;
+    }
+    body.field-fx-wrong[data-field-fx] #drillScreen .action-buttons {
+      box-shadow:
+        inset 0 0 18px color-mix(in srgb, var(--field-secondary, transparent) 22%, transparent),
+        0 0 16px color-mix(in srgb, var(--field-secondary, transparent) 24%, transparent);
+      border-color: color-mix(in srgb, var(--field-secondary, transparent) 50%, transparent);
+    }
+
+    /* ----- Summary / result screen continuity (#drillComplete) ----- */
+    body[data-field-fx] #drillComplete {
+      position: relative;
+    }
+    /* Subtle themed glow behind summary cards */
+    body[data-field-fx] #drillComplete::before {
+      content: '';
+      position: fixed;
+      left: 50%; top: 30%;
+      width: 70vw; height: 40vh;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at 50% 50%,
+        color-mix(in srgb, var(--field-primary, transparent) 14%, transparent) 0%,
+        transparent 70%);
+      filter: blur(20px);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+      animation: field-ambient-pulse 6s ease-in-out infinite;
+    }
+    /* Themed accent on summary cards */
+    body[data-field-fx] #drillComplete .card,
+    body[data-field-fx] #drillComplete .boss-victory-card,
+    body[data-field-fx] #drillComplete .boss-defeat-card {
+      position: relative;
+      z-index: 1;
+      box-shadow:
+        var(--card-shadow, 0 4px 12px rgba(0,0,0,0.30)),
+        0 0 14px color-mix(in srgb, var(--field-primary, transparent) 14%, transparent);
+      border: 1px solid color-mix(in srgb, var(--field-primary, transparent) 25%, transparent);
+    }
+
+    /* ----- Reduced motion: disable ambient pulsing, keep static glow ----- */
+    @media (prefers-reduced-motion: reduce) {
+      body[data-fx-respect-motion="true"] #drillScreen .action-buttons::before,
+      body[data-fx-respect-motion="true"] #drillComplete::before {
+        animation: none !important;
+        opacity: 0.5 !important;
+      }
+    }
+
+    /* ----- Field FX preview block in detail modal (replaces button-only sandbox) ----- */
+    .field-preview-stage {
+      position: relative;
+      width: 100%; max-width: 280px;
+      margin: 0 auto 12px;
+      padding: 18px 16px;
+      background:
+        radial-gradient(ellipse at 50% 50%,
+          color-mix(in srgb, var(--fx-primary, #d4af37) 18%, transparent) 0%,
+          transparent 70%),
+        linear-gradient(180deg, #1a2030 0%, #0a0e16 100%);
+      border-radius: 14px;
+      border: 1px solid color-mix(in srgb, var(--fx-primary, #d4af37) 30%, transparent);
+      box-shadow:
+        inset 0 0 22px color-mix(in srgb, var(--fx-primary, #d4af37) 16%, transparent),
+        0 0 16px color-mix(in srgb, var(--fx-primary, #d4af37) 14%, transparent);
+    }
+    .field-preview-stage::before {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 18px;
+      background: radial-gradient(ellipse at 50% 50%,
+        color-mix(in srgb, var(--fx-primary, #d4af37) 20%, transparent) 0%,
+        transparent 70%);
+      filter: blur(10px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: -1;
+      animation: field-ambient-pulse 4s ease-in-out infinite;
+    }
+    .field-preview-stage > .field-preview-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.2px;
+      color: var(--fx-glow, #fff);
+      text-transform: uppercase; text-align: center;
+      margin-bottom: 10px;
+      opacity: 0.75;
+    }
+
     /* Reduced-motion fallback */
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-tongue,
     body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-spark,
@@ -10526,6 +10687,9 @@ function buildDrillQueue(count) {
 }
 
 function renderDrillQuestion() {
+  // v3.8.0 — purge any lingering FX overlay before rendering the next
+  // question so transient bursts don't leak across question boundaries.
+  try { if (typeof clearAllAnswerFx === 'function') clearAllAnswerFx(); } catch (e) {}
   const d = App.state.drill;
   const q = d.queue[d.currentIndex];
   if (!q) { showDrillComplete(); return; }
@@ -11701,6 +11865,9 @@ function nextDrillHand() {
 }
 
 function showDrillComplete() {
+  // v3.8.0 — purge transient FX overlays before drill summary mounts so
+  // no stale rectangle leaks onto the result screen.
+  try { if (typeof clearAllAnswerFx === 'function') clearAllAnswerFx(); } catch (e) {}
   const d = App.state.drill;
   const elapsed = Math.round((Date.now() - d.startTime) / 1000 / 60 * 10) / 10;
   const total = d.answers.length;
@@ -18651,7 +18818,9 @@ function equipAnswerFx(packId) {
   if (packId === null || packId === undefined) {
     App.state.profile.equippedAnswerFxId = null;
     try { App.saveProgress(); } catch (e) {}
-    if (typeof showToast === 'function') showToast('Answer FX cleared');
+    if (typeof showToast === 'function') showToast('Field FX cleared');
+    // v3.8.0 — clear persistent field theme too
+    try { applyEquippedFieldFx(); } catch (e) {}
     return;
   }
   const pack = ANSWER_FX_PACK_BY_ID[packId];
@@ -18673,6 +18842,8 @@ function equipAnswerFx(packId) {
   App.state.profile.equippedAnswerFxId = packId;
   try { App.saveProgress(); } catch (e) {}
   if (typeof showToast === 'function') showToast('✓ Equipped · ' + pack.name);
+  // v3.8.0 — refresh persistent field theme so the change is visible immediately
+  try { applyEquippedFieldFx(); } catch (e) {}
 }
 
 // Buy an FX pack with Chips. Mirrors buyShopItem semantics for wardrobe items.
@@ -19135,19 +19306,73 @@ function triggerAnswerFx(kind, opts) {
     '<div class="fx-frame-layer" style="' + frameStyle + '">' + (html.frameLayer || '') + '</div>' +
     '<div class="fx-button-layer" style="' + buttonStyle + '">' + (html.buttonLayer || '') + '</div>';
   document.body.appendChild(container);
-  // Auto-cleanup after the longest animation duration completes.
-  // v3.7.3 — premium packs (Mythic/Royal) include staggered sparkle particles
-  // with up to 440ms delay + 820ms duration = ~1260ms total. Bumped from
-  // 800ms → 1400ms so the final ascension sparkles aren't cut off.
-  setTimeout(function () {
+  // v3.8.0 — Lifecycle-safe registry: every burst is tracked so
+  // clearAllAnswerFx() can purge them all at screen transitions. This
+  // kills the orphan-rectangle leak when the player answers fast.
+  // Cleanup window shortened from 1400ms → 700ms — micro-interactions
+  // are now subordinate to the persistent field theme.
+  if (!window._activeAnswerFx) window._activeAnswerFx = [];
+  const entry = { node: container, timeout: null };
+  window._activeAnswerFx.push(entry);
+  entry.timeout = setTimeout(function () {
     if (container.parentNode) container.parentNode.removeChild(container);
-  }, 1400);
+    if (window._activeAnswerFx) {
+      window._activeAnswerFx = window._activeAnswerFx.filter(function (e) { return e !== entry; });
+    }
+  }, 700);
+  // v3.8.0 — Transient field-intensity bump for correct/wrong (the
+  // persistent field theme animates briefly stronger as the answer accent).
+  if (kind === 'correct' || kind === 'wrong') {
+    const cls = (kind === 'correct') ? 'field-fx-correct' : 'field-fx-wrong';
+    document.body.classList.add(cls);
+    setTimeout(function () { document.body.classList.remove(cls); }, 420);
+  }
+}
+
+// v3.8.0 — Hard teardown: cancels all pending burst cleanup timers and
+// removes any FX node from the DOM. Called at every drill state transition
+// so no stale rectangle leaks into the next screen.
+function clearAllAnswerFx() {
+  if (window._activeAnswerFx) {
+    window._activeAnswerFx.forEach(function (entry) {
+      if (entry.timeout) clearTimeout(entry.timeout);
+      if (entry.node && entry.node.parentNode) entry.node.parentNode.removeChild(entry.node);
+    });
+    window._activeAnswerFx = [];
+  }
+  // Defensive sweep — also remove any orphan burst nodes by class
+  try {
+    const orphans = document.querySelectorAll('.answer-fx-burst');
+    orphans.forEach(function (el) { if (el.parentNode) el.parentNode.removeChild(el); });
+  } catch (e) { /* non-fatal */ }
+  // Clear transient intensity-bump classes so they don't linger
+  try {
+    document.body.classList.remove('field-fx-correct', 'field-fx-wrong');
+  } catch (e) { /* non-fatal */ }
+}
+
+// v3.8.0 — Apply the equipped FX as a persistent field theme via body
+// data attribute. CSS rules cascade from body[data-field-fx="<id>"]
+// down to drill containers + summary screen. Removed when no FX equipped
+// or when the FX master toggle is off.
+function applyEquippedFieldFx() {
+  if (!document.body) return;
+  const settings = (typeof _fxSettings === 'function') ? _fxSettings() : { enabled: true };
+  const equipped = (typeof _fxEquippedId === 'function') ? _fxEquippedId() : null;
+  if (!settings.enabled || !equipped) {
+    document.body.removeAttribute('data-field-fx');
+    return;
+  }
+  document.body.setAttribute('data-field-fx', equipped);
 }
 
 // Apply settings on boot so initial FX uses correct intensity
 if (typeof document !== 'undefined') {
   // Fire on next tick — App.state may not be initialized yet at parse time
-  setTimeout(function () { try { _fxApplyBodyState(); } catch (e) {} }, 0);
+  setTimeout(function () {
+    try { _fxApplyBodyState(); } catch (e) {}
+    try { if (typeof applyEquippedFieldFx === 'function') applyEquippedFieldFx(); } catch (e) {}
+  }, 0);
 }
 
 // ============================================================
@@ -26910,12 +27135,14 @@ function _renderAnswerFxDetailBody(pack) {
       '</div>' +
       prestigeBadgeHtml +
       '<div class="item-detail-tags-row">' + sourceTag + rarityPill + fxPill + '</div>' +
-      // v3.7.1 — FX preview sandbox: realistic answer button INSIDE an answer
-      // frame so the sandbox mirrors the actual drill UI. Three trigger
-      // buttons fire surface-reactive FX targeting BOTH layers.
+      // v3.8.0 — Field FX preview: persistent themed atmosphere shown via
+      // .field-preview-stage (palette gradient + ambient halo loop). The
+      // sample button + 3 trigger buttons sit INSIDE that stage so player
+      // sees the FIELD identity first, micro-accents second.
       '<div class="fx-preview-sandbox">' +
-        '<div style="font-size:10px;color:var(--text-secondary);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Live Preview · Surface-Reactive</div>' +
-        '<div class="fx-preview-frame" id="fxPreviewFrame" style="' + stageStyle + '">' +
+        '<div style="font-size:10px;color:var(--text-secondary);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Field Theme Preview · Battle Atmosphere</div>' +
+        '<div class="field-preview-stage" id="fxPreviewFrame" style="' + stageStyle + '">' +
+          '<div class="field-preview-label">Drill Atmosphere</div>' +
           '<div class="fx-preview-btn-sample fx-preview-stage" id="fxPreviewStage">' +
             'Sample Answer' +
           '</div>' +
@@ -26924,6 +27151,9 @@ function _renderAnswerFxDetailBody(pack) {
           '<button class="fx-preview-btn tap" onclick="_fxPlayPreview(\'' + pack.id + '\', \'tap\')">▸ Tap</button>' +
           '<button class="fx-preview-btn correct" onclick="_fxPlayPreview(\'' + pack.id + '\', \'correct\')">✓ Correct</button>' +
           '<button class="fx-preview-btn wrong" onclick="_fxPlayPreview(\'' + pack.id + '\', \'wrong\')">✕ Wrong</button>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-secondary);margin-top:10px;line-height:1.5;text-align:center">' +
+          'When equipped, this theme persists through the whole drill — question, answer, and result screen.' +
         '</div>' +
       '</div>' +
       // v3.7.1 — Behavior labels so player understands what each state does
@@ -28357,6 +28587,8 @@ function startOverallExam(targetRank) {
 }
 
 function showOverallExamResult() {
+  // v3.8.0 — purge transient FX overlays before exam result mounts
+  try { if (typeof clearAllAnswerFx === 'function') clearAllAnswerFx(); } catch (e) {}
   const d = App.state.drill;
   const oe = d.overallExam;
   if (!oe) { showDrillComplete(); return; }
@@ -29331,6 +29563,8 @@ function masteryStartChallenge() {
 
 // Replaces showDrillComplete when challenge mode finishes.
 function showChallengeResult() {
+  // v3.8.0 — purge transient FX overlays before challenge result mounts
+  try { if (typeof clearAllAnswerFx === 'function') clearAllAnswerFx(); } catch (e) {}
   const d = App.state.drill;
   const ch = d.challenge;
   if (!ch) { showDrillComplete(); return; }
@@ -30414,9 +30648,9 @@ function renderSettings() {
     </div>
 
     <div class="card">
-      <div class="card-title">★ Answer FX</div>
+      <div class="card-title">★ Field FX (Battle Theme)</div>
       <div style="font-size:11.5px;color:var(--text-secondary);margin:-4px 0 12px;line-height:1.5">
-        Cosmetic feedback effects on answer button press, correct, and wrong answers. Buy and equip FX packs in the Catalog.
+        Themed atmosphere that wraps the whole drill experience — answer area, button frame, and result screen all inherit the equipped Field FX. Quick correct/wrong accents bump the field intensity briefly.
       </div>
       <div class="settings-row">
         <div>
@@ -30592,6 +30826,8 @@ function updateFxSetting(key, value) {
   App.state.settings[key] = value;
   try { App.saveProgress(); } catch (e) {}
   try { _fxApplyBodyState(); } catch (e) {}
+  // v3.8.0 — re-evaluate persistent field theme (master toggle may flip it)
+  try { applyEquippedFieldFx(); } catch (e) {}
 }
 
 // v3.6.0 — Aura-specific setter; refreshes body attribute + re-renders any
