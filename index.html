@@ -6561,6 +6561,320 @@
       50%      { opacity: 0.80; transform: translate(-50%, -50%) scale(1.02); }
     }
 
+    /* ========================================================================
+       v3.7.4 — Aura Identity + Premium Hierarchy
+       Each aura now has a unique looping pattern (no two packs share template).
+       Premium tier auras get more layers + unique primitives free packs lack.
+       All animations loop infinitely (steady character cosmetic).
+       ======================================================================== */
+
+    /* ----- MIST WISPS (Frost Mist Aura) — wavy ribbons drifting around ----- */
+    .aura-mist-wisp {
+      position: absolute; left: 0; right: 0;
+      height: 14%;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--aura-glow, #e7f5ff) 30%,
+        var(--aura-primary, #a5d8ff) 50%,
+        var(--aura-glow, #e7f5ff) 70%,
+        transparent 100%);
+      filter: blur(4px);
+      opacity: 0.55;
+      animation: aura-mist-drift calc(5s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-mist-drift {
+      0%, 100% { transform: translateX(-12%); opacity: 0.35; }
+      50%      { transform: translateX(12%);  opacity: 0.75; }
+    }
+
+    /* ----- EMBER FLICKER (Ember Ring Aura) — small flame ticks at feet ----- */
+    .aura-ember-tick {
+      position: absolute; bottom: 8%;
+      width: 5px; height: 9px;
+      background: linear-gradient(0deg,
+        var(--aura-secondary, #c41a2a) 0%,
+        var(--aura-primary, #ff8c1a) 60%,
+        var(--aura-glow, #ffd060) 100%);
+      border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+      filter: drop-shadow(0 0 4px var(--aura-primary, #ff8c1a));
+      transform-origin: 50% 100%;
+      opacity: 0;
+      animation: aura-ember-flick calc(2s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-ember-flick {
+      0%, 100% { opacity: 0;   transform: scaleY(0.3); }
+      30%      { opacity: 1;   transform: scaleY(1.0); }
+      60%      { opacity: 0.5; transform: scaleY(0.7); }
+    }
+
+    /* ----- NEON SCAN LOOP (Neon Pulse Aura) — vertical scanline cycling ----- */
+    .aura-neon-loop {
+      position: absolute; left: 8%; right: 8%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--aura-primary, #22d3ee) 20%,
+        var(--aura-glow, #67e8f9) 50%,
+        var(--aura-secondary, #a855f7) 80%,
+        transparent 100%);
+      box-shadow: 0 0 8px var(--aura-primary, #22d3ee), 0 0 16px var(--aura-secondary, #a855f7);
+      opacity: 0.85;
+      animation: aura-neon-cycle calc(3s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-neon-cycle {
+      0%   { top: 100%; opacity: 0;   }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { top: 0%;   opacity: 0;   }
+    }
+    .aura-neon-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(0deg,  transparent 49%, var(--aura-primary, #22d3ee) 50%, transparent 51%),
+        linear-gradient(90deg, transparent 49%, var(--aura-primary, #22d3ee) 50%, transparent 51%);
+      background-size: 18px 18px;
+      opacity: 0.10;
+      animation: aura-neon-grid-pulse calc(3s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-neon-grid-pulse {
+      0%, 100% { opacity: 0.08; }
+      50%      { opacity: 0.18; }
+    }
+
+    /* ----- STORM ARCS (Storm Crackle — NEW Shop) — random lightning flickers ----- */
+    .aura-storm-arc {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(180deg,
+        var(--aura-glow, #fef9c3) 0%,
+        var(--aura-primary, #fbbf24) 100%);
+      box-shadow: 0 0 6px var(--aura-primary, #fbbf24), 0 0 12px var(--aura-glow, #fef9c3);
+      transform-origin: 50% 0%;
+      transform: rotate(var(--aura-rot, 0deg));
+      opacity: 0;
+      animation: aura-storm-flicker calc(2.4s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-storm-flicker {
+      0%, 100% { opacity: 0; height: 0; }
+      8%       { opacity: 1; height: calc(28px * var(--aura-scale, 1)); }
+      14%      { opacity: 0; }
+      22%      { opacity: 0.85; height: calc(28px * var(--aura-scale, 1)); }
+      28%      { opacity: 0; }
+      45%      { opacity: 0.6; height: calc(22px * var(--aura-scale, 1)); }
+      52%      { opacity: 0; }
+    }
+
+    /* ----- SHIELD ROTATION (Fortress Guard) — 4 rotating cardinal shields ----- */
+    .aura-shield-orbit-wrap {
+      position: absolute; left: 50%; top: 50%;
+      width: 100%; height: 100%;
+      transform: translate(-50%, -50%);
+      animation: aura-shield-spin calc(10s * var(--aura-time, 1)) linear infinite;
+    }
+    @keyframes aura-shield-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .aura-shield-emblem {
+      position: absolute; left: 50%;
+      width: 14px; height: 16px;
+      background: var(--aura-primary, #9aa0b0);
+      border: 1.5px solid var(--aura-glow, #d4af37);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 70%, 50% 100%, 0% 70%, 0% 25%);
+      filter: drop-shadow(0 0 6px var(--aura-glow, #d4af37));
+      transform: translateX(-50%) rotate(var(--aura-rot-counter, 0deg));
+    }
+    .aura-shield-emblem.s-top    { top: -2%;  }
+    .aura-shield-emblem.s-right  { top: 50%; left: 102%; transform: translate(-50%, -50%) rotate(0deg); }
+    .aura-shield-emblem.s-bottom { bottom: -2%; left: 50%; transform: translateX(-50%) rotate(180deg); }
+    .aura-shield-emblem.s-left   { top: 50%; left: -2%;  transform: translate(-50%, -50%) rotate(0deg); }
+
+    /* ----- MULTI-SHADOW (Shadow Rejam) — multiple offset doppelganger shadows ----- */
+    .aura-shadow-trail {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 60%,
+        var(--aura-primary, #7c3aed) 0%,
+        var(--aura-secondary, #0f0f1f) 30%,
+        transparent 60%);
+      filter: blur(6px);
+      opacity: 0;
+      animation: aura-shadow-trail calc(2.8s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-shadow-trail {
+      0%, 100% { opacity: 0; transform: translateX(0); }
+      50%      { opacity: 0.5; transform: translateX(var(--aura-trail-x, -8px)); }
+    }
+
+    /* ----- SURGE COLUMNS (All-In Surge) — multiple energy columns + flame ticks ----- */
+    /* Reuses .aura-surge-line + .aura-ember-tick from above */
+
+    /* ----- DISCIPLINE ORBIT (Consistency Glow) — glow ring + 4 orbital nodes ----- */
+    .aura-discipline-orbit {
+      position: absolute; left: 50%; top: 50%;
+      width: 80%; height: 80%;
+      transform: translate(-50%, -50%);
+      animation: aura-discipline-spin calc(8s * var(--aura-time, 1)) linear infinite;
+    }
+    @keyframes aura-discipline-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .aura-discipline-node {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--aura-glow, #d4af37);
+      box-shadow: 0 0 8px var(--aura-primary, #10b981);
+    }
+    .aura-discipline-node.n-top    { top: -3px;    left: 50%; transform: translateX(-50%); }
+    .aura-discipline-node.n-right  { right: -3px;  top: 50%;  transform: translateY(-50%); }
+    .aura-discipline-node.n-bottom { bottom: -3px; left: 50%; transform: translateX(-50%); }
+    .aura-discipline-node.n-left   { left: -3px;   top: 50%;  transform: translateY(-50%); }
+
+    /* ----- MEDITATION CROSS (Perfect Focus) — multi-ring + cross gleam ----- */
+    .aura-meditation-cross {
+      position: absolute; inset: 25%;
+      border-radius: 50%;
+      border: 1.5px dashed var(--aura-glow, #ffffff);
+      opacity: 0.5;
+      animation: aura-meditation-rotate calc(12s * var(--aura-time, 1)) linear infinite;
+    }
+    @keyframes aura-meditation-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .aura-meditation-line {
+      position: absolute; left: 50%; top: 50%;
+      width: 90%; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--aura-glow, #fff) 50%, transparent 100%);
+      transform: translate(-50%, -50%) rotate(var(--aura-rot, 0deg));
+      opacity: 0.55;
+      animation: aura-meditation-pulse calc(3.2s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-meditation-pulse {
+      0%, 100% { opacity: 0.30; }
+      50%      { opacity: 0.85; }
+    }
+
+    /* ----- ROYAL CROWN HALO (Champion Radiance — premium) — gold halo + 4 beams + ground ring ----- */
+    .aura-royal-beam {
+      position: absolute; left: 50%; top: 50%;
+      width: 110%; height: 3px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--aura-primary, #a78bfa) 30%,
+        var(--aura-glow, #d4af37) 50%,
+        var(--aura-primary, #a78bfa) 70%,
+        transparent 100%);
+      filter: drop-shadow(0 0 6px var(--aura-glow, #d4af37));
+      transform-origin: 50% 50%;
+      transform: translate(-50%, -50%) rotate(var(--aura-rot, 0deg));
+      opacity: 0.55;
+      animation: aura-royal-pulse calc(3s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-royal-pulse {
+      0%, 100% { opacity: 0.25; transform: translate(-50%, -50%) rotate(var(--aura-rot, 0deg)) scaleX(0.7); }
+      50%      { opacity: 0.85; transform: translate(-50%, -50%) rotate(var(--aura-rot, 0deg)) scaleX(1.05); }
+    }
+    .aura-royal-crown-halo {
+      position: absolute; left: 50%; top: 6%;
+      width: 50%; height: 14%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      border: 2px solid var(--aura-glow, #d4af37);
+      box-shadow:
+        0 0 18px var(--aura-glow, #d4af37),
+        inset 0 0 14px var(--aura-primary, #a78bfa);
+      opacity: 0.85;
+      animation: aura-halo-shimmer calc(3.5s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+
+    /* ----- DIVINE ASCENSION (Mythic Crown — premium) — multi-layered halos + ascending sparkles ----- */
+    .aura-ascension-ring {
+      position: absolute; left: 50%; top: 50%;
+      width: 78%; height: 22%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid var(--aura-glow, #fef3c7);
+      box-shadow: 0 0 16px var(--aura-primary, #fbbf24);
+      opacity: 0;
+      animation: aura-ascension calc(4s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-ascension {
+      0%, 100% { opacity: 0;    transform: translate(-50%, -50%) scale(0.7); }
+      40%      { opacity: 0.85; transform: translate(-50%, -50%) scale(1.0); }
+      100%     { opacity: 0;    transform: translate(-50%, -50%) scale(1.5); }
+    }
+    .aura-ascend-particle {
+      position: absolute; bottom: 10%;
+      font-size: 9px;
+      color: var(--aura-glow, #fef3c7);
+      text-shadow: 0 0 6px var(--aura-primary, #fbbf24);
+      opacity: 0;
+      animation: aura-ascend-rise calc(5s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    @keyframes aura-ascend-rise {
+      0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+      30%  { opacity: 1; transform: translateY(-30%) scale(1); }
+      100% { opacity: 0; transform: translateY(-90%) scale(0.4); }
+    }
+
+    /* ----- PRISM SPLIT (Prism Decision — NEW Boss) — dual cyan/magenta halves ----- */
+    .aura-prism-half {
+      position: absolute; top: 0; bottom: 0;
+      width: 50%;
+      filter: blur(6px);
+      opacity: 0;
+      animation: aura-prism-pulse calc(3.6s * var(--aura-time, 1)) ease-in-out infinite;
+    }
+    .aura-prism-half.left {
+      left: 0;
+      background: radial-gradient(ellipse at 100% 50%,
+        var(--aura-primary, #2da8c4) 0%,
+        transparent 60%);
+    }
+    .aura-prism-half.right {
+      right: 0;
+      background: radial-gradient(ellipse at 0% 50%,
+        var(--aura-secondary, #c4407a) 0%,
+        transparent 60%);
+      animation-delay: calc(1.8s * var(--aura-time, 1));
+    }
+    @keyframes aura-prism-pulse {
+      0%, 100% { opacity: 0.30; }
+      50%      { opacity: 0.75; }
+    }
+
+    /* ----- DIAMOND VORTEX (Diamond Vortex — NEW Rank) — spinning diamond shards ----- */
+    .aura-vortex-wrap {
+      position: absolute; left: 50%; top: 50%;
+      width: 90%; height: 90%;
+      transform: translate(-50%, -50%);
+      animation: aura-vortex-spin calc(7s * var(--aura-time, 1)) linear infinite;
+    }
+    @keyframes aura-vortex-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .aura-vortex-shard {
+      position: absolute; left: 50%;
+      width: 6px; height: 12px;
+      background: linear-gradient(180deg,
+        var(--aura-glow, #e0e7ff) 0%,
+        var(--aura-primary, #7c3aed) 100%);
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      filter: drop-shadow(0 0 4px var(--aura-primary, #7c3aed));
+      transform-origin: 50% 50%;
+    }
+    .aura-vortex-shard.v-top    { top: -3%;    transform: translateX(-50%) rotate(0deg); }
+    .aura-vortex-shard.v-right  { top: 50%; left: 103%; transform: translate(-50%, -50%) rotate(90deg); }
+    .aura-vortex-shard.v-bottom { bottom: -3%; left: 50%; transform: translateX(-50%) rotate(180deg); }
+    .aura-vortex-shard.v-left   { top: 50%; left: -3%;  transform: translate(-50%, -50%) rotate(270deg); }
+    .aura-vortex-shard.v-tr     { top: 12%; left: 88%;  transform: translate(-50%, -50%) rotate(45deg); }
+    .aura-vortex-shard.v-tl     { top: 12%; left: 12%;  transform: translate(-50%, -50%) rotate(-45deg); }
+    .aura-vortex-shard.v-br     { bottom: 12%; left: 88%; transform: translate(-50%, 50%) rotate(135deg); }
+    .aura-vortex-shard.v-bl     { bottom: 12%; left: 12%; transform: translate(-50%, 50%) rotate(-135deg); }
+
     /* ----- Aura preview sandbox in detail modal ----- */
     .aura-preview-sandbox {
       position: relative;
@@ -15756,6 +16070,10 @@ const AURA_PACKS = [
   { id:'aura_neon_pulse', name:'Neon Pulse Aura', source:'shop', rarity:'prestige', kind:'aura', price:1600, purchasable:true,
     description:'Cyber scan pulse — neon lines spiral up the trainer.',
     palette:{ primary:'#22d3ee', secondary:'#a855f7', glow:'#67e8f9' }, icon:'◈', template:'surge' },
+  // v3.7.4 NEW Shop Aura — Storm Crackle (chaotic lightning, prestige tier)
+  { id:'aura_storm_crackle', name:'Storm Crackle Aura', source:'shop', rarity:'prestige', kind:'aura', price:1700, purchasable:true,
+    description:'Crackling lightning arcs flicker around the trainer — chaotic electric energy.',
+    palette:{ primary:'#fbbf24', secondary:'#a855f7', glow:'#fef9c3' }, icon:'⚡', template:'storm_arcs' },
 
   // ----- BOSS — 3 packs (preview-only, earned via boss clears) -----
   { id:'aura_fortress_guard', name:'Fortress Guard Aura', source:'boss', rarity:'signature', kind:'aura', purchasable:false, previewOnly:true,
@@ -15770,6 +16088,11 @@ const AURA_PACKS = [
     description:'Red surge of all-in energy — bursts upward from the trainer. Earned from the Push/Fold Boss.',
     palette:{ primary:'#dc2626', secondary:'#7c2d12', glow:'#fbbf24' }, icon:'▲', template:'surge',
     unlock:{ type:'boss', boss:'Push/Fold Boss', requirement:'Defeat the Push/Fold Boss', ctaLabel:'Train Push/Fold', ctaTarget:'drill' } },
+  // v3.7.4 NEW Boss Aura — Prism Decision (Mixed Decision Boss exclusive)
+  { id:'aura_prism_decision', name:'Prism Decision Aura', source:'boss', rarity:'signature', kind:'aura', purchasable:false, previewOnly:true,
+    description:'Cyan and magenta dual-tone prism splits around the trainer — earned from the Mixed Decision Boss.',
+    palette:{ primary:'#2da8c4', secondary:'#c4407a', glow:'#e8d4ff' }, icon:'◊', template:'prism_split',
+    unlock:{ type:'boss', boss:'Mixed Decision Boss', requirement:'Defeat the Mixed Decision Boss', ctaLabel:'Train Mixed Decision', ctaTarget:'drill' } },
 
   // ----- ACHIEVEMENT — 2 packs -----
   { id:'aura_consistency_glow', name:'Consistency Glow Aura', source:'achievement', rarity:'rare', kind:'aura', purchasable:false, previewOnly:true,
@@ -15789,7 +16112,12 @@ const AURA_PACKS = [
   { id:'aura_mythic_crown',      name:'Mythic Crown Aura',      source:'rank', rarity:'prestige', kind:'aura', purchasable:false, previewOnly:true,
     description:'Celestial halo with crown glow — awarded upon reaching Master (Mythic) rank.',
     palette:{ primary:'#fbbf24', secondary:'#ffffff', glow:'#fef3c7' }, icon:'☼', template:'halo',
-    unlock:{ type:'rank', requirement:'Reach Master (Mythic) rank', requiredRank:'Master', ctaLabel:'View Mastery Path', ctaTarget:'home' } }
+    unlock:{ type:'rank', requirement:'Reach Master (Mythic) rank', requiredRank:'Master', ctaLabel:'View Mastery Path', ctaTarget:'home' } },
+  // v3.7.4 NEW Rank Aura — Diamond Vortex (Warlord/Diamond exclusive)
+  { id:'aura_diamond_vortex', name:'Diamond Vortex Aura', source:'rank', rarity:'prestige', kind:'aura', purchasable:false, previewOnly:true,
+    description:'Diamond-spiked vortex spinning around the trainer — awarded upon reaching Warlord (Diamond) rank.',
+    palette:{ primary:'#7c3aed', secondary:'#a78bfa', glow:'#e0e7ff' }, icon:'◈', template:'diamond_vortex',
+    unlock:{ type:'rank', requirement:'Reach Warlord (Diamond) rank', requiredRank:'Diamond', ctaLabel:'View Mastery Path', ctaTarget:'home' } }
 ];
 
 // Lookup + cross-register in WARDROBE_ITEM_BY_ID so detail/collection helpers find them
@@ -16541,9 +16869,10 @@ function grantBossAnswerFxReward(moduleKey) {
 // Same pattern as Boss FX: independent of wardrobe drops, both can fire from
 // the same clear, queued for reveal after the result screen settles.
 const BOSS_MODULE_TO_AURA = {
-  'bb_defense':   'aura_fortress_guard',
-  'rejam':        'aura_shadow_rejam',
-  'push_fold':    'aura_all_in_surge'
+  'bb_defense':     'aura_fortress_guard',
+  'rejam':          'aura_shadow_rejam',
+  'push_fold':      'aura_all_in_surge',
+  'mixed_decision': 'aura_prism_decision'   // v3.7.4
 };
 
 function grantBossAuraReward(moduleKey) {
@@ -16735,7 +17064,8 @@ const RANK_GRANTS = [
   // v3.5.1 — Royal Crest FX granted alongside Champion mantle/cape on Platinum.
   // v3.6.0 — Champion Radiance Aura also granted on Platinum.
   { rank: 'Platinum', itemIds: ['rank_champion_mantle', 'rank_champion_crest_cape', 'fx_rank_royal', 'aura_champion_radiance'] },
-  { rank: 'Diamond',  itemIds: ['rank_warlord_mark', 'rank_warlord_command_boots', 'rank_warlord_legguards'] },
+  // v3.7.4 — Diamond Vortex Aura granted alongside Warlord items
+  { rank: 'Diamond',  itemIds: ['rank_warlord_mark', 'rank_warlord_command_boots', 'rank_warlord_legguards', 'aura_diamond_vortex'] },
   // v3.5.1 — Mythic Halo FX granted alongside Mythic Halo Band on Master.
   // v3.6.0 — Mythic Crown Aura also granted on Master.
   { rank: 'Master',   itemIds: ['rank_mythic_halo_band', 'fx_rank_mythic', 'aura_mythic_crown'] }
@@ -18852,40 +19182,179 @@ function _auraApplyBodyState() {
   document.body.setAttribute('data-aura-intensity', s.intensity);
 }
 
-// Build the inner HTML for an aura layer (template-specific structure).
-// Returns child HTML to nest inside an .aura-layer container.
+// v3.7.4 — Per-pack aura builder. Each pack has a unique looping pattern
+// driven by pack.id (template field still used as a hint, but per-pack
+// switch keeps each aura visually distinct). Premium tier auras include
+// MORE layers and use primitives free packs lack.
 function _auraBuildHtml(pack) {
+  const id = pack.id;
+  switch (id) {
+
+    // ===== FREE SHOP AURAS =====
+
+    // Soft Blue — minimal starter glow
+    case 'aura_soft_blue':
+      return '<div class="aura-glow-ring"></div>';
+
+    // Gold Spark — 6 orbiting gold particles
+    case 'aura_gold_spark': {
+      let html = '<div class="aura-glow-ring" style="opacity:0.30"></div>';
+      [0, 60, 120, 180, 240, 300].forEach(function (a, i) {
+        const delay = (i * 0.5).toFixed(2);
+        html += '<div class="aura-particle" style="--aura-rot:' + a + 'deg;animation-delay:-' + delay + 's"></div>';
+      });
+      return html;
+    }
+
+    // Frost Mist — 3 wavy mist ribbons drifting horizontally at different heights
+    case 'aura_frost_mist': {
+      return '<div class="aura-glow-ring" style="opacity:0.25"></div>' +
+        '<div class="aura-mist-wisp" style="top:25%;animation-delay:0s"></div>' +
+        '<div class="aura-mist-wisp" style="top:55%;animation-delay:-1.5s"></div>' +
+        '<div class="aura-mist-wisp" style="top:75%;animation-delay:-3s"></div>';
+    }
+
+    // Ember Ring — ground ring + 6 small flame ticks flickering around feet
+    case 'aura_ember_ring': {
+      let html = '<div class="aura-ground-ring"></div><div class="aura-ground-ring-inner"></div>';
+      ['10%','25%','42%','58%','75%','90%'].forEach(function (left, i) {
+        html += '<div class="aura-ember-tick" style="left:' + left + ';animation-delay:-' + (i * 0.3).toFixed(2) + 's"></div>';
+      });
+      return html;
+    }
+
+    // Neon Pulse — vertical scanline cycling + faint pixel grid
+    case 'aura_neon_pulse':
+      return '<div class="aura-neon-grid"></div>' +
+        '<div class="aura-neon-loop" style="animation-delay:0s"></div>' +
+        '<div class="aura-neon-loop" style="animation-delay:-1.5s"></div>';
+
+    // ===== NEW SHOP — Storm Crackle (prestige) =====
+    // Random lightning arcs flickering at different positions/angles around character
+    case 'aura_storm_crackle': {
+      let html = '<div class="aura-glow-ring" style="opacity:0.20"></div>';
+      // 6 arcs at varying positions + delays for chaotic flickering
+      const arcs = [
+        { left: '15%', top: '10%', rot:  10, delay: 0    },
+        { left: '85%', top: '20%', rot: -15, delay: -0.4 },
+        { left: '50%', top:  '5%', rot:   0, delay: -0.8 },
+        { left: '20%', top: '60%', rot:  20, delay: -1.2 },
+        { left: '80%', top: '70%', rot: -10, delay: -1.6 },
+        { left: '50%', top: '40%', rot:   5, delay: -2.0 }
+      ];
+      arcs.forEach(function (a) {
+        html += '<div class="aura-storm-arc" style="left:' + a.left + ';top:' + a.top + ';--aura-rot:' + a.rot + 'deg;animation-delay:' + a.delay + 's"></div>';
+      });
+      return html;
+    }
+
+    // ===== BOSS EXCLUSIVES (premium) =====
+
+    // Fortress Guard — defensive shield ring + 4 rotating cardinal shield emblems
+    case 'aura_fortress_guard': {
+      return '<div class="aura-ground-ring"></div><div class="aura-ground-ring-inner"></div>' +
+        '<div class="aura-glow-ring" style="opacity:0.30"></div>' +
+        '<div class="aura-shield-orbit-wrap">' +
+          '<div class="aura-shield-emblem s-top"></div>' +
+          '<div class="aura-shield-emblem s-right"></div>' +
+          '<div class="aura-shield-emblem s-bottom"></div>' +
+          '<div class="aura-shield-emblem s-left"></div>' +
+        '</div>';
+    }
+
+    // Shadow Rejam — base shadow + 2 offset doppelganger shadows trailing
+    case 'aura_shadow_rejam':
+      return '<div class="aura-shadow-echo"></div>' +
+        '<div class="aura-shadow-trail" style="--aura-trail-x:-12px;animation-delay:0s"></div>' +
+        '<div class="aura-shadow-trail" style="--aura-trail-x:12px;animation-delay:-1.4s"></div>';
+
+    // All-In Surge — 5 vertical surge lines + ground ring + 4 flame ticks (premium fire feel)
+    case 'aura_all_in_surge': {
+      let html = '<div class="aura-ground-ring" style="opacity:0.45"></div>';
+      // Surge lines
+      [{ rot: -25, delay: 0 }, { rot: -10, delay: -0.4 }, { rot: 0, delay: -0.8 },
+       { rot:  10, delay: -0.2 }, { rot: 25, delay: -0.6 }].forEach(function (l) {
+        html += '<div class="aura-surge-line" style="--aura-rot:' + l.rot + 'deg;animation-delay:' + l.delay + 's"></div>';
+      });
+      // Flame ticks at 4 spots
+      ['20%','40%','60%','80%'].forEach(function (left, i) {
+        html += '<div class="aura-ember-tick" style="left:' + left + ';animation-delay:-' + (i * 0.4).toFixed(2) + 's"></div>';
+      });
+      return html;
+    }
+
+    // ===== NEW BOSS EXCLUSIVE — Prism Decision =====
+    // Dual cyan/magenta prism halves alternating with central halo
+    case 'aura_prism_decision':
+      return '<div class="aura-prism-half left"></div>' +
+        '<div class="aura-prism-half right"></div>' +
+        '<div class="aura-glow-ring" style="opacity:0.35"></div>';
+
+    // ===== ACHIEVEMENT EXCLUSIVES =====
+
+    // Consistency Glow — disciplined glow + 4 orbital nodes spinning
+    case 'aura_consistency_glow':
+      return '<div class="aura-glow-ring"></div>' +
+        '<div class="aura-discipline-orbit">' +
+          '<div class="aura-discipline-node n-top"></div>' +
+          '<div class="aura-discipline-node n-right"></div>' +
+          '<div class="aura-discipline-node n-bottom"></div>' +
+          '<div class="aura-discipline-node n-left"></div>' +
+        '</div>';
+
+    // Perfect Focus — concentric breathing rings + cross gleam (meditation language)
+    case 'aura_perfect_focus':
+      return '<div class="aura-glow-ring" style="opacity:0.40"></div>' +
+        '<div class="aura-focus-ring"></div>' +
+        '<div class="aura-meditation-cross"></div>' +
+        '<div class="aura-meditation-line" style="--aura-rot:0deg;animation-delay:0s"></div>' +
+        '<div class="aura-meditation-line" style="--aura-rot:90deg;animation-delay:-1.6s"></div>';
+
+    // ===== RANK EXCLUSIVES (premium tier — most layers) =====
+
+    // Champion Radiance — gold halo above + 4 royal beams + ground glow + glow ring
+    case 'aura_champion_radiance':
+      return '<div class="aura-ground-ring" style="opacity:0.45"></div>' +
+        '<div class="aura-glow-ring" style="opacity:0.45"></div>' +
+        '<div class="aura-royal-crown-halo"></div>' +
+        '<div class="aura-royal-beam" style="--aura-rot:0deg;animation-delay:0s"></div>' +
+        '<div class="aura-royal-beam" style="--aura-rot:45deg;animation-delay:-0.75s"></div>' +
+        '<div class="aura-royal-beam" style="--aura-rot:90deg;animation-delay:-1.5s"></div>' +
+        '<div class="aura-royal-beam" style="--aura-rot:-45deg;animation-delay:-2.25s"></div>';
+
+    // Mythic Crown — multi-halo layers (3 staggered) + halo ring + ascending sparkles
+    case 'aura_mythic_crown':
+      return '<div class="aura-halo-ring"></div>' +
+        '<div class="aura-glow-ring" style="opacity:0.40"></div>' +
+        '<div class="aura-ascension-ring" style="animation-delay:0s"></div>' +
+        '<div class="aura-ascension-ring" style="animation-delay:-1.3s"></div>' +
+        '<div class="aura-ascension-ring" style="animation-delay:-2.6s"></div>' +
+        '<div class="aura-ascend-particle" style="left:15%;animation-delay:-0.5s">✦</div>' +
+        '<div class="aura-ascend-particle" style="left:35%;animation-delay:-1.2s">✧</div>' +
+        '<div class="aura-ascend-particle" style="left:55%;animation-delay:-2.0s">✦</div>' +
+        '<div class="aura-ascend-particle" style="left:75%;animation-delay:-3.0s">✧</div>' +
+        '<div class="aura-ascend-particle" style="left:90%;animation-delay:-3.8s">✦</div>';
+
+    // ===== NEW RANK EXCLUSIVE — Diamond Vortex =====
+    // 8 spinning diamond shards in vortex pattern + central glow
+    case 'aura_diamond_vortex':
+      return '<div class="aura-glow-ring" style="opacity:0.35"></div>' +
+        '<div class="aura-vortex-wrap">' +
+          '<div class="aura-vortex-shard v-top"></div>' +
+          '<div class="aura-vortex-shard v-right"></div>' +
+          '<div class="aura-vortex-shard v-bottom"></div>' +
+          '<div class="aura-vortex-shard v-left"></div>' +
+          '<div class="aura-vortex-shard v-tr"></div>' +
+          '<div class="aura-vortex-shard v-tl"></div>' +
+          '<div class="aura-vortex-shard v-br"></div>' +
+          '<div class="aura-vortex-shard v-bl"></div>' +
+        '</div>';
+  }
+
+  // Fallback for unknown packs — use template hint or default
   const tmpl = pack.template || 'glow_ring';
-  if (tmpl === 'glow_ring')   return '<div class="aura-glow-ring"></div>';
-  if (tmpl === 'focus_ring')  return '<div class="aura-glow-ring"></div><div class="aura-focus-ring"></div>';
   if (tmpl === 'ground_ring') return '<div class="aura-ground-ring"></div><div class="aura-ground-ring-inner"></div>';
   if (tmpl === 'halo')        return '<div class="aura-halo-ring"></div><div class="aura-glow-ring" style="opacity:0.35"></div>';
-  if (tmpl === 'shadow_echo') return '<div class="aura-shadow-echo"></div>';
-  if (tmpl === 'particles') {
-    // 6 orbiting particles at evenly spread starting angles
-    let html = '<div class="aura-glow-ring" style="opacity:0.30"></div>';
-    const angles = [0, 60, 120, 180, 240, 300];
-    angles.forEach(function (a, i) {
-      const delay = (i * 0.5).toFixed(2);
-      html += '<div class="aura-particle" style="--aura-rot:' + a + 'deg;animation-delay:-' + delay + 's"></div>';
-    });
-    return html;
-  }
-  if (tmpl === 'surge') {
-    // 5 vertical lines staggered around feet
-    let html = '<div class="aura-ground-ring" style="opacity:0.45"></div>';
-    const lines = [
-      { rot: -25, delay: 0   },
-      { rot: -10, delay: 0.4 },
-      { rot:   0, delay: 0.8 },
-      { rot:  10, delay: 0.2 },
-      { rot:  25, delay: 0.6 }
-    ];
-    lines.forEach(function (l) {
-      html += '<div class="aura-surge-line" style="--aura-rot:' + l.rot + 'deg;animation-delay:-' + l.delay + 's"></div>';
-    });
-    return html;
-  }
   return '<div class="aura-glow-ring"></div>';
 }
 
