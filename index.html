@@ -14351,28 +14351,40 @@ function _avBottomTrainerTrousers(bodyType) {
   return s;
 }
 
-// === BOTTOM: starter_training_pants — gray track pants with white side stripes ===
+// === BOTTOM: starter_training_pants — v3.2.2 REDESIGNED: thicker double-stripe + drawstring ===
 function _avBottomTrainingPants(bodyType) {
-  const pants    = '#5a6275';      // mid gray-blue
-  const pantsSh  = '#3a4252';      // darker shadow
-  const pantsHl  = '#7c8499';      // light highlight
-  const stripe   = '#f0f0f8';      // white side stripe
+  const pants    = '#5a6275';
+  const pantsSh  = '#3a4252';
+  const pantsHl  = '#7c8499';
+  const stripe   = '#f0f0f8';
+  const stripeShade = '#a8b0c4';
+  const draw     = '#1a2a52';
   const R = _avRect;
   let s = '';
-  // Hip transition
   s += R(22, 46, 20, 1, pants);
-  // Left leg
+  // L leg
   s += R(25, 47, 6, 7, pants);
-  s += R(25, 47, 1, 7, pantsHl);   // outer side highlight
-  s += R(28, 47, 1, 7, stripe);    // white side stripe (key visual feature)
-  s += R(30, 47, 1, 7, pantsSh);   // inner shadow
-  // Right leg
+  s += R(25, 47, 1, 7, pantsHl);
+  // DOUBLE white stripe (was single)
+  s += R(27, 47, 1, 7, stripe);
+  s += R(28, 47, 1, 7, stripeShade);
+  s += R(30, 47, 1, 7, pantsSh);
+  // R leg
   s += R(33, 47, 6, 7, pants);
-  s += R(33, 47, 1, 7, pantsSh);   // inner shadow
-  s += R(35, 47, 1, 7, stripe);    // white side stripe
-  s += R(38, 47, 1, 7, pantsHl);   // outer highlight
+  s += R(33, 47, 1, 7, pantsSh);
+  s += R(35, 47, 1, 7, stripeShade);
+  s += R(36, 47, 1, 7, stripe);
+  s += R(38, 47, 1, 7, pantsHl);
   // Center crotch shadow
   s += R(31, 47, 2, 7, _avDarken(pants, 0.40));
+  // Visible drawstring at waist
+  s += R(30, 46, 1, 1, draw);
+  s += R(31, 47, 1, 1, draw);
+  s += R(33, 47, 1, 1, draw);
+  s += R(34, 46, 1, 1, draw);
+  // Cuff at ankle
+  s += R(25, 53, 6, 1, pantsSh);
+  s += R(33, 53, 6, 1, pantsSh);
   return s;
 }
 
@@ -14437,77 +14449,86 @@ function _avShoesTrainerBoots(bodyType) {
   return s;
 }
 
-// === SHOES: starter_training_shoes — white sneakers with red sole ===
+// === SHOES: starter_training_shoes — v3.2.2 REDESIGNED: two-tone white/blue sport ===
+// Distinct from canvas_sneakers (red+white) by using blue accent + curved swoosh
 function _avShoesTrainingShoes(bodyType) {
-  const shoeBody  = '#f0f0f8';     // white
-  const shoeSh    = '#a8a8b8';     // gray shadow
-  const shoeHl    = '#ffffff';     // pure white highlight
-  const shoeSole  = '#c41a2a';     // red sole
-  const shoeSoleSh = '#8e1a1f';    // dark red sole shadow
-  const lace      = '#1a1a26';     // dark lace
-  const trim      = '#7a7a8a';     // gray trim
+  const body='#f0f0f8', sh='#a8a8b8', hl='#ffffff', accent='#2a4a72', accentHl='#5a8eaa', sole='#c0c4d0', lace='#1a2a52';
   const R = _avRect;
   let s = '';
   // L sneaker
-  s += R(23, 54, 8, 2, shoeBody);  // top body
-  s += R(23, 56, 8, 4, shoeBody);  // main body
-  s += R(23, 54, 1, 6, shoeHl);    // L outer highlight
-  s += R(30, 54, 1, 6, shoeSh);    // R inner shadow
-  s += R(27, 56, 1, 3, lace);      // dark lace line
-  s += R(26, 55, 1, 1, lace);      // small lace knot
-  s += R(28, 57, 1, 1, lace);
-  s += R(23, 60, 9, 1, shoeSole);  // red sole top edge
-  s += R(22, 61, 10, 1, shoeSoleSh);  // red sole bottom (darker)
+  s += R(23, 54, 8, 2, body);
+  s += R(23, 56, 8, 4, body);
+  s += R(23, 54, 1, 6, hl);            // L outer highlight
+  s += R(30, 54, 1, 6, sh);            // R inner shadow
+  // BLUE ACCENT swoosh (curved across side)
+  s += R(24, 56, 5, 1, accent);
+  s += R(24, 56, 1, 1, accentHl);      // accent shine
+  // White sole with blue trim
+  s += R(23, 60, 9, 1, sole);
+  s += R(22, 61, 10, 1, accent);       // BLUE sole edge (distinct from canvas red)
+  // Lace + 3 eyelets
+  s += R(27, 55, 1, 4, lace);
+  s += R(26, 56, 1, 1, lace);
+  s += R(28, 56, 1, 1, lace);
   // R sneaker (mirror)
-  s += R(33, 54, 8, 2, shoeBody);
-  s += R(33, 56, 8, 4, shoeBody);
-  s += R(40, 54, 1, 6, shoeSh);
-  s += R(33, 54, 1, 6, shoeHl);
-  s += R(37, 56, 1, 3, lace);
-  s += R(36, 55, 1, 1, lace);
-  s += R(38, 57, 1, 1, lace);
-  s += R(33, 60, 9, 1, shoeSole);
-  s += R(32, 61, 10, 1, shoeSoleSh);
+  s += R(33, 54, 8, 2, body);
+  s += R(33, 56, 8, 4, body);
+  s += R(40, 54, 1, 6, sh);
+  s += R(33, 54, 1, 6, hl);
+  s += R(35, 56, 5, 1, accent);
+  s += R(39, 56, 1, 1, accentHl);
+  s += R(33, 60, 9, 1, sole);
+  s += R(32, 61, 10, 1, accent);
+  s += R(37, 55, 1, 4, lace);
+  s += R(36, 56, 1, 1, lace);
+  s += R(38, 56, 1, 1, lace);
   return s;
 }
 
-// === HEAD: starter_basic_cap — dark blue baseball cap with brim ===
+// === HEAD: starter_basic_cap — v3.2.2 REDESIGNED: bigger logo + visible brim shadow ===
 function _avHatBasicCap() {
-  const cap    = '#2d4a7a';        // dark blue
-  const capSh  = '#1a2e52';        // darker shadow
-  const capHl  = '#4a6ea8';        // lighter highlight
-  const brim   = '#1a2e52';        // dark brim (matches shadow)
+  const cap='#2d4a7a', capSh='#1a2e52', capHl='#4a6ea8', brim='#1a2e52', logo='#d4af37', logoHl='#f0d060', logoBg='#ffffff';
   const R = _avRect;
   let s = '';
-  // Cap dome (covers top of head + hair)
+  // Cap dome
   s += R(24, 4, 16, 1, cap);
-  s += R(22, 5, 20, 4, cap);       // main cap body
-  // Highlight on top-left (3D feel)
+  s += R(22, 5, 20, 4, cap);
+  // Highlight + shadow
   s += R(23, 5, 8, 1, capHl);
   s += R(22, 6, 4, 1, capHl);
-  // Shadow on right
   s += R(40, 6, 2, 3, capSh);
-  // Brim — extends forward (to the right side of viewport since the character faces us)
-  s += R(28, 9, 14, 1, brim);      // brim front edge (covers forehead/eye area top)
-  s += R(28, 10, 14, 1, capSh);    // brim shadow row
-  // Tiny logo accent — gold pixel on front of cap
-  s += R(31, 7, 1, 1, '#d4af37');
+  // Brim — wider + more visible
+  s += R(26, 9, 18, 1, brim);
+  s += R(26, 10, 18, 1, capSh);
+  // BIGGER LOGO front (white circle + gold star)
+  s += R(30, 6, 4, 3, logoBg);     // white logo background
+  s += R(30, 6, 4, 1, '#a8a8b8');  // logo top edge
+  s += R(31, 7, 2, 1, logo);       // gold star horizontal
+  s += R(32, 7, 1, 1, logoHl);     // shine
   return s;
 }
 
 // === HEAD: starter_training_headband — white horizontal sweatband on forehead ===
+// v3.2.2 REDESIGNED: wider 3-row band + center logo block + side accents
 function _avHatTrainingHeadband() {
-  const band   = '#f0f0f8';        // white
-  const bandSh = '#a8a8b8';        // gray shadow
-  const accent = '#c41a2a';        // red center accent (athletic detail)
+  const band   = '#f0f0f8';
+  const bandSh = '#a8a8b8';
+  const bandHl = '#ffffff';
+  const accent = '#c41a2a';
+  const accentHl = '#e84050';
   const R = _avRect;
   let s = '';
-  // Headband strip across forehead (over hair area at y=8-9)
-  s += R(22, 8, 20, 2, band);      // 20w x 2h white band
-  s += R(22, 8, 20, 1, '#ffffff'); // top highlight (pure white)
+  // 3-ROW band (was 2) — y=7-9
+  s += R(22, 7, 20, 3, band);
+  s += R(22, 7, 20, 1, bandHl);    // top highlight
   s += R(22, 9, 20, 1, bandSh);    // bottom shadow
-  // Red center accent stripe
-  s += R(31, 8, 2, 1, accent);
+  // CENTER LOGO BLOCK (4w bold red)
+  s += R(30, 7, 4, 3, accent);
+  s += R(30, 7, 4, 1, accentHl);
+  s += R(31, 8, 2, 1, '#ffffff');  // white inner detail
+  // Side accent dots
+  s += R(24, 8, 1, 1, accent);
+  s += R(39, 8, 1, 1, accent);
   return s;
 }
 
@@ -14515,22 +14536,30 @@ function _avHatTrainingHeadband() {
 // v3.0.0 SHOP ITEM SPRITES (12 items)
 // ============================================================
 
-// === HEAD: shop_simple_visor — green sun visor with curved brim, open top ===
+// === HEAD: shop_simple_visor — v3.2.2 REDESIGNED: bigger logo + adjustable strap ===
 function _avHatSunVisor() {
   const visor   = '#3a7a4a';
   const visorSh = '#1f5230';
   const visorHl = '#5fa86e';
+  const strap   = '#1f5230';
+  const logo    = '#d4af37';
+  const logoHl  = '#f0d060';
   const R = _avRect;
   let s = '';
-  // Headband strap (top of head, narrow)
-  s += R(24, 7, 16, 1, visor);
+  // Headband strap (wider, with visible strap detail)
+  s += R(22, 6, 20, 1, strap);     // back strap
+  s += R(24, 7, 16, 2, visor);
   s += R(24, 7, 16, 1, visorHl);
-  // Brim (extends forward over forehead)
-  s += R(22, 8, 20, 1, visor);
+  // Brim — wider curve
   s += R(20, 9, 24, 1, visor);
-  s += R(20, 10, 24, 1, visorSh);
-  // Center logo accent
-  s += R(31, 7, 2, 1, '#d4af37');
+  s += R(18, 10, 28, 1, visor);    // wider brim front
+  s += R(18, 11, 28, 1, visorSh);  // brim shadow
+  // BIGGER center logo (3-pixel star)
+  s += R(30, 7, 4, 1, logo);
+  s += R(31, 8, 2, 1, logo);
+  s += R(31, 7, 2, 1, logoHl);     // logo shine
+  // Strap adjuster on side
+  s += R(40, 7, 2, 1, strap);
   return s;
 }
 
@@ -14830,23 +14859,32 @@ function _avTopChampionJacket(bodyType) {
 }
 
 // === BOTTOM: shop_running_shorts — dark blue athletic shorts ===
+// v3.2.2 REDESIGNED: bolder multi-stripe + visible waistband
 function _avBottomRunningShorts(bodyType) {
   const shorts   = '#1a3a72';
   const shortsSh = '#0a1f4a';
   const shortsHl = '#3a5a92';
   const stripe   = '#f0f0f8';
+  const accent   = '#ff8c1a';
+  const waist    = '#0a1f4a';
   const R = _avRect;
   let s = '';
+  // Visible waistband (3-row, distinct color)
+  s += R(22, 45, 20, 1, waist);
   s += R(22, 46, 20, 1, shorts);
+  // L leg
   s += R(25, 47, 6, 4, shorts);
-  s += R(33, 47, 6, 4, shorts);
   s += R(25, 47, 1, 4, shortsHl);
+  // R leg
+  s += R(33, 47, 6, 4, shorts);
   s += R(38, 47, 1, 4, shortsHl);
   s += R(30, 47, 1, 4, shortsSh);
   s += R(33, 47, 1, 4, shortsSh);
   s += R(31, 47, 2, 4, _avDarken(shorts, 0.40));
-  // White side stripes (athletic detail)
+  // BOLD multi-stripe (white + orange accent)
   s += R(26, 47, 1, 4, stripe);
+  s += R(27, 47, 1, 4, accent);
+  s += R(36, 47, 1, 4, accent);
   s += R(37, 47, 1, 4, stripe);
   // Hem trim
   s += R(25, 50, 6, 1, shortsSh);
@@ -14880,33 +14918,45 @@ function _avBottomCargoPants(bodyType) {
 }
 
 // === SHOES: shop_canvas_sneakers — bright red canvas, white sole ===
+// v3.2.2 REDESIGNED: HIGH-TOP profile + visible white swoosh + thick sole
 function _avShoesCanvasSneakers(bodyType) {
-  const body    = '#c41a2a';        // red
+  const body    = '#c41a2a';
   const bodySh  = '#8e1a26';
   const bodyHl  = '#e84050';
-  const sole    = '#f0f0f8';        // white
+  const sole    = '#f0f0f8';
   const soleSh  = '#a8a8b8';
   const lace    = '#f0f0f8';
+  const swoosh  = '#ffffff';
   const R = _avRect;
   let s = '';
-  // L sneaker
-  s += R(23, 54, 8, 2, body);
-  s += R(23, 56, 8, 4, body);
-  s += R(23, 54, 1, 6, bodyHl);
-  s += R(30, 54, 1, 6, bodySh);
-  s += R(27, 56, 1, 3, lace);
-  s += R(26, 55, 1, 1, lace);
-  s += R(28, 57, 1, 1, lace);
+  // L HIGH-TOP — extends UP into shorts/calf area (was y=54-60, now y=51-60)
+  s += R(23, 51, 8, 1, body);          // upper cuff
+  s += R(23, 52, 8, 8, body);
+  s += R(23, 51, 1, 9, bodyHl);
+  s += R(30, 51, 1, 9, bodySh);
+  // WHITE SWOOSH curving across side (signature canvas look)
+  s += R(24, 56, 5, 1, swoosh);
+  s += R(28, 55, 1, 1, swoosh);
+  // 3 lace eyelets going up
+  s += R(27, 53, 1, 5, lace);
+  s += R(26, 54, 1, 1, lace);
+  s += R(28, 54, 1, 1, lace);
+  s += R(26, 56, 1, 1, lace);
+  s += R(28, 56, 1, 1, lace);
   s += R(23, 60, 9, 1, sole);
   s += R(22, 61, 10, 1, soleSh);
-  // R sneaker
-  s += R(33, 54, 8, 2, body);
-  s += R(33, 56, 8, 4, body);
-  s += R(40, 54, 1, 6, bodySh);
-  s += R(33, 54, 1, 6, bodyHl);
-  s += R(37, 56, 1, 3, lace);
-  s += R(36, 55, 1, 1, lace);
-  s += R(38, 57, 1, 1, lace);
+  // R sneaker (mirror)
+  s += R(33, 51, 8, 1, body);
+  s += R(33, 52, 8, 8, body);
+  s += R(40, 51, 1, 9, bodySh);
+  s += R(33, 51, 1, 9, bodyHl);
+  s += R(35, 56, 5, 1, swoosh);
+  s += R(35, 55, 1, 1, swoosh);
+  s += R(37, 53, 1, 5, lace);
+  s += R(36, 54, 1, 1, lace);
+  s += R(38, 54, 1, 1, lace);
+  s += R(36, 56, 1, 1, lace);
+  s += R(38, 56, 1, 1, lace);
   s += R(33, 60, 9, 1, sole);
   s += R(32, 61, 10, 1, soleSh);
   return s;
@@ -15380,24 +15430,43 @@ function _avAccessoryRankSquireInsignia() {
 // ----- BOSS PREVIEW SPRITES (21 items) -----
 
 // Push/Fold Boss — All-In Set (red theme)
+// v3.2.2 REDESIGNED: 3-row band + bigger gold chip emblem + flame trim accent
 function _avHatBossPFAllInBand() {
+  const red='#c41a2a', redHl='#e84050', redSh='#8e1a26', gold='#d4af37', goldHl='#f0d060', flame='#ff8c1a';
   const R = _avRect; let s = '';
-  s += R(22, 8, 20, 2, '#c41a2a');
-  s += R(22, 8, 20, 1, '#e84050');
-  s += R(31, 8, 2, 1, '#d4af37');     // gold chip emblem center
-  s += R(40, 8, 3, 2, '#8e1a26');     // side knot
+  // 3-ROW band (was 2)
+  s += R(22, 7, 20, 3, red);
+  s += R(22, 7, 20, 1, redHl);
+  s += R(22, 9, 20, 1, redSh);
+  // BIGGER gold chip emblem center (4w x 3h)
+  s += R(30, 7, 4, 3, gold);
+  s += R(30, 7, 4, 1, goldHl);
+  s += R(31, 8, 2, 1, redSh);          // chip center dot (red contrast)
+  // Flame accent left side
+  s += R(23, 6, 1, 1, flame);
+  s += R(24, 7, 1, 1, flame);
+  // Knot tied right side
+  s += R(40, 7, 3, 3, redSh);
+  s += R(40, 7, 1, 1, redHl);
   return s;
 }
+// v3.2.2 REDESIGNED: bold #99 chest number + dramatic shoulder stripes
 function _avTopBossPFJersey(bodyType) {
-  const body='#c41a2a', sh='#8e1a26', hl='#e84050', stripe='#f0f0f8';
+  const body='#c41a2a', sh='#8e1a26', hl='#e84050', stripe='#f0f0f8', dark='#1a1a26';
   const R = _avRect; let s = '';
   if (bodyType === 'masc') {
     s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
     s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
     s += R(28, 27, 8, 1, sh);          // V neck
-    s += R(20, 31, 4, 1, stripe);      // L stripe
-    s += R(40, 31, 4, 1, stripe);      // R stripe
-    s += R(31, 35, 2, 3, stripe);      // center number stripe
+    // BOLD shoulder stripes (3-row chevron)
+    s += R(20, 30, 24, 1, stripe);
+    s += R(20, 31, 24, 1, sh);
+    // Big "9" number on chest (left digit)
+    s += R(28, 33, 1, 4, stripe); s += R(28, 33, 3, 1, stripe); s += R(30, 34, 1, 1, stripe); s += R(28, 36, 3, 1, stripe);
+    // Big "9" number (right digit)
+    s += R(33, 33, 1, 4, stripe); s += R(33, 33, 3, 1, stripe); s += R(35, 34, 1, 1, stripe); s += R(33, 36, 3, 1, stripe);
+    // Dark trim at hem
+    s += R(20, 41, 24, 1, dark);
     s += R(45, 30, 1, 11, sh);
   } else {
     s += R(22, 27, 20, 2, body); s += R(28, 27, 8, 1, sh);
@@ -15423,17 +15492,29 @@ function _avAccessoryBossPFChipCharm() {
 }
 
 // Call vs Jam Boss — Pressure Set (deep wine theme)
+// v3.2.2 REDESIGNED: bigger ear cups + cyan LED + visible mic boom + side wire
 function _avHatBossCVJHeadset() {
+  const body='#1a1a26', bodyHl='#3a3a4a', cup='#0a0a14', led='#2da8c4', ledHl='#5fc8e0', mic='#5a5a6a', wine='#7a1a26';
   const R = _avRect; let s = '';
-  // Headband across top
-  s += R(22, 4, 20, 2, '#1a1a26');
-  s += R(22, 4, 20, 1, '#3a3a4a');
-  // Ear cups on sides
-  s += R(20, 8, 4, 4, '#1a1a26');
-  s += R(40, 8, 4, 4, '#1a1a26');
-  s += R(20, 8, 1, 4, '#3a3a4a');     // L cup highlight
-  // Tiny mic boom
-  s += R(19, 12, 1, 2, '#5a5a6a');
+  // Headband across top (now thicker)
+  s += R(22, 3, 20, 3, body);
+  s += R(22, 3, 20, 1, bodyHl);
+  // BIGGER ear cups (was 4x4, now 5x5)
+  s += R(19, 7, 5, 5, cup);
+  s += R(40, 7, 5, 5, cup);
+  s += R(19, 7, 1, 5, bodyHl);         // L cup highlight
+  s += R(44, 7, 1, 5, body);           // R cup shadow
+  // Cyan LED on each cup
+  s += R(21, 9, 2, 1, led);
+  s += R(42, 9, 2, 1, led);
+  s += R(21, 9, 1, 1, ledHl);          // L LED shine
+  s += R(42, 9, 1, 1, ledHl);          // R LED shine
+  // VISIBLE mic boom on right (longer)
+  s += R(45, 11, 1, 3, mic);           // boom rod
+  s += R(45, 14, 2, 1, mic);           // mic head
+  s += R(46, 14, 1, 1, wine);          // wine accent on mic tip (Call vs Jam theme)
+  // Brand badge on band
+  s += R(31, 4, 2, 1, wine);
   return s;
 }
 function _avTopBossCVJJamline(bodyType) {
@@ -15467,16 +15548,29 @@ function _avAccessoryBossCVJRiskCharm() {
 }
 
 // BB Defense Boss — Fortress Set (gray/silver theme)
+// v3.2.2 REDESIGNED: crown ridge + cheek guards + visor slit + gold rivets
 function _avHatBossBBFortressHelm() {
+  const body='#6a7080', bodyHl='#9aa0b0', bodySh='#3a404a', visor='#1a1a26', gold='#d4af37';
   const R = _avRect; let s = '';
-  // Gray knight helm covering head
-  s += R(23, 4, 18, 1, '#6a7080');
-  s += R(22, 5, 20, 5, '#6a7080');
-  s += R(22, 5, 20, 1, '#9aa0b0');    // top highlight
-  s += R(40, 6, 2, 4, '#3a404a');     // right shadow
-  s += R(22, 10, 20, 1, '#3a404a');   // bottom edge
-  // Visor slit (eyes area at y=11-12 visible)
-  s += R(24, 11, 16, 1, '#1a1a26');
+  // Crown ridge (vertical fin on top)
+  s += R(31, 2, 2, 3, bodyHl);
+  s += R(31, 2, 2, 1, '#c0c4d0');     // ridge highlight
+  // Helm body
+  s += R(23, 4, 18, 1, body);
+  s += R(22, 5, 20, 6, body);
+  s += R(22, 5, 20, 1, bodyHl);
+  s += R(40, 6, 2, 5, bodySh);
+  // Visor slit (horizontal eye opening)
+  s += R(23, 11, 18, 1, visor);
+  s += R(23, 12, 18, 1, bodySh);      // visor shadow row
+  // Cheek guards (extend down past eyes)
+  s += R(22, 12, 1, 3, body);         // L cheek
+  s += R(41, 12, 1, 3, body);         // R cheek
+  // Gold rivets (4 corners)
+  s += R(24, 6, 1, 1, gold);
+  s += R(39, 6, 1, 1, gold);
+  s += R(24, 9, 1, 1, gold);
+  s += R(39, 9, 1, 1, gold);
   return s;
 }
 function _avTopBossBBBulwarkJacket(bodyType) {
@@ -15512,13 +15606,26 @@ function _avBackBossBBFortressBanner() {
 }
 
 // Blind Battle Boss — Sentinel Set (gold theme)
+// v3.2.2 REDESIGNED: wing-tip side flares + chevron emblem + bigger crown
 function _avHatBossBlindSentinelVisor() {
+  const gold='#d4af37', goldHl='#f0d060', goldSh='#9e7d20', dark='#1a2332';
   const R = _avRect; let s = '';
-  s += R(24, 7, 16, 1, '#d4af37');    // top strap
-  s += R(22, 8, 20, 1, '#d4af37');    // brim
-  s += R(20, 9, 24, 1, '#d4af37');    // wider brim
-  s += R(20, 10, 24, 1, '#9e7d20');   // brim shadow
-  s += R(31, 7, 2, 1, '#1a2332');     // emblem
+  // Top strap (wider, with detail)
+  s += R(22, 6, 20, 2, gold);
+  s += R(22, 6, 20, 1, goldHl);       // top highlight
+  // Wing-tip side flares (extends past head silhouette)
+  s += R(20, 7, 2, 2, gold);
+  s += R(42, 7, 2, 2, gold);
+  s += R(19, 8, 1, 1, goldSh);
+  s += R(44, 8, 1, 1, goldSh);
+  // Brim (wider)
+  s += R(18, 9, 28, 1, gold);
+  s += R(18, 10, 28, 1, goldSh);      // brim shadow
+  s += R(18, 11, 28, 1, dark);        // brim under shadow
+  // Big chevron emblem on front (V shape)
+  s += R(30, 7, 1, 1, dark);
+  s += R(31, 8, 2, 1, dark);
+  s += R(33, 7, 1, 1, dark);
   return s;
 }
 function _avTopBossBlindDuelguard(bodyType) {
@@ -15585,16 +15692,27 @@ function _avAccessoryBossRJShadowBand() {
 }
 
 // Open vs 3-Bet Boss — Counterplay Set (cyan theme)
+// v3.2.2 ENHANCED: wider brim + grid pattern + LED accent
 function _avHatBossO3BVisor() {
+  const cyan='#2da8c4', cyanHl='#5fc8e0', cyanSh='#1a6e80', dark='#1a2332', led='#5fc8e0';
   const R = _avRect; let s = '';
-  s += R(24, 7, 16, 1, '#2da8c4');
-  s += R(22, 8, 20, 1, '#2da8c4');
-  s += R(20, 9, 24, 1, '#2da8c4');
-  s += R(20, 10, 24, 1, '#1a6e80');
-  // Grid pattern: 3 dots
-  s += R(26, 9, 1, 1, '#1a2332');
-  s += R(31, 9, 1, 1, '#1a2332');
-  s += R(36, 9, 1, 1, '#1a2332');
+  // Top strap thicker
+  s += R(22, 6, 20, 2, cyan);
+  s += R(22, 6, 20, 1, cyanHl);
+  // Wider brim
+  s += R(18, 8, 28, 1, cyan);
+  s += R(18, 9, 28, 1, cyan);
+  s += R(18, 10, 28, 1, cyanSh);
+  // GRID pattern across brim (signature look)
+  s += R(22, 9, 1, 1, dark);
+  s += R(26, 9, 1, 1, dark);
+  s += R(30, 9, 1, 1, dark);
+  s += R(34, 9, 1, 1, dark);
+  s += R(38, 9, 1, 1, dark);
+  s += R(42, 9, 1, 1, dark);
+  // LED indicator (right side glowing)
+  s += R(43, 7, 1, 1, led);
+  s += R(43, 7, 1, 1, '#ffffff');     // LED shine
   return s;
 }
 function _avTopBossO3BJacket(bodyType) {
@@ -15704,25 +15822,49 @@ function _avAccessoryAchvNoCriticalPatch() {
   s += R(18, 42, 1, 1, '#ffffff');
   return s;
 }
+// v3.2.2 REDESIGNED: distinct from reader_glasses with monocle-style + chain accent
 function _avFaceAchvScholarGlasses() {
+  const frame='#1a1a26', lens='#3a4a72', shine='#9aa0b0', chain='#a88040';
   const R = _avRect; let s = '';
-  // Round glasses frames
-  s += R(25, 14, 4, 3, '#1a1a26');    // L lens frame
-  s += R(35, 14, 4, 3, '#1a1a26');    // R lens frame
-  s += R(26, 15, 2, 1, '#5a8ab2');    // L lens shine
-  s += R(36, 15, 2, 1, '#5a8ab2');    // R lens shine
-  s += R(29, 15, 6, 1, '#1a1a26');    // bridge
+  // Single LARGE round monocle on left eye (academic style — distinct from reader_glasses square frames)
+  s += R(24, 13, 6, 5, frame);         // L lens outer (BIGGER round monocle)
+  s += R(25, 14, 4, 3, lens);          // L inner glass
+  s += R(25, 14, 1, 1, shine);         // L shine
+  // Smaller R lens (asymmetric scholar look)
+  s += R(35, 14, 4, 3, frame);
+  s += R(36, 15, 2, 1, lens);
+  // Bridge connection
+  s += R(30, 15, 5, 1, frame);
+  // Chain hanging from R lens (academic chain)
+  s += R(40, 15, 1, 1, chain);
+  s += R(41, 16, 1, 1, chain);
+  s += R(41, 17, 1, 1, chain);
   return s;
 }
+// v3.2.2 REDESIGNED: dramatic 3-spike crown + jewel inlays + bigger band
 function _avHatAchvPBCrown() {
+  const gold='#d4af37', goldHl='#f0d060', goldSh='#9e7d20', ruby='#c41a2a', rubyHl='#e84050', sapphire='#3a4a72', dark='#5e3a1f';
   const R = _avRect; let s = '';
-  // Small 3-point gold crown on top of head
-  s += R(25, 5, 2, 1, '#d4af37');
-  s += R(31, 4, 2, 2, '#f0d060');
-  s += R(37, 5, 2, 1, '#d4af37');
-  s += R(24, 6, 16, 2, '#d4af37');    // crown band
-  s += R(24, 6, 16, 1, '#f0d060');    // band highlight
-  s += R(31, 6, 2, 1, '#c41a2a');     // ruby center
+  // 3 LARGER spikes (was 1-row, now 3-rows tall)
+  s += R(24, 3, 3, 1, gold);          // L spike top
+  s += R(25, 4, 1, 1, goldHl);
+  s += R(24, 5, 3, 1, gold);          // L spike base
+  s += R(30, 2, 4, 1, gold);          // M spike top (taller)
+  s += R(31, 3, 2, 2, goldHl);
+  s += R(30, 5, 4, 1, gold);          // M spike base
+  s += R(37, 3, 3, 1, gold);          // R spike top
+  s += R(38, 4, 1, 1, goldHl);
+  s += R(37, 5, 3, 1, gold);          // R spike base
+  // Crown band (taller — 3 rows now)
+  s += R(23, 6, 18, 3, gold);
+  s += R(23, 6, 18, 1, goldHl);       // top highlight
+  s += R(23, 8, 18, 1, goldSh);       // bottom shadow
+  // Center ruby (bigger)
+  s += R(31, 7, 2, 1, ruby);
+  s += R(31, 7, 1, 1, rubyHl);
+  // Side sapphires
+  s += R(26, 7, 1, 1, sapphire);
+  s += R(37, 7, 1, 1, sapphire);
   return s;
 }
 
@@ -15737,13 +15879,25 @@ function _avAccessoryRankSquireInsignia() {
   s += R(16, 42, 2, 1, '#e8a050');    // top highlight
   return s;
 }
+// v3.2.2 REDESIGNED: longer drape + silver wolf emblem + chain trim
 function _avBackRankRangerMantle() {
+  const body='#b8bcc8', bodyHl='#e8eaf0', bodySh='#7a808a', trim='#9aa0b0', wolf='#3a3a4a', emblem='#5a5a6a';
   const R = _avRect; let s = '';
-  // Silver shoulder mantle (covers right shoulder area)
-  s += R(40, 28, 8, 6, '#b8bcc8');
-  s += R(40, 28, 8, 1, '#e8eaf0');    // top highlight
-  s += R(40, 33, 8, 1, '#7a808a');    // bottom shadow
-  s += R(47, 28, 1, 6, '#7a808a');
+  // LONGER mantle drape (was y=28-33, now y=28-40)
+  s += R(40, 28, 8, 13, body);
+  s += R(40, 28, 8, 1, bodyHl);       // top highlight
+  s += R(40, 40, 8, 1, bodySh);       // bottom shadow
+  s += R(47, 28, 1, 13, bodySh);      // R edge shadow
+  s += R(40, 28, 1, 13, bodyHl);      // L edge highlight
+  // Chain trim across top (silver chain detail)
+  s += R(40, 30, 8, 1, trim);
+  // WOLF EMBLEM center (head silhouette + ears)
+  s += R(43, 33, 2, 2, wolf);          // head
+  s += R(42, 32, 1, 1, wolf);          // L ear
+  s += R(45, 32, 1, 1, wolf);          // R ear
+  s += R(43, 35, 2, 1, emblem);        // jaw shadow
+  // Cape clasp at top
+  s += R(43, 28, 2, 1, '#d4af37');    // gold clasp
   return s;
 }
 function _avBackRankKnightCape() {
@@ -15887,25 +16041,44 @@ function _avHatShopGoldTrimVisor() {
 
 // ----- FACE (+5) -----
 
+// v3.2.2 REDESIGNED: thicker square frames + gold bridge + visible temples
 function _avFaceShopReaderGlasses() {
+  const frame='#1a1a26', shine='#9aa0b0', tint='#5a8ab2', gold='#d4af37';
   const R = _avRect; let s = '';
-  s += R(25, 14, 4, 3, '#1a1a26');     // L lens frame
-  s += R(35, 14, 4, 3, '#1a1a26');     // R lens frame
-  s += R(26, 15, 2, 1, '#9aa0b0');     // L lens shine
-  s += R(36, 15, 2, 1, '#9aa0b0');
-  s += R(29, 15, 6, 1, '#1a1a26');     // bridge
+  // L lens — bigger, square shape (was 4x3, now 5x4)
+  s += R(24, 13, 6, 5, frame);         // L outer frame
+  s += R(25, 14, 4, 3, tint);          // L lens tint
+  s += R(25, 14, 1, 1, shine);         // L shine
+  // R lens — mirror
+  s += R(34, 13, 6, 5, frame);
+  s += R(35, 14, 4, 3, tint);
+  s += R(35, 14, 1, 1, shine);
+  // GOLD bridge (premium accent)
+  s += R(30, 14, 4, 1, gold);
+  // Temple arms going to ears
+  s += R(23, 14, 1, 1, frame);
+  s += R(40, 14, 1, 1, frame);
   return s;
 }
+// v3.2.2 REDESIGNED: bolder thicker frames + mirror shine + wider bridge
 function _avFaceShopCoolShades() {
+  const frame='#0a0a14', lens='#1a1a26', mirror='#5a8eaa', mirrorHl='#9aceec', accent='#5a5a72';
   const R = _avRect; let s = '';
-  // Wide dark sunglasses — bigger than reader glasses
-  s += R(24, 13, 6, 4, '#0a0a14');
-  s += R(34, 13, 6, 4, '#0a0a14');
-  s += R(25, 14, 4, 2, '#1a1a26');     // L lens (slightly lighter)
-  s += R(35, 14, 4, 2, '#1a1a26');
-  s += R(28, 14, 1, 1, '#5a5a72');     // L shine
-  s += R(38, 14, 1, 1, '#5a5a72');
-  s += R(30, 14, 4, 1, '#0a0a14');     // bold bridge
+  // Wider lenses — 7w x 5h (was 6x4)
+  s += R(23, 12, 8, 6, frame);         // L outer frame
+  s += R(33, 12, 8, 6, frame);         // R outer frame
+  s += R(24, 13, 6, 4, lens);          // L inner lens
+  s += R(34, 13, 6, 4, lens);          // R inner lens
+  // MIRROR shine effect (gradient look)
+  s += R(25, 13, 4, 1, mirror);
+  s += R(35, 13, 4, 1, mirror);
+  s += R(25, 14, 1, 1, mirrorHl);      // L sparkle
+  s += R(35, 14, 1, 1, mirrorHl);      // R sparkle
+  // Bold thick bridge
+  s += R(30, 13, 4, 2, frame);
+  // Side temple arms
+  s += R(22, 14, 1, 2, frame);
+  s += R(41, 14, 1, 2, frame);
   return s;
 }
 function _avFaceShopHalfMask() {
@@ -16221,8 +16394,9 @@ function _avBottomShopTacticalTrousers(bodyType) {
   s += R(38, 46, 1, 1, loop);
   return s;
 }
+// v3.2.2 REDESIGNED: triple-stripe + tapered cuff
 function _avBottomShopJoggerPants(bodyType) {
-  const body='#1a1a26', sh='#0a0a14', hl='#3a3a4a', stripe='#f0f0f8';
+  const body='#1a1a26', sh='#0a0a14', hl='#3a3a4a', stripe='#f0f0f8', stripeShade='#a8a8b8';
   const R = _avRect; let s = '';
   s += R(22, 46, 20, 1, body);
   s += R(25, 47, 6, 7, body);
@@ -16232,9 +16406,14 @@ function _avBottomShopJoggerPants(bodyType) {
   s += R(30, 47, 1, 7, sh);
   s += R(33, 47, 1, 7, sh);
   s += R(31, 47, 2, 7, _avDarken(body, 0.40));
-  // White side stripes
-  s += R(26, 47, 1, 7, stripe);
-  s += R(37, 47, 1, 7, stripe);
+  // TRIPLE white stripes (signature 3-stripe athletic look)
+  s += R(26, 47, 1, 6, stripe);
+  s += R(27, 47, 1, 6, stripeShade);
+  s += R(36, 47, 1, 6, stripeShade);
+  s += R(37, 47, 1, 6, stripe);
+  // Tapered cuff at ankle (darker)
+  s += R(26, 53, 4, 1, sh);
+  s += R(34, 53, 4, 1, sh);
   return s;
 }
 function _avBottomShopSprintShorts(bodyType) {
@@ -17024,18 +17203,32 @@ function _avShoesShopStreetBoots(bodyType) {
   s += R(32, 60, 10, 2, sole);
   return s;
 }
+// v3.2.2 REDESIGNED: patent leather shine + brogue dot detail + wider toe + heel
 function _avShoesShopPolishedOxfords(bodyType) {
-  const body='#0a0a14', sh='#000000', hl='#3a3a4a', sole='#1a1410', shine='#7a7a8a';
+  const body='#0a0a14', sh='#000000', hl='#3a3a4a', sole='#1a1410', shine='#9aa0b0', brogue='#3a3a4a';
   const R = _avRect; let s = '';
-  s += R(23, 56, 8, 4, body);
-  s += R(23, 56, 8, 1, hl);
-  s += R(23, 56, 8, 1, shine);           // top shine
-  s += R(23, 59, 8, 1, sh);
+  // L oxford — taller body (was 4 rows, now 5)
+  s += R(23, 55, 8, 5, body);
+  s += R(23, 55, 8, 1, hl);              // top edge highlight
+  s += R(23, 55, 8, 1, shine);           // patent leather shine (overlay)
+  s += R(23, 56, 1, 4, hl);              // L outer highlight
+  s += R(30, 56, 1, 4, sh);              // R inner shadow
+  // BROGUE perforation dots
+  s += R(25, 57, 1, 1, brogue);
+  s += R(27, 57, 1, 1, brogue);
+  s += R(29, 57, 1, 1, brogue);
+  // Heel + sole (visible heel block)
+  s += R(28, 60, 4, 1, sh);              // L heel
   s += R(22, 60, 10, 2, sole);
-  // R
-  s += R(33, 56, 8, 4, body);
-  s += R(33, 56, 8, 1, shine);
-  s += R(33, 59, 8, 1, sh);
+  // R oxford (mirror)
+  s += R(33, 55, 8, 5, body);
+  s += R(33, 55, 8, 1, shine);
+  s += R(33, 56, 1, 4, hl);
+  s += R(40, 56, 1, 4, sh);
+  s += R(35, 57, 1, 1, brogue);
+  s += R(37, 57, 1, 1, brogue);
+  s += R(39, 57, 1, 1, brogue);
+  s += R(32, 60, 4, 1, sh);              // R heel
   s += R(32, 60, 10, 2, sole);
   return s;
 }
@@ -23497,7 +23690,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.2.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.2.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -23608,7 +23801,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.2.1',
+    appVersion: '3.2.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
