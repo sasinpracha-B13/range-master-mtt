@@ -14,3 +14,7 @@
 audit/ranges-flat.csv
 audit/ranges-summary.md
 audit/checksum.txt
+
+# Design lock prototypes (local-only; never deployed)
+design-previews/
+.commit-msg.tmp

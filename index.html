@@ -5291,6 +5291,273 @@
       margin-right: 8px;
       vertical-align: middle;
     }
+    /* ============================================================ */
+    /* PIXEL TRAINER v2.7.0 — Trainer Stand frame + Picker UI       */
+    /* ============================================================ */
+    /* Home header: pixel bust fills the gold-ringed avatar circle */
+    .header-avatar-pixel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    .header-avatar-pixel svg {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    /* Settings identity row: small pixel bust in a 32px circle */
+    .identity-row-pixel-bust {
+      display: flex;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08), rgba(0,0,0,0.0) 55%),
+        linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      box-shadow:
+        0 0 0 1.5px var(--avatar-ring-color, #d4af37),
+        0 0 0 3px rgba(15,23,42,0.85);
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+    }
+    .identity-row-pixel-bust svg {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+    /* Trainer Stand frame — appears in Trainer Dossier hero */
+    .trainer-stand-frame {
+      width: 120px;
+      height: 120px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2332 0%, #0a0e16 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.24);
+      box-shadow: inset 0 0 22px rgba(0,0,0,0.40);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .trainer-stand-frame::after {
+      content: '';
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 4px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%);
+      border-radius: 50%;
+      filter: blur(1.5px);
+    }
+    .trainer-stand-frame svg {
+      width: 108px;
+      height: 108px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      position: relative;
+      z-index: 1;
+    }
+    /* ===== CHARACTER PICKER MODAL ===== */
+    .character-picker-box {
+      max-width: 360px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .character-picker-preview-frame {
+      width: 140px;
+      height: 140px;
+      margin: 4px auto 14px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.12) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2332 0%, #0a0e16 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.30);
+      box-shadow: inset 0 0 22px rgba(0,0,0,0.40);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .character-picker-preview-frame::after {
+      content: '';
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 5px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.45) 50%, transparent 100%);
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+    .character-picker-preview-frame svg {
+      width: 124px;
+      height: 124px;
+      image-rendering: pixelated;
+      position: relative;
+      z-index: 1;
+    }
+    .cp-preview-glyph {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 2px solid var(--avatar-ring-color, #d4af37);
+      background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .character-picker-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-bottom: 14px;
+      padding: 4px;
+      background: rgba(0,0,0,0.30);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .cp-tab {
+      padding: 8px 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cp-tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .cp-tab.active {
+      background: rgba(212,175,55,0.18);
+      color: #d4af37;
+      box-shadow: inset 0 0 0 1px rgba(212,175,55,0.40);
+    }
+    .character-picker-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      min-height: 100px;
+    }
+    .cp-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 6px;
+      background: rgba(0,0,0,0.20);
+      border: 1.5px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, transform 0.12s, background 0.15s;
+    }
+    .cp-option:hover {
+      border-color: rgba(212,175,55,0.50);
+      background: rgba(212,175,55,0.04);
+    }
+    .cp-option:active { transform: scale(0.97); }
+    .cp-option.selected {
+      border-color: #d4af37;
+      background: rgba(212,175,55,0.10);
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.40), 0 0 12px rgba(212,175,55,0.18);
+    }
+    .cp-option-thumb {
+      width: 64px; height: 64px;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.10) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2332 0%, #0a0e16 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2px;
+      overflow: hidden;
+    }
+    .cp-option-thumb svg {
+      width: 90%; height: 90%;
+      image-rendering: pixelated;
+    }
+    .cp-thumb-bust {
+      align-items: center !important;
+      padding-bottom: 0 !important;
+    }
+    .cp-thumb-bust svg { width: 100%; height: 100%; }
+    .cp-option-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .cp-option.selected .cp-option-label { color: #d4af37; }
+    .cp-option-swatch .cp-swatch {
+      width: 64px; height: 64px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    /* Body type option (full stand thumbnail) — bigger thumb */
+    .cp-option-body .cp-option-thumb { width: 70px; height: 80px; }
+    /* Legacy glyph collapse */
+    .character-picker-legacy {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,0.08);
+    }
+    .cp-legacy-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.20);
+      border: 1px dashed rgba(255,255,255,0.10);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .cp-legacy-toggle:hover {
+      color: var(--text);
+      border-color: rgba(212,175,55,0.40);
+    }
+    .cp-legacy-chevron {
+      font-size: 10px;
+      transition: transform 0.18s;
+    }
+    .cp-legacy-toggle.open .cp-legacy-chevron {
+      transform: rotate(180deg);
+    }
+    .cp-legacy-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .cp-legacy-grid.hidden { display: none; }
     /* Profile Overlay — full-screen mobile, slide-up + fade in */
     .profile-overlay {
       position: fixed;
@@ -5750,15 +6017,33 @@
   </div>
 </div>
 
-<!-- v2.2.3: AVATAR PICKER MODAL -->
+<!-- v2.7.0: CHARACTER PICKER MODAL (Pixel Trainer customization) -->
 <div class="modal-overlay hidden" id="avatarPickerModal" onclick="if(event.target===this)closeAvatarPicker()">
-  <div class="modal-box" style="max-width:380px">
-    <div class="modal-title">Choose Avatar</div>
-    <div class="modal-text">
-      <p>Pick a preset emblem for your trainer. Tap one to apply.</p>
+  <div class="modal-box character-picker-box">
+    <div class="modal-title">Customize Your Trainer</div>
+    <!-- Live preview area (Trainer Stand at ~140px) -->
+    <div class="character-picker-preview-frame">
+      <div id="characterPickerPreview"><!-- Filled by openAvatarPicker -->
+      </div>
     </div>
-    <div class="avatar-picker-grid" id="avatarPickerGrid"><!-- Filled by openAvatarPicker() --></div>
-    <div style="display:flex;gap:10px;margin-top:16px;">
+    <!-- Tab strip -->
+    <div class="character-picker-tabs" id="characterPickerTabs">
+      <button class="cp-tab" data-cp-tab="bodyType">Body</button>
+      <button class="cp-tab" data-cp-tab="skin">Skin</button>
+      <button class="cp-tab" data-cp-tab="hairStyle">Hair</button>
+      <button class="cp-tab" data-cp-tab="hairColor">Color</button>
+    </div>
+    <!-- Active tab content (option grid) -->
+    <div class="character-picker-options" id="characterPickerOptions"><!-- Filled by openAvatarPicker --></div>
+    <!-- Legacy glyph fallback section (collapsible) -->
+    <div class="character-picker-legacy">
+      <button class="cp-legacy-toggle" onclick="toggleCharacterPickerLegacy()" id="cpLegacyToggle">
+        <span>Use a legacy emblem instead</span>
+        <span class="cp-legacy-chevron">▾</span>
+      </button>
+      <div class="cp-legacy-grid hidden" id="characterPickerLegacyGrid"><!-- 12 emblem glyphs --></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
       <button class="btn btn-secondary btn-full" onclick="closeAvatarPicker()">Done</button>
     </div>
   </div>
@@ -6081,7 +6366,28 @@ const App = {
       // AVATAR_PRESETS. null on first install; ensureTrainerIdentity()
       // populates a deterministic default from trainerId. Additive +
       // backup-safe; user can change anytime via Avatar Picker.
+      // v2.7.0: kept for legacy glyph users. avatarMode='glyph' renders this.
       avatarId: null,
+      // v2.7.0: Pixel Trainer character. Default mode for new users.
+      // Modular layered sprite — body+skin+hair customization. Reserved
+      // wardrobe slots (hat/top/bottom/shoes/back/accessory/faceMark/faceMask)
+      // are nullable now and will be populated in v2.8.0 Wardrobe.
+      avatarMode: 'character',
+      avatarCharacter: {
+        bodyType:   'masc',           // 'masc' | 'fem'
+        skin:       'medium',         // 'fair' | 'light' | 'medium' | 'tan' | 'brown' | 'deep'
+        hairStyle:  'short_crop',     // 'short_crop' | 'side_part' | 'bob' | 'ponytail' | 'long_flow' | 'curls'
+        hairColor:  'dark_brown',     // 'black' | 'dark_brown' | 'light_brown' | 'blonde' | 'red' | 'silver'
+        // Reserved for v2.8.0+ Wardrobe (null = starter outfit fused into base):
+        hat:        null,
+        top:        null,
+        bottom:     null,
+        shoes:      null,
+        back:       null,
+        accessory:  null,
+        faceMask:   null,
+        faceMark:   null
+      },
       // Reserved slots for upcoming pillars (declared so loadProgress
       // deep-merge picks them up; populated in v2.4-2.6):
       // v2.4.0: Personal Records ATH cache. Three keys, populated lazily
@@ -11037,6 +11343,24 @@ function ensureTrainerIdentity() {
     profile.avatarId = pickDefaultAvatarId(profile.trainerId);
     mutated = true;
   }
+  // v2.7.0: ensure avatarMode + avatarCharacter sub-fields exist for both
+  // fresh users and legacy users (deep-merge in loadProgress only handles
+  // top-level keys; nested avatarCharacter sub-fields need explicit defaulting).
+  if (typeof profile.avatarMode !== 'string') {
+    profile.avatarMode = 'character';
+    mutated = true;
+  }
+  if (!profile.avatarCharacter || typeof profile.avatarCharacter !== 'object') {
+    profile.avatarCharacter = {};
+    mutated = true;
+  }
+  const acDefaults = { bodyType:'masc', skin:'medium', hairStyle:'short_crop', hairColor:'dark_brown', hat:null, top:null, bottom:null, shoes:null, back:null, accessory:null, faceMask:null, faceMark:null };
+  Object.keys(acDefaults).forEach(function (k) {
+    if (profile.avatarCharacter[k] === undefined) {
+      profile.avatarCharacter[k] = acDefaults[k];
+      mutated = true;
+    }
+  });
   if (mutated) {
     try { App.saveProgress(); } catch (e) { /* non-fatal */ }
   }
@@ -11406,6 +11730,321 @@ function pickDefaultAvatarId(seedStr) {
   return AVATAR_PRESETS[idx].id;
 }
 
+// ============================================================
+// PIXEL TRAINER SPRITE SYSTEM v2.7.0
+// ============================================================
+// Modular layered SVG character. 64x64 viewBox, ~120 rects per character.
+// Layered Z-order (bottom→top, reserved for v2.8.0 Wardrobe equip):
+//   back_item → body → bottom → shoes → top → face_mark → hair → face_mask
+//   → hat → accessory_front
+// In v2.7.0 only body+outfit+face+hair render; other slots stay null and
+// the starter outfit is fused into the body sprite.
+
+const AVATAR_SKIN_TONES = {
+  fair:   '#f5d0a5',
+  light:  '#e8b486',
+  medium: '#c89a6a',
+  tan:    '#a87850',
+  brown:  '#7a5535',
+  deep:   '#5a3a20'
+};
+const AVATAR_SKIN_LABELS = { fair:'Fair', light:'Light', medium:'Medium', tan:'Tan', brown:'Brown', deep:'Deep' };
+
+const AVATAR_HAIR_COLORS = {
+  black:       '#1a1a26',
+  dark_brown:  '#4a3525',
+  light_brown: '#8b6534',
+  blonde:      '#d4af37',
+  red:         '#b8332a',
+  silver:      '#b8bcc8'
+};
+const AVATAR_HAIR_COLOR_LABELS = { black:'Black', dark_brown:'Dark brown', light_brown:'Light brown', blonde:'Blonde', red:'Red', silver:'Silver' };
+
+const AVATAR_HAIR_STYLES_LIST = ['short_crop', 'side_part', 'bob', 'ponytail', 'long_flow', 'curls'];
+const AVATAR_HAIR_STYLE_LABELS = {
+  short_crop: 'Short Crop',
+  side_part:  'Side Part',
+  bob:        'Bob',
+  ponytail:   'Ponytail',
+  long_flow:  'Long Flow',
+  curls:      'Curls'
+};
+
+const AVATAR_BODY_TYPES_LIST = ['masc', 'fem'];
+const AVATAR_BODY_TYPE_LABELS = { masc: 'Masculine', fem: 'Feminine' };
+
+// ---- Color math helpers (used for skin shading + hair 3-tone) ----
+function _avHex2rgb(h) { return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+function _avRgb2hex(rr,gg,bb) { return '#' + [rr,gg,bb].map(function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');}).join(''); }
+function _avDarken(h, amt) { const c = _avHex2rgb(h); return _avRgb2hex(c[0]*(1-amt), c[1]*(1-amt), c[2]*(1-amt)); }
+function _avLighten(h, amt) { const c = _avHex2rgb(h); return _avRgb2hex(c[0]+(255-c[0])*amt, c[1]+(255-c[1])*amt, c[2]+(255-c[2])*amt); }
+function _avRect(x,y,w,h,c) { return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+c+'"/>'; }
+
+// ---- BODY (skin tone with shadow + highlight, body type variants) ----
+function _avPartsBody(bodyType, skinHex) {
+  const sh = _avDarken(skinHex, 0.18);
+  const hl = _avLighten(skinHex, 0.10);
+  const R = _avRect;
+  let s = '';
+  // Head
+  s += R(24, 6, 16, 1, skinHex);
+  s += R(23, 7, 18, 1, skinHex);
+  s += R(22, 8, 20, 2, skinHex);
+  s += R(22, 10, 20, 8, skinHex);
+  s += R(23, 18, 18, 2, skinHex);
+  s += R(24, 20, 16, 1, skinHex);
+  s += R(25, 21, 14, 1, sh);
+  // Right-side face shadow
+  s += R(40, 10, 2, 8, sh);
+  s += R(39, 18, 2, 2, sh);
+  s += R(38, 20, 2, 1, sh);
+  s += R(23, 10, 1, 2, hl);
+  // Neck
+  s += R(28, 22, 8, 4, skinHex);
+  s += R(34, 22, 2, 4, sh);
+  // Body (skin under outfit; outfit covers most)
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, skinHex);
+    s += R(19, 27, 26, 1, skinHex);
+    s += R(18, 28, 28, 2, skinHex);
+    s += R(20, 30, 24, 14, skinHex);
+    s += R(43, 28, 2, 16, sh);
+    s += R(43, 30, 2, 14, sh);
+    s += R(22, 44, 20, 2, skinHex);
+  } else {
+    s += R(22, 26, 20, 1, skinHex);
+    s += R(21, 27, 22, 1, skinHex);
+    s += R(20, 28, 24, 2, skinHex);
+    s += R(22, 30, 20, 6, skinHex);
+    s += R(23, 36, 18, 4, skinHex);
+    s += R(22, 40, 20, 4, skinHex);
+    s += R(41, 28, 2, 12, sh);
+    s += R(40, 36, 1, 4, sh);
+    s += R(41, 40, 1, 4, sh);
+  }
+  // Hands
+  s += R(18, 39, 4, 4, skinHex);
+  s += R(42, 39, 4, 4, skinHex);
+  s += R(18, 42, 4, 1, sh);
+  s += R(42, 42, 4, 1, sh);
+  return s;
+}
+
+// ---- STARTER OUTFIT (Trainer Academy casual; fused for v2.7.0) ----
+function _avPartsOutfit(bodyType) {
+  const jacket   = '#7a8059';
+  const jacketSh = '#54593b';
+  const jacketHl = '#969a73';
+  const collar   = '#3e4128';
+  const collarHl = '#5a5e3e';
+  const lapel    = '#4f5435';
+  const cuff     = '#3e4128';
+  const cuffHl   = '#5a5e3e';
+  const hem      = '#3e4128';
+  const beltBrn  = '#3e2918';
+  const beltBrnSh= '#1f130a';
+  const beltGold = '#d4af37';
+  const beltGoldHl = '#f0d060';
+  const beltGoldSh = '#9e7d20';
+  const trouser  = '#3a2515';
+  const trouserSh= '#1f130a';
+  const bootCuff = '#5e4225';
+  const bootBody = '#1a1410';
+  const bootHl   = '#3a2515';
+  const bootSole = '#0a0805';
+  const bootLace = '#54593b';
+  const R = _avRect;
+  let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, collar);
+    s += R(19, 27, 26, 1, collar);
+    s += R(18, 28, 28, 1, collar);
+    s += R(20, 28, 4, 1, jacket);
+    s += R(40, 28, 4, 1, jacket);
+    s += R(28, 27, 8, 1, lapel);
+    s += R(29, 28, 6, 1, lapel);
+    s += R(30, 29, 4, 1, lapel);
+    s += R(20, 29, 4, 12, jacket);
+    s += R(40, 29, 4, 12, jacket);
+    s += R(24, 29, 16, 12, jacket);
+    s += R(27, 28, 1, 2, collarHl);
+    s += R(36, 28, 1, 2, collarHl);
+    s += R(42, 28, 2, 14, jacketSh);
+    s += R(20, 28, 1, 12, jacketHl);
+    s += R(31, 30, 2, 11, lapel);
+    s += R(18, 37, 4, 2, cuff);
+    s += R(42, 37, 4, 2, cuff);
+    s += R(18, 37, 4, 1, cuffHl);
+    s += R(42, 37, 4, 1, cuffHl);
+    s += R(18, 39, 1, 4, jacketSh);
+    s += R(45, 39, 1, 4, jacketSh);
+    s += R(20, 41, 24, 1, hem);
+  } else {
+    s += R(22, 26, 20, 1, collar);
+    s += R(21, 27, 22, 1, collar);
+    s += R(20, 28, 24, 1, collar);
+    s += R(22, 28, 4, 1, jacket);
+    s += R(38, 28, 4, 1, jacket);
+    s += R(28, 27, 8, 1, lapel);
+    s += R(29, 28, 6, 1, lapel);
+    s += R(30, 29, 4, 1, lapel);
+    s += R(22, 29, 4, 7, jacket);
+    s += R(38, 29, 4, 7, jacket);
+    s += R(24, 29, 14, 7, jacket);
+    s += R(23, 36, 18, 4, jacket);
+    s += R(22, 40, 20, 1, jacket);
+    s += R(27, 28, 1, 2, collarHl);
+    s += R(36, 28, 1, 2, collarHl);
+    s += R(41, 28, 1, 12, jacketSh);
+    s += R(40, 36, 1, 4, jacketSh);
+    s += R(22, 28, 1, 12, jacketHl);
+    s += R(31, 30, 2, 10, lapel);
+    s += R(18, 37, 4, 2, cuff);
+    s += R(42, 37, 4, 2, cuff);
+    s += R(18, 37, 4, 1, cuffHl);
+    s += R(42, 37, 4, 1, cuffHl);
+    s += R(18, 39, 1, 4, jacketSh);
+    s += R(45, 39, 1, 4, jacketSh);
+    s += R(22, 40, 20, 1, hem);
+  }
+  // Belt
+  s += R(22, 42, 20, 2, beltBrn);
+  s += R(22, 43, 20, 1, beltBrnSh);
+  s += R(30, 42, 4, 2, beltGold);
+  s += R(30, 42, 4, 1, beltGoldHl);
+  s += R(30, 43, 4, 1, beltGoldSh);
+  // Trousers
+  s += R(22, 44, 20, 1, trouser);
+  s += R(25, 45, 6, 9, trouser);
+  s += R(33, 45, 6, 9, trouser);
+  s += R(30, 45, 1, 9, trouserSh);
+  s += R(38, 45, 1, 9, trouserSh);
+  s += R(31, 45, 2, 9, _avDarken(trouser, 0.45));
+  // Boots
+  s += R(23, 54, 8, 2, bootCuff);
+  s += R(23, 56, 8, 5, bootBody);
+  s += R(23, 57, 1, 3, bootHl);
+  s += R(27, 56, 1, 4, bootLace);
+  s += R(22, 60, 10, 2, bootSole);
+  s += R(33, 54, 8, 2, bootCuff);
+  s += R(33, 56, 8, 5, bootBody);
+  s += R(33, 57, 1, 3, bootHl);
+  s += R(37, 56, 1, 4, bootLace);
+  s += R(32, 60, 10, 2, bootSole);
+  return s;
+}
+
+// ---- FACE (sparkle eyes + soft-arch brows + smile curve) ----
+function _avPartsFace() {
+  const browDark = '#1a1a26';
+  const R = _avRect;
+  let s = '';
+  s += R(25, 12, 4, 1, browDark);
+  s += R(26, 11, 2, 1, browDark);
+  s += R(35, 12, 4, 1, browDark);
+  s += R(36, 11, 2, 1, browDark);
+  s += R(26, 14, 3, 2, '#0a0a14');
+  s += R(35, 14, 3, 2, '#0a0a14');
+  s += R(27, 14, 1, 1, '#ffffff');
+  s += R(36, 14, 1, 1, '#ffffff');
+  s += R(24, 17, 2, 1, '#e89a8a');
+  s += R(38, 17, 2, 1, '#e89a8a');
+  s += R(30, 19, 4, 1, '#7a3a2a');
+  s += R(29, 18, 1, 1, '#5a2a1a');
+  s += R(34, 18, 1, 1, '#5a2a1a');
+  return s;
+}
+
+// ---- HAIR (one of 6 styles, 3-tone shading per style) ----
+function _avPartsHair(style, baseHex) {
+  const hl = _avLighten(baseHex, 0.25);
+  const sh = _avDarken(baseHex, 0.30);
+  const R = _avRect;
+  switch (style) {
+    case 'short_crop':
+      return [
+        R(23, 4, 18, 2, baseHex), R(22, 6, 20, 4, baseHex),
+        R(22, 10, 3, 2, baseHex), R(39, 10, 3, 2, baseHex),
+        R(24, 5, 6, 1, hl), R(23, 7, 3, 1, hl),
+        R(40, 6, 2, 4, sh), R(40, 10, 2, 2, sh), R(22, 11, 1, 1, sh)
+      ].join('');
+    case 'side_part':
+      return [
+        R(22, 4, 20, 4, baseHex),
+        R(20, 8, 14, 2, baseHex), R(20, 10, 6, 3, baseHex),
+        R(36, 8, 6, 2, baseHex), R(38, 10, 4, 3, baseHex),
+        R(23, 5, 10, 1, hl), R(22, 8, 6, 1, hl), R(21, 10, 2, 1, hl),
+        R(40, 6, 2, 6, sh), R(20, 12, 6, 1, sh), R(41, 12, 1, 1, sh)
+      ].join('');
+    case 'bob':
+      return [
+        R(22, 4, 20, 5, baseHex),
+        R(21, 9, 5, 13, baseHex), R(38, 9, 5, 13, baseHex),
+        R(20, 19, 2, 4, baseHex), R(42, 19, 2, 4, baseHex),
+        R(23, 5, 10, 1, hl), R(22, 7, 6, 1, hl), R(22, 10, 3, 1, hl),
+        R(40, 6, 2, 4, sh), R(41, 10, 2, 12, sh),
+        R(20, 22, 2, 1, sh), R(42, 22, 2, 1, sh)
+      ].join('');
+    case 'ponytail':
+      return [
+        R(22, 4, 20, 5, baseHex),
+        R(22, 9, 4, 3, baseHex), R(38, 9, 4, 3, baseHex),
+        R(43, 11, 2, 2, '#8b3a2a'),
+        R(43, 13, 4, 4, baseHex), R(44, 17, 4, 6, baseHex),
+        R(45, 23, 3, 6, baseHex), R(46, 29, 2, 4, baseHex),
+        R(23, 5, 8, 1, hl), R(22, 7, 4, 1, hl),
+        R(43, 14, 1, 6, hl), R(44, 20, 1, 6, hl),
+        R(40, 6, 2, 4, sh),
+        R(46, 13, 1, 4, sh), R(47, 17, 1, 6, sh), R(47, 23, 1, 6, sh)
+      ].join('');
+    case 'long_flow':
+      return [
+        R(22, 4, 20, 5, baseHex),
+        R(19, 9, 4, 23, baseHex), R(41, 9, 4, 23, baseHex),
+        R(22, 9, 4, 14, baseHex), R(38, 9, 4, 14, baseHex),
+        R(18, 28, 2, 4, baseHex), R(44, 28, 2, 4, baseHex),
+        R(23, 5, 10, 1, hl), R(22, 7, 6, 1, hl),
+        R(19, 10, 1, 10, hl), R(22, 10, 1, 8, hl),
+        R(40, 6, 2, 4, sh),
+        R(41, 11, 1, 14, sh), R(44, 11, 1, 12, sh),
+        R(19, 25, 1, 6, sh), R(44, 25, 1, 6, sh)
+      ].join('');
+    case 'curls':
+      return [
+        R(24, 1, 4, 2, baseHex), R(30, 1, 4, 2, baseHex), R(36, 1, 4, 2, baseHex),
+        R(22, 3, 20, 2, baseHex),
+        R(20, 5, 24, 7, baseHex),
+        R(18, 9, 4, 5, baseHex), R(42, 9, 4, 5, baseHex),
+        R(25, 1, 2, 1, hl), R(31, 1, 2, 1, hl), R(37, 1, 2, 1, hl),
+        R(22, 4, 18, 1, hl), R(20, 6, 4, 1, hl), R(20, 9, 2, 1, hl),
+        R(40, 7, 4, 5, sh), R(43, 9, 1, 5, sh),
+        R(18, 13, 4, 1, sh), R(42, 13, 4, 1, sh)
+      ].join('');
+  }
+  return '';
+}
+
+// ---- COMPOSER ----
+// Returns inline SVG for a Pixel Trainer character. mode:
+//   'bust'  → viewBox="14 0 36 30" — head + shoulders crop for 46px Home
+//   'stand' → viewBox="0 0 64 64"  — full body for Trainer Stand
+function renderCharacterSvg(opts, mode) {
+  const safeOpts = opts || {};
+  const bodyType  = (safeOpts.bodyType  && AVATAR_BODY_TYPE_LABELS[safeOpts.bodyType]) ? safeOpts.bodyType  : 'masc';
+  const skin      = (safeOpts.skin      && AVATAR_SKIN_TONES[safeOpts.skin])           ? safeOpts.skin      : 'medium';
+  const hairStyle = (safeOpts.hairStyle && AVATAR_HAIR_STYLE_LABELS[safeOpts.hairStyle]) ? safeOpts.hairStyle : 'short_crop';
+  const hairColor = (safeOpts.hairColor && AVATAR_HAIR_COLORS[safeOpts.hairColor])     ? safeOpts.hairColor : 'dark_brown';
+  const viewBox = (mode === 'bust') ? '14 0 36 30' : '0 0 64 64';
+  const skinHex = AVATAR_SKIN_TONES[skin];
+  const hairHex = AVATAR_HAIR_COLORS[hairColor];
+  return '<svg viewBox="' + viewBox + '" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:100%;image-rendering:pixelated">' +
+    _avPartsBody(bodyType, skinHex) +
+    _avPartsOutfit(bodyType) +
+    _avPartsFace() +
+    _avPartsHair(hairStyle, hairHex) +
+  '</svg>';
+}
+
 // Render a preset glyph as an inline SVG. size in px. color is the fill
 // (defaults to currentColor so the parent's color cascades). Falls back to
 // the spade preset if the requested id is unknown.
@@ -11443,63 +12082,209 @@ function closeCallsignEditor() {
 }
 
 // ============================================================
-// AVATAR PICKER v2.2.3
+// CHARACTER PICKER v2.7.0 (replaces glyph-only Avatar Picker)
 // ============================================================
-// Renders the 12-tile preset grid into the modal, marks the current
-// selection, wires tile-tap to setAvatarId() (which persists + re-renders
-// every identity surface). Apply-on-tap with no Save button — the modal
-// reads as a chooser, and "Done" just closes.
+// 4 tabs (Body / Skin / Hair Style / Hair Color) + live preview at top.
+// Apply-on-tap: every option tap mutates profile.avatarCharacter, persists,
+// updates the live preview, and re-renders all 3 identity surfaces.
+// Legacy glyph fallback section preserved (collapsed by default).
+
+// Picker state — current active tab
+window._characterPickerActiveTab = 'bodyType';
+
 function openAvatarPicker() {
   const modal = document.getElementById('avatarPickerModal');
-  const grid  = document.getElementById('avatarPickerGrid');
-  if (!modal || !grid) return;
-  const profile = App.state.profile || {};
-  const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
-  const ringColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
-  const currentId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
-  const tiles = AVATAR_PRESETS.map(function (p) {
-    const sel = (p.id === currentId) ? ' selected' : '';
-    return '<button class="avatar-picker-tile' + sel + '" ' +
-             'data-avatar-id="' + p.id + '" ' +
-             'onclick="setAvatarId(\'' + p.id + '\')" ' +
-             'aria-label="Avatar: ' + p.label + '" title="' + p.label + '">' +
-             '<span class="picker-check" aria-hidden="true">✓</span>' +
-             // v2.2.4: all picker tiles in vivid gold (consistent w/ identity surfaces)
-             renderAvatarGlyph(p.id, 30, AVATAR_GLYPH_GOLD) +
-           '</button>';
-  }).join('');
-  grid.innerHTML = tiles;
+  if (!modal) return;
+  // Render initial preview + active tab content + legacy glyph grid
+  _refreshCharacterPickerPreview();
+  _refreshCharacterPickerTabs();
+  _renderCharacterPickerOptions(window._characterPickerActiveTab || 'bodyType');
+  _renderCharacterPickerLegacyGrid();
+  // Wire tab clicks (idempotent — innerHTML doesn't recreate the tab strip)
+  document.querySelectorAll('#characterPickerTabs .cp-tab').forEach(function (btn) {
+    btn.onclick = function () {
+      window._characterPickerActiveTab = btn.getAttribute('data-cp-tab');
+      _refreshCharacterPickerTabs();
+      _renderCharacterPickerOptions(window._characterPickerActiveTab);
+    };
+  });
   modal.classList.remove('hidden');
 }
 
 function closeAvatarPicker() {
   const modal = document.getElementById('avatarPickerModal');
   if (modal) modal.classList.add('hidden');
+  // Collapse legacy glyph section so next open starts clean
+  const lg = document.getElementById('characterPickerLegacyGrid');
+  if (lg) lg.classList.add('hidden');
+  const tg = document.getElementById('cpLegacyToggle');
+  if (tg) tg.classList.remove('open');
 }
 
-// Apply selected avatar across every identity surface. Defensive try/catch
-// per re-render so a single render failure can't block the others.
+// Render the 140px live preview at the top of the picker modal
+function _refreshCharacterPickerPreview() {
+  const previewEl = document.getElementById('characterPickerPreview');
+  if (!previewEl) return;
+  const profile = App.state.profile || {};
+  if (profile.avatarMode === 'glyph') {
+    // Show the legacy glyph centered in a circle
+    const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
+    const ringColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
+    const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+    previewEl.innerHTML = '<div class="cp-preview-glyph" style="--avatar-ring-color:' + ringColor + '">' +
+      renderAvatarGlyph(avatarId, 80, AVATAR_GLYPH_GOLD) +
+    '</div>';
+  } else {
+    previewEl.innerHTML = renderCharacterSvg(profile.avatarCharacter, 'stand');
+  }
+}
+
+// Highlight the active tab
+function _refreshCharacterPickerTabs() {
+  const active = window._characterPickerActiveTab || 'bodyType';
+  document.querySelectorAll('#characterPickerTabs .cp-tab').forEach(function (btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-cp-tab') === active);
+  });
+}
+
+// Render the option grid for the active tab
+function _renderCharacterPickerOptions(tab) {
+  const optionsEl = document.getElementById('characterPickerOptions');
+  if (!optionsEl) return;
+  const profile = App.state.profile || {};
+  const ac = profile.avatarCharacter || {};
+  let html = '';
+  if (tab === 'bodyType') {
+    AVATAR_BODY_TYPES_LIST.forEach(function (bt) {
+      const sel = (ac.bodyType === bt) ? ' selected' : '';
+      // Each option shows a mini-stand of just THIS body type (with current other choices)
+      const sampleSvg = renderCharacterSvg({ bodyType: bt, skin: ac.skin, hairStyle: ac.hairStyle, hairColor: ac.hairColor }, 'stand');
+      html += '<button class="cp-option cp-option-body' + sel + '" data-cp-value="' + bt + '" ' +
+        'onclick="setCharacterField(\'bodyType\', \'' + bt + '\')" ' +
+        'aria-label="' + AVATAR_BODY_TYPE_LABELS[bt] + '">' +
+        '<div class="cp-option-thumb">' + sampleSvg + '</div>' +
+        '<div class="cp-option-label">' + AVATAR_BODY_TYPE_LABELS[bt] + '</div>' +
+      '</button>';
+    });
+  } else if (tab === 'skin') {
+    Object.keys(AVATAR_SKIN_TONES).forEach(function (k) {
+      const sel = (ac.skin === k) ? ' selected' : '';
+      html += '<button class="cp-option cp-option-swatch' + sel + '" ' +
+        'onclick="setCharacterField(\'skin\', \'' + k + '\')" ' +
+        'aria-label="Skin: ' + AVATAR_SKIN_LABELS[k] + '">' +
+        '<div class="cp-swatch" style="background:' + AVATAR_SKIN_TONES[k] + '"></div>' +
+        '<div class="cp-option-label">' + AVATAR_SKIN_LABELS[k] + '</div>' +
+      '</button>';
+    });
+  } else if (tab === 'hairStyle') {
+    AVATAR_HAIR_STYLES_LIST.forEach(function (st) {
+      const sel = (ac.hairStyle === st) ? ' selected' : '';
+      // Bust-only preview shows the head with this hair on current other choices
+      const sampleSvg = renderCharacterSvg({ bodyType: ac.bodyType, skin: ac.skin, hairStyle: st, hairColor: ac.hairColor }, 'bust');
+      html += '<button class="cp-option cp-option-hair' + sel + '" ' +
+        'onclick="setCharacterField(\'hairStyle\', \'' + st + '\')" ' +
+        'aria-label="Hair: ' + AVATAR_HAIR_STYLE_LABELS[st] + '">' +
+        '<div class="cp-option-thumb cp-thumb-bust">' + sampleSvg + '</div>' +
+        '<div class="cp-option-label">' + AVATAR_HAIR_STYLE_LABELS[st] + '</div>' +
+      '</button>';
+    });
+  } else if (tab === 'hairColor') {
+    Object.keys(AVATAR_HAIR_COLORS).forEach(function (k) {
+      const sel = (ac.hairColor === k) ? ' selected' : '';
+      html += '<button class="cp-option cp-option-swatch' + sel + '" ' +
+        'onclick="setCharacterField(\'hairColor\', \'' + k + '\')" ' +
+        'aria-label="Hair color: ' + AVATAR_HAIR_COLOR_LABELS[k] + '">' +
+        '<div class="cp-swatch" style="background:' + AVATAR_HAIR_COLORS[k] + '"></div>' +
+        '<div class="cp-option-label">' + AVATAR_HAIR_COLOR_LABELS[k] + '</div>' +
+      '</button>';
+    });
+  }
+  optionsEl.innerHTML = html;
+}
+
+// Render the 12 legacy glyph tiles (initially collapsed)
+function _renderCharacterPickerLegacyGrid() {
+  const grid = document.getElementById('characterPickerLegacyGrid');
+  if (!grid) return;
+  const profile = App.state.profile || {};
+  const useGlyph = profile.avatarMode === 'glyph';
+  const currentId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+  const tiles = AVATAR_PRESETS.map(function (p) {
+    const sel = (useGlyph && p.id === currentId) ? ' selected' : '';
+    return '<button class="avatar-picker-tile' + sel + '" ' +
+             'data-avatar-id="' + p.id + '" ' +
+             'onclick="setAvatarId(\'' + p.id + '\')" ' +
+             'aria-label="Legacy emblem: ' + p.label + '" title="' + p.label + '">' +
+             '<span class="picker-check" aria-hidden="true">✓</span>' +
+             renderAvatarGlyph(p.id, 30, AVATAR_GLYPH_GOLD) +
+           '</button>';
+  }).join('');
+  grid.innerHTML = tiles;
+}
+
+function toggleCharacterPickerLegacy() {
+  const grid = document.getElementById('characterPickerLegacyGrid');
+  const toggle = document.getElementById('cpLegacyToggle');
+  if (!grid) return;
+  const wasHidden = grid.classList.contains('hidden');
+  grid.classList.toggle('hidden');
+  if (toggle) toggle.classList.toggle('open', wasHidden);
+}
+
+// Apply-on-tap: set a single character field, persist, refresh all surfaces
+function setCharacterField(field, value) {
+  if (!App.state.profile) return;
+  if (!App.state.profile.avatarCharacter) App.state.profile.avatarCharacter = {};
+  // Validate the value against the canonical lists
+  const valid =
+    (field === 'bodyType'  && AVATAR_BODY_TYPE_LABELS[value]) ||
+    (field === 'skin'      && AVATAR_SKIN_TONES[value]) ||
+    (field === 'hairStyle' && AVATAR_HAIR_STYLE_LABELS[value]) ||
+    (field === 'hairColor' && AVATAR_HAIR_COLORS[value]);
+  if (!valid) return;
+  // If user is in legacy glyph mode, switch them to character mode now
+  if (App.state.profile.avatarMode !== 'character') {
+    App.state.profile.avatarMode = 'character';
+  }
+  App.state.profile.avatarCharacter[field] = value;
+  try { App.saveProgress(); } catch (e) { /* non-fatal */ }
+  // Refresh picker preview + active tab (so selected highlight updates)
+  _refreshCharacterPickerPreview();
+  _renderCharacterPickerOptions(window._characterPickerActiveTab || 'bodyType');
+  // Refresh all 3 identity surfaces
+  try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
+  try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
+  try {
+    const overlay = document.getElementById('profileOverlay');
+    if (overlay && !overlay.classList.contains('hidden')) {
+      const body = document.getElementById('profileOverlayBody');
+      if (body && typeof renderTrainerProfileBody === 'function') {
+        body.innerHTML = renderTrainerProfileBody();
+      }
+    }
+  } catch (e) {}
+}
+
+// Apply legacy glyph (sets avatarMode='glyph' so the glyph renders instead
+// of the Pixel Trainer). Preserved so users can opt back into the old emblem.
 function setAvatarId(avatarId) {
   if (!AVATAR_PRESET_BY_ID[avatarId]) return;
   if (!App.state.profile) return;
-  if (App.state.profile.avatarId === avatarId) {
-    // Tap-same-tile = just close (avoid useless re-renders + toast spam)
+  const sameAvatar = App.state.profile.avatarId === avatarId;
+  const sameMode = App.state.profile.avatarMode === 'glyph';
+  if (sameAvatar && sameMode) {
     closeAvatarPicker();
     return;
   }
   App.state.profile.avatarId = avatarId;
+  App.state.profile.avatarMode = 'glyph';
   try { App.saveProgress(); } catch (e) { /* non-fatal */ }
-  // Update tile selection inline (visual feedback before re-render replaces it)
-  const grid = document.getElementById('avatarPickerGrid');
-  if (grid) {
-    grid.querySelectorAll('.avatar-picker-tile').forEach(function (t) {
-      t.classList.toggle('selected', t.getAttribute('data-avatar-id') === avatarId);
-    });
-  }
-  // Re-render the 3 identity surfaces (avatar appears in all of them)
+  // Refresh picker preview + legacy grid selection + tabs (mode switch hides character grid)
+  _refreshCharacterPickerPreview();
+  _renderCharacterPickerLegacyGrid();
+  // Refresh all 3 identity surfaces
   try { if (typeof renderMastery === 'function') renderMastery(); } catch (e) {}
   try { if (typeof renderSettings === 'function') renderSettings(); } catch (e) {}
-  // If Profile overlay is open, refresh its body so the dossier tile updates
   try {
     const overlay = document.getElementById('profileOverlay');
     if (overlay && !overlay.classList.contains('hidden')) {
@@ -11510,7 +12295,7 @@ function setAvatarId(avatarId) {
     }
   } catch (e) {}
   const preset = AVATAR_PRESET_BY_ID[avatarId];
-  if (typeof showToast === 'function') showToast('✓ Avatar set · ' + preset.label);
+  if (typeof showToast === 'function') showToast('✓ Legacy emblem · ' + preset.label);
 }
 function saveCallsign() {
   const input = document.getElementById('callsignInput');
@@ -11693,11 +12478,18 @@ function renderTrainerCard() {
       // --- HERO BLOCK -------------------------------------------------
       '<div class="trainer-dossier-hero">' +
         '<div class="trainer-dossier-avatar-wrap">' +
-          '<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
-            renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
-          '</span>' +
+          // v2.7.0: 120px Trainer Stand for Pixel Trainer; legacy glyph
+          // users still get the 56px gold-ringed circle.
+          (profile.avatarMode === 'glyph'
+            ? ('<span class="avatar-tile size-56" style="--avatar-ring-color:' + avatarRingColor + '">' +
+                  renderAvatarGlyph(avatarId, 32, AVATAR_GLYPH_GOLD) +
+                '</span>')
+            : ('<div class="trainer-stand-frame">' +
+                  renderCharacterSvg(profile.avatarCharacter, 'stand') +
+                '</div>')
+          ) +
           '<button class="trainer-dossier-avatar-link" onclick="openAvatarPicker()" ' +
-            'aria-label="Change avatar">Change avatar</button>' +
+            'aria-label="Change appearance">Change appearance</button>' +
         '</div>' +
         '<div class="trainer-dossier-callsign-row">' +
           '<h2 class="trainer-dossier-callsign">' + _trainerEscapeHtml(profile.callsign || 'Trainer') + '</h2>' +
@@ -13078,24 +13870,32 @@ function renderHomeHeaderAvatar() {
   const profile = App.state.profile || {};
   const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
   const ringColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
-  const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
   const isFirstTime = !profile.hasOpenedTrainerProfile;
   const pulseCls = isFirstTime ? ' pulse' : '';
-  // First-time floating label sits beneath the button to teach the affordance
-  // without colliding with anything in the row. Removed entirely after first
-  // open — no permanent text label, just the avatar circle.
   const cueLabel = isFirstTime
     ? '<span class="header-avatar-cue" aria-hidden="true">Profile</span>'
     : '';
+  // v2.7.0: render Pixel Trainer bust by default. Legacy glyph users
+  // (avatarMode==='glyph') still get the gold emblem for backward compat.
+  const useGlyph = profile.avatarMode === 'glyph';
+  let avatarInner;
+  if (useGlyph) {
+    const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+    avatarInner = '<span class="header-avatar-glyph">' +
+      renderAvatarGlyph(avatarId, 26, AVATAR_GLYPH_GOLD) +
+    '</span>';
+  } else {
+    // Pixel Trainer bust — fills the 46px circle frame
+    avatarInner = '<span class="header-avatar-pixel">' +
+      renderCharacterSvg(profile.avatarCharacter, 'bust') +
+    '</span>';
+  }
   mount.innerHTML =
     '<button class="header-avatar-btn' + pulseCls + '" ' +
       'onclick="openTrainerProfile()" ' +
       'aria-label="Open Trainer Profile" ' +
       'style="--avatar-ring-color:' + ringColor + '">' +
-      '<span class="header-avatar-glyph">' +
-        // v2.2.4: glyph in vivid gold (ring stays rank-color)
-        renderAvatarGlyph(avatarId, 26, AVATAR_GLYPH_GOLD) +
-      '</span>' +
+      avatarInner +
       cueLabel +
     '</button>';
 }
@@ -13196,23 +13996,37 @@ function renderIdentitySettingsCard() {
   // v2.2.3: surface the avatar in Settings Identity row + give a direct
   // "Change" entry point so users discover the picker without going through
   // the Profile overlay first.
+  // v2.7.0: shows Pixel Trainer bust by default; legacy glyph users see
+  // their gold emblem instead.
   const overallRank = (profile.certifications && profile.certifications.overallRank) || 'Unranked';
   const avatarRingColor = (typeof RANK_COLOR === 'object' && RANK_COLOR[overallRank]) || '#d4af37';
-  const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
-  const avatarPreset = AVATAR_PRESET_BY_ID[avatarId] || AVATAR_PRESETS[0];
+  const useGlyph = profile.avatarMode === 'glyph';
+  let swatchInner, swatchLabel;
+  if (useGlyph) {
+    const avatarId = profile.avatarId || pickDefaultAvatarId(profile.trainerId);
+    const avatarPreset = AVATAR_PRESET_BY_ID[avatarId] || AVATAR_PRESETS[0];
+    swatchInner = '<span class="avatar-tile size-32" style="--avatar-ring-color:' + avatarRingColor + '">' +
+      renderAvatarGlyph(avatarId, 18, AVATAR_GLYPH_GOLD) +
+    '</span>';
+    swatchLabel = _trainerEscapeHtml(avatarPreset.label);
+  } else {
+    // Pixel Trainer bust in a small circular frame
+    swatchInner = '<span class="identity-row-pixel-bust" style="--avatar-ring-color:' + avatarRingColor + '">' +
+      renderCharacterSvg(profile.avatarCharacter, 'bust') +
+    '</span>';
+    const ac = profile.avatarCharacter || {};
+    const bodyLbl = AVATAR_BODY_TYPE_LABELS[ac.bodyType] || 'Trainer';
+    const hairLbl = AVATAR_HAIR_STYLE_LABELS[ac.hairStyle] || '';
+    swatchLabel = _trainerEscapeHtml(bodyLbl + ' · ' + hairLbl);
+  }
   return '' +
     '<div class="card identity-settings-card">' +
       '<div class="card-title">✦ Identity</div>' +
       '<div class="identity-row">' +
         '<span class="identity-row-label">Avatar</span>' +
         '<span class="identity-row-value">' +
-          '<span class="identity-row-avatar-swatch">' +
-            '<span class="avatar-tile size-32" style="--avatar-ring-color:' + avatarRingColor + '">' +
-              // v2.2.4: glyph in vivid gold (ring stays rank-color)
-              renderAvatarGlyph(avatarId, 18, AVATAR_GLYPH_GOLD) +
-            '</span>' +
-          '</span>' +
-          _trainerEscapeHtml(avatarPreset.label) +
+          '<span class="identity-row-avatar-swatch">' + swatchInner + '</span>' +
+          swatchLabel +
         '</span>' +
         '<button class="identity-row-edit" onclick="openAvatarPicker()">Change</button>' +
       '</div>' +
@@ -16028,7 +16842,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.6.0</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v2.7.0</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -16139,7 +16953,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '2.6.0',
+    appVersion: '2.7.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -16622,6 +17436,13 @@ function confirmReset() {
     // v2.2.3: reset clears avatar so ensureTrainerIdentity re-derives a
     // fresh deterministic default from the new trainerId.
     avatarId: null,
+    // v2.7.0: reset Pixel Trainer character to default starter look.
+    avatarMode: 'character',
+    avatarCharacter: {
+      bodyType: 'masc', skin: 'medium', hairStyle: 'short_crop', hairColor: 'dark_brown',
+      hat: null, top: null, bottom: null, shoes: null,
+      back: null, accessory: null, faceMask: null, faceMark: null
+    },
     // v2.4.0: reset wipes Personal Records ATH cache so a brand-new identity
     // starts fresh (no stale records from the previous trainer).
     records: {
