@@ -4107,8 +4107,42 @@
     }
     .shop-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.5; }
     .shop-tabs {
-      display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
-      padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    /* v3.1.2 dual-filter UI — secondary slot row + helper text */
+    .shop-slot-tabs {
+      display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap;
+      padding-bottom: 4px;
+    }
+    .shop-slot-tab {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-secondary); padding: 5px 10px; border-radius: 6px;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .shop-slot-tab:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .shop-slot-tab.active {
+      background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.40);
+      color: #60a5fa;
+    }
+    .shop-filter-context {
+      font-size: 11px; color: var(--text-secondary); letter-spacing: 0.4px;
+      margin-bottom: 14px; padding: 6px 10px;
+      background: rgba(255,255,255,0.03); border-left: 2px solid rgba(212,175,55,0.40);
+      border-radius: 0 6px 6px 0;
+    }
+    .shop-filter-context strong { color: var(--text); font-weight: 700; }
+    /* v3.1.2 prominent slot pill on cards (replaces small uppercase text) */
+    .shop-card-slot-pill {
+      display: inline-block;
+      padding: 3px 9px; border-radius: 999px;
+      background: rgba(96,165,250,0.10);
+      border: 1px solid rgba(96,165,250,0.35);
+      color: #60a5fa;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.7px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      line-height: 1.2;
     }
     .shop-tab {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
@@ -12585,7 +12619,62 @@ const SHOP_WARDROBE_ITEMS = [
   { id:'shop_combat_boots',    slot:'shoes',     name:'Combat Boots',      rarity:'rare',      source:'shop', price:650,  description:'Tall black combat boots, laced tight.' },
   { id:'shop_satchel_studded', slot:'back',      name:'Studded Satchel',   rarity:'rare',      source:'shop', price:580,  description:'Dark satchel with metal stud trim.' },
   // ----- PRESTIGE tier (1 item, 1500) -----
-  { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  source:'shop', price:1500, description:'Gold-trimmed championship jacket with crest.' }
+  { id:'shop_champion_jacket', slot:'top',       name:'Champion Jacket',   rarity:'prestige',  source:'shop', price:1500, description:'Gold-trimmed championship jacket with crest.' },
+
+  // ====================================================
+  // v3.1.2 EXPANSION — 36 new items across 6 style families
+  // Style families: street / academy / tactical / traveler / sport / prestige-lite
+  // ====================================================
+
+  // HEAD (+6) — variety: beanie / beret / headset / hat / visor / gold visor
+  { id:'shop_beanie_cap',         slot:'head',      name:'Beanie Cap',        rarity:'common',    source:'shop', style:'street',        price:120,  description:'A relaxed knit beanie for casual training.' },
+  { id:'shop_academy_beret',      slot:'head',      name:'Academy Beret',     rarity:'uncommon',  source:'shop', style:'academy',       price:260,  description:'A neat navy beret with academy trim.' },
+  { id:'shop_focus_headset',      slot:'head',      name:'Focus Headset',     rarity:'rare',      source:'shop', style:'tactical',      price:620,  description:'Tactical headset with cyan LED indicator.' },
+  { id:'shop_travel_hat',         slot:'head',      name:'Travel Hat',        rarity:'uncommon',  source:'shop', style:'traveler',      price:280,  description:'Wide-brim brown traveler hat.' },
+  { id:'shop_sports_visor_pro',   slot:'head',      name:'Sports Visor Pro',  rarity:'uncommon',  source:'shop', style:'sport',         price:240,  description:'Bright sport visor with logo accent.' },
+  { id:'shop_gold_trim_visor',    slot:'head',      name:'Gold Trim Visor',   rarity:'rare',      source:'shop', style:'prestige-lite', price:680,  description:'Polished black visor with gold edge trim.' },
+
+  // FACE (+5) — glasses / shades / mask / scarf / monocle
+  { id:'shop_reader_glasses',     slot:'face',      name:'Reader Glasses',    rarity:'common',    source:'shop', style:'academy',       price:100,  description:'Round wire-framed reader glasses.' },
+  { id:'shop_cool_shades',        slot:'face',      name:'Cool Shades',       rarity:'uncommon',  source:'shop', style:'street',        price:280,  description:'Dark sunglasses with bold bridge.' },
+  { id:'shop_half_mask',          slot:'face',      name:'Half Mask',         rarity:'rare',      source:'shop', style:'tactical',      price:650,  description:'Tactical mask covering nose and mouth.' },
+  { id:'shop_travel_scarf_mask',  slot:'face',      name:'Travel Scarf Mask', rarity:'uncommon',  source:'shop', style:'traveler',      price:300,  description:'Woven scarf wrapped around the face.' },
+  { id:'shop_silver_monocle',     slot:'face',      name:'Silver Monocle',    rarity:'rare',      source:'shop', style:'prestige-lite', price:720,  description:'A polished silver monocle with chain.' },
+
+  // TOP (+7) — hoodie / blazer / vest / coat / studio hoodie / silk robe / varsity
+  { id:'shop_basic_hoodie',       slot:'top',       name:'Basic Hoodie',      rarity:'common',    source:'shop', style:'street',        price:140,  description:'A relaxed gray hoodie with hood up.' },
+  { id:'shop_academy_jacket',     slot:'top',       name:'Academy Jacket',    rarity:'uncommon',  source:'shop', style:'academy',       price:320,  description:'Neat navy academy jacket with brass buttons.' },
+  { id:'shop_utility_vest',       slot:'top',       name:'Utility Vest',      rarity:'rare',      source:'shop', style:'tactical',      price:600,  description:'Tactical vest with pocket detail.' },
+  { id:'shop_field_coat',         slot:'top',       name:'Field Coat',        rarity:'uncommon',  source:'shop', style:'traveler',      price:340,  description:'Long brown traveler field coat.' },
+  { id:'shop_studio_hoodie',      slot:'top',       name:'Studio Hoodie',     rarity:'common',    source:'shop', style:'street',        price:160,  description:'Light studio hoodie with chest accent.' },
+  { id:'shop_silk_training_robe', slot:'top',       name:'Silk Training Robe',rarity:'prestige',  source:'shop', style:'prestige-lite', price:950,  description:'A clean silk robe with red trim.' },
+  { id:'shop_varsity_jacket',     slot:'top',       name:'Varsity Jacket',    rarity:'rare',      source:'shop', style:'street',        price:560,  description:'Collegiate jacket with leather sleeves.' },
+
+  // BOTTOM (+5) — joggers / slacks / tactical / jogger pants / sprint shorts
+  { id:'shop_tapered_joggers',    slot:'bottom',    name:'Tapered Joggers',   rarity:'common',    source:'shop', style:'street',        price:130,  description:'Slim-fit gray joggers.' },
+  { id:'shop_academy_slacks',     slot:'bottom',    name:'Academy Slacks',    rarity:'uncommon',  source:'shop', style:'academy',       price:300,  description:'Sharp navy academy slacks.' },
+  { id:'shop_tactical_trousers',  slot:'bottom',    name:'Tactical Trousers', rarity:'rare',      source:'shop', style:'tactical',      price:620,  description:'Dark green tactical trousers with pocket loops.' },
+  { id:'shop_jogger_pants',       slot:'bottom',    name:'Jogger Pants',      rarity:'common',    source:'shop', style:'sport',         price:130,  description:'Black athletic jogger pants.' },
+  { id:'shop_sprint_shorts',      slot:'bottom',    name:'Sprint Shorts',     rarity:'common',    source:'shop', style:'sport',         price:140,  description:'Bright orange sprint shorts.' },
+
+  // SHOES (+4) — high-tops / loafers / trail boots / gold-trim
+  { id:'shop_high_top_sneakers',  slot:'shoes',     name:'High-Top Sneakers', rarity:'uncommon',  source:'shop', style:'street',        price:260,  description:'Bold red high-top sneakers.' },
+  { id:'shop_academy_loafers',    slot:'shoes',     name:'Academy Loafers',   rarity:'uncommon',  source:'shop', style:'academy',       price:240,  description:'Polished brown leather loafers.' },
+  { id:'shop_trail_boots',        slot:'shoes',     name:'Trail Boots',       rarity:'rare',      source:'shop', style:'traveler',      price:620,  description:'Sturdy brown trail boots.' },
+  { id:'shop_gold_trim_shoes',    slot:'shoes',     name:'Gold Trim Shoes',   rarity:'rare',      source:'shop', style:'prestige-lite', price:700,  description:'Black formal shoes with gold edge trim.' },
+
+  // BACK (+5) — backpack / sling / tactical pack / satchel / mini cape
+  { id:'shop_study_backpack',     slot:'back',      name:'Study Backpack',    rarity:'common',    source:'shop', style:'academy',       price:150,  description:'A neat navy study backpack.' },
+  { id:'shop_sling_bag',          slot:'back',      name:'Sling Bag',         rarity:'uncommon',  source:'shop', style:'street',        price:260,  description:'Compact black sling bag worn across the body.' },
+  { id:'shop_tactical_pack',      slot:'back',      name:'Tactical Pack',     rarity:'rare',      source:'shop', style:'tactical',      price:620,  description:'Dark green tactical pack with strap detail.' },
+  { id:'shop_travel_satchel',     slot:'back',      name:'Travel Satchel',    rarity:'uncommon',  source:'shop', style:'traveler',      price:320,  description:'A worn brown leather satchel.' },
+  { id:'shop_mini_cape',          slot:'back',      name:'Mini Cape',         rarity:'rare',      source:'shop', style:'prestige-lite', price:750,  description:'A short red cape with gold clasp.' },
+
+  // ACCESSORY (+4) — card charm / notebook / wristband / compass
+  { id:'shop_card_charm',         slot:'accessory', name:'Card Charm',        rarity:'common',    source:'shop', style:'street',        price:120,  description:'A small playing-card charm at the hip.' },
+  { id:'shop_strategy_notebook',  slot:'accessory', name:'Strategy Notebook', rarity:'uncommon',  source:'shop', style:'academy',       price:300,  description:'A study notebook clipped at the side.' },
+  { id:'shop_tactical_wristband', slot:'accessory', name:'Tactical Wristband',rarity:'uncommon',  source:'shop', style:'tactical',      price:280,  description:'Dark woven tactical wristband.' },
+  { id:'shop_compass_charm',      slot:'accessory', name:'Compass Charm',     rarity:'uncommon',  source:'shop', style:'traveler',      price:280,  description:'A small brass compass charm at the hip.' }
 ];
 // Combined item map (starter + shop). Preview-only items are added AFTER their
 // const declarations later in this file (BOSS/ACHIEVEMENT/RANK) — see merge
@@ -13194,6 +13283,14 @@ function _avPartsTop(bodyType, itemId) {
     case 'boss_md_split_coat':        return _avTopBossMDSplitCoat(bodyType);
     // v3.1.0 rank preview tops
     case 'rank_champion_mantle':      return _avTopRankChampionMantle(bodyType);
+    // v3.1.2 shop expansion tops (7)
+    case 'shop_basic_hoodie':         return _avTopShopBasicHoodie(bodyType);
+    case 'shop_academy_jacket':       return _avTopShopAcademyJacket(bodyType);
+    case 'shop_utility_vest':         return _avTopShopUtilityVest(bodyType);
+    case 'shop_field_coat':           return _avTopShopFieldCoat(bodyType);
+    case 'shop_studio_hoodie':        return _avTopShopStudioHoodie(bodyType);
+    case 'shop_silk_training_robe':   return _avTopShopSilkRobe(bodyType);
+    case 'shop_varsity_jacket':       return _avTopShopVarsityJacket(bodyType);
     default:                          return _avTopTrainerJacket(bodyType);  // safe fallback
   }
 }
@@ -13204,6 +13301,12 @@ function _avPartsBottom(bodyType, itemId) {
     case 'starter_trainer_trousers': return _avBottomTrainerTrousers(bodyType);
     case 'shop_running_shorts':      return _avBottomRunningShorts(bodyType);
     case 'shop_cargo_pants':         return _avBottomCargoPants(bodyType);
+    // v3.1.2 shop expansion bottoms (5)
+    case 'shop_tapered_joggers':     return _avBottomShopTaperedJoggers(bodyType);
+    case 'shop_academy_slacks':      return _avBottomShopAcademySlacks(bodyType);
+    case 'shop_tactical_trousers':   return _avBottomShopTacticalTrousers(bodyType);
+    case 'shop_jogger_pants':        return _avBottomShopJoggerPants(bodyType);
+    case 'shop_sprint_shorts':       return _avBottomShopSprintShorts(bodyType);
     default:                         return _avBottomTrainerTrousers(bodyType);
   }
 }
@@ -13213,6 +13316,11 @@ function _avPartsShoes(bodyType, itemId) {
     case 'starter_brown_boots':    return _avShoesTrainerBoots(bodyType);
     case 'shop_canvas_sneakers':   return _avShoesCanvasSneakers(bodyType);
     case 'shop_combat_boots':      return _avShoesCombatBoots(bodyType);
+    // v3.1.2 shop expansion shoes (4)
+    case 'shop_high_top_sneakers': return _avShoesShopHighTopSneakers(bodyType);
+    case 'shop_academy_loafers':   return _avShoesShopAcademyLoafers(bodyType);
+    case 'shop_trail_boots':       return _avShoesShopTrailBoots(bodyType);
+    case 'shop_gold_trim_shoes':   return _avShoesShopGoldTrimShoes(bodyType);
     default:                       return _avShoesTrainerBoots(bodyType);
   }
 }
@@ -13233,6 +13341,13 @@ function _avPartsHat(itemId) {
     // v3.1.0 achievement preview hats
     case 'achv_streak_7_band':        return _avHatAchvStreak7Band();
     case 'achv_pb_crown':             return _avHatAchvPBCrown();
+    // v3.1.2 shop expansion hats (6)
+    case 'shop_beanie_cap':           return _avHatShopBeanieCap();
+    case 'shop_academy_beret':        return _avHatShopAcademyBeret();
+    case 'shop_focus_headset':        return _avHatShopFocusHeadset();
+    case 'shop_travel_hat':           return _avHatShopTravelHat();
+    case 'shop_sports_visor_pro':     return _avHatShopSportsVisorPro();
+    case 'shop_gold_trim_visor':      return _avHatShopGoldTrimVisor();
     default: return '';
   }
 }
@@ -13242,6 +13357,12 @@ function _avPartsFaceMask(itemId) {
     // v3.1.0 preview face items
     case 'achv_scholar_glasses':   return _avFaceAchvScholarGlasses();
     case 'rank_warlord_mark':      return _avFaceRankWarlordMark();
+    // v3.1.2 shop expansion face (5)
+    case 'shop_reader_glasses':    return _avFaceShopReaderGlasses();
+    case 'shop_cool_shades':       return _avFaceShopCoolShades();
+    case 'shop_half_mask':         return _avFaceShopHalfMask();
+    case 'shop_travel_scarf_mask': return _avFaceShopTravelScarfMask();
+    case 'shop_silver_monocle':    return _avFaceShopSilverMonocle();
     default: return '';
   }
 }
@@ -13258,6 +13379,12 @@ function _avPartsBack(itemId) {
     case 'achv_streak_30_cape':        return _avBackAchvMarathonCape();
     case 'rank_ranger_mantle':         return _avBackRankRangerMantle();
     case 'rank_knight_cape':           return _avBackRankKnightCape();
+    // v3.1.2 shop expansion backs (5)
+    case 'shop_study_backpack':        return _avBackShopStudyBackpack();
+    case 'shop_sling_bag':             return _avBackShopSlingBag();
+    case 'shop_tactical_pack':         return _avBackShopTacticalPack();
+    case 'shop_travel_satchel':        return _avBackShopTravelSatchel();
+    case 'shop_mini_cape':             return _avBackShopMiniCape();
     default: return '';
   }
 }
@@ -13273,6 +13400,11 @@ function _avPartsAccessory(itemId) {
     // v3.1.0 achievement + rank preview accessories
     case 'achv_no_critical_patch':      return _avAccessoryAchvNoCriticalPatch();
     case 'rank_squire_insignia':        return _avAccessoryRankSquireInsignia();
+    // v3.1.2 shop expansion accessories (4)
+    case 'shop_card_charm':             return _avAccessoryShopCardCharm();
+    case 'shop_strategy_notebook':      return _avAccessoryShopStrategyNotebook();
+    case 'shop_tactical_wristband':     return _avAccessoryShopTacticalWristband();
+    case 'shop_compass_charm':          return _avAccessoryShopCompassCharm();
     default: return '';
   }
 }
@@ -14732,6 +14864,689 @@ function _avFaceRankWarlordMark() {
   s += R(37, 17, 3, 1, '#a78bfa');
   s += R(38, 18, 1, 1, '#a78bfa');
   s += R(38, 17, 1, 1, '#e8d4ff');    // shine
+  return s;
+}
+
+// ============================================================
+// v3.1.2 SHOP EXPANSION — 36 new sprites across 6 style families
+// Style palettes:
+//   Street: bold blues / reds / accent yellows
+//   Academy: navy / cream / brass
+//   Tactical: black / charcoal / dark green / cyan accent
+//   Traveler: brown / khaki / leather
+//   Sport: bright cyan / orange / white
+//   Prestige-lite: gold / silver / cream
+// ============================================================
+
+// ----- HEAD (+6) -----
+
+function _avHatShopBeanieCap() {
+  const R = _avRect; let s = '';
+  // Knit beanie body — covers top + sides of head
+  s += R(22, 4, 20, 1, '#3a4a72');     // top
+  s += R(21, 5, 22, 5, '#3a4a72');     // body
+  s += R(21, 5, 1, 5, '#5a6a92');      // L highlight
+  s += R(42, 5, 1, 5, '#1a2a52');      // R shadow
+  s += R(21, 9, 22, 1, '#1a2a52');     // brim
+  // Knit pattern (small dots)
+  s += R(28, 6, 1, 1, '#5a6a92');
+  s += R(34, 6, 1, 1, '#5a6a92');
+  s += R(31, 8, 2, 1, '#5a6a92');
+  return s;
+}
+function _avHatShopAcademyBeret() {
+  const R = _avRect; let s = '';
+  // Beret — slanted dome to one side
+  s += R(24, 4, 16, 1, '#1a2a52');
+  s += R(22, 5, 20, 3, '#1a2a52');
+  s += R(22, 5, 18, 1, '#3a4a72');     // top highlight
+  s += R(40, 6, 2, 2, '#0a1a3a');      // R shadow
+  s += R(22, 8, 20, 1, '#0a1a3a');     // brim under
+  // Stem nub on top right
+  s += R(38, 3, 2, 1, '#1a2a52');
+  // Brass academy badge
+  s += R(31, 7, 2, 1, '#d4af37');
+  return s;
+}
+function _avHatShopFocusHeadset() {
+  const R = _avRect; let s = '';
+  // Headband over top
+  s += R(22, 5, 20, 2, '#1a1a26');
+  s += R(22, 5, 20, 1, '#3a3a4a');
+  // Ear cups
+  s += R(20, 8, 4, 4, '#1a1a26');
+  s += R(40, 8, 4, 4, '#1a1a26');
+  s += R(20, 8, 1, 4, '#3a3a4a');
+  // Cyan LED indicator
+  s += R(22, 10, 1, 1, '#2da8c4');
+  s += R(41, 10, 1, 1, '#2da8c4');
+  // Mic boom
+  s += R(19, 12, 1, 2, '#5a5a6a');
+  s += R(19, 14, 1, 1, '#2da8c4');     // mic tip glow
+  return s;
+}
+function _avHatShopTravelHat() {
+  const R = _avRect; let s = '';
+  // Wide-brim hat — extends past head silhouette
+  s += R(24, 4, 16, 1, '#5e3a1f');     // crown top
+  s += R(23, 5, 18, 4, '#5e3a1f');     // crown body
+  s += R(23, 5, 18, 1, '#8b6534');     // top highlight
+  s += R(40, 7, 2, 2, '#3a1f10');      // R shadow
+  // Wide brim (extends past head)
+  s += R(20, 9, 24, 1, '#5e3a1f');
+  s += R(18, 10, 28, 1, '#5e3a1f');
+  s += R(18, 11, 28, 1, '#3a1f10');    // brim shadow
+  // Hat band
+  s += R(23, 8, 18, 1, '#3a1f10');
+  return s;
+}
+function _avHatShopSportsVisorPro() {
+  const R = _avRect; let s = '';
+  // Bright cyan sport visor — open top, curved brim
+  s += R(24, 7, 16, 1, '#2da8c4');
+  s += R(22, 8, 20, 1, '#2da8c4');
+  s += R(20, 9, 24, 1, '#2da8c4');
+  s += R(20, 10, 24, 1, '#1a6e80');
+  // White logo accent center
+  s += R(31, 7, 2, 1, '#ffffff');
+  return s;
+}
+function _avHatShopGoldTrimVisor() {
+  const R = _avRect; let s = '';
+  // Black visor with gold edge trim
+  s += R(24, 7, 16, 1, '#d4af37');     // gold top strap
+  s += R(22, 8, 20, 1, '#1a1a26');     // black brim
+  s += R(20, 9, 24, 1, '#1a1a26');
+  s += R(20, 9, 24, 1, '#d4af37');     // gold edge highlight (overlay top)
+  s += R(20, 10, 24, 1, '#9e7d20');    // gold-shadow trim row
+  return s;
+}
+
+// ----- FACE (+5) -----
+
+function _avFaceShopReaderGlasses() {
+  const R = _avRect; let s = '';
+  s += R(25, 14, 4, 3, '#1a1a26');     // L lens frame
+  s += R(35, 14, 4, 3, '#1a1a26');     // R lens frame
+  s += R(26, 15, 2, 1, '#9aa0b0');     // L lens shine
+  s += R(36, 15, 2, 1, '#9aa0b0');
+  s += R(29, 15, 6, 1, '#1a1a26');     // bridge
+  return s;
+}
+function _avFaceShopCoolShades() {
+  const R = _avRect; let s = '';
+  // Wide dark sunglasses — bigger than reader glasses
+  s += R(24, 13, 6, 4, '#0a0a14');
+  s += R(34, 13, 6, 4, '#0a0a14');
+  s += R(25, 14, 4, 2, '#1a1a26');     // L lens (slightly lighter)
+  s += R(35, 14, 4, 2, '#1a1a26');
+  s += R(28, 14, 1, 1, '#5a5a72');     // L shine
+  s += R(38, 14, 1, 1, '#5a5a72');
+  s += R(30, 14, 4, 1, '#0a0a14');     // bold bridge
+  return s;
+}
+function _avFaceShopHalfMask() {
+  const R = _avRect; let s = '';
+  // Tactical mask covering nose+mouth (lower face)
+  s += R(24, 16, 16, 4, '#1a1a26');    // mask body
+  s += R(24, 16, 16, 1, '#3a3a4a');    // top highlight
+  s += R(24, 19, 16, 1, '#0a0a14');    // bottom shadow
+  // Vent stripes
+  s += R(28, 18, 1, 1, '#5a5a6a');
+  s += R(31, 18, 1, 1, '#5a5a6a');
+  s += R(34, 18, 1, 1, '#5a5a6a');
+  return s;
+}
+function _avFaceShopTravelScarfMask() {
+  const R = _avRect; let s = '';
+  // Scarf wrapped around face (lower)
+  s += R(22, 17, 20, 4, '#8b6534');    // scarf body
+  s += R(22, 17, 20, 1, '#a88040');    // top highlight
+  s += R(22, 20, 20, 1, '#5e3a1f');    // bottom shadow
+  // Tail draping down right
+  s += R(40, 21, 2, 3, '#8b6534');
+  return s;
+}
+function _avFaceShopSilverMonocle() {
+  const R = _avRect; let s = '';
+  // Single round monocle on right eye
+  s += R(35, 13, 5, 4, '#c0c4d0');     // monocle frame
+  s += R(36, 14, 3, 2, '#3a4a72');     // lens (slight blue tint)
+  s += R(37, 14, 1, 1, '#e8eaf0');     // shine
+  // Chain dangling
+  s += R(40, 16, 1, 1, '#c0c4d0');
+  s += R(40, 17, 1, 1, '#c0c4d0');
+  s += R(40, 18, 1, 1, '#c0c4d0');
+  return s;
+}
+
+// ----- TOP (+7) — body-type aware -----
+
+function _avTopShopBasicHoodie(bodyType) {
+  const body='#5a5a6a', sh='#3a3a4a', hl='#7a7a8a', hood='#3a3a4a', cord='#a8a8b8';
+  const R = _avRect; let s = '';
+  // HOOD — covers top of head behind hair
+  s += R(22, 4, 20, 1, hood);
+  s += R(20, 5, 24, 4, hood);
+  s += R(20, 5, 1, 4, sh);             // L hood shadow
+  s += R(43, 5, 1, 4, sh);             // R hood shadow
+  s += R(20, 8, 24, 1, sh);            // hood bottom shadow
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body); s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body); s += R(20, 31, 24, 10, body);
+    // Front pouch
+    s += R(24, 33, 16, 5, sh);
+    s += R(24, 33, 16, 1, hl);         // pouch top
+    // Drawstrings
+    s += R(28, 28, 1, 4, cord);
+    s += R(35, 28, 1, 4, cord);
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(25, 33, 14, 3, sh);          // front pouch
+    s += R(28, 28, 1, 4, cord); s += R(35, 28, 1, 4, cord);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopAcademyJacket(bodyType) {
+  const body='#1a2a52', sh='#0a1a3a', hl='#3a4a72', brass='#d4af37';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, '#0a1a3a');
+    s += R(18, 27, 28, 1, '#0a1a3a');
+    s += R(16, 28, 32, 1, '#0a1a3a');
+    s += R(17, 29, 30, 1, '#0a1a3a');
+    s += R(18, 30, 28, 1, '#0a1a3a');
+    s += R(19, 31, 26, 1, body);
+    s += R(20, 32, 24, 9, body);
+    // 3 brass buttons down center
+    s += R(31, 33, 1, 1, brass); s += R(32, 33, 1, 1, '#9e7d20');
+    s += R(31, 36, 1, 1, brass); s += R(32, 36, 1, 1, '#9e7d20');
+    s += R(31, 39, 1, 1, brass); s += R(32, 39, 1, 1, '#9e7d20');
+    s += R(20, 32, 1, 9, hl);          // L highlight
+    s += R(43, 32, 1, 9, sh);          // R shadow
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(24, 25, 16, 1, '#0a1a3a');
+    s += R(23, 26, 18, 1, '#0a1a3a');
+    s += R(22, 27, 20, 2, '#0a1a3a');
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(31, 31, 1, 1, brass); s += R(32, 31, 1, 1, '#9e7d20');
+    s += R(31, 34, 1, 1, brass); s += R(32, 34, 1, 1, '#9e7d20');
+    s += R(31, 37, 1, 1, brass); s += R(32, 37, 1, 1, '#9e7d20');
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopUtilityVest(bodyType) {
+  const body='#3a4232', sh='#1a221a', hl='#5a6248', strap='#5e4225', pocket='#5a6248', buckle='#a88040';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body);
+    s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body);
+    s += R(20, 31, 24, 10, body);
+    // Two chest pockets
+    s += R(22, 33, 5, 4, pocket);
+    s += R(37, 33, 5, 4, pocket);
+    s += R(22, 33, 5, 1, hl);
+    s += R(37, 33, 5, 1, hl);
+    // Cross strap
+    s += R(20, 32, 24, 1, strap);
+    s += R(20, 38, 24, 1, strap);
+    s += R(31, 32, 2, 1, buckle);      // central buckle
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(23, 33, 5, 4, pocket); s += R(36, 33, 5, 4, pocket);
+    s += R(22, 32, 20, 1, strap); s += R(22, 38, 20, 1, strap);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopFieldCoat(bodyType) {
+  const body='#5e4225', sh='#3a2515', hl='#8b6534', collar='#3a2515', button='#a88040';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, collar);
+    s += R(18, 27, 28, 1, collar);
+    s += R(16, 28, 32, 1, collar);
+    s += R(17, 29, 30, 1, body);
+    s += R(18, 30, 28, 1, body);
+    s += R(19, 31, 26, 1, body);
+    s += R(20, 32, 24, 13, body);      // long coat extends below normal hem
+    // Belt at waist
+    s += R(20, 38, 24, 1, sh);
+    s += R(31, 38, 2, 1, button);
+    s += R(45, 30, 1, 14, sh);
+  } else {
+    s += R(24, 25, 16, 1, collar);
+    s += R(23, 26, 18, 1, collar);
+    s += R(22, 27, 20, 2, collar);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 4, body);
+    s += R(22, 38, 20, 1, sh); s += R(31, 38, 2, 1, button);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopStudioHoodie(bodyType) {
+  const body='#a8a8b8', sh='#7a7a8a', hl='#c8c8d4', hood='#7a7a8a', logo='#c41a2a';
+  const R = _avRect; let s = '';
+  s += R(22, 4, 20, 1, hood);
+  s += R(20, 5, 24, 4, hood);
+  s += R(20, 8, 24, 1, sh);
+  if (bodyType === 'masc') {
+    s += R(20, 27, 24, 2, body);
+    s += R(18, 29, 28, 1, body);
+    s += R(19, 30, 26, 1, body);
+    s += R(20, 31, 24, 10, body);
+    s += R(31, 35, 2, 2, logo);        // chest logo
+    s += R(45, 30, 1, 11, sh);
+  } else {
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(31, 33, 2, 2, logo);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopSilkRobe(bodyType) {
+  const body='#f0f0f8', sh='#a8a8b8', hl='#ffffff', trim='#c41a2a', knot='#8e1a26';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, trim);
+    s += R(18, 27, 28, 1, trim);
+    s += R(16, 28, 32, 1, body);
+    s += R(17, 29, 30, 1, body);
+    s += R(18, 30, 28, 1, body);
+    s += R(19, 31, 26, 1, body);
+    s += R(20, 32, 24, 12, body);
+    // Red sash trim down center
+    s += R(31, 28, 2, 14, trim);
+    // Knot at waist
+    s += R(29, 38, 6, 2, knot);
+    s += R(20, 32, 1, 12, hl);
+    s += R(43, 32, 1, 12, sh);
+  } else {
+    s += R(24, 25, 16, 1, trim);
+    s += R(23, 26, 18, 1, trim);
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 3, body);
+    s += R(31, 28, 2, 13, trim);
+    s += R(29, 36, 6, 2, knot);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    s += R(21, 29, 2, 1, body); s += R(20, 30, 3, 1, body); s += R(19, 31, 4, 1, body); s += R(18, 32, 5, 5, body);
+    s += R(41, 29, 2, 1, body); s += R(42, 30, 3, 1, body); s += R(43, 31, 4, 1, body); s += R(42, 32, 5, 5, body);
+  }
+  return s;
+}
+function _avTopShopVarsityJacket(bodyType) {
+  const body='#5a3a1f', sh='#3a2515', hl='#8b6534', sleeve='#f0f0f8', sleeveSh='#a8a8b8', stripe='#c41a2a';
+  const R = _avRect; let s = '';
+  if (bodyType === 'masc') {
+    s += R(20, 26, 24, 1, sh);
+    s += R(18, 27, 28, 1, sh);
+    s += R(16, 28, 32, 1, sh);
+    s += R(17, 29, 30, 1, body);
+    s += R(18, 30, 28, 1, body);
+    s += R(19, 31, 26, 1, body);
+    s += R(20, 32, 24, 9, body);
+    // Cream sleeves (visible at edges)
+    s += R(16, 28, 4, 1, sleeve);
+    s += R(44, 28, 4, 1, sleeve);
+    s += R(17, 29, 3, 12, sleeve);
+    s += R(45, 29, 3, 12, sleeve);
+    // Red stripe at hem
+    s += R(20, 41, 24, 1, stripe);
+    // Letter on chest
+    s += R(31, 35, 2, 2, sleeve);
+  } else {
+    s += R(24, 25, 16, 1, sh);
+    s += R(23, 26, 18, 1, sh);
+    s += R(22, 27, 20, 2, body);
+    s += R(22, 29, 20, 4, body);
+    s += R(23, 33, 18, 1, body); s += R(24, 34, 16, 1, body); s += R(25, 35, 14, 3, body);
+    s += R(24, 38, 16, 1, body); s += R(22, 39, 20, 1, body); s += R(21, 40, 22, 2, body);
+    s += R(21, 42, 22, 1, stripe);
+    s += R(31, 33, 2, 2, sleeve);
+    s += R(22, 28, 1, 5, hl); s += R(41, 28, 1, 5, sh);
+    // Cream arm sleeves for fem
+    s += R(21, 29, 2, 1, sleeve); s += R(20, 30, 3, 1, sleeve); s += R(19, 31, 4, 1, sleeve); s += R(18, 32, 5, 5, sleeve);
+    s += R(41, 29, 2, 1, sleeve); s += R(42, 30, 3, 1, sleeve); s += R(43, 31, 4, 1, sleeve); s += R(42, 32, 5, 5, sleeve);
+    s += R(18, 32, 1, 5, sleeveSh); s += R(46, 32, 1, 5, sleeveSh);
+  }
+  return s;
+}
+
+// ----- BOTTOM (+5) -----
+
+function _avBottomShopTaperedJoggers(bodyType) {
+  const body='#5a5a6a', sh='#3a3a4a', hl='#7a7a8a';
+  const R = _avRect; let s = '';
+  s += R(22, 46, 20, 1, body);
+  s += R(25, 47, 6, 7, body);
+  s += R(33, 47, 6, 7, body);
+  s += R(25, 47, 1, 7, hl);
+  s += R(38, 47, 1, 7, hl);
+  s += R(30, 47, 1, 7, sh);
+  s += R(33, 47, 1, 7, sh);
+  s += R(31, 47, 2, 7, _avDarken(body, 0.40));
+  // Tapered ankle (narrower at bottom)
+  s += R(26, 53, 4, 1, sh);
+  s += R(34, 53, 4, 1, sh);
+  // Drawstring tie at waist
+  s += R(31, 46, 2, 1, '#c8c8d4');
+  return s;
+}
+function _avBottomShopAcademySlacks(bodyType) {
+  const body='#1a2a52', sh='#0a1a3a', hl='#3a4a72';
+  const R = _avRect; let s = '';
+  s += R(22, 46, 20, 1, body);
+  s += R(25, 47, 6, 7, body);
+  s += R(33, 47, 6, 7, body);
+  s += R(25, 47, 1, 7, hl);
+  s += R(38, 47, 1, 7, hl);
+  s += R(30, 47, 1, 7, sh);
+  s += R(33, 47, 1, 7, sh);
+  s += R(31, 47, 2, 7, _avDarken(body, 0.40));
+  // Sharp pleat
+  s += R(27, 47, 1, 7, _avDarken(body, 0.30));
+  s += R(36, 47, 1, 7, _avDarken(body, 0.30));
+  return s;
+}
+function _avBottomShopTacticalTrousers(bodyType) {
+  const body='#3a4232', sh='#1a221a', hl='#5a6248', loop='#1a221a', pocket='#1a221a';
+  const R = _avRect; let s = '';
+  s += R(22, 46, 20, 1, body);
+  s += R(25, 47, 6, 7, body);
+  s += R(33, 47, 6, 7, body);
+  s += R(25, 47, 1, 7, hl);
+  s += R(38, 47, 1, 7, hl);
+  s += R(30, 47, 1, 7, sh);
+  s += R(33, 47, 1, 7, sh);
+  s += R(31, 47, 2, 7, _avDarken(body, 0.40));
+  // Side cargo pockets
+  s += R(25, 49, 3, 2, pocket);
+  s += R(36, 49, 3, 2, pocket);
+  // Belt loops
+  s += R(25, 46, 1, 1, loop);
+  s += R(38, 46, 1, 1, loop);
+  return s;
+}
+function _avBottomShopJoggerPants(bodyType) {
+  const body='#1a1a26', sh='#0a0a14', hl='#3a3a4a', stripe='#f0f0f8';
+  const R = _avRect; let s = '';
+  s += R(22, 46, 20, 1, body);
+  s += R(25, 47, 6, 7, body);
+  s += R(33, 47, 6, 7, body);
+  s += R(25, 47, 1, 7, hl);
+  s += R(38, 47, 1, 7, hl);
+  s += R(30, 47, 1, 7, sh);
+  s += R(33, 47, 1, 7, sh);
+  s += R(31, 47, 2, 7, _avDarken(body, 0.40));
+  // White side stripes
+  s += R(26, 47, 1, 7, stripe);
+  s += R(37, 47, 1, 7, stripe);
+  return s;
+}
+function _avBottomShopSprintShorts(bodyType) {
+  const body='#ff8c1a', sh='#c45a0a', hl='#ffb060', stripe='#ffffff';
+  const R = _avRect; let s = '';
+  // Short shorts (only y=46-49)
+  s += R(22, 46, 20, 1, body);
+  s += R(25, 47, 6, 3, body);
+  s += R(33, 47, 6, 3, body);
+  s += R(25, 47, 1, 3, hl);
+  s += R(38, 47, 1, 3, hl);
+  s += R(30, 47, 1, 3, sh);
+  s += R(33, 47, 1, 3, sh);
+  s += R(31, 47, 2, 3, _avDarken(body, 0.40));
+  // White side stripe
+  s += R(26, 47, 1, 3, stripe);
+  s += R(37, 47, 1, 3, stripe);
+  s += R(25, 49, 6, 1, sh);
+  s += R(33, 49, 6, 1, sh);
+  return s;
+}
+
+// ----- SHOES (+4) -----
+
+function _avShoesShopHighTopSneakers(bodyType) {
+  const body='#c41a2a', sh='#8e1a26', hl='#e84050', sole='#f0f0f8', lace='#ffffff';
+  const R = _avRect; let s = '';
+  // Tall high-tops (extends up)
+  s += R(23, 53, 8, 1, body);          // upper cuff
+  s += R(23, 54, 8, 6, body);
+  s += R(23, 53, 1, 7, hl);
+  s += R(30, 53, 1, 7, sh);
+  // White laces (vertical)
+  s += R(27, 54, 1, 4, lace);
+  s += R(28, 56, 1, 1, lace);
+  s += R(26, 56, 1, 1, lace);
+  s += R(22, 60, 10, 2, sole);
+  // Mirror R
+  s += R(33, 53, 8, 1, body);
+  s += R(33, 54, 8, 6, body);
+  s += R(40, 53, 1, 7, sh);
+  s += R(33, 53, 1, 7, hl);
+  s += R(37, 54, 1, 4, lace);
+  s += R(38, 56, 1, 1, lace);
+  s += R(36, 56, 1, 1, lace);
+  s += R(32, 60, 10, 2, sole);
+  return s;
+}
+function _avShoesShopAcademyLoafers(bodyType) {
+  const body='#5e3a1f', sh='#3a1f10', hl='#8b6534', sole='#1a1410';
+  const R = _avRect; let s = '';
+  s += R(23, 56, 8, 4, body);
+  s += R(23, 56, 8, 1, hl);
+  s += R(23, 59, 8, 1, sh);
+  s += R(23, 56, 1, 4, hl);
+  // Brass detail
+  s += R(26, 57, 2, 1, '#d4af37');
+  s += R(22, 60, 10, 2, sole);
+  // R loafer
+  s += R(33, 56, 8, 4, body);
+  s += R(33, 56, 8, 1, hl);
+  s += R(33, 59, 8, 1, sh);
+  s += R(40, 56, 1, 4, sh);
+  s += R(36, 57, 2, 1, '#d4af37');
+  s += R(32, 60, 10, 2, sole);
+  return s;
+}
+function _avShoesShopTrailBoots(bodyType) {
+  const body='#5e3a1f', sh='#3a1f10', hl='#8b6534', sole='#1a1410', tread='#3a2515';
+  const R = _avRect; let s = '';
+  // Tall trail boots
+  s += R(23, 53, 8, 1, body);
+  s += R(23, 54, 8, 6, body);
+  s += R(23, 53, 1, 7, hl);
+  s += R(30, 53, 1, 7, sh);
+  // Lace tabs
+  s += R(26, 55, 1, 1, '#5a4520');
+  s += R(28, 55, 1, 1, '#5a4520');
+  s += R(26, 57, 1, 1, '#5a4520');
+  s += R(28, 57, 1, 1, '#5a4520');
+  // Aggressive sole (taller for tread)
+  s += R(22, 60, 10, 1, tread);
+  s += R(22, 61, 10, 1, sole);
+  // R boot
+  s += R(33, 53, 8, 1, body);
+  s += R(33, 54, 8, 6, body);
+  s += R(40, 53, 1, 7, sh);
+  s += R(33, 53, 1, 7, hl);
+  s += R(36, 55, 1, 1, '#5a4520');
+  s += R(38, 55, 1, 1, '#5a4520');
+  s += R(36, 57, 1, 1, '#5a4520');
+  s += R(38, 57, 1, 1, '#5a4520');
+  s += R(32, 60, 10, 1, tread);
+  s += R(32, 61, 10, 1, sole);
+  return s;
+}
+function _avShoesShopGoldTrimShoes(bodyType) {
+  const body='#0a0a14', sh='#0a0a08', hl='#3a3a4a', gold='#d4af37', sole='#1a1410';
+  const R = _avRect; let s = '';
+  s += R(23, 56, 8, 4, body);
+  s += R(23, 56, 8, 1, gold);          // gold top trim
+  s += R(23, 59, 8, 1, sh);
+  s += R(22, 60, 10, 2, sole);
+  // Gold accent strip
+  s += R(26, 57, 2, 1, gold);
+  // R shoe
+  s += R(33, 56, 8, 4, body);
+  s += R(33, 56, 8, 1, gold);
+  s += R(33, 59, 8, 1, sh);
+  s += R(36, 57, 2, 1, gold);
+  s += R(32, 60, 10, 2, sole);
+  return s;
+}
+
+// ----- BACK (+5) -----
+
+function _avBackShopStudyBackpack() {
+  const body='#1a2a52', sh='#0a1a3a', hl='#3a4a72', strap='#0a1a3a';
+  const R = _avRect; let s = '';
+  // Backpack on right side
+  s += R(43, 30, 6, 18, body);
+  s += R(43, 30, 6, 1, hl);
+  s += R(43, 47, 6, 1, sh);
+  s += R(48, 30, 1, 18, sh);
+  // Front pocket
+  s += R(44, 36, 4, 5, sh);
+  // Strap to shoulder
+  s += R(43, 28, 1, 2, strap);
+  s += R(40, 30, 3, 2, strap);
+  return s;
+}
+function _avBackShopSlingBag() {
+  const body='#0a0a14', sh='#0a0a08', hl='#3a3a4a', strap='#0a0a08';
+  const R = _avRect; let s = '';
+  // Smaller sling bag at right hip
+  s += R(43, 36, 6, 8, body);
+  s += R(43, 36, 6, 1, hl);
+  s += R(43, 43, 6, 1, sh);
+  s += R(48, 36, 1, 8, sh);
+  // Cross-body strap
+  s += R(43, 28, 1, 8, strap);
+  s += R(40, 32, 3, 4, strap);
+  s += R(36, 36, 4, 1, strap);
+  return s;
+}
+function _avBackShopTacticalPack() {
+  const body='#3a4232', sh='#1a221a', hl='#5a6248', strap='#1a221a', clip='#a88040';
+  const R = _avRect; let s = '';
+  s += R(43, 30, 6, 16, body);
+  s += R(43, 30, 6, 1, hl);
+  s += R(43, 45, 6, 1, sh);
+  s += R(48, 30, 1, 16, sh);
+  // Multiple straps + buckle
+  s += R(43, 35, 6, 1, strap);
+  s += R(43, 40, 6, 1, strap);
+  s += R(45, 35, 2, 1, clip);
+  s += R(45, 40, 2, 1, clip);
+  // Strap to shoulder
+  s += R(43, 28, 1, 2, strap);
+  s += R(40, 30, 3, 2, strap);
+  return s;
+}
+function _avBackShopTravelSatchel() {
+  const body='#5e3a1f', sh='#3a1f10', hl='#8b6534', strap='#3a1f10', buckle='#a88040';
+  const R = _avRect; let s = '';
+  // Wide leather satchel
+  s += R(42, 36, 8, 10, body);
+  s += R(42, 36, 8, 1, hl);
+  s += R(42, 45, 8, 1, sh);
+  s += R(49, 36, 1, 10, sh);
+  // Flap detail
+  s += R(42, 36, 8, 4, _avDarken(body, 0.20));
+  s += R(45, 39, 2, 1, buckle);
+  // Strap
+  s += R(42, 28, 1, 8, strap);
+  s += R(39, 32, 3, 4, strap);
+  return s;
+}
+function _avBackShopMiniCape() {
+  const body='#c41a2a', sh='#8e1a26', hl='#e84050', clasp='#d4af37';
+  const R = _avRect; let s = '';
+  // Short red cape (right side, drapes shoulder to hip)
+  s += R(43, 28, 6, 14, body);
+  s += R(43, 28, 6, 1, hl);
+  s += R(43, 41, 6, 1, sh);
+  s += R(48, 28, 1, 14, sh);
+  s += R(45, 32, 1, 8, hl);            // inner highlight stripe
+  // Gold clasp at top
+  s += R(42, 28, 4, 1, clasp);
+  s += R(43, 28, 2, 1, '#f0d060');
+  return s;
+}
+
+// ----- ACCESSORY (+4) -----
+
+function _avAccessoryShopCardCharm() {
+  const R = _avRect; let s = '';
+  // Playing card charm at left hip
+  s += R(15, 41, 4, 5, '#f0f0f8');
+  s += R(15, 41, 4, 1, '#a8a8b8');
+  s += R(15, 45, 4, 1, '#7a7a8a');
+  s += R(16, 42, 1, 1, '#c41a2a');     // suit symbol
+  s += R(17, 43, 1, 1, '#1a1a26');
+  return s;
+}
+function _avAccessoryShopStrategyNotebook() {
+  const R = _avRect; let s = '';
+  // Small notebook clipped at side
+  s += R(15, 40, 4, 6, '#5e3a1f');
+  s += R(15, 40, 4, 1, '#8b6534');
+  s += R(15, 45, 4, 1, '#3a1f10');
+  s += R(15, 41, 1, 5, '#3a1f10');
+  // Spine highlight
+  s += R(18, 40, 1, 6, '#a88040');
+  // Small label
+  s += R(16, 42, 2, 1, '#f0f0f8');
+  return s;
+}
+function _avAccessoryShopTacticalWristband() {
+  const R = _avRect; let s = '';
+  s += R(18, 39, 4, 2, '#3a4232');
+  s += R(18, 39, 4, 1, '#5a6248');
+  s += R(18, 40, 4, 1, '#1a221a');
+  // Small clip
+  s += R(20, 39, 1, 1, '#a88040');
+  return s;
+}
+function _avAccessoryShopCompassCharm() {
+  const R = _avRect; let s = '';
+  // Brass compass at left hip
+  s += R(15, 41, 4, 4, '#a88040');
+  s += R(15, 41, 4, 1, '#d4af37');
+  s += R(15, 44, 4, 1, '#5e4225');
+  s += R(16, 42, 2, 2, '#1a1a26');     // dial face
+  s += R(16, 42, 1, 1, '#c41a2a');     // N indicator
   return s;
 }
 
@@ -17177,6 +17992,7 @@ function equipItem(itemId) {
 // profile.ownedItemIds.
 
 window._shopActiveTab = 'all';
+window._shopActiveSlot = 'all';   // v3.1.2 — secondary slot filter
 
 function renderShopEntryCard() {
   const profile = App.state.profile || {};
@@ -17200,6 +18016,7 @@ function openShopOverlay() {
   const overlay = document.getElementById('shopOverlay');
   if (!overlay) return;
   window._shopActiveTab = 'all';
+  window._shopActiveSlot = 'all';
   document.getElementById('shopOverlayBody').innerHTML = renderShopOverlayBody();
   overlay.classList.remove('hidden');
   document.body.classList.add('profile-overlay-open');
@@ -17219,6 +18036,11 @@ function _shopSetTab(tab) {
   const body = document.getElementById('shopOverlayBody');
   if (body) body.innerHTML = renderShopOverlayBody();
 }
+function _shopSetSlot(slot) {
+  window._shopActiveSlot = slot;
+  const body = document.getElementById('shopOverlayBody');
+  if (body) body.innerHTML = renderShopOverlayBody();
+}
 
 function renderShopOverlayBody() {
   const profile = App.state.profile || {};
@@ -17226,8 +18048,8 @@ function renderShopOverlayBody() {
   const ownedSet = new Set(profile.ownedItemIds || []);
   const equipped = (profile.wardrobe && profile.wardrobe.equipped) || {};
   const activeTab = window._shopActiveTab || 'all';
-  // v3.1.0: Source filters replace slot filters. Catalog is now unified
-  // (Shop + Boss + Achievement + Rank previews).
+  const activeSlot = window._shopActiveSlot || 'all';
+  // v3.1.0: Source filter row (primary)
   const SOURCE_FILTERS = [
     { key:'all',          label:'All' },
     { key:'shop',         label:'Shop' },
@@ -17239,6 +18061,21 @@ function renderShopOverlayBody() {
   const tabsHtml = SOURCE_FILTERS.map(function (f) {
     const cls = (activeTab === f.key) ? ' active' : '';
     return '<button class="shop-tab' + cls + '" onclick="_shopSetTab(\'' + f.key + '\')">' + f.label + '</button>';
+  }).join('');
+  // v3.1.2: Slot filter row (secondary)
+  const SLOT_FILTERS = [
+    { key:'all',       label:'All Slots' },
+    { key:'head',      label:'Head' },
+    { key:'face',      label:'Face' },
+    { key:'top',       label:'Top' },
+    { key:'bottom',    label:'Bottom' },
+    { key:'shoes',     label:'Shoes' },
+    { key:'back',      label:'Back' },
+    { key:'accessory', label:'Accessory' }
+  ];
+  const slotTabsHtml = SLOT_FILTERS.map(function (f) {
+    const cls = (activeSlot === f.key) ? ' active' : '';
+    return '<button class="shop-slot-tab' + cls + '" onclick="_shopSetSlot(\'' + f.key + '\')">' + f.label + '</button>';
   }).join('');
   // Build pool: unified catalog + (for Owned filter) starter items too
   const allCatalog = (typeof getCatalogItems === 'function') ? getCatalogItems() : SHOP_WARDROBE_ITEMS.slice();
@@ -17252,6 +18089,10 @@ function renderShopOverlayBody() {
       .filter(function (it) { return !!it; });
   } else {
     filtered = allCatalog.filter(function (it) { return it.source === activeTab; });
+  }
+  // v3.1.2: apply secondary slot filter (refines source filter)
+  if (activeSlot !== 'all') {
+    filtered = filtered.filter(function (it) { return it.slot === activeSlot; });
   }
   // Sort: shop items first (affordable, owned, by price), then preview items by rarity
   const RARITY_ORDER = { common:1, uncommon:2, rare:3, prestige:4, signature:5, starter:0 };
@@ -17267,6 +18108,11 @@ function renderShopOverlayBody() {
     }
     return (RARITY_ORDER[a.rarity] || 0) - (RARITY_ORDER[b.rarity] || 0);
   });
+  // Helper text — communicates the active filter combination
+  const sourceLabel = (SOURCE_FILTERS.find(function(f){ return f.key === activeTab; }) || {}).label || 'All';
+  const slotLabel = (SLOT_FILTERS.find(function(f){ return f.key === activeSlot; }) || {}).label || 'All Slots';
+  const contextHtml = '<div class="shop-filter-context">Showing <strong>' + sourceLabel +
+    '</strong> · <strong>' + slotLabel + '</strong> · ' + filtered.length + ' item' + (filtered.length === 1 ? '' : 's') + '</div>';
   const cardsHtml = filtered.length === 0
     ? '<div class="shop-empty">No items in this view yet.</div>'
     : filtered.map(function (it) { return _shopRenderItemCard(it, ownedSet, equipped, profile, chips); }).join('');
@@ -17285,6 +18131,8 @@ function renderShopOverlayBody() {
       '</div>' +
       '<div class="shop-sub">Buy cosmetics with Chips. Preview exclusive rewards earned from Bosses, ranks, and achievements.</div>' +
       '<div class="shop-tabs">' + tabsHtml + '</div>' +
+      '<div class="shop-slot-tabs">' + slotTabsHtml + '</div>' +
+      contextHtml +
       '<div class="shop-grid">' + cardsHtml + '</div>' +
       '<div class="shop-cross-link">' +
         '<div class="shop-cross-link-text">' +
@@ -17350,12 +18198,14 @@ function _shopRenderItemCard(item, ownedSet, equipped, profile, chips) {
     actionHtml = '<button class="shop-buy-btn ' + (affordable ? 'affordable' : 'unaffordable') +
       '"' + (affordable ? '' : ' disabled') + ' onclick="' + onclick + '">' + btnLabel + '</button>';
   }
+  // v3.1.2: prominent slot pill replaces the small uppercase slot text
+  const slotPill = '<div class="shop-card-slot-pill">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>';
   return '' +
     '<div class="' + cardClass + '">' +
       headerHtml +
       '<div class="shop-card-thumb">' + previewSvg + '</div>' +
       '<div class="shop-card-name">' + _trainerEscapeHtml(item.name) + '</div>' +
-      '<div class="shop-card-slot">' + WARDROBE_SLOT_LABELS[item.slot] + '</div>' +
+      slotPill +
       priceHtml +
       actionHtml +
     '</div>';
@@ -20480,7 +21330,7 @@ function renderSettings() {
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
-        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.1</p>
+        <p><strong style="color:var(--text)">Range Master MTT</strong> v3.1.2</p>
         <p>A GTO preflop range study app for multi-table tournaments. Practice shove/fold and opening ranges across all stack depths and positions.</p>
         <p>Ranges based on published Nash/GTO equilibrium solutions. For study purposes only — see disclaimer.</p>
         <div class="divider"></div>
@@ -20591,7 +21441,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.1.1',
+    appVersion: '3.1.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
