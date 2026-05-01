@@ -6362,75 +6362,182 @@
     body[data-field-fx="fx_rank_mythic"]     { --field-primary:#fbbf24; --field-secondary:#ffffff; --field-glow:#fef3c7; }
 
     /* ====================================================================
-       v3.8.1 — ANIME BATTLE FIELD: themed ambient covers ENTIRE drill flow
-       (question screen, answer feedback, freq bars, summary, boss/exam).
-       Correct/wrong = full-screen flash + page shake + intensity surge.
+       v3.8.2 — VIEWPORT-DOMINANT FIELD FX: a fixed-position canvas covers
+       the ENTIRE viewport on every screen (question, answer, summary,
+       boss/exam result). Five animated layers — radial backdrop, corner
+       power glows, diagonal beam sweep, drifting scanlines, expanding
+       rings — give the field a live anime-battle atmosphere.
+       Correct/wrong = full-screen vignette flash + frame surge + page
+       shake. Cards/freq displays/action-buttons keep themed borders so
+       the entire UI reads as part of the field.
        ==================================================================== */
 
-    @keyframes field-ambient-pulse {
-      0%, 100% { opacity: 0.45; }
-      50%      { opacity: 0.85; }
+    /* Body-level: ensure canvas can paint behind content */
+    body[data-field-fx] { position: relative; }
+
+    /* ==== KEYFRAMES (canvas + frame surge + impact) ==== */
+    @keyframes field-canvas-breathe {
+      0%, 100% { opacity: 0.85; }
+      50%      { opacity: 1.0; }
     }
-    @keyframes field-corner-pulse {
-      0%, 100% { opacity: 0.40; transform: scale(1); }
-      50%      { opacity: 0.85; transform: scale(1.04); }
+    @keyframes field-canvas-corner-pulse {
+      0%, 100% { opacity: 0.7;  transform: scale(1.0); }
+      50%      { opacity: 1.0;  transform: scale(1.06); }
+    }
+    @keyframes field-beam-sweep {
+      0%   { transform: translate(-110%, -110%); opacity: 0; }
+      12%  { opacity: 0.6; }
+      50%  { opacity: 0.9; }
+      88%  { opacity: 0.6; }
+      100% { transform: translate(110%, 110%);   opacity: 0; }
+    }
+    @keyframes field-scanline-drift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(140px); }
+    }
+    @keyframes field-ring-expand {
+      0%   { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+      8%   { opacity: 0.8; }
+      100% { transform: translate(-50%, -50%) scale(2.6);  opacity: 0; }
     }
     @keyframes field-edge-runner {
       0%   { background-position: 0% 50%; }
       100% { background-position: 200% 50%; }
     }
+    @keyframes field-ambient-pulse {
+      0%, 100% { opacity: 0.45; }
+      50%      { opacity: 0.85; }
+    }
 
-    /* ==== WHOLE DRILL SCREEN: deep radial backdrop + corner glows ==== */
-    body[data-field-fx] #drillScreen {
+    /* ==== FIELD FX CANVAS (injected at body level — covers viewport) ==== */
+    .field-fx-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;            /* sits above body bg, below all UI */
+      overflow: hidden;
+      contain: strict;
+    }
+    .field-fx-canvas .ffx-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    /* Layer 1 — Deep radial backdrop (top primary, bottom secondary, center mid) */
+    .field-fx-canvas .ffx-backdrop {
+      background:
+        radial-gradient(ellipse at 50% 0%,
+          color-mix(in srgb, var(--field-primary, #888) 32%, transparent) 0%,
+          transparent 50%),
+        radial-gradient(ellipse at 50% 100%,
+          color-mix(in srgb, var(--field-secondary, #555) 38%, transparent) 0%,
+          transparent 55%),
+        radial-gradient(ellipse at 50% 50%,
+          color-mix(in srgb, var(--field-primary, #888) 10%, transparent) 0%,
+          transparent 70%);
+      filter: blur(22px);
+      opacity: 0.9;
+      animation: field-canvas-breathe 6s ease-in-out infinite;
+    }
+
+    /* Layer 2 — Corner power glows (anime energy field corners) */
+    .field-fx-canvas .ffx-corners {
+      background:
+        radial-gradient(circle at 0% 0%,    color-mix(in srgb, var(--field-primary, #888) 55%, transparent) 0%, transparent 22%),
+        radial-gradient(circle at 100% 0%,  color-mix(in srgb, var(--field-glow,    #fff) 50%, transparent) 0%, transparent 22%),
+        radial-gradient(circle at 0% 100%,  color-mix(in srgb, var(--field-glow,    #fff) 50%, transparent) 0%, transparent 22%),
+        radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--field-primary, #888) 55%, transparent) 0%, transparent 22%);
+      filter: blur(36px);
+      opacity: 0.85;
+      animation: field-canvas-corner-pulse 6s ease-in-out infinite;
+    }
+
+    /* Layer 3 — Diagonal energy beam sweep (anime power surge) */
+    .field-fx-canvas .ffx-beam {
+      width: 220%;
+      height: 220%;
+      inset: -60% -60% auto auto;
+      background: linear-gradient(135deg,
+        transparent 38%,
+        color-mix(in srgb, var(--field-glow,    #fff) 25%, transparent) 47%,
+        color-mix(in srgb, var(--field-primary, #888) 40%, transparent) 50%,
+        color-mix(in srgb, var(--field-glow,    #fff) 25%, transparent) 53%,
+        transparent 62%);
+      filter: blur(8px);
+      opacity: 0.55;
+      animation: field-beam-sweep 7s ease-in-out infinite;
+    }
+
+    /* Layer 4 — Drifting scanlines (subtle texture motion) */
+    .field-fx-canvas .ffx-scanline {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent 0,
+          transparent 38px,
+          color-mix(in srgb, var(--field-glow, #fff) 8%, transparent) 38px,
+          color-mix(in srgb, var(--field-glow, #fff) 8%, transparent) 39px
+        );
+      mix-blend-mode: screen;
+      opacity: 0.55;
+      animation: field-scanline-drift 9s linear infinite;
+    }
+
+    /* Layer 5 — Center expanding power rings (3 staggered) */
+    .field-fx-canvas .ffx-ring {
+      top: 50%;
+      left: 50%;
+      width: 60vmax;
+      height: 60vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        transparent 38%,
+        color-mix(in srgb, var(--field-primary, #888) 28%, transparent) 47%,
+        color-mix(in srgb, var(--field-glow,    #fff) 22%, transparent) 53%,
+        transparent 60%);
+      filter: blur(10px);
+      opacity: 0;
+      animation: field-ring-expand 5s ease-out infinite;
+      inset: 50% auto auto 50%;     /* override .ffx-layer's inset:0 */
+      transform: translate(-50%, -50%) scale(0.25);
+    }
+    .field-fx-canvas .ffx-ring.ring-2 { animation-delay: 1.7s; }
+    .field-fx-canvas .ffx-ring.ring-3 { animation-delay: 3.4s; }
+
+    /* ==== Themed borders on cards across drill screen ==== */
+    body[data-field-fx] #drillScreen,
+    body[data-field-fx] #drillComplete {
       position: relative;
       z-index: 0;
     }
-    /* Layer 1 — deep radial wash (top + bottom themed) */
-    body[data-field-fx] #drillScreen::before {
-      content: '';
-      position: absolute; inset: -30px;
-      background:
-        radial-gradient(ellipse at 50% 25%,
-          color-mix(in srgb, var(--field-primary) 20%, transparent) 0%,
-          transparent 55%),
-        radial-gradient(ellipse at 50% 100%,
-          color-mix(in srgb, var(--field-secondary) 26%, transparent) 0%,
-          transparent 60%);
-      filter: blur(18px);
-      pointer-events: none;
-      z-index: -2;
-      opacity: 0.75;
-      animation: field-ambient-pulse 5s ease-in-out infinite;
-    }
-    /* Layer 2 — corner power glows (anime energy field corners) */
-    body[data-field-fx] #drillScreen::after {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(circle at 0% 0%,    color-mix(in srgb, var(--field-primary) 36%, transparent) 0%, transparent 22%),
-        radial-gradient(circle at 100% 0%,  color-mix(in srgb, var(--field-glow) 32%, transparent)    0%, transparent 22%),
-        radial-gradient(circle at 0% 100%,  color-mix(in srgb, var(--field-glow) 32%, transparent)    0%, transparent 22%),
-        radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--field-primary) 36%, transparent) 0%, transparent 22%);
-      filter: blur(28px);
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.55;
-      animation: field-corner-pulse 7s ease-in-out infinite;
-    }
-
-    /* ==== ALL CARDS in drill flow get themed border + glow ==== */
     body[data-field-fx] #drillScreen .card,
+    body[data-field-fx] #drillScreen .situation-card,
     body[data-field-fx] #drillScreen .freq-display-row,
     body[data-field-fx] #drillScreen .freq-bar-card,
-    body[data-field-fx] #drillScreen .answer-feedback-card {
+    body[data-field-fx] #drillScreen .answer-feedback-card,
+    body[data-field-fx] #drillScreen .reasoning-box,
+    body[data-field-fx] #drillScreen .edu-note,
+    body[data-field-fx] #drillComplete .card,
+    body[data-field-fx] #drillComplete .situation-card,
+    body[data-field-fx] #drillComplete .boss-victory-card,
+    body[data-field-fx] #drillComplete .boss-defeat-card {
       position: relative;
       z-index: 1;
-      border: 1.5px solid color-mix(in srgb, var(--field-primary) 40%, var(--border, rgba(255,255,255,0.10))) !important;
+      border: 1.5px solid color-mix(in srgb, var(--field-primary) 45%, var(--border, rgba(255,255,255,0.10))) !important;
       box-shadow:
-        0 4px 12px rgba(0,0,0,0.30),
-        0 0 18px color-mix(in srgb, var(--field-primary) 22%, transparent),
-        inset 0 0 14px color-mix(in srgb, var(--field-primary) 5%, transparent) !important;
-      transition: box-shadow 300ms ease, border-color 300ms ease;
+        0 4px 14px rgba(0,0,0,0.35),
+        0 0 22px color-mix(in srgb, var(--field-primary) 28%, transparent),
+        inset 0 0 18px color-mix(in srgb, var(--field-primary) 6%, transparent) !important;
+      transition: box-shadow 320ms ease, border-color 320ms ease;
+    }
+    /* drill-progress-bar fill — themed accent */
+    body[data-field-fx] #drillScreen .drill-progress-fill {
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--field-primary) 80%, transparent) 0%,
+        color-mix(in srgb, var(--field-glow) 70%, transparent) 100%) !important;
+      box-shadow: 0 0 10px color-mix(in srgb, var(--field-primary) 50%, transparent);
     }
 
     /* ==== ACTION BUTTONS FRAME — STRONG themed arena ==== */
@@ -6450,7 +6557,6 @@
         0 0 56px color-mix(in srgb, var(--field-glow) 14%, transparent);
       transition: box-shadow 320ms ease, border-color 320ms ease, background 320ms ease;
     }
-    /* Frame ambient halo */
     body[data-field-fx] #drillScreen .action-buttons::before {
       content: '';
       position: absolute; inset: -18px;
@@ -6464,7 +6570,6 @@
       z-index: -1;
       animation: field-ambient-pulse 3s ease-in-out infinite;
     }
-    /* Edge runner: animated themed light traveling around frame border */
     body[data-field-fx] #drillScreen .action-buttons::after {
       content: '';
       position: absolute; inset: -2px;
@@ -6487,7 +6592,6 @@
       opacity: 0.5;
       animation: field-edge-runner 4s linear infinite;
     }
-    /* Action button — stronger themed glow (semantic colors preserved) */
     body[data-field-fx] #drillScreen .action-btn {
       box-shadow:
         0 0 14px color-mix(in srgb, var(--field-primary) 32%, transparent),
@@ -6495,63 +6599,16 @@
       transition: box-shadow 200ms ease, transform 150ms ease;
     }
 
-    /* ==== SUMMARY / RESULT SCREEN: same anime-grade treatment ==== */
-    body[data-field-fx] #drillComplete {
-      position: relative;
-      z-index: 0;
-    }
-    body[data-field-fx] #drillComplete::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 30%,
-          color-mix(in srgb, var(--field-primary) 22%, transparent) 0%,
-          transparent 55%),
-        radial-gradient(ellipse at 50% 100%,
-          color-mix(in srgb, var(--field-secondary) 28%, transparent) 0%,
-          transparent 70%);
-      filter: blur(24px);
-      pointer-events: none;
-      z-index: -2;
-      opacity: 0.7;
-      animation: field-ambient-pulse 6s ease-in-out infinite;
-    }
-    body[data-field-fx] #drillComplete::after {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(circle at 0% 0%,    color-mix(in srgb, var(--field-primary) 38%, transparent) 0%, transparent 20%),
-        radial-gradient(circle at 100% 0%,  color-mix(in srgb, var(--field-glow) 34%, transparent)    0%, transparent 20%),
-        radial-gradient(circle at 0% 100%,  color-mix(in srgb, var(--field-glow) 34%, transparent)    0%, transparent 20%),
-        radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--field-primary) 38%, transparent) 0%, transparent 20%);
-      filter: blur(32px);
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.55;
-      animation: field-corner-pulse 7s ease-in-out infinite;
-    }
-    body[data-field-fx] #drillComplete .card,
-    body[data-field-fx] #drillComplete .boss-victory-card,
-    body[data-field-fx] #drillComplete .boss-defeat-card {
-      position: relative;
-      z-index: 1;
-      border: 1.5px solid color-mix(in srgb, var(--field-primary) 50%, transparent) !important;
-      box-shadow:
-        0 4px 16px rgba(0,0,0,0.35),
-        0 0 28px color-mix(in srgb, var(--field-primary) 28%, transparent),
-        inset 0 0 22px color-mix(in srgb, var(--field-primary) 6%, transparent) !important;
-    }
-
-    /* ==== ANIME-GRADE CORRECT FLASH: full-screen vignette + frame surge ==== */
+    /* ==== ANIME-GRADE CORRECT FLASH (full viewport vignette) ==== */
     body.field-fx-correct[data-field-fx]::after {
       content: '';
       position: fixed; inset: 0;
       pointer-events: none;
       z-index: 9000;
       background: radial-gradient(ellipse at 50% 50%,
-        transparent 25%,
-        color-mix(in srgb, var(--field-primary) 38%, transparent) 75%,
-        color-mix(in srgb, var(--field-glow) 60%, transparent) 100%);
+        transparent 22%,
+        color-mix(in srgb, var(--field-primary) 42%, transparent) 70%,
+        color-mix(in srgb, var(--field-glow) 65%, transparent) 100%);
       animation: anime-correct-flash 480ms ease-out forwards;
     }
     @keyframes anime-correct-flash {
@@ -6559,7 +6616,17 @@
       20%  { opacity: 1; }
       100% { opacity: 0; }
     }
-    /* Frame surge — even brighter on correct */
+    /* Canvas surge on correct: every layer flashes brighter */
+    body.field-fx-correct[data-field-fx] .field-fx-canvas .ffx-backdrop,
+    body.field-fx-correct[data-field-fx] .field-fx-canvas .ffx-corners {
+      opacity: 1.0 !important;
+      animation-duration: 0.5s !important;
+    }
+    body.field-fx-correct[data-field-fx] .field-fx-canvas .ffx-beam {
+      opacity: 1.0 !important;
+      animation-duration: 0.9s !important;
+    }
+    /* Frame surge on correct */
     body.field-fx-correct[data-field-fx] #drillScreen .action-buttons {
       box-shadow:
         inset 0 0 48px color-mix(in srgb, var(--field-primary) 60%, transparent),
@@ -6581,16 +6648,16 @@
         inset 0 0 16px color-mix(in srgb, var(--field-primary) 14%, transparent) !important;
     }
 
-    /* ==== ANIME-GRADE WRONG FLASH: dark vignette + page shake ==== */
+    /* ==== ANIME-GRADE WRONG FLASH (dark vignette + page shake) ==== */
     body.field-fx-wrong[data-field-fx]::after {
       content: '';
       position: fixed; inset: 0;
       pointer-events: none;
       z-index: 9000;
       background: radial-gradient(ellipse at 50% 50%,
-        transparent 25%,
-        color-mix(in srgb, var(--field-secondary) 45%, transparent) 75%,
-        rgba(0, 0, 0, 0.35) 100%);
+        transparent 22%,
+        color-mix(in srgb, var(--field-secondary) 50%, transparent) 70%,
+        rgba(0, 0, 0, 0.45) 100%);
       animation: anime-wrong-flash 420ms ease-out forwards;
     }
     @keyframes anime-wrong-flash {
@@ -6598,17 +6665,21 @@
       30%  { opacity: 1; }
       100% { opacity: 0; }
     }
-    /* Page shake on wrong (anime impact frame) */
     body.field-fx-wrong[data-field-fx] #mainContent {
       animation: anime-wrong-shake 320ms ease-out;
     }
     @keyframes anime-wrong-shake {
       0%, 100% { transform: translateX(0); }
-      15%      { transform: translateX(-4px); }
-      30%      { transform: translateX(4px); }
-      45%      { transform: translateX(-3px); }
-      60%      { transform: translateX(3px); }
-      80%      { transform: translateX(-1px); }
+      15%      { transform: translateX(-5px); }
+      30%      { transform: translateX(5px); }
+      45%      { transform: translateX(-4px); }
+      60%      { transform: translateX(4px); }
+      80%      { transform: translateX(-2px); }
+    }
+    /* Canvas dampens on wrong (red/dark wash) */
+    body.field-fx-wrong[data-field-fx] .field-fx-canvas .ffx-backdrop,
+    body.field-fx-wrong[data-field-fx] .field-fx-canvas .ffx-corners {
+      filter: blur(22px) hue-rotate(-15deg) saturate(1.4) brightness(0.85) !important;
     }
     body.field-fx-wrong[data-field-fx] #drillScreen .action-buttons {
       box-shadow:
@@ -6619,10 +6690,14 @@
 
     /* ==== Reduced motion fallback ==== */
     @media (prefers-reduced-motion: reduce) {
-      body[data-fx-respect-motion="true"] #drillScreen::before,
-      body[data-fx-respect-motion="true"] #drillScreen::after,
-      body[data-fx-respect-motion="true"] #drillComplete::before,
-      body[data-fx-respect-motion="true"] #drillComplete::after,
+      body[data-fx-respect-motion="true"] .field-fx-canvas .ffx-layer {
+        animation: none !important;
+      }
+      body[data-fx-respect-motion="true"] .field-fx-canvas .ffx-beam,
+      body[data-fx-respect-motion="true"] .field-fx-canvas .ffx-scanline,
+      body[data-fx-respect-motion="true"] .field-fx-canvas .ffx-ring {
+        display: none !important;
+      }
       body[data-fx-respect-motion="true"] #drillScreen .action-buttons::before,
       body[data-fx-respect-motion="true"] #drillScreen .action-buttons::after {
         animation: none !important;
@@ -19532,19 +19607,41 @@ function clearAllAnswerFx() {
   } catch (e) { /* non-fatal */ }
 }
 
-// v3.8.0 — Apply the equipped FX as a persistent field theme via body
-// data attribute. CSS rules cascade from body[data-field-fx="<id>"]
-// down to drill containers + summary screen. Removed when no FX equipped
+// v3.8.2 — Apply the equipped FX as a persistent field theme via body
+// data attribute + injected viewport-fixed .field-fx-canvas (5 animated
+// layers covering the entire screen on every drill state — question,
+// answer, summary, boss/exam result). Removed when no FX equipped
 // or when the FX master toggle is off.
+function _ensureFieldFxCanvas() {
+  if (document.querySelector('.field-fx-canvas')) return;
+  const canvas = document.createElement('div');
+  canvas.className = 'field-fx-canvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  canvas.innerHTML =
+    '<div class="ffx-layer ffx-backdrop"></div>' +
+    '<div class="ffx-layer ffx-corners"></div>' +
+    '<div class="ffx-layer ffx-beam"></div>' +
+    '<div class="ffx-layer ffx-scanline"></div>' +
+    '<div class="ffx-layer ffx-ring"></div>' +
+    '<div class="ffx-layer ffx-ring ring-2"></div>' +
+    '<div class="ffx-layer ffx-ring ring-3"></div>';
+  document.body.insertBefore(canvas, document.body.firstChild);
+}
+function _removeFieldFxCanvas() {
+  const c = document.querySelector('.field-fx-canvas');
+  if (c && c.parentNode) c.parentNode.removeChild(c);
+}
 function applyEquippedFieldFx() {
   if (!document.body) return;
   const settings = (typeof _fxSettings === 'function') ? _fxSettings() : { enabled: true };
   const equipped = (typeof _fxEquippedId === 'function') ? _fxEquippedId() : null;
   if (!settings.enabled || !equipped) {
     document.body.removeAttribute('data-field-fx');
+    _removeFieldFxCanvas();
     return;
   }
   document.body.setAttribute('data-field-fx', equipped);
+  _ensureFieldFxCanvas();
 }
 
 // Apply settings on boot so initial FX uses correct intensity
@@ -31116,7 +31213,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.8.1',
+    appVersion: '3.8.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
