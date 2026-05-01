@@ -5472,233 +5472,432 @@
     }
 
     /* ========================================================================
-       v3.5.0 — Answer FX System (themed per-button press feedback)
-       Each pack reads --fx-primary / --fx-secondary / --fx-glow / --fx-icon
-       set inline at trigger time. Animations are short, GPU-friendly, and
-       pinned to a fixed-position container at the button's center coords so
-       they survive renderAnswerScreen() replacing the buttons.
+       v3.7.1 — Answer FX Surface-Reactive Redesign
+       Each pack acts as a UI response THEME: the button surface, button
+       border, and answer frame all react. Effects are pinned to actual
+       button/frame rects (NOT centered floating icons). The .answer-fx-burst
+       container is a body-level fixed overlay; its inner .fx-button-layer
+       and .fx-frame-layer are absolutely positioned to match captured rects
+       so they survive renderAnswerScreen() replacing the DOM.
        ======================================================================== */
     .answer-fx-burst {
       position: fixed; pointer-events: none;
-      transform: translate(-50%, -50%);
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
       z-index: 9999;
       contain: layout style paint;
+    }
+    .fx-button-layer, .fx-frame-layer {
+      position: absolute; pointer-events: none;
+      border-radius: 10px;
       will-change: opacity, transform;
+      contain: layout style paint;
+    }
+    .fx-frame-layer {
+      border-radius: 12px;
+      overflow: hidden;
     }
     /* Intensity scaler — set on body via data attribute */
     body[data-fx-intensity="low"]    .answer-fx-burst { --fx-scale: 0.7; --fx-time: 0.85; }
     body[data-fx-intensity="normal"] .answer-fx-burst { --fx-scale: 1.0; --fx-time: 1.0; }
     body[data-fx-intensity="high"]   .answer-fx-burst { --fx-scale: 1.25; --fx-time: 1.15; }
 
-    /* Common particle / shape primitives */
-    .fx-ring {
-      position: absolute; left: 50%; top: 50%;
-      width: 0; height: 0;
-      border-radius: 50%;
+    /* ===== Surface-reactive primitives — all attach to button/frame edges ===== */
+
+    /* BORDER WASH — animated border ring on button surface */
+    .fx-border-wash {
+      position: absolute; inset: 0;
+      border-radius: inherit;
       border: 2px solid var(--fx-primary, #d4af37);
-      transform: translate(-50%, -50%);
-      animation: fx-ring-expand calc(220ms * var(--fx-time, 1)) ease-out forwards;
-    }
-    @keyframes fx-ring-expand {
-      0%   { width: 0; height: 0; opacity: 0.85; border-width: 3px; }
-      100% { width: calc(120px * var(--fx-scale, 1)); height: calc(120px * var(--fx-scale, 1)); opacity: 0; border-width: 1px; }
-    }
-
-    .fx-burst-core {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(60px * var(--fx-scale, 1));
-      height: calc(60px * var(--fx-scale, 1));
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--fx-glow, #fff) 0%, var(--fx-primary, #d4af37) 35%, transparent 70%);
-      transform: translate(-50%, -50%) scale(0.2);
+      box-shadow: 0 0 14px var(--fx-primary, #d4af37), inset 0 0 14px var(--fx-glow, #fff);
       opacity: 0;
-      filter: blur(0.5px);
-      animation: fx-burst-pop calc(380ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: fx-border-wash calc(420ms * var(--fx-time, 1)) ease-out forwards;
     }
-    @keyframes fx-burst-pop {
-      0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-      30%  { opacity: 1; }
-      60%  { transform: translate(-50%, -50%) scale(1.2); opacity: 0.85; }
-      100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+    @keyframes fx-border-wash {
+      0%   { opacity: 0;    transform: scale(0.96); border-width: 1px; }
+      30%  { opacity: 0.95; transform: scale(1.02); border-width: 3px; }
+      100% { opacity: 0;    transform: scale(1.06); border-width: 1px; }
     }
-
-    .fx-particle {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(8px * var(--fx-scale, 1));
-      height: calc(8px * var(--fx-scale, 1));
-      border-radius: 50%;
-      background: var(--fx-primary, #d4af37);
-      box-shadow: 0 0 6px var(--fx-glow, #fff);
-      transform: translate(-50%, -50%);
+    /* CORRECT variant — stronger + slower border surge */
+    .fx-border-correct {
+      position: absolute; inset: -2px;
+      border-radius: inherit;
+      border: 3px solid var(--fx-primary, #d4af37);
+      box-shadow:
+        0 0 22px var(--fx-primary, #d4af37),
+        0 0 40px var(--fx-glow, #fff),
+        inset 0 0 18px var(--fx-glow, #fff);
       opacity: 0;
-      animation: fx-particle-fly calc(450ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-border-correct calc(620ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
-    @keyframes fx-particle-fly {
-      0%   { transform: translate(-50%, -50%) translate(0, 0) scale(0.4); opacity: 0; }
-      20%  { opacity: 1; }
-      100% { transform: translate(-50%, -50%) translate(var(--fx-dx, 40px), var(--fx-dy, -40px)) scale(0.4); opacity: 0; }
+    @keyframes fx-border-correct {
+      0%   { opacity: 0;    transform: scale(0.94); }
+      30%  { opacity: 1;    transform: scale(1.04); }
+      70%  { opacity: 0.85; transform: scale(1.0);  }
+      100% { opacity: 0;    transform: scale(1.0);  }
     }
-
-    .fx-icon {
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: calc(28px * var(--fx-scale, 1));
-      color: var(--fx-glow, #fff);
-      text-shadow:
-        0 0 8px var(--fx-primary, #d4af37),
-        0 0 16px var(--fx-primary, #d4af37);
-      animation: fx-icon-pop calc(420ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-    @keyframes fx-icon-pop {
-      0%   { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
-      40%  { transform: translate(-50%, -50%) scale(1.2) rotate(0deg); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1.6) rotate(8deg); opacity: 0; }
-    }
-
-    /* Wrong-feedback skeleton: shake + dim red ring */
-    .fx-wrong-shake {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(80px * var(--fx-scale, 1));
-      height: calc(80px * var(--fx-scale, 1));
-      border-radius: 12px;
-      transform: translate(-50%, -50%);
-      animation: fx-wrong-shake calc(380ms * var(--fx-time, 1)) ease-in-out forwards;
-    }
-    @keyframes fx-wrong-shake {
-      0%, 100% { transform: translate(-50%, -50%) translateX(0); }
-      20%      { transform: translate(-50%, -50%) translateX(-6px); }
-      40%      { transform: translate(-50%, -50%) translateX(6px); }
-      60%      { transform: translate(-50%, -50%) translateX(-4px); }
-      80%      { transform: translate(-50%, -50%) translateX(4px); }
-    }
-    .fx-wrong-x {
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: calc(32px * var(--fx-scale, 1));
-      color: var(--fx-secondary, #c41a2a);
-      text-shadow: 0 0 10px var(--fx-secondary, #c41a2a);
-      animation: fx-wrong-x calc(420ms * var(--fx-time, 1)) ease-out forwards;
-    }
-    @keyframes fx-wrong-x {
-      0%   { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      30%  { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1.0); opacity: 0; }
-    }
-
-    /* Premium template — extra rotating arc layer */
-    .fx-arc {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(100px * var(--fx-scale, 1));
-      height: calc(100px * var(--fx-scale, 1));
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: var(--fx-primary, #d4af37);
-      border-right-color: var(--fx-glow, #fff);
-      transform: translate(-50%, -50%) rotate(0deg) scale(0);
+    /* WRONG variant — shake + harsh outline */
+    .fx-border-wrong {
+      position: absolute; inset: -2px;
+      border-radius: inherit;
+      border: 3px solid var(--fx-secondary, #c41a2a);
+      box-shadow: 0 0 16px var(--fx-secondary, #c41a2a), inset 0 0 12px var(--fx-secondary, #c41a2a);
       opacity: 0;
-      animation: fx-arc-spin calc(520ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-border-wrong calc(480ms * var(--fx-time, 1)) ease-in-out forwards;
     }
-    @keyframes fx-arc-spin {
-      0%   { transform: translate(-50%, -50%) rotate(0deg) scale(0); opacity: 0; }
-      30%  { opacity: 1; }
-      100% { transform: translate(-50%, -50%) rotate(280deg) scale(1.6); opacity: 0; }
+    @keyframes fx-border-wrong {
+      0%, 100% { opacity: 0; transform: translateX(0); }
+      15%      { opacity: 0.85; transform: translateX(-3px); }
+      30%      { opacity: 0.95; transform: translateX(3px); }
+      45%      { opacity: 0.85; transform: translateX(-2px); }
+      60%      { opacity: 0.75; transform: translateX(2px); }
+      80%      { opacity: 0.45; transform: translateX(0); }
     }
 
-    /* Halo template — slow elegant ring + cross gleam (mythic-tier) */
-    .fx-halo {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(110px * var(--fx-scale, 1));
-      height: calc(110px * var(--fx-scale, 1));
-      border-radius: 50%;
-      border: 2px solid var(--fx-glow, #fef3c7);
-      transform: translate(-50%, -50%) scale(0.4);
+    /* SURFACE FILL — themed wash flooding the button background */
+    .fx-surface-fill {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at 50% 50%, var(--fx-glow, #fff) 0%, var(--fx-primary, #d4af37) 50%, transparent 90%);
       opacity: 0;
-      box-shadow: 0 0 20px var(--fx-primary, #fbbf24), inset 0 0 20px var(--fx-glow, #fef3c7);
-      animation: fx-halo-bloom calc(520ms * var(--fx-time, 1)) ease-out forwards;
+      mix-blend-mode: screen;
+      animation: fx-surface-fill calc(520ms * var(--fx-time, 1)) ease-out forwards;
     }
-    @keyframes fx-halo-bloom {
-      0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
-      40%  { opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+    @keyframes fx-surface-fill {
+      0%   { opacity: 0;    transform: scale(0.6); }
+      30%  { opacity: 0.55; transform: scale(1.0); }
+      100% { opacity: 0;    transform: scale(1.1); }
     }
 
-    /* Card template — fanned suit chips */
-    .fx-card-chip {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(14px * var(--fx-scale, 1));
-      height: calc(20px * var(--fx-scale, 1));
-      border-radius: 3px;
-      background: var(--fx-glow, #f0d060);
+    /* FRAME AURA — themed wash on the answer-buttons frame */
+    .fx-frame-aura {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at var(--fx-aura-x, 50%) 50%,
+        var(--fx-primary, #d4af37) 0%,
+        transparent 55%);
+      opacity: 0;
+      mix-blend-mode: screen;
+      animation: fx-frame-aura calc(680ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-frame-aura {
+      0%   { opacity: 0;    }
+      30%  { opacity: 0.50; }
+      100% { opacity: 0;    }
+    }
+    .fx-frame-border {
+      position: absolute; inset: 0;
+      border-radius: inherit;
       border: 1.5px solid var(--fx-primary, #d4af37);
-      transform: translate(-50%, -50%) rotate(var(--fx-rot, 0deg)) translate(0, 0);
+      box-shadow: 0 0 12px var(--fx-primary, #d4af37);
       opacity: 0;
-      animation: fx-card-fan calc(450ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: fx-frame-border calc(520ms * var(--fx-time, 1)) ease-out forwards;
     }
-    @keyframes fx-card-fan {
-      0%   { transform: translate(-50%, -50%) rotate(0deg) translate(0,0); opacity: 0; }
-      30%  { opacity: 1; }
-      100% { transform: translate(-50%, -50%) rotate(var(--fx-rot, 0deg)) translate(0, calc(-46px * var(--fx-scale, 1))); opacity: 0; }
+    @keyframes fx-frame-border {
+      0%   { opacity: 0;    }
+      30%  { opacity: 0.65; }
+      100% { opacity: 0;    }
     }
 
-    /* Glitch template — neon cyber scan flicker */
-    .fx-glitch-bar {
+    /* ===== Theme-specific primitives (button surface) ===== */
+
+    /* FIRE — flame tongues rising from edges */
+    .fx-flame-tongue {
+      position: absolute;
+      width: 8px; height: 16px;
+      background: linear-gradient(0deg, var(--fx-secondary, #c41a2a) 0%, var(--fx-primary, #ff8c1a) 50%, var(--fx-glow, #ffd060) 100%);
+      border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+      filter: blur(0.5px);
+      transform-origin: 50% 100%;
+      opacity: 0;
+      animation: fx-flame-rise calc(520ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-flame-rise {
+      0%   { opacity: 0; transform: scaleY(0.3) translateY(0); }
+      30%  { opacity: 0.95; transform: scaleY(1.0) translateY(-4px); }
+      80%  { opacity: 0.6; transform: scaleY(0.7) translateY(-12px); }
+      100% { opacity: 0;   transform: scaleY(0.4) translateY(-20px); }
+    }
+    .fx-flame-spark {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--fx-glow, #ffd060);
+      box-shadow: 0 0 6px var(--fx-primary, #ff8c1a);
+      opacity: 0;
+      animation: fx-spark-rise calc(620ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-spark-rise {
+      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(calc(-30px * var(--fx-scale, 1))) scale(0.4); }
+    }
+
+    /* WATER — ripple expanding ring + drop streaks */
+    .fx-ripple {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      border: 2px solid var(--fx-primary, #60a5fa);
+      opacity: 0;
+      animation: fx-ripple-expand calc(540ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-ripple-expand {
+      0%   { opacity: 0;    transform: scale(0.92); }
+      30%  { opacity: 0.85; }
+      100% { opacity: 0;    transform: scale(1.18); }
+    }
+    .fx-water-droplet {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--fx-glow, #b8e0ff);
+      box-shadow: 0 0 4px var(--fx-primary, #60a5fa);
+      opacity: 0;
+      animation: fx-droplet-fall calc(560ms * var(--fx-time, 1)) ease-in forwards;
+    }
+    @keyframes fx-droplet-fall {
+      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(calc(20px * var(--fx-scale, 1))) scale(0.6); }
+    }
+
+    /* EARTH — dust pulse from bottom edge */
+    .fx-earth-dust {
+      position: absolute;
+      bottom: -2px; left: 50%;
+      width: 80%; height: 8px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at 50% 100%,
+        var(--fx-primary, #a87850) 0%,
+        var(--fx-secondary, #7a5535) 40%,
+        transparent 80%);
+      opacity: 0;
+      animation: fx-dust-pulse calc(520ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-dust-pulse {
+      0%   { opacity: 0;    transform: translateX(-50%) translateY(0) scaleY(0.5); }
+      30%  { opacity: 0.85; transform: translateX(-50%) translateY(-2px) scaleY(1.2); }
+      100% { opacity: 0;    transform: translateX(-50%) translateY(-12px) scaleY(0.6); }
+    }
+    .fx-earth-rock {
+      position: absolute;
+      width: 5px; height: 5px;
+      background: var(--fx-secondary, #7a5535);
+      border: 1px solid var(--fx-primary, #a87850);
+      transform: rotate(var(--fx-rot, 0deg));
+      opacity: 0;
+      animation: fx-rock-fly calc(540ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-rock-fly {
+      0%   { opacity: 0; transform: translate(0, 0) rotate(var(--fx-rot, 0deg)); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--fx-dx, 0), var(--fx-dy, -16px)) rotate(calc(var(--fx-rot, 0deg) + 180deg)); }
+    }
+
+    /* WIND — streak lines */
+    .fx-wind-streak {
+      position: absolute;
+      height: 2px; width: 30px;
+      background: linear-gradient(90deg, transparent 0%, var(--fx-primary, #86efac) 50%, transparent 100%);
+      opacity: 0;
+      animation: fx-streak-fly calc(420ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-streak-fly {
+      0%   { opacity: 0; transform: translateX(-30px) scaleX(0.3); }
+      40%  { opacity: 1; }
+      100% { opacity: 0; transform: translateX(40px) scaleX(1.4); }
+    }
+
+    /* LIGHTNING — branching arc lines (SVG-friendly via stacked clip-path lines) */
+    .fx-arc-line {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(180deg, var(--fx-glow, #fef9c3) 0%, var(--fx-primary, #fbbf24) 70%, transparent 100%);
+      box-shadow: 0 0 8px var(--fx-primary, #fbbf24), 0 0 16px var(--fx-glow, #fef9c3);
+      transform-origin: 50% 0%;
+      transform: rotate(var(--fx-rot, 0deg));
+      opacity: 0;
+      animation: fx-arc-snap calc(360ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-arc-snap {
+      0%   { opacity: 0; height: 0; }
+      30%  { opacity: 1; height: calc(40px * var(--fx-scale, 1)); }
+      60%  { opacity: 0.7; }
+      100% { opacity: 0; height: calc(50px * var(--fx-scale, 1)); }
+    }
+    .fx-lightning-flash {
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: var(--fx-glow, #fef9c3);
+      opacity: 0;
+      mix-blend-mode: screen;
+      animation: fx-lightning-flash calc(280ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-lightning-flash {
+      0%   { opacity: 0; }
+      20%  { opacity: 0.7; }
+      40%  { opacity: 0.1; }
+      60%  { opacity: 0.5; }
+      100% { opacity: 0; }
+    }
+
+    /* ICE — frost crystals from corners */
+    .fx-frost-crystal {
+      position: absolute;
+      width: 12px; height: 12px;
+      background:
+        linear-gradient(45deg, transparent 40%, var(--fx-glow, #e7f5ff) 50%, transparent 60%),
+        linear-gradient(-45deg, transparent 40%, var(--fx-glow, #e7f5ff) 50%, transparent 60%);
+      filter: drop-shadow(0 0 4px var(--fx-primary, #a5d8ff));
+      opacity: 0;
+      animation: fx-crystal-grow calc(620ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-crystal-grow {
+      0%   { opacity: 0; transform: scale(0); }
+      40%  { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0; transform: scale(1.6); }
+    }
+
+    /* HEART — soft pulse */
+    .fx-heart-pulse {
       position: absolute; left: 50%; top: 50%;
-      width: calc(90px * var(--fx-scale, 1));
-      height: calc(3px * var(--fx-scale, 1));
-      background: var(--fx-primary, #22d3ee);
-      box-shadow: 0 0 12px var(--fx-primary, #22d3ee);
       transform: translate(-50%, -50%);
+      width: 16px; height: 16px;
+      color: var(--fx-primary, #fb7185);
+      font-size: 16px;
+      text-shadow: 0 0 8px var(--fx-glow, #fecdd3);
       opacity: 0;
-      animation: fx-glitch-scan calc(380ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-heart-pop calc(540ms * var(--fx-time, 1)) ease-out forwards;
     }
-    @keyframes fx-glitch-scan {
-      0%   { opacity: 0; transform: translate(-50%, calc(-50% - 30px)); }
-      30%  { opacity: 1; }
-      60%  { opacity: 1; transform: translate(-50%, calc(-50% + 30px)); }
-      100% { opacity: 0; transform: translate(-50%, calc(-50% + 36px)); }
+    @keyframes fx-heart-pop {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+      30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translateY(-30px) scale(0.6); }
     }
 
-    /* Shatter template — void shards radiating out */
-    .fx-shard {
-      position: absolute; left: 50%; top: 50%;
-      width: calc(4px * var(--fx-scale, 1));
-      height: calc(18px * var(--fx-scale, 1));
+    /* LAVA — molten cracks */
+    .fx-lava-crack {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--fx-glow, #fed7aa) 30%, var(--fx-primary, #f97316) 50%, var(--fx-glow, #fed7aa) 70%, transparent 100%);
+      box-shadow: 0 0 8px var(--fx-primary, #f97316);
+      opacity: 0;
+      animation: fx-crack-glow calc(620ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-crack-glow {
+      0%   { opacity: 0; transform: scaleX(0); }
+      30%  { opacity: 1; transform: scaleX(1); }
+      100% { opacity: 0; transform: scaleX(1.2); }
+    }
+
+    /* CARD — suit pip flick at corners */
+    .fx-card-pip {
+      position: absolute;
+      font-size: 14px;
+      color: var(--fx-glow, #f0d060);
+      text-shadow: 0 0 6px var(--fx-primary, #d4af37);
+      opacity: 0;
+      animation: fx-pip-flick calc(480ms * var(--fx-time, 1)) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes fx-pip-flick {
+      0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
+      40%  { opacity: 1; transform: scale(1.3) rotate(0deg); }
+      100% { opacity: 0; transform: scale(1.0) rotate(15deg) translateY(-6px); }
+    }
+
+    /* NEON — scanline sweep top→bottom */
+    .fx-neon-scan {
+      position: absolute;
+      left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, var(--fx-primary, #22d3ee) 50%, transparent 100%);
+      box-shadow: 0 0 12px var(--fx-primary, #22d3ee), 0 0 20px var(--fx-secondary, #a855f7);
+      opacity: 0;
+      animation: fx-neon-sweep calc(440ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-neon-sweep {
+      0%   { opacity: 0; top: 0; }
+      30%  { opacity: 1; }
+      100% { opacity: 0; top: 100%; }
+    }
+
+    /* SHADOW — void shards radiating from edges (NOT center) */
+    .fx-void-shard {
+      position: absolute;
+      width: 3px;
       background: linear-gradient(180deg, var(--fx-primary, #7c3aed) 0%, transparent 100%);
       transform-origin: 50% 100%;
-      transform: translate(-50%, -100%) rotate(var(--fx-rot, 0deg));
+      transform: rotate(var(--fx-rot, 0deg));
       opacity: 0;
-      animation: fx-shard-burst calc(450ms * var(--fx-time, 1)) ease-out forwards;
+      animation: fx-void-burst calc(520ms * var(--fx-time, 1)) ease-out forwards;
     }
-    @keyframes fx-shard-burst {
+    @keyframes fx-void-burst {
       0%   { opacity: 0; height: 0; }
-      30%  { opacity: 1; height: calc(20px * var(--fx-scale, 1)); }
-      100% { opacity: 0; height: calc(28px * var(--fx-scale, 1)); transform: translate(-50%, -100%) rotate(var(--fx-rot, 0deg)) translateY(calc(-12px * var(--fx-scale, 1))); }
+      30%  { opacity: 0.95; height: calc(22px * var(--fx-scale, 1)); }
+      100% { opacity: 0; height: calc(32px * var(--fx-scale, 1)); transform: rotate(var(--fx-rot, 0deg)) translateY(calc(-8px * var(--fx-scale, 1))); }
     }
 
-    /* Reduced-motion fallback — minimal pulse only */
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-ring,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-burst-core {
-      animation-duration: 180ms !important;
+    /* MYTHIC HALO — golden ring sweep */
+    .fx-halo-sweep {
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--fx-glow, #fef3c7);
+      box-shadow: 0 0 24px var(--fx-primary, #fbbf24), inset 0 0 20px var(--fx-glow, #fef3c7);
+      opacity: 0;
+      animation: fx-halo-sweep calc(680ms * var(--fx-time, 1)) ease-out forwards;
     }
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-particle,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-card-chip,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-glitch-bar,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-shard,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-arc,
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-icon {
+    @keyframes fx-halo-sweep {
+      0%   { opacity: 0; transform: scale(0.6); }
+      40%  { opacity: 1; transform: scale(1.0); }
+      100% { opacity: 0; transform: scale(1.3); }
+    }
+
+    /* PREMIUM (Boss) — extra rotating border accent */
+    .fx-premium-arc {
+      position: absolute; inset: -3px;
+      border-radius: inherit;
+      border: 2.5px solid transparent;
+      border-top-color: var(--fx-glow, #fff);
+      border-right-color: var(--fx-primary, #d4af37);
+      opacity: 0;
+      animation: fx-premium-arc-spin calc(620ms * var(--fx-time, 1)) ease-out forwards;
+    }
+    @keyframes fx-premium-arc-spin {
+      0%   { opacity: 0; transform: rotate(0deg) scale(0.92); }
+      30%  { opacity: 1; transform: rotate(120deg) scale(1.0); }
+      100% { opacity: 0; transform: rotate(280deg) scale(1.12); }
+    }
+
+    /* Reduced-motion fallback */
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-tongue,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-spark,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-water-droplet,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-earth-rock,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-wind-streak,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-arc-line,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-frost-crystal,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-card-pip,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-neon-scan,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-void-shard,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-lava-crack,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-heart-pulse,
+    body[data-fx-respect-motion="true"] .answer-fx-burst .fx-premium-arc {
+      animation: none !important;
       display: none !important;
     }
-    body[data-fx-reduced="true"] .answer-fx-burst .fx-wrong-shake {
-      animation: none !important;
-    }
-
-    /* Honor user's prefers-reduced-motion when fxRespectMotion is on */
     @media (prefers-reduced-motion: reduce) {
-      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-particle,
-      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-card-chip,
-      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-glitch-bar,
-      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-shard,
-      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-arc {
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-tongue,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-flame-spark,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-water-droplet,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-earth-rock,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-wind-streak,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-arc-line,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-frost-crystal,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-card-pip,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-neon-scan,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-void-shard,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-lava-crack,
+      body[data-fx-respect-motion="true"] .answer-fx-burst .fx-premium-arc {
         display: none !important;
       }
     }
@@ -5914,9 +6113,9 @@
       }
     }
 
-    /* === FX preview sandbox in detail modal === */
+    /* === v3.7.1 — FX preview sandbox: realistic answer button INSIDE answer frame === */
     .fx-preview-sandbox {
-      padding: 18px 14px;
+      padding: 16px 12px;
       background:
         radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.06) 0%, transparent 70%),
         linear-gradient(180deg, #1f2937 0%, #0a0e16 100%);
@@ -5925,20 +6124,31 @@
       margin: 12px 0;
       text-align: center;
     }
-    .fx-preview-stage {
+    /* Frame mirrors the .action-buttons grid container (themed aura target) */
+    .fx-preview-frame {
       position: relative;
-      width: 100%; max-width: 240px;
+      width: 100%; max-width: 280px;
       margin: 0 auto;
-      padding: 18px 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1.5px solid rgba(255,255,255,0.20);
+      padding: 18px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
+    }
+    /* Sample button mirrors .action-btn styling so previews look real */
+    .fx-preview-btn-sample {
+      position: relative;
+      width: 100%;
+      padding: 16px;
       border-radius: 10px;
-      font-size: 16px; font-weight: 800; color: var(--text);
-      letter-spacing: 0.4px;
+      border: 2px solid rgba(110,231,183,0.30);
+      background: rgba(110,231,183,0.10);
+      color: var(--mint, #6ee7b7);
+      font-size: 15px; font-weight: 700;
+      letter-spacing: 0.02em;
     }
     .fx-preview-buttons {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 6px; margin-top: 12px;
+      gap: 6px; margin-top: 14px;
     }
     .fx-preview-btn {
       padding: 8px 4px; border-radius: 6px;
@@ -5953,6 +6163,29 @@
     .fx-preview-btn.tap     { color: #f0d060; border-color: rgba(212,175,55,0.40); }
     .fx-preview-btn.correct { color: #6ee7b7; border-color: rgba(110,231,183,0.40); }
     .fx-preview-btn.wrong   { color: #fb7185; border-color: rgba(251,113,133,0.40); }
+
+    /* Behavior labels grid in detail modal */
+    .fx-behavior-grid {
+      margin: 12px 0 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+    .fx-behavior-row {
+      display: grid; grid-template-columns: 60px 1fr;
+      gap: 8px; padding: 4px 0;
+      font-size: 11.5px; line-height: 1.4;
+    }
+    .fx-behavior-row:not(:last-child) {
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .fx-behavior-label {
+      font-weight: 800; letter-spacing: 0.6px;
+      color: #d4af37; text-transform: uppercase;
+      font-size: 10px; padding-top: 2px;
+    }
+    .fx-behavior-text { color: var(--text-secondary); }
 
     /* Big themed FX-pack thumbnail used in shop cards / collection rows */
     .fx-thumb {
@@ -10403,24 +10636,32 @@ function handleAnswer(userAction, evt) {
   // v3.5.0 — Capture button rect BEFORE renderAnswerScreen replaces the DOM,
   // then fire tap FX immediately and stash the rect for the correct/wrong FX
   // call later in this function.
+  // v3.7.1 — Also capture the .action-buttons frame rect so the FX system
+  // can paint themed aura on the answer frame surface (not just the button).
   let _fxBtnRect = null;
+  let _fxFrameRect = null;
   try {
     const btnEl = (evt && evt.currentTarget) || null;
     if (btnEl && typeof btnEl.getBoundingClientRect === 'function') {
-      _fxBtnRect = btnEl.getBoundingClientRect();
-      // Convert to plain object so it survives DOM detachment
-      _fxBtnRect = { left: _fxBtnRect.left, top: _fxBtnRect.top, width: _fxBtnRect.width, height: _fxBtnRect.height };
+      const r = btnEl.getBoundingClientRect();
+      _fxBtnRect = { left: r.left, top: r.top, width: r.width, height: r.height };
+      // Frame: the .action-buttons grid containing this button
+      const frameEl = btnEl.closest && btnEl.closest('.action-buttons');
+      if (frameEl && typeof frameEl.getBoundingClientRect === 'function') {
+        const fr = frameEl.getBoundingClientRect();
+        _fxFrameRect = { left: fr.left, top: fr.top, width: fr.width, height: fr.height };
+      }
     }
-    if (typeof triggerAnswerFx === 'function') triggerAnswerFx('tap', { rect: _fxBtnRect });
+    if (typeof triggerAnswerFx === 'function') triggerAnswerFx('tap', { rect: _fxBtnRect, frameRect: _fxFrameRect });
   } catch (e) { /* non-fatal */ }
   const responseTime = Date.now() - d.questionStartTime;
   const correctAction = getBestAction(q.freqs);
   const cls = classifyAnswer(userAction, q.freqs);
   console.log('[DEBUG] classify:', cls, '| freqs:', JSON.stringify(q.freqs));
-  // v3.5.0 — Fire correct/wrong FX based on classification (same button rect)
+  // v3.5.0 — Fire correct/wrong FX based on classification (same rects).
   try {
-    if (cls.result === 'correct')      triggerAnswerFx('correct', { rect: _fxBtnRect });
-    else if (cls.result === 'wrong')   triggerAnswerFx('wrong',   { rect: _fxBtnRect });
+    if (cls.result === 'correct')      triggerAnswerFx('correct', { rect: _fxBtnRect, frameRect: _fxFrameRect });
+    else if (cls.result === 'wrong')   triggerAnswerFx('wrong',   { rect: _fxBtnRect, frameRect: _fxFrameRect });
     // 'partial' intentionally has no FX — gentle outcome, no celebration/penalty
   } catch (e) { /* non-fatal */ }
 
@@ -17645,117 +17886,328 @@ function buyAnswerFxPack(packId) {
   try { _ccCheckAndSurface({ trigger: 'buy_fx' }); } catch (e) {}
 }
 
-// Build the inner HTML for a given pack + kind (tap | correct | wrong).
-// Returns a string of child nodes for the .answer-fx-burst container.
+// v3.7.1 — Surface-reactive FX builder. Returns HTML strings for two layers:
+//   { buttonLayer, frameLayer }
+// `buttonLayer` decorates the button border + surface (themed reaction to
+// the press / correct / wrong). `frameLayer` decorates the .action-buttons
+// frame (ambient themed aura). Both layers use ONLY edge/border/inset
+// primitives — no centered floating icons.
+//
+// Per-pack switch keeps each effect distinct. Shared CSS primitives keep
+// the markup small. All animations are short and GPU-friendly.
 function _fxBuildHtml(pack, kind) {
-  const tmpl = pack.template || 'standard';
-  // Tap is universal: small ring (cheap, fast)
+  const id = pack.id;
+  // Defaults — most packs override these via switch
+  let buttonHtml = '';
+  let frameHtml = '';
+
+  // ---- TAP — light edge reaction, no fill ----
   if (kind === 'tap') {
-    return '<div class="fx-ring"></div>';
-  }
-  // Wrong is universal: shake outline + X mark + dim ring (uses secondary color)
-  if (kind === 'wrong') {
-    return '<div class="fx-wrong-shake"></div><div class="fx-wrong-x">✕</div>';
-  }
-  // Correct varies by template
-  if (tmpl === 'card') {
-    // Fanned-out playing-chip burst (5 chips at varying angles)
-    let html = '<div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
-    const angles = [-40, -20, 0, 20, 40];
-    angles.forEach(function (a) {
-      html += '<div class="fx-card-chip" style="--fx-rot:' + a + 'deg"></div>';
-    });
-    return html;
-  }
-  if (tmpl === 'glitch') {
-    // Neon scan bars (3 horizontal slices)
-    let html = '<div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
-    html += '<div class="fx-glitch-bar" style="animation-delay:0ms"></div>';
-    html += '<div class="fx-glitch-bar" style="animation-delay:80ms"></div>';
-    html += '<div class="fx-glitch-bar" style="animation-delay:160ms"></div>';
-    return html;
-  }
-  if (tmpl === 'shatter') {
-    // Void shards in 8 directions
-    let html = '<div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
-    for (let i = 0; i < 8; i++) {
-      html += '<div class="fx-shard" style="--fx-rot:' + (i * 45) + 'deg"></div>';
+    switch (id) {
+      case 'fx_fire': case 'fx_lava': case 'fx_boss_inferno':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-flame-tongue" style="left:18%;bottom:-2px"></div>' +
+          '<div class="fx-flame-tongue" style="left:80%;bottom:-2px;animation-delay:60ms"></div>';
+        break;
+      case 'fx_water':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-ripple"></div>';
+        break;
+      case 'fx_earth':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-earth-dust"></div>';
+        break;
+      case 'fx_wind':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-wind-streak" style="left:0;top:30%"></div>' +
+          '<div class="fx-wind-streak" style="left:0;top:70%;animation-delay:60ms"></div>';
+        break;
+      case 'fx_lightning': case 'fx_boss_storm':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-lightning-flash"></div>' +
+          '<div class="fx-arc-line" style="left:30%;top:0;--fx-rot:15deg"></div>';
+        break;
+      case 'fx_ice':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;top:6px"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;bottom:6px;animation-delay:80ms"></div>';
+        break;
+      case 'fx_heart':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-heart-pulse">♥</div>';
+        break;
+      case 'fx_card':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-card-pip" style="left:8px;top:8px">♠</div>' +
+          '<div class="fx-card-pip" style="right:8px;bottom:8px;animation-delay:80ms">♣</div>';
+        break;
+      case 'fx_neon':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-neon-scan"></div>';
+        break;
+      case 'fx_boss_shadow':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-void-shard" style="left:50%;top:0;--fx-rot:0deg"></div>' +
+          '<div class="fx-void-shard" style="left:0;top:50%;--fx-rot:-90deg"></div>';
+        break;
+      case 'fx_achv_emerald':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-frost-crystal" style="left:50%;top:50%;transform:translate(-50%,-50%)"></div>';
+        break;
+      case 'fx_rank_royal':
+        buttonHtml = '<div class="fx-border-wash"></div>' +
+          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%)">♛</div>';
+        break;
+      case 'fx_rank_mythic':
+        buttonHtml = '<div class="fx-border-wash"></div><div class="fx-halo-sweep"></div>';
+        break;
+      default:
+        buttonHtml = '<div class="fx-border-wash"></div>';
     }
-    return html;
+    return { buttonLayer: buttonHtml, frameLayer: frameHtml };
   }
-  if (tmpl === 'halo') {
-    // Slow elegant halo + central icon glow
-    return '<div class="fx-halo"></div><div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
+
+  // ---- CORRECT — strong themed surge, frame aura ----
+  if (kind === 'correct') {
+    // Universal frame aura on correct (themed wash through the .action-buttons frame)
+    frameHtml = '<div class="fx-frame-aura"></div><div class="fx-frame-border"></div>';
+    switch (id) {
+      case 'fx_fire':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
+            return '<div class="fx-flame-tongue" style="left:' + l + ';bottom:-2px;animation-delay:' + (i * 30) + 'ms"></div>';
+          }).join('') +
+          '<div class="fx-flame-spark" style="left:30%;top:50%;animation-delay:80ms"></div>' +
+          '<div class="fx-flame-spark" style="left:70%;top:60%;animation-delay:140ms"></div>' +
+          '<div class="fx-flame-spark" style="left:50%;top:40%;animation-delay:200ms"></div>';
+        break;
+      case 'fx_water':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-ripple"></div>' +
+          '<div class="fx-ripple" style="animation-delay:120ms"></div>' +
+          '<div class="fx-water-droplet" style="left:20%;top:20%"></div>' +
+          '<div class="fx-water-droplet" style="left:50%;top:10%;animation-delay:60ms"></div>' +
+          '<div class="fx-water-droplet" style="left:80%;top:25%;animation-delay:120ms"></div>';
+        break;
+      case 'fx_earth':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-earth-dust"></div>' +
+          ['-30','-15','15','30'].map(function (rot, i) {
+            const dx = (rot < 0 ? '-' : '') + (Math.abs(rot) * 0.6) + 'px';
+            return '<div class="fx-earth-rock" style="left:50%;bottom:0;--fx-rot:' + rot + 'deg;--fx-dx:' + dx + ';--fx-dy:-22px;animation-delay:' + (i * 30) + 'ms"></div>';
+          }).join('');
+        break;
+      case 'fx_wind':
+        buttonHtml = '<div class="fx-border-correct"></div>' +
+          ['10%','30%','50%','70%','90%'].map(function (top, i) {
+            return '<div class="fx-wind-streak" style="left:0;top:' + top + ';animation-delay:' + (i * 50) + 'ms"></div>';
+          }).join('');
+        break;
+      case 'fx_lightning':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-lightning-flash"></div>' +
+          ['10%','30%','50%','70%','90%'].map(function (l, i) {
+            const rot = (i % 2 === 0 ? -8 : 8) + (i * 3);
+            return '<div class="fx-arc-line" style="left:' + l + ';top:0;--fx-rot:' + rot + 'deg;animation-delay:' + (i * 40) + 'ms"></div>';
+          }).join('');
+        break;
+      case 'fx_ice':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;top:6px"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;top:6px;animation-delay:60ms"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;bottom:6px;animation-delay:120ms"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;bottom:6px;animation-delay:180ms"></div>' +
+          '<div class="fx-frost-crystal" style="left:50%;top:50%;transform:translate(-50%,-50%);animation-delay:240ms"></div>';
+        break;
+      case 'fx_heart':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-heart-pulse" style="left:30%">♥</div>' +
+          '<div class="fx-heart-pulse" style="left:50%;animation-delay:80ms">♥</div>' +
+          '<div class="fx-heart-pulse" style="left:70%;animation-delay:160ms">♥</div>';
+        break;
+      case 'fx_lava':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-lava-crack" style="left:10%;top:30%;width:80%"></div>' +
+          '<div class="fx-lava-crack" style="left:5%;top:55%;width:90%;animation-delay:80ms"></div>' +
+          '<div class="fx-lava-crack" style="left:15%;top:75%;width:70%;animation-delay:160ms"></div>';
+        break;
+      case 'fx_card':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-card-pip" style="left:15%;top:15%">♠</div>' +
+          '<div class="fx-card-pip" style="right:15%;top:15%;animation-delay:60ms">♥</div>' +
+          '<div class="fx-card-pip" style="left:15%;bottom:15%;animation-delay:120ms">♦</div>' +
+          '<div class="fx-card-pip" style="right:15%;bottom:15%;animation-delay:180ms">♣</div>';
+        break;
+      case 'fx_neon':
+        buttonHtml = '<div class="fx-border-correct"></div>' +
+          '<div class="fx-neon-scan"></div>' +
+          '<div class="fx-neon-scan" style="animation-delay:80ms"></div>' +
+          '<div class="fx-neon-scan" style="animation-delay:160ms"></div>';
+        break;
+      case 'fx_boss_inferno':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-surface-fill"></div>' +
+          ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
+            return '<div class="fx-flame-tongue" style="left:' + l + ';bottom:-2px;animation-delay:' + (i * 25) + 'ms"></div>';
+          }).join('') +
+          ['20%','40%','60%','80%'].map(function (l, i) {
+            return '<div class="fx-flame-spark" style="left:' + l + ';top:60%;animation-delay:' + (80 + i * 50) + 'ms"></div>';
+          }).join('');
+        break;
+      case 'fx_boss_storm':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-lightning-flash"></div>' +
+          ['10%','25%','40%','55%','70%','85%'].map(function (l, i) {
+            const rot = (i % 2 === 0 ? -10 : 10);
+            return '<div class="fx-arc-line" style="left:' + l + ';top:0;--fx-rot:' + rot + 'deg;animation-delay:' + (i * 30) + 'ms"></div>';
+          }).join('');
+        break;
+      case 'fx_boss_shadow':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div>' +
+          [0, 45, 90, 135, 180, 225, 270, 315].map(function (rot) {
+            // Shards radiate from EDGES (anchored at left/top of viewport-relative position)
+            const x = 50 + 45 * Math.cos((rot - 90) * Math.PI / 180);
+            const y = 50 + 45 * Math.sin((rot - 90) * Math.PI / 180);
+            return '<div class="fx-void-shard" style="left:' + x + '%;top:' + y + '%;--fx-rot:' + rot + 'deg"></div>';
+          }).join('');
+        break;
+      case 'fx_achv_emerald':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;top:6px"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;top:6px;animation-delay:60ms"></div>' +
+          '<div class="fx-frost-crystal" style="left:6px;bottom:6px;animation-delay:120ms"></div>' +
+          '<div class="fx-frost-crystal" style="right:6px;bottom:6px;animation-delay:180ms"></div>';
+        break;
+      case 'fx_rank_royal':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-premium-arc"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px">♛</div>';
+        break;
+      case 'fx_rank_mythic':
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-halo-sweep"></div><div class="fx-surface-fill"></div>' +
+          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px">☼</div>';
+        break;
+      default:
+        buttonHtml = '<div class="fx-border-correct"></div><div class="fx-surface-fill"></div>';
+    }
+    return { buttonLayer: buttonHtml, frameLayer: frameHtml };
   }
-  if (tmpl === 'premium') {
-    // Standard burst PLUS rotating arc accent + 6 particles
-    let html = '<div class="fx-arc"></div><div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
-    const dirs = [
-      { dx: '50px',  dy: '-50px' },
-      { dx: '-50px', dy: '-50px' },
-      { dx: '50px',  dy: '50px'  },
-      { dx: '-50px', dy: '50px'  },
-      { dx: '0px',   dy: '-65px' },
-      { dx: '0px',   dy: '65px'  }
-    ];
-    dirs.forEach(function (d) {
-      html += '<div class="fx-particle" style="--fx-dx:' + d.dx + ';--fx-dy:' + d.dy + '"></div>';
-    });
-    return html;
+
+  // ---- WRONG — themed harsh outline + dimmed accent ----
+  if (kind === 'wrong') {
+    // Universal frame: muted themed border (no full aura)
+    frameHtml = '<div class="fx-frame-border" style="opacity:0.4"></div>';
+    switch (id) {
+      case 'fx_fire': case 'fx_boss_inferno':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-flame-tongue" style="left:50%;bottom:-2px;filter:brightness(0.5);animation-delay:80ms"></div>';
+        break;
+      case 'fx_water':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-water-droplet" style="left:30%;top:20%"></div>' +
+          '<div class="fx-water-droplet" style="left:70%;top:25%;animation-delay:60ms"></div>';
+        break;
+      case 'fx_earth':
+        buttonHtml = '<div class="fx-border-wrong"></div><div class="fx-earth-dust" style="filter:brightness(0.6)"></div>';
+        break;
+      case 'fx_wind':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-wind-streak" style="left:0;top:50%;filter:brightness(0.5)"></div>';
+        break;
+      case 'fx_lightning': case 'fx_boss_storm':
+        buttonHtml = '<div class="fx-border-wrong"></div><div class="fx-lightning-flash" style="animation-duration:140ms"></div>' +
+          '<div class="fx-arc-line" style="left:50%;top:0;--fx-rot:0deg;filter:brightness(0.6)"></div>';
+        break;
+      case 'fx_ice':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-frost-crystal" style="left:50%;top:50%;transform:translate(-50%,-50%);filter:brightness(0.5)"></div>';
+        break;
+      case 'fx_heart':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-heart-pulse" style="filter:brightness(0.6) saturate(0.5)">♡</div>';
+        break;
+      case 'fx_lava':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-lava-crack" style="left:10%;top:50%;width:80%;filter:brightness(0.5)"></div>';
+        break;
+      case 'fx_card':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);filter:brightness(0.5)">✕</div>';
+        break;
+      case 'fx_neon':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-neon-scan" style="filter:hue-rotate(180deg) brightness(0.7)"></div>';
+        break;
+      case 'fx_boss_shadow':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          [45, 135, 225, 315].map(function (rot) {
+            const x = 50 + 35 * Math.cos((rot - 90) * Math.PI / 180);
+            const y = 50 + 35 * Math.sin((rot - 90) * Math.PI / 180);
+            return '<div class="fx-void-shard" style="left:' + x + '%;top:' + y + '%;--fx-rot:' + rot + 'deg;filter:brightness(0.6)"></div>';
+          }).join('');
+        break;
+      case 'fx_achv_emerald':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-frost-crystal" style="left:50%;top:50%;transform:translate(-50%,-50%);filter:brightness(0.5)"></div>';
+        break;
+      case 'fx_rank_royal': case 'fx_rank_mythic':
+        buttonHtml = '<div class="fx-border-wrong"></div>' +
+          '<div class="fx-card-pip" style="left:50%;top:50%;transform:translate(-50%,-50%);filter:brightness(0.5)">⚠</div>';
+        break;
+      default:
+        buttonHtml = '<div class="fx-border-wrong"></div>';
+    }
+    return { buttonLayer: buttonHtml, frameLayer: frameHtml };
   }
-  // standard template — burst core + icon + 4 particles
-  let html = '<div class="fx-burst-core"></div><div class="fx-icon">' + (pack.icon || '★') + '</div>';
-  const stdDirs = [
-    { dx: '40px',  dy: '-40px' },
-    { dx: '-40px', dy: '-40px' },
-    { dx: '40px',  dy: '40px'  },
-    { dx: '-40px', dy: '40px'  }
-  ];
-  stdDirs.forEach(function (d) {
-    html += '<div class="fx-particle" style="--fx-dx:' + d.dx + ';--fx-dy:' + d.dy + '"></div>';
-  });
-  return html;
+
+  return { buttonLayer: buttonHtml, frameLayer: frameHtml };
 }
 
 // Trigger an FX burst.
 //   kind: 'tap' | 'correct' | 'wrong'
-//   opts: { rect?, button?, packId?, force? }
-//     - rect:    DOMRect-like with left/top/width/height (preferred)
-//     - button:  HTMLElement to read getBoundingClientRect from
-//     - packId:  override equipped pack (used by preview sandbox)
-//     - force:   ignore master enable toggle (used by preview sandbox)
+//   opts: { rect?, button?, frameRect?, packId?, force? }
+//     - rect / button:  button rect or HTMLElement (button-layer position)
+//     - frameRect:      .action-buttons rect (frame-layer position; optional)
+//     - packId:         override equipped pack (used by preview sandbox)
+//     - force:          ignore master enable toggle (used by preview sandbox)
 function triggerAnswerFx(kind, opts) {
   opts = opts || {};
   const settings = _fxSettings();
   if (!opts.force && !settings.enabled) return;
   const packId = opts.packId || _fxEquippedId();
-  if (!packId) return;  // no FX equipped → silent
+  if (!packId) return;
   const pack = ANSWER_FX_PACK_BY_ID[packId];
   if (!pack) return;
-  // Rect resolution
+  // Resolve button rect
   let rect = opts.rect;
   if (!rect && opts.button && typeof opts.button.getBoundingClientRect === 'function') {
     rect = opts.button.getBoundingClientRect();
   }
   if (!rect || rect.width === 0) return;
-  // Build container at button center
+  // Frame rect (optional — falls back to button rect inflated 12px so frame
+  // aura still has somewhere to render even outside the drill answer flow)
+  let frameRect = opts.frameRect;
+  if (!frameRect) {
+    frameRect = { left: rect.left - 12, top: rect.top - 12, width: rect.width + 24, height: rect.height + 24 };
+  }
+  // Build outer container (full viewport, body-anchored — survives DOM swap)
   const container = document.createElement('div');
   container.className = 'answer-fx-burst answer-fx-pack-' + pack.id + ' answer-fx-kind-' + kind;
-  // Inject palette CSS variables inline
   container.style.cssText =
-    'left:' + (rect.left + rect.width / 2) + 'px;' +
-    'top:' + (rect.top + rect.height / 2) + 'px;' +
-    'width:' + rect.width + 'px;' +
-    'height:' + rect.height + 'px;' +
     '--fx-primary:' + (pack.palette.primary) + ';' +
     '--fx-secondary:' + (pack.palette.secondary) + ';' +
     '--fx-glow:' + (pack.palette.glow) + ';';
-  container.innerHTML = _fxBuildHtml(pack, kind);
+  // Build inner button + frame layers, positioned at exact captured rects
+  const html = _fxBuildHtml(pack, kind);
+  const buttonStyle =
+    'left:' + rect.left + 'px;' +
+    'top:' + rect.top + 'px;' +
+    'width:' + rect.width + 'px;' +
+    'height:' + rect.height + 'px;';
+  const frameStyle =
+    'left:' + frameRect.left + 'px;' +
+    'top:' + frameRect.top + 'px;' +
+    'width:' + frameRect.width + 'px;' +
+    'height:' + frameRect.height + 'px;';
+  container.innerHTML =
+    '<div class="fx-frame-layer" style="' + frameStyle + '">' + (html.frameLayer || '') + '</div>' +
+    '<div class="fx-button-layer" style="' + buttonStyle + '">' + (html.buttonLayer || '') + '</div>';
   document.body.appendChild(container);
-  // Auto-cleanup after longest animation duration (520ms × 1.15 high-intensity = ~600ms)
+  // Auto-cleanup after the longest animation duration completes
   setTimeout(function () {
     if (container.parentNode) container.parentNode.removeChild(container);
-  }, 700);
+  }, 800);
 }
 
 // Apply settings on boot so initial FX uses correct intensity
@@ -25385,17 +25837,28 @@ function _renderAnswerFxDetailBody(pack) {
       '</div>' +
       prestigeBadgeHtml +
       '<div class="item-detail-tags-row">' + sourceTag + rarityPill + fxPill + '</div>' +
-      // FX preview sandbox — shows a mock answer button + 3 trigger buttons
+      // v3.7.1 — FX preview sandbox: realistic answer button INSIDE an answer
+      // frame so the sandbox mirrors the actual drill UI. Three trigger
+      // buttons fire surface-reactive FX targeting BOTH layers.
       '<div class="fx-preview-sandbox">' +
-        '<div style="font-size:10px;color:var(--text-secondary);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Live Preview</div>' +
-        '<div class="fx-preview-stage" id="fxPreviewStage" style="' + stageStyle + '">' +
-          '<span style="opacity:0.85">Sample Answer</span>' +
+        '<div style="font-size:10px;color:var(--text-secondary);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Live Preview · Surface-Reactive</div>' +
+        '<div class="fx-preview-frame" id="fxPreviewFrame" style="' + stageStyle + '">' +
+          '<div class="fx-preview-btn-sample fx-preview-stage" id="fxPreviewStage">' +
+            'Sample Answer' +
+          '</div>' +
         '</div>' +
         '<div class="fx-preview-buttons">' +
           '<button class="fx-preview-btn tap" onclick="_fxPlayPreview(\'' + pack.id + '\', \'tap\')">▸ Tap</button>' +
           '<button class="fx-preview-btn correct" onclick="_fxPlayPreview(\'' + pack.id + '\', \'correct\')">✓ Correct</button>' +
           '<button class="fx-preview-btn wrong" onclick="_fxPlayPreview(\'' + pack.id + '\', \'wrong\')">✕ Wrong</button>' +
         '</div>' +
+      '</div>' +
+      // v3.7.1 — Behavior labels so player understands what each state does
+      '<div class="fx-behavior-grid">' +
+        '<div class="fx-behavior-row"><span class="fx-behavior-label">Tap</span><span class="fx-behavior-text">' + _trainerEscapeHtml(_fxBehaviorText(pack, 'tap')) + '</span></div>' +
+        '<div class="fx-behavior-row"><span class="fx-behavior-label">Correct</span><span class="fx-behavior-text">' + _trainerEscapeHtml(_fxBehaviorText(pack, 'correct')) + '</span></div>' +
+        '<div class="fx-behavior-row"><span class="fx-behavior-label">Wrong</span><span class="fx-behavior-text">' + _trainerEscapeHtml(_fxBehaviorText(pack, 'wrong')) + '</span></div>' +
+        '<div class="fx-behavior-row"><span class="fx-behavior-label">Frame</span><span class="fx-behavior-text">' + _trainerEscapeHtml(_fxBehaviorText(pack, 'frame')) + '</span></div>' +
       '</div>' +
       '<h2 class="item-detail-name">' + _trainerEscapeHtml(pack.name) + '</h2>' +
       '<div class="item-detail-meta">Answer FX · ' + (RARITY_LABELS[pack.rarity] || 'Common') +
@@ -25407,13 +25870,129 @@ function _renderAnswerFxDetailBody(pack) {
     '</div>';
 }
 
+// v3.7.1 — Per-pack behavior copy, one short sentence per state.
+function _fxBehaviorText(pack, state) {
+  const id = pack.id;
+  const map = {
+    fx_fire: {
+      tap:     'Edge ignites with quick flame tongues.',
+      correct: 'Flame sweep + warm sparks rise from the button.',
+      wrong:   'Burnt crackle, smoke fade.',
+      frame:   'Subtle heat aura around the answer frame.'
+    },
+    fx_water: {
+      tap:     'Ripple ring expands from button border.',
+      correct: 'Splash bloom + cool blue wash across the frame.',
+      wrong:   'Droplet scatter, collapsing ripple.',
+      frame:   'Soft watery shimmer on the answer frame.'
+    },
+    fx_earth: {
+      tap:     'Dust pulse from the bottom edge.',
+      correct: 'Stone burst + amber-brown frame aura.',
+      wrong:   'Cracked-ground dust crumble.',
+      frame:   'Grounded sandstone aura.'
+    },
+    fx_wind: {
+      tap:     'Swift streak lines along the button.',
+      correct: 'Gust sweep + pale mint aura around the frame.',
+      wrong:   'Broken gust dissipates.',
+      frame:   'Thin moving ribbons.'
+    },
+    fx_lightning: {
+      tap:     'Quick electric snap on border.',
+      correct: 'Branching arcs across the button + flash on frame.',
+      wrong:   'Unstable spark glitch.',
+      frame:   'Charged hum aura.'
+    },
+    fx_ice: {
+      tap:     'Frost crawls in from the corners.',
+      correct: 'Crystal bloom + icy frame glow.',
+      wrong:   'Brittle shard flick.',
+      frame:   'Cold pale mist border.'
+    },
+    fx_heart: {
+      tap:     'Soft pulse ring.',
+      correct: 'Heart burst + warm pink wash on frame.',
+      wrong:   'Broken-heart flicker.',
+      frame:   'Affectionate soft aura.'
+    },
+    fx_lava: {
+      tap:     'Molten glow rises through edges.',
+      correct: 'Lava cracks across button + dark red frame aura.',
+      wrong:   'Cooling crack fades.',
+      frame:   'Volcanic red-black aura.'
+    },
+    fx_card: {
+      tap:     'Suit pip flicks at corners.',
+      correct: 'Four-suit corner burst + casino frame trim.',
+      wrong:   'Folded-card dim.',
+      frame:   'Subtle poker prestige border.'
+    },
+    fx_neon: {
+      tap:     'Neon scan sweeps the button.',
+      correct: 'Triple-pulse digital scan + cyan frame border.',
+      wrong:   'Glitch hue-rotate flicker.',
+      frame:   'Pixel scan aura.'
+    },
+    fx_boss_inferno: {
+      tap:     'Premium edge ignition with stronger glow.',
+      correct: 'Heavy flame sweep + rotating arc + spark trail + frame heat.',
+      wrong:   'Dimmed ember crackle.',
+      frame:   'Trophy-tier red-gold heat shimmer.'
+    },
+    fx_boss_storm: {
+      tap:     'Sharp arc snaps the border.',
+      correct: 'Six-arc lightning storm + button flash + premium arc.',
+      wrong:   'Short-circuit flicker.',
+      frame:   'Charged blue-violet hum.'
+    },
+    fx_boss_shadow: {
+      tap:     'Void shards radiate from edge points.',
+      correct: '8-direction shard burst + premium void arc.',
+      wrong:   'Dimmed shard fade.',
+      frame:   'Dark purple void aura.'
+    },
+    fx_achv_emerald: {
+      tap:     'Crystalline pulse on the button surface.',
+      correct: 'Four-corner crystal bloom + green-gold frame wash.',
+      wrong:   'Dimmed crystal flicker.',
+      frame:   'Disciplined green-gold aura.'
+    },
+    fx_rank_royal: {
+      tap:     'Elegant gold pulse on border.',
+      correct: 'Crown emblem + premium arc + purple-gold frame.',
+      wrong:   'Royal warning fade.',
+      frame:   'Noble polished aura.'
+    },
+    fx_rank_mythic: {
+      tap:     'Halo ring sweep on the button.',
+      correct: 'Celestial halo + sun emblem + golden frame wash.',
+      wrong:   'Mythic warning fade.',
+      frame:   'Premium celestial aura.'
+    }
+  };
+  const entry = map[id];
+  if (entry && entry[state]) return entry[state];
+  // Fallback for unrecognized packs
+  if (state === 'tap')     return 'Themed edge reaction.';
+  if (state === 'correct') return 'Themed surface flare + frame aura.';
+  if (state === 'wrong')   return 'Themed dim flicker.';
+  if (state === 'frame')   return 'Subtle ambient aura on answer frame.';
+  return '';
+}
+
 // Trigger an FX preview pinned to the sandbox stage element.
+// v3.7.1 — Pass BOTH button rect and frame rect so surface-reactive overlay
+// can paint the themed aura on the answer frame too.
 function _fxPlayPreview(packId, kind) {
   const stage = document.getElementById('fxPreviewStage');
   if (!stage) return;
-  const rect = stage.getBoundingClientRect();
+  const sr = stage.getBoundingClientRect();
+  const frame = document.getElementById('fxPreviewFrame');
+  const fr = frame ? frame.getBoundingClientRect() : null;
   triggerAnswerFx(kind, {
-    rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+    rect: { left: sr.left, top: sr.top, width: sr.width, height: sr.height },
+    frameRect: fr ? { left: fr.left, top: fr.top, width: fr.width, height: fr.height } : null,
     packId: packId,
     force: true   // preview ignores master enable toggle
   });
