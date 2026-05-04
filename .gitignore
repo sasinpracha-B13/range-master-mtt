@@ -8,7 +8,10 @@
 # But DO commit shared tooling and committed scripts
 !service-worker.js
 !tools/*.ps1
+!tools/*.js
 !audit/generate-audit.ps1
+!postflop/*.js
+!postflop/*.ps1
 
 # Generated audit output -- regenerate on demand from ranges.json
 audit/ranges-flat.csv

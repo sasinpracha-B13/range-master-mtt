@@ -1,0 +1,1517 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-05-04",
+  "description": "v4.0.0 seed data. 30 hand-authored scenarios covering Module 1 (Board Texture Trainer, 20 scenarios) and Module 2 (Flop C-bet IP, 10 scenarios). Spot context: BTN open 2.5x vs BB call, 100BB SRP, flop only, NLH MTT chipEV. All scenarios audited per postflop_audit_rules.js.",
+
+  "scenarios": [
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry", "high_card_dominant"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On A♥ K♦ 5♣ (BTN open vs BB call, 100BB SRP), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral / split" },
+          { "id": "split", "label": "Split — both have meaningful equity" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": ["caller"] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN. Open range contains far more A-x and K-x; BB 3-bets most strong A-x preflop.",
+        "rangeLogic": "BTN open ~45% range includes A2s-AKs, A8o-AKo, K9s+, KJo+ — many cards that connect with A or K. BB calling range vs BTN open is roughly 30% (22-JJ, suited connectors, suited gappers, A2s-A9s, KTs/KJs, QJs, etc.). Critically, BB 3-bets AJo+, AQs, AKs, KQs, KJs at high frequency, removing them from the flatting range. Result: BTN's flop range is much more A-x-heavy and K-x-heavy.",
+        "nutLogic": "BTN holds AA, KK, AK at full preflop frequency; BB 3-bets these heavily, so BB's flatting range contains far fewer combos. Top of range overwhelmingly favors BTN.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Some players answer 'neutral' assuming pocket pairs and connectors balance things out. They don't — sets of 5 are rare in both ranges and BTN has many more pairs that connect with A and K specifically."
+      },
+      "conceptTags": ["range_advantage", "dry_high_card_strategy", "board_texture_recognition", "dry_board"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_KhTd2s_nutadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Kh", "Td", "2s"],
+        "highCardClass": "K_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "broadway_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "nut_advantage",
+        "prompt": "On K♥ T♦ 2♠, who has nut advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split — both have nutted regions" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN. KK and AK dominate the top of range; BB 3-bets these often so they're sparse in BB's flatting range.",
+        "rangeLogic": "BTN open contains KK, KJo, KJs, KTs, KTo (some), KQ, AK at high frequency. BB calls vs BTN typically with 22-JJ and suited Broadways, but BB 3-bets KK, AK, KQs, KQo at high frequency.",
+        "nutLogic": "Top of range hands on K♥T♦2♠ are sets (KK, TT, 22), top two (KT), top pair top kicker (AK, KQ). BTN dominates KK and AK. TT is in both ranges but BB's KT combos are rare (KTo / KTs typically 3-bet or fold). 22 is in BB more often. Net nut advantage clearly BTN.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Some assume 'TT and 22 are easier for BB to have' and answer 'caller' — but the dominant top-of-range hands (KK, AK) are heavily in BTN's range and outweigh the small-pair edge."
+      },
+      "conceptTags": ["nut_advantage", "range_advantage", "dry_board", "board_texture_recognition"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_JhTs9c_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Jh", "Ts", "9c"],
+        "highCardClass": "J_high",
+        "textureTags": ["wet", "highly_connected", "rainbow", "straightening", "broadway_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 3,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On J♥ T♠ 9♣ (highly connected), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral / very close" },
+          { "id": "split", "label": "Split — BTN has overpairs but BB has more connectors" }
+        ]
+      },
+      "answer": { "best": ["caller"], "acceptable": ["neutral"], "bad": ["preflop_raiser", "split"], "critical": ["preflop_raiser"] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Caller (BB). Highly connected board favors BB's wider connector / suited-gapper range.",
+        "rangeLogic": "BB's calling range contains many JTs, T9s, 98s, 87s, J9s, T8s, 76s — all of which hit this board for top pair, two pair, sets, or straights. BTN opens these but at lower frequency in raw combos than the broader BB call range. BB also has 88, 77, 66, 55 etc. for sets and pair-plus-draw equity.",
+        "nutLogic": "Made straights (KQ, Q8, 87, 78) and two-pair combos (JT, T9, J9) appear at higher frequency in BB's range. BTN does have AA-QQ overpairs, but on this connected board overpairs are not nutted — they're often only marginal made hands.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "BTN players often assume 'I raised, so I have range advantage' and over-c-bet here. That's a major leak — solver play has BTN c-betting only ~25–35% of range here, often with polar sizings, because the board belongs to BB."
+      },
+      "conceptTags": ["range_advantage", "wet_board", "low_connected_caution", "check_strategy", "dynamic_board"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_5h4d3c_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["5h", "4d", "3c"],
+        "highCardClass": "low",
+        "textureTags": ["wet", "highly_connected", "rainbow", "low_heavy", "low_connected", "straightening"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 3,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On 5♥ 4♦ 3♣ (low connected), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpairs dominate" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["caller"], "acceptable": ["split"], "bad": ["preflop_raiser", "neutral"], "critical": ["preflop_raiser"] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Caller (BB). BB's range is dense in low pairs, low suited connectors, and made straights.",
+        "rangeLogic": "BB calls vs BTN with 22, 33, 44, 55, 66, 77, plus 76s, 65s, 54s, 43s (some), A2s-A5s, etc. Many of these make sets, two pair, top pair, or open-ended on this board. BTN's overpairs (TT-AA) are a thin slice of range and aren't even ahead of BB's many made hands.",
+        "nutLogic": "Sets (33, 44, 55) are concentrated in BB. Made straights (76, 67, A2 for the wheel) are mostly in BB's range. BTN's nut advantage is essentially zero here — even AA is just an overpair on a heavily textured low board.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Big leak: BTN players who think 'low board = no one has it = always c-bet small' get crushed here. The whole BB calling range loves this board. Solver: BTN checks ~70%+ of range."
+      },
+      "conceptTags": ["range_advantage", "low_connected_caution", "wet_board", "check_strategy", "common_leaks"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhAd6s_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Ad", "6s"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "paired", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "paired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On A♥ A♦ 6♠ (paired ace), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — much more A-x" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": ["caller"] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN. With one of the two remaining aces, BTN's wider opening range contains far more trip-A combos.",
+        "rangeLogic": "BTN open includes A2s-AKs and A8o-AKo. BB calling range has only A2s-A9s and very few off-suit aces (BB 3-bets AJo+, AQo+). With 2 aces on the board, only 2 unseen aces remain — and BTN has many more A-x combos to hold one of them.",
+        "nutLogic": "Trips-A is the nut equivalent here. BTN holds it at much higher frequency. Full house combos (66, AA — but AA is impossible with 2 aces on board) are essentially the same low frequency for both players, and 66 is mostly in BB's range. Net, BTN dominates.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Some players overweight 'BB has 66 = BB has nuts' and answer caller. Sets of 6 are 3 combos for BB and 3 for BTN — they cancel. The real edge is in trip-A frequency, which BTN dominates."
+      },
+      "conceptTags": ["range_advantage", "paired_board_strategy", "dry_board", "dry_high_card_strategy"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_8h7c6s_dynamic_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["8h", "7c", "6s"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "highly_connected", "rainbow", "low_connected", "straightening", "middle_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "dynamic_level",
+        "prompt": "On 8♥ 7♣ 6♠, how dynamic is this board?",
+        "choices": [
+          { "id": "static", "label": "Static (1) — equity rarely changes" },
+          { "id": "semi_static", "label": "Semi-static (2)" },
+          { "id": "dynamic", "label": "Dynamic (3)" },
+          { "id": "very_dynamic", "label": "Very dynamic (4) — equity swings every street" }
+        ]
+      },
+      "answer": { "best": ["very_dynamic"], "acceptable": ["dynamic"], "bad": ["static", "semi_static"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Very dynamic. Every overcard makes a straight or massively shifts equity.",
+        "rangeLogic": "Made straights already exist (T9, 95, 54). The turn or river: 5 → straight for 9-x and 4-x; 9 → straight for 5-x and T-x; T → straight for J-x and 9-x; J → straight for T-x; 4 → straight for 5-x; etc. Almost any non-paired card changes the equity landscape significantly.",
+        "nutLogic": null,
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Underestimating how many cards swing equity. The rule of thumb: if an overcard or undercard makes a straight for a meaningful slice of the calling range, the board is at least dynamic. Here, it's about as dynamic as flops get."
+      },
+      "conceptTags": ["dynamic_board", "wet_board", "board_texture_recognition", "low_connected_caution"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_9c5d2h_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["9c", "5d", "2h"],
+        "highCardClass": "low",
+        "textureTags": ["dry", "disconnected", "rainbow", "low_disconnected"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On 9♣ 5♦ 2♥ (low dry rainbow), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpair-heavy" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": ["neutral"], "bad": ["caller", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN — slight to moderate edge. Overpairs (TT-AA) dominate this static, disconnected low board.",
+        "rangeLogic": "On 9-5-2 disconnected rainbow, the strongest hand class is overpairs. BTN has TT, JJ, QQ, KK, AA in opening range. BB has TT-QQ for sure, KK and AA at much lower frequency (3-bets these often). BTN also has many overcards (A-x, K-x) that have backdoor + over-pair-when-paired equity.",
+        "nutLogic": "Sets (99, 55, 22) are about equally distributed. Two-pair (95, 92, 52) is rare in both ranges. The nut hands here are sets and overpairs; BTN's overpair density gives the edge.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Some players answer 'caller' assuming 'BB has small pairs and 5x'. But BB has roughly the same set frequency, and BTN's overpair density wins on this static board."
+      },
+      "conceptTags": ["range_advantage", "dry_board", "static_board", "board_texture_recognition"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_KhKd7s_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Kh", "Kd", "7s"],
+        "highCardClass": "K_high",
+        "textureTags": ["dry", "paired", "rainbow"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "paired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On K♥ K♦ 7♠ (paired king), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — much more K-x" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN — large edge. BTN has many more K-x combos for trips, plus overpairs.",
+        "rangeLogic": "BTN open contains K9s+, KJo+, KQ at high frequency. BB's flatting range vs BTN open contains very few K-x combos because BB 3-bets KJ+ and KQs/KQo most of the time. With 2 kings on the board, the trips-K combos remaining go heavily to BTN.",
+        "nutLogic": "Trips-K is the dominant top-of-range hand. BTN dominates trips-K. KK is impossible. 77 is in BB much more often (BTN often opens 77 but BB has it as a flat combo more frequently). Boats from KK would matter but KK is on the board. Net: BTN has clear nut advantage too.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Underweighting the impact of BB 3-betting K-x preflop. The 'BB has random K' myth fails on board where BB filtered most K-x out preflop."
+      },
+      "conceptTags": ["range_advantage", "paired_board_strategy", "dry_board"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5d_freq_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5d"],
+        "highCardClass": "A_high",
+        "textureTags": ["semi_dry", "two_tone", "disconnected", "broadway_heavy", "ace_high_wet", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "frequency_strategy",
+        "prompt": "On A♥ K♦ 5♦ (two-tone), what is the optimal c-bet strategy for BTN?",
+        "choices": [
+          { "id": "range_small", "label": "Small (33%) with very high frequency (~75%+)" },
+          { "id": "mixed_small_check", "label": "Mixed — small bet ~50%, check ~50%" },
+          { "id": "polar_big", "label": "Polar big (75%) with low frequency (~30%)" },
+          { "id": "check_heavy", "label": "Check heavy (~70%+ checks)" }
+        ]
+      },
+      "answer": { "best": ["range_small"], "acceptable": [], "bad": ["mixed_small_check", "check_heavy"], "critical": ["polar_big"] },
+      "mixing": { "range_small": 0.75, "mixed_small_check": 0.20, "polar_big": 0.05, "check_heavy": 0 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Small (33%) high frequency. Two-tone adds some draw equity but BTN still dominates with range adv + nut adv.",
+        "rangeLogic": "Same dynamics as A-K-5 rainbow, with the addition that some BB combos pick up flush draws (e.g., QdJd, QdTd). This slightly equalizes equity but doesn't flip range advantage. BTN still bets ~75% of range.",
+        "nutLogic": "BTN has nut flush draw combos (AdXd in opening range — though many AdKd-type combos are now blockers to BB's flushes). Nut advantage stays with BTN.",
+        "handLogic": null,
+        "sizingLogic": "Small (33%) is best because (1) BTN has range advantage so betting most of range is +EV, (2) the small size keeps the pot manageable on a board where flush draws can complicate big-pot decisions, (3) it extracts thin value from BB's many marginal calls.",
+        "commonMistake": "Going polar big on this board to 'charge the flush draw' loses EV — small high-freq value bets accomplish denial AND value extraction simultaneously, while big bets fold out the marginal calls that small bets get."
+      },
+      "conceptTags": ["small_cbet_freq", "dry_high_card_strategy", "range_advantage", "two_tone_board_strategy", "cbet_size_selection"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_Qh9d6s_freq_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Qh", "9d", "6s"],
+        "highCardClass": "Q_high",
+        "textureTags": ["semi_dry", "semi_connected", "rainbow", "middle_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "semi_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "neutral"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "frequency_strategy",
+        "prompt": "On Q♥ 9♦ 6♠ (semi-connected, rainbow), what's the optimal c-bet strategy?",
+        "choices": [
+          { "id": "range_small", "label": "Small (33%) high freq (~75%)" },
+          { "id": "mixed_small_check", "label": "Mixed — small ~50%, check ~50%" },
+          { "id": "polar_big", "label": "Polar big with low frequency" },
+          { "id": "check_heavy", "label": "Check ~70%+" }
+        ]
+      },
+      "answer": { "best": ["mixed_small_check"], "acceptable": ["range_small"], "bad": ["check_heavy"], "critical": ["polar_big"] },
+      "mixing": { "range_small": 0.30, "mixed_small_check": 0.55, "polar_big": 0.05, "check_heavy": 0.10 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Mixed small / check (~50/50). Modest range advantage with shared nut advantage = balanced strategy.",
+        "rangeLogic": "BTN has overpairs (TT-AA) and Q-x (KQ, AQ) for top pair. BB has 99, 66, sets, plus T8s, 87s, 76s, 65s for two-pair / draw equity. Range advantage tips slightly to BTN but not as dominantly as on A-high or K-high dry.",
+        "nutLogic": "Sets are roughly even. Top pair (Q-x) leans BTN. Straight combos (87, T8) lean BB. Net nut advantage is roughly neutral.",
+        "handLogic": null,
+        "sizingLogic": "Mixed strategy: small bet with stronger Q-x and overpairs for value, check with weaker overpairs (88-TT) and air. Polar big is wrong because BTN's nut advantage isn't strong enough to support a bluff-heavy big sizing.",
+        "commonMistake": "Defaulting to 'small high freq' on every board where BTN has range adv. On semi-wet boards like this, mixing in checks protects the checking range and avoids over-betting medium hands into the caller's many sets and draws."
+      },
+      "conceptTags": ["mixed_small_check", "cbet_size_selection", "range_advantage"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_Th8h3h_nutadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Th", "8h", "3h"],
+        "highCardClass": "T_high",
+        "textureTags": ["wet", "monotone", "disconnected", "flushing"],
+        "suitTexture": "monotone",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "neutral",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "nut_advantage",
+        "prompt": "On T♥ 8♥ 3♥ (monotone), who has nut advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — more high suited Broadways" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": ["neutral"], "bad": ["caller", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN — slight nut edge from holding more A♥-x and K♥-x suited Broadways.",
+        "rangeLogic": "Range advantage on monotone boards is roughly neutral here — BB's range has many low/mid hearts (87s, 76s, 9♥7♥) but BTN's wider range still picks up many flush combos.",
+        "nutLogic": "The nut flush is A♥-X — BTN's range (A2s-AKs all suited) contains all suited Aces, and many of those are with hearts. BB's flatting range has fewer A♥-X combos because BB 3-bets ATs+, AJs+ at high frequency. BTN holds the nut flush (A♥X♥) more often. Second-nut flush (K♥X♥) similarly favors BTN. Net nut advantage = BTN, but moderate not crushing.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "'Monotone always means caller advantage' is wrong. On low monotone (5h4h2h), caller has more — but on T-high or higher monotone, the player with more high-suited hands (usually the raiser) holds nut advantage."
+      },
+      "conceptTags": ["nut_advantage", "monotone_board_strategy", "board_texture_recognition"],
+      "difficulty": 3,
+      "sourceConfidence": "expert_judgment",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_8s7s5s_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["8s", "7s", "5s"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "monotone", "semi_connected", "low_heavy", "flushing", "low_connected"],
+        "suitTexture": "monotone",
+        "connectedness": "semi_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On 8♠ 7♠ 5♠ (monotone, low connected), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split — overpairs vs flushes" }
+        ]
+      },
+      "answer": { "best": ["caller"], "acceptable": [], "bad": ["preflop_raiser", "neutral", "split"], "critical": ["preflop_raiser"] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Caller (BB) crushes this board. BB has more low pairs, more 5♠/7♠/8♠ holdings, and more flush combos.",
+        "rangeLogic": "BB's calling range contains many small suited connectors and one-gappers (87s, 76s, 65s, 54s, 86s, 75s) — many of which include the spade for a flush. BB also has 22-77 for sets. BTN's range is wider but heavily favors broadway and high cards that don't connect with this board.",
+        "nutLogic": "Made flushes — BB's range contains low-spade flush combos (e.g., 9♠6♠, J♠4♠ if in flatting range). Straight combos (96, 64, 69s etc.) more frequent in BB. Nut flush A♠X is roughly even since BB's A♠X♠ frequency is meaningful (A2s-A9s in BB, A♠-x). On low monotone, the calling range really does eclipse the raiser.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "BTN players who 'always c-bet small' on monotone get punished here. Solver: BTN c-bets ~15–25% of range max, often as a small block bet with overpairs."
+      },
+      "conceptTags": ["range_advantage", "monotone_board_strategy", "wet_board", "low_connected_caution", "common_leaks"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_JhTh4d_dynamic_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Jh", "Th", "4d"],
+        "highCardClass": "J_high",
+        "textureTags": ["wet", "two_tone", "semi_connected", "broadway_heavy", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "semi_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 3,
+        "rangeAdvantage": "neutral",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "dynamic_level",
+        "prompt": "On J♥ T♥ 4♦ (two-tone, semi-connected), how dynamic is this board?",
+        "choices": [
+          { "id": "static", "label": "Static (1)" },
+          { "id": "semi_static", "label": "Semi-static (2)" },
+          { "id": "dynamic", "label": "Dynamic (3)" },
+          { "id": "very_dynamic", "label": "Very dynamic (4)" }
+        ]
+      },
+      "answer": { "best": ["dynamic"], "acceptable": ["very_dynamic"], "bad": ["static", "semi_static"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Dynamic (3). Many straight draws (KQ, Q9, 98, 87) and an active flush draw.",
+        "rangeLogic": null,
+        "nutLogic": null,
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Underrating two-tone semi-connected boards. The flush draw alone makes any board at least dynamic. Add the open-enders and gutshots to KQ, Q9, 98, 87, Q8 and you have constant equity churn."
+      },
+      "conceptTags": ["dynamic_board", "wet_board", "two_tone_board_strategy", "board_texture_recognition"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_Qd9c4h_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Qd", "9c", "4h"],
+        "highCardClass": "Q_high",
+        "textureTags": ["semi_dry", "disconnected", "rainbow"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On Q♦ 9♣ 4♥ (semi-dry rainbow), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": ["neutral"], "bad": ["caller", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN — moderate edge. Q-x (KQ, AQ, QJ) and overpairs (KK, AA) carry the range.",
+        "rangeLogic": "BTN opens KQ, AQ, QJs at high frequency. BB's calling range has QJs (some), JT, T9, QTs sparingly, but BB 3-bets KQ, AQ heavily. BTN's range is denser in top-pair Q-x and overpairs. BB has more 99 sets and small connector equity (98s for two pair, 8-x for second pair).",
+        "nutLogic": "Sets QQ vs 99 vs 44 — QQ favors BTN (BTN opens at full frequency, BB sometimes 3-bets QQ). 99 even. 44 slight BB lean. Top pair Q-x clearly BTN. Net nut advantage modestly BTN.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Some assume neutrality because of '9 in BB's range' — but BTN's overpair density and Q-x density outweighs the second-pair argument."
+      },
+      "conceptTags": ["range_advantage", "dry_board", "board_texture_recognition"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhJh3s_sizing_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Jh", "3s"],
+        "highCardClass": "A_high",
+        "textureTags": ["semi_dry", "two_tone", "disconnected", "ace_high_wet", "broadway_heavy", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "sizing_family",
+        "prompt": "On A♥ J♥ 3♠ (two-tone), what sizing family is best for BTN?",
+        "choices": [
+          { "id": "range_small", "label": "Small (~33%) high frequency" },
+          { "id": "mixed_small_check", "label": "Mixed small / check ~50/50" },
+          { "id": "polar_big", "label": "Polar big (~75%) with selected combos" },
+          { "id": "check_heavy", "label": "Check heavy (~70%+ checks)" }
+        ]
+      },
+      "answer": { "best": ["range_small"], "acceptable": ["polar_big"], "bad": ["mixed_small_check", "check_heavy"], "critical": [] },
+      "mixing": { "range_small": 0.65, "mixed_small_check": 0.10, "polar_big": 0.20, "check_heavy": 0.05 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Small high-freq (range_small). Two-tone adds some draw equity but A-high range advantage stays huge.",
+        "rangeLogic": "BTN dominates A-x range hugely. Two-tone slightly equalizes via flush draws (BB picks up Q♥T♥, K♥T♥ etc.) but range advantage stays clearly BTN.",
+        "nutLogic": "BTN holds A♥-X for nut flush draws. Made flush is impossible on flop. Top of range still dominates BTN.",
+        "handLogic": null,
+        "sizingLogic": "Range_small (33%) is best because BTN can bet the entire range profitably. Polar big (75%) is acceptable as a secondary line for the very polar combos (sets + nut bluffs) but isn't the main strategy. Check-heavy bleeds EV.",
+        "commonMistake": "Going too polar 'because there's a flush draw' loses EV — small bets with nearly the entire range still works on A-high two-tone."
+      },
+      "conceptTags": ["small_cbet_freq", "dry_high_card_strategy", "two_tone_board_strategy", "cbet_size_selection"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_9h8c7d_freq_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["9h", "8c", "7d"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "highly_connected", "rainbow", "low_connected", "straightening", "middle_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "frequency_strategy",
+        "prompt": "On 9♥ 8♣ 7♦ (highly connected), what's the best c-bet strategy for BTN?",
+        "choices": [
+          { "id": "range_small", "label": "Small (33%) high frequency" },
+          { "id": "mixed_small_check", "label": "Mixed small / check" },
+          { "id": "polar_big", "label": "Polar big with low frequency" },
+          { "id": "check_heavy", "label": "Check ~70%+" }
+        ]
+      },
+      "answer": { "best": ["check_heavy"], "acceptable": ["polar_big"], "bad": ["mixed_small_check"], "critical": ["range_small"] },
+      "mixing": { "range_small": 0.05, "mixed_small_check": 0.15, "polar_big": 0.20, "check_heavy": 0.60 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Check heavy. BB has range advantage and many made hands; betting most of range bleeds EV.",
+        "rangeLogic": "BB's calling range has many T9s, 98s, 87s, 76s, J9s, T8s, plus 99, 88, 77, 66 etc. Many made straights, two-pair, sets. BTN's overpairs (TT-AA) are now medium hands at best.",
+        "nutLogic": "Made straights live. Sets concentrated in BB. BTN's nut hands (sets of 9, 8, 7, made straight with JT) exist but at lower combo count than BB's nut hands.",
+        "handLogic": null,
+        "sizingLogic": "Check ~70%+ of range with everything except the strongest hands and selected polar bluffs (e.g., AQ with backdoor straight + overcards). When betting, use big sizing (~75%) polarized.",
+        "commonMistake": "Range-c-betting small here is a critical leak — BTN gets check-raised constantly by BB's many made hands and draws, and the small bet doesn't fold out enough equity."
+      },
+      "conceptTags": ["check_strategy", "range_advantage", "low_connected_caution", "wet_board", "common_leaks"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_KhJc8s_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Kh", "Jc", "8s"],
+        "highCardClass": "K_high",
+        "textureTags": ["semi_dry", "semi_connected", "rainbow", "broadway_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "semi_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On K♥ J♣ 8♠ (semi-connected, rainbow), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split" }
+        ]
+      },
+      "answer": { "best": ["preflop_raiser"], "acceptable": ["neutral"], "bad": ["caller", "split"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "BTN — moderate edge from K-x and J-x density.",
+        "rangeLogic": "BTN opens KJ, KQ, KT, AK, KJs+ at high frequency. BB calls some KT, KJ but 3-bets KQ/KJ often. BTN dominates K-x. J-x is closer (BB has JT, J9 etc.) but BTN still has more KJ, AJ, QJ.",
+        "nutLogic": "Sets KK, JJ, 88 — KK heavily BTN, JJ split (some 3-bet), 88 slightly BB. Two pair KJ heavily BTN. Top pair K leaning BTN. Top of range BTN.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Underrating K-high broadway boards. Even when there's some connectedness, the broadway-heavy nature still favors BTN."
+      },
+      "conceptTags": ["range_advantage", "dry_board", "board_texture_recognition"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_Tc9d2s_dynamic_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Tc", "9d", "2s"],
+        "highCardClass": "T_high",
+        "textureTags": ["semi_dry", "semi_connected", "rainbow"],
+        "suitTexture": "rainbow",
+        "connectedness": "semi_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "neutral"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "dynamic_level",
+        "prompt": "On T♣ 9♦ 2♠ (rainbow, T9 connected), how dynamic is the board?",
+        "choices": [
+          { "id": "static", "label": "Static (1)" },
+          { "id": "semi_static", "label": "Semi-static (2)" },
+          { "id": "dynamic", "label": "Dynamic (3)" },
+          { "id": "very_dynamic", "label": "Very dynamic (4)" }
+        ]
+      },
+      "answer": { "best": ["semi_static"], "acceptable": ["dynamic"], "bad": ["static", "very_dynamic"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Semi-static (2). T9 is connected but no flush draw and 2 is disconnected — limited equity swings.",
+        "rangeLogic": null,
+        "nutLogic": null,
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Treating any two-card connection as 'dynamic' overestimates equity churn. T-9 is connected but the 2 doesn't extend the structure, and rainbow eliminates flush dynamics."
+      },
+      "conceptTags": ["dynamic_board", "static_board", "board_texture_recognition"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_6c5c4s_sizing_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["6c", "5c", "4s"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "highly_connected", "two_tone", "low_connected", "low_heavy", "straightening", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "sizing_family",
+        "prompt": "On 6♣ 5♣ 4♠, what sizing family is best for BTN?",
+        "choices": [
+          { "id": "range_small", "label": "Small (33%) high freq" },
+          { "id": "mixed_small_check", "label": "Mixed small/check" },
+          { "id": "polar_big", "label": "Polar big with low frequency" },
+          { "id": "check_heavy", "label": "Check heavy (~75%+)" }
+        ]
+      },
+      "answer": { "best": ["check_heavy"], "acceptable": ["polar_big"], "bad": ["mixed_small_check"], "critical": ["range_small"] },
+      "mixing": { "range_small": 0.05, "mixed_small_check": 0.10, "polar_big": 0.20, "check_heavy": 0.65 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Check heavy. BB owns this board on every dimension.",
+        "rangeLogic": "BB has all the connectors (76, 65, 54, 43, 87, 86), all the small pairs (44, 55, 66, 33, 22), and many flush-draw combos. BTN's overpairs are weak; BTN's broadway hands are mostly air.",
+        "nutLogic": "Made straights and sets concentrated in BB. The 'top' of BTN's range here (AA, KK) often has under 50% equity vs BB's full continuing range.",
+        "handLogic": null,
+        "sizingLogic": "Check ~65–75% of range. When betting, polarize big with sets/straights and selected high-equity bluffs (e.g., AcQc combo draw). Small bets here get raised mercilessly.",
+        "commonMistake": "Critical leak: range-c-betting small. The BB will check-raise relentlessly and BTN can't continue with most of the range. Polar big with low frequency is the only profitable bet line."
+      },
+      "conceptTags": ["check_strategy", "low_connected_caution", "wet_board", "polar_big_strategy", "common_leaks"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_7d7s3c_rangeadv_001",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_board_texture",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["7d", "7s", "3c"],
+        "highCardClass": "low",
+        "textureTags": ["dry", "paired", "rainbow", "low_disconnected"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "paired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "split",
+        "nutAdvantage": "neutral"
+      },
+      "heroHand": null,
+      "handClass": null,
+      "actionHistory": [],
+      "question": {
+        "type": "range_advantage",
+        "prompt": "On 7♦ 7♠ 3♣ (paired low), who has range advantage?",
+        "choices": [
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpairs dominate" },
+          { "id": "caller", "label": "Caller (BB) — small pairs / 7-x" },
+          { "id": "neutral", "label": "Neutral" },
+          { "id": "split", "label": "Split — both have meaningful equity" }
+        ]
+      },
+      "answer": { "best": ["split"], "acceptable": ["neutral", "preflop_raiser"], "bad": ["caller"], "critical": [] },
+      "mixing": null,
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Split / mostly neutral. BTN has overpairs, BB has more 7-x and small pairs — they roughly balance.",
+        "rangeLogic": "BTN's overpair density (88-AA) is real but BB's 7-x combos (97s, 87s, 76s, 75s, 74s, 73s rare) and 33 sets (BTN's 33 mostly opens too — even split) keep things close. BB has slightly more underpairs (22, 33, 44, 55, 66) which all have meaningful showdown value but trail 88+.",
+        "nutLogic": "Trips-7 even (both have 77 — wait, 77 impossible; 7-x distribution slightly favors BB due to wider flatting range with 87s, 76s, 97s). Full house (33, 77 — 77 impossible) — 33 even.",
+        "handLogic": null,
+        "sizingLogic": null,
+        "commonMistake": "Overweighting overpairs as 'range advantage' on paired low boards. Underpairs and trips combos balance things significantly. The texture supports a c-bet because BTN can fold equity from BB's many missed broadways, but the underlying range advantage is split."
+      },
+      "conceptTags": ["range_advantage", "paired_board_strategy", "dry_board"],
+      "difficulty": 4,
+      "sourceConfidence": "expert_judgment",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_action_AhKc",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Ah", "Kc"],
+      "handClass": "top_two_pair",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with A♥K♣ on A♥K♦5♣. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["bet_75"], "bad": ["check"], "critical": [] },
+      "mixing": { "check": 0.05, "bet_33": 0.75, "bet_75": 0.20 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33%. Top two with the entire range bet — small high-freq value plus protection.",
+        "rangeLogic": "BTN bets the entire range small here. AK is value plus blocker — by holding both A and K, hero blocks BB's nutted A-x and K-x continues, so the bet folds out air (which is what BB has most often) and gets called by worse A-x and K-x.",
+        "nutLogic": null,
+        "handLogic": "Top two is too strong to check — protection from runner-runner draws and value from K-x marginals is essential. The hand benefits from getting 3 streets of value when a low or rag turns.",
+        "sizingLogic": "Small (33%) is best because BTN's whole range bets small. Big (75%) is acceptable as part of the polar mix but small is preferred — small extracts value from K-x and pocket pairs that fold to big.",
+        "commonMistake": "Slowplaying top two on a dry board because 'I'm so strong.' This loses value — there's almost nothing for opponent to outdraw, but plenty of K-x and pocket pairs that pay off."
+      },
+      "conceptTags": ["small_cbet_freq", "thin_value_betting", "dry_high_card_strategy", "range_advantage"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_action_QQ",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Qs", "Qd"],
+      "handClass": "underpair",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with Q♠Q♦ on A♥K♦5♣. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["check"], "bad": ["bet_75"], "critical": [] },
+      "mixing": { "check": 0.30, "bet_33": 0.65, "bet_75": 0.05 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33%. Mostly bet for thin value + denial; checking is acceptable as part of the mix.",
+        "rangeLogic": "On A♥K♦5♣ the GTO bet-frequency is high (~75%+). QQ wants to bet because it has equity vs many BB calls (bluff-catching with K-x high might call) and gains from denying equity to BB's overcards (J-x, T-x with backdoors).",
+        "nutLogic": null,
+        "handLogic": "QQ here is not an overpair — it's an underpair to top two of board. But it's still ahead of BB's many K-x bluff-catchers (BB rarely has K-x given preflop; more often pocket pairs 22-JJ that QQ beats and overcards that miss). Check has merit if you want to keep weaker hands in for value, but most of the time bet small.",
+        "sizingLogic": "Small (33%) keeps the pot manageable when BB has K-x or A-x. Bet 75% is wrong because it folds out the J-x, T-x, low pairs that QQ beats and only gets called by what beats it.",
+        "commonMistake": "Checking QQ 'because I'm scared of A-x' is a common leak. BB's range is mostly missed broadways and small pairs — QQ bets small for value and protection."
+      },
+      "conceptTags": ["small_cbet_freq", "thin_value_betting", "protection_betting", "dry_high_card_strategy"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_action_76s",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["7h", "6h"],
+      "handClass": "no_pair_no_draw",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with 7♥6♥ on A♥K♦5♣. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["check"], "bad": ["bet_75"], "critical": [] },
+      "mixing": { "check": 0.30, "bet_33": 0.65, "bet_75": 0.05 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33%. In a small high-freq strategy, bluff with backdoor equity is part of the bet range.",
+        "rangeLogic": "BTN bets ~75% of range small here. 76s has backdoor straight (with 4 or 8 to come) and backdoor flush (with hearts) — enough equity-when-called to bet for fold equity now.",
+        "nutLogic": null,
+        "handLogic": "76s is air on the flop but has multiple backdoor draws, making it a clear small-bluff candidate within the small high-freq strategy. Air without backdoors checks; air with backdoors bets.",
+        "sizingLogic": "Small (33%) is the strategy. Big (75%) is wrong — bigger bluffs lose more when called and don't extract more fold equity than 33% on this dry board.",
+        "commonMistake": "Checking pure air 'because I have nothing.' If BTN bets the value range small, BTN must also bluff small with the backdoor combos to balance — otherwise the value range is too transparent."
+      },
+      "conceptTags": ["small_cbet_freq", "semi_bluff_with_equity", "dry_high_card_strategy"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_action_Td9d",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Td", "9d"],
+      "handClass": "backdoor_only",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with T♦9♦ on A♥K♦5♣. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["check"], "bad": ["bet_75"], "critical": [] },
+      "mixing": { "check": 0.30, "bet_33": 0.65, "bet_75": 0.05 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33%. T9s with backdoor flush + backdoor straight + two overcards is a clear small-bet bluff.",
+        "rangeLogic": null,
+        "nutLogic": null,
+        "handLogic": "T9 of diamonds: backdoor flush (need 2 diamonds), backdoor straight (need J + Q or J + 8 to come), and Q/J overcards that can pair for showdown value. This is one of the best bluff candidates in BTN's range — multiple backdoor equity sources.",
+        "sizingLogic": "Small (33%) gets folds from BB's air (J-x, Q-x, T-x air without backdoors) and keeps pot small for backdoor realization. Big (75%) folds out the same hands but commits more chips to a bluff — net negative.",
+        "commonMistake": "Same as 76s — checking 'because I don't have a pair.' The backdoor density makes this a clear bet."
+      },
+      "conceptTags": ["small_cbet_freq", "semi_bluff_with_equity", "dry_high_card_strategy"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_KhTd2s_action_QJs",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Kh", "Td", "2s"],
+        "highCardClass": "K_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "broadway_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Qc", "Jc"],
+      "handClass": "gutshot",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with Q♣J♣ on K♥T♦2♠. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": [], "bad": ["bet_75", "check"], "critical": [] },
+      "mixing": { "check": 0.10, "bet_33": 0.85, "bet_75": 0.05 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33%. Open-ended straight draw + two overcards = clear semi-bluff in a small high-freq strategy.",
+        "rangeLogic": null,
+        "nutLogic": null,
+        "handLogic": "QJ: open-ended (any A or 9 makes a straight) + Q/J overcards for pair showdown value. Strong semi-bluff candidate. Equity vs BB's continue range is high enough that even when called the hand has playability on most turns.",
+        "sizingLogic": "Small (33%) is correct — same as the value range. Big bets on dry K-high are a leak.",
+        "commonMistake": "Treating 'open-ended + overcards' as 'big bet semi-bluff' — on dry K-high, small high-freq is the strategy. Save big bets for dynamic boards where you actually need to charge equity."
+      },
+      "conceptTags": ["small_cbet_freq", "semi_bluff_with_equity", "dry_high_card_strategy"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_8h7c6s_action_AA",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["8h", "7c", "6s"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "highly_connected", "rainbow", "low_connected", "straightening", "middle_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": ["Ah", "As"],
+      "handClass": "overpair",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with A♥A♠ on 8♥7♣6♠. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["check"], "acceptable": ["bet_75"], "bad": ["bet_33"], "critical": [] },
+      "mixing": { "check": 0.55, "bet_33": 0.05, "bet_75": 0.40 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Mostly check (~55%); bet big as part of polar mix (~40%). Small bet is wrong on this board.",
+        "rangeLogic": "On 876, BTN's range is checking ~70%+. BB has too many made hands and draws to range-bet small profitably.",
+        "nutLogic": null,
+        "handLogic": "AA is an overpair but not nutted — BB has straights, sets, two pair already. Checking protects the checking range (mixing AA in with weaker hands) and lets AA call multiple streets without bloating the pot OOP for BB's strong hands. Big bet (75%) is part of a polar protection line — denies equity to draws.",
+        "sizingLogic": "If betting, go big (75%). Small (33%) is wrong because (a) it doesn't fold out enough draws, (b) it gets check-raised by BB's many made hands, and (c) it commits chips to a marginal-now-medium hand.",
+        "commonMistake": "Range-c-betting AA small on every board. On dynamic low-connected boards, AA wants to either check for pot-control + induce or bet big for protection — the small bet is the worst of both worlds."
+      },
+      "conceptTags": ["check_strategy", "protection_betting", "low_connected_caution", "dynamic_board"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_JhTs9c_action_QQ",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Jh", "Ts", "9c"],
+        "highCardClass": "J_high",
+        "textureTags": ["wet", "highly_connected", "rainbow", "straightening", "broadway_heavy"],
+        "suitTexture": "rainbow",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 3,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": ["Qc", "Qs"],
+      "handClass": "overpair",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with Q♣Q♠ on J♥T♠9♣ (also a gutshot to K). Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["check"], "acceptable": ["bet_75"], "bad": ["bet_33"], "critical": [] },
+      "mixing": { "check": 0.50, "bet_33": 0.10, "bet_75": 0.40 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Mix of check (~50%) and bet big (~40%). QQ is overpair + gutshot but BB has too much.",
+        "rangeLogic": "BTN checks ~50–60% on JT9 connected. QQ is in the mixing region — sometimes check for pot-control vs BB's straights (KQ, Q8) and two pair (JT, J9, T9), sometimes bet big for protection and value vs draws and worse pairs.",
+        "nutLogic": null,
+        "handLogic": "QQ on JT9 has reasonable equity: ahead of one pair, behind two pair / sets / straights. Has gutshot to K for nut straight. Either line (check or bet big) plays the hand reasonably.",
+        "sizingLogic": "If betting, big (75%) — denies equity to gutshots and underpairs while still extracting value from worse one-pair hands. Small (33%) is wrong because it doesn't fold out draws and gets raised.",
+        "commonMistake": "Auto-betting overpairs on connected boards. QQ is decent but not a clear bet; the connected nature and BB's range density means caution and big sizing-or-check is correct."
+      },
+      "conceptTags": ["check_strategy", "protection_betting", "low_connected_caution", "wet_board"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhJh3s_action_KhQh",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Jh", "3s"],
+        "highCardClass": "A_high",
+        "textureTags": ["semi_dry", "two_tone", "disconnected", "ace_high_wet", "broadway_heavy", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Kh", "Qh"],
+      "handClass": "combo_draw",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with K♥Q♥ on A♥J♥3♠ (FD + gutshot + overcard). Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["bet_75"], "bad": ["check"], "critical": [] },
+      "mixing": { "check": 0.05, "bet_33": 0.50, "bet_75": 0.45 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet — small or big both fine. Combo draw with overcard and nut flush draw is a premium semi-bluff.",
+        "rangeLogic": "On A♥J♥3♠ BTN bets ~75% small. KQ of hearts: nut flush draw (best possible flush), gutshot to T (for Broadway straight), overcard to K. Equity vs continue range high; folds equity is meaningful.",
+        "nutLogic": null,
+        "handLogic": "KhQh is one of the best semi-bluffing combos here — when called, has 12+ outs (9 flush outs, 3 K-high outs, sometimes Ts for straight). Both small and big bet sizing work.",
+        "sizingLogic": "Small (33%) plays the small high-freq strategy. Big (75%) is part of the polar mix — KhQh appears in both because of its raw equity. Check is wrong: you have a clear betting hand with great equity.",
+        "commonMistake": "Slowplaying combo draws. Combo draws want to bet — they have fold equity AND hand-improving equity, both of which you forfeit by checking."
+      },
+      "conceptTags": ["semi_bluff_with_equity", "small_cbet_freq", "polar_big_strategy", "two_tone_board_strategy"],
+      "difficulty": 2,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_6c5c4s_action_KK",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["6c", "5c", "4s"],
+        "highCardClass": "low",
+        "textureTags": ["very_wet", "highly_connected", "two_tone", "low_connected", "low_heavy", "straightening", "flushing"],
+        "suitTexture": "two_tone",
+        "connectedness": "highly_connected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 4,
+        "rangeAdvantage": "caller",
+        "nutAdvantage": "caller"
+      },
+      "heroHand": ["Kh", "Ks"],
+      "handClass": "overpair",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with K♥K♠ on 6♣5♣4♠. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["check"], "acceptable": ["bet_75"], "bad": ["bet_33"], "critical": [] },
+      "mixing": { "check": 0.55, "bet_33": 0.05, "bet_75": 0.40 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Check often (~55%); bet big as protection sometimes (~40%). Small bet is the worst option.",
+        "rangeLogic": "BTN checks ~65–75% of range here. KK is in the mixing zone — strong but vulnerable.",
+        "nutLogic": null,
+        "handLogic": "KK on 654 has decent equity: ahead of all underpairs and most one-pair, behind made straights (87, 76, 73 unlikely), behind sets (66, 55, 44 — all in BB more often). Many turn cards (3, 7, 8, club for flush) are bad. Checking realizes equity by getting to showdown cheaper; betting big denies draws and gets value from worse pairs and FDs.",
+        "sizingLogic": "Big (75%) for protection if betting — accomplish the fold-equity goal. Small (33%) gets check-raised constantly here and doesn't deny enough equity. Small bet on this board is a meaningful leak.",
+        "commonMistake": "'Overpair = always bet small' — wrong on dynamic wet boards. KK is good but not great on 654, and the board demands either check or big, never small."
+      },
+      "conceptTags": ["check_strategy", "protection_betting", "low_connected_caution", "wet_board"],
+      "difficulty": 3,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_KhTd2s_action_TT",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Kh", "Td", "2s"],
+        "highCardClass": "K_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "broadway_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 2,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["Tc", "Th"],
+      "handClass": "set",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with T♣T♥ (set of T) on K♥T♦2♠. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["bet_75"], "bad": ["check"], "critical": [] },
+      "mixing": { "check": 0.05, "bet_33": 0.70, "bet_75": 0.25 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33% (mostly). Set of T on dry K-high — small for value plus protection from runner-runner.",
+        "rangeLogic": "BTN bets ~75% small on K-high dry. Sets bet small with the range — the small size extracts value from K-x (top pair will call), pocket pairs, and floats.",
+        "nutLogic": null,
+        "handLogic": "Set on dry K-high is huge — only AA, KK ahead. Most turns are completely safe (A might give BB top pair = more value). Big sizing acceptable for second-line value, but small with the range is preferred — easier to extract three streets.",
+        "sizingLogic": "Small (33%) keeps everything calling. Big (75%) folds out marginal calls (pocket pairs 22-99, weak K-x). Small is greedy and correct.",
+        "commonMistake": "Slowplaying set 'to trap.' On dry K-high there's nothing to trap — opponent has nothing to fire with most of the time. Bet for value."
+      },
+      "conceptTags": ["small_cbet_freq", "thin_value_betting", "dry_high_card_strategy"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    },
+
+    {
+      "id": "pf_btn_v_bb_srp_100bb_flop_AhKd5c_action_55",
+      "version": "1.0.0",
+      "schemaVersion": "1.0.0",
+      "game": "NLH_MTT",
+      "module": "pf_flop_cbet_ip",
+      "street": "flop",
+      "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
+      "board": {
+        "cards": ["Ah", "Kd", "5c"],
+        "highCardClass": "A_high",
+        "textureTags": ["dry", "disconnected", "rainbow", "ace_high_dry"],
+        "suitTexture": "rainbow",
+        "connectedness": "disconnected",
+        "pairedStatus": "unpaired",
+        "dynamicLevel": 1,
+        "rangeAdvantage": "preflop_raiser",
+        "nutAdvantage": "preflop_raiser"
+      },
+      "heroHand": ["5h", "5s"],
+      "handClass": "set",
+      "actionHistory": [],
+      "question": {
+        "type": "action_choice",
+        "prompt": "BTN with 5♥5♠ (bottom set) on A♥K♦5♣. Action?",
+        "choices": [
+          { "id": "check", "label": "Check" },
+          { "id": "bet_33", "label": "Bet 33% pot" },
+          { "id": "bet_75", "label": "Bet 75% pot" }
+        ]
+      },
+      "answer": { "best": ["bet_33"], "acceptable": ["bet_75"], "bad": ["check"], "critical": [] },
+      "mixing": { "check": 0.05, "bet_33": 0.70, "bet_75": 0.25 },
+      "scoring": { "best": 1.0, "acceptable": 0.5, "bad": 0, "critical": 0 },
+      "explanation": {
+        "short": "Bet 33% with the range. Bottom set on dry A-high — value extraction from A-x and K-x.",
+        "rangeLogic": "BTN's range bets ~75% small on AK5 dry. Sets bet with the range to extract value across multiple streets.",
+        "nutLogic": null,
+        "handLogic": "Bottom set is very strong — only AA, KK, AK ahead. Many K-x and A-x will call. Backdoor draws can complete (e.g., turn club for BDFD continuation), giving second-bet/third-bet equity. Big bet acceptable as part of polar mix but small with the range is the standard line.",
+        "sizingLogic": "Small (33%) maximizes call frequency from K-x/A-x and pocket pairs. Big (75%) loses some marginal calls.",
+        "commonMistake": "Slowplaying bottom set on dry A-high. Loses massive value — A-x pays you off and would call multiple bets."
+      },
+      "conceptTags": ["small_cbet_freq", "thin_value_betting", "dry_high_card_strategy"],
+      "difficulty": 1,
+      "sourceConfidence": "consensus_gto",
+      "auditStatus": "approved"
+    }
+
+  ]
+}

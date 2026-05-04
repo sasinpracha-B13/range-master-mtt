@@ -1,0 +1,312 @@
+{
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-05-04",
+  "description": "Concept taxonomy for post-flop training. Each concept has a key (used in scenario.conceptTags), display name, short + long definitions, examples, and related concepts.",
+
+  "concepts": [
+    {
+      "key": "range_advantage",
+      "displayName": "Range advantage",
+      "category": "foundation",
+      "shortDef": "Whose preflop range hits this board class harder, by total equity.",
+      "longDef": "A player has range advantage when their entire preflop range, weighted across all combos, has higher equity on the board than the opponent's range. Range advantage is a *whole-range* property, not a *top-of-range* property — even if the opponent has more nuts, you can have range advantage if your range is more polarized toward strong-medium hands. Range advantage typically supports higher c-bet frequency at smaller sizes.",
+      "examples": [
+        "BTN open vs BB call on A♥K♦5♣: BTN has range advantage because BTN range contains far more A-x and K-x.",
+        "BTN open vs BB call on 8♣7♦5♠: ranges are close; BB has more straight combos but BTN has more overpairs — neutral or slight BB edge.",
+        "BTN open vs BB call on 5♣4♦3♠: BB has range advantage because BB's calling range contains more low pairs and connectors."
+      ],
+      "relatedConcepts": ["nut_advantage", "board_texture_recognition", "small_cbet_freq"]
+    },
+    {
+      "key": "nut_advantage",
+      "displayName": "Nut advantage",
+      "category": "foundation",
+      "shortDef": "Whose range contains more of the strongest possible hands on this board.",
+      "longDef": "Nut advantage measures who has more of the absolute top hands (sets, top two pair, straights, flushes) given the board. Nut advantage and range advantage are independent. Nut advantage drives the player's ability to use big polar sizings — the player with nut advantage can credibly threaten an overbet because they have the nutted hands to back it up.",
+      "examples": [
+        "BTN vs BB on A♥K♦5♣: BTN has nut advantage. AA, KK, AK are in BTN's open range at high frequency; BB 3-bets these much of the time so they're underrepresented in BB's flatting range.",
+        "BTN vs BB on 8♥7♥6♠: BB has nut advantage on most run-outs. BB's calling range contains many 9x, 5x, sets of 8/7/6, and small straights that BTN's range either folds preflop or rarely opens.",
+        "Boards where range adv and nut adv split: K♥7♥3♣ — BTN has range adv (many K-x), BB has slight nut adv (sets of 7, 3 are equally distributed but BTN's lack of small pairs gives BB the edge on bottom-set boards)."
+      ],
+      "relatedConcepts": ["range_advantage", "polar_big_strategy", "nut_advantage_shift"]
+    },
+    {
+      "key": "nut_advantage_shift",
+      "displayName": "Nut advantage shift",
+      "category": "intermediate",
+      "shortDef": "Cards on later streets that swing nut advantage from one player to the other.",
+      "longDef": "A turn or river card that significantly changes which player holds the nutted region. Recognizing nut shifts is critical for sizing decisions: when a card hits opponent's range hard, the bettor should slow down or polarize differently. Common shifts: low connector arrives on a high-board flop (8 lands on AK5); flush completes; straight completes for the calling range.",
+      "examples": [
+        "Flop A♥K♦5♣ → Turn 6♠: small shift toward caller; BB now has 65, 67, 64, A6, K6 representing combos BTN doesn't have.",
+        "Flop 9♥8♦5♣ → Turn 7♣: massive shift toward caller; BB's flatting range has many T9, 87, 76, 65 making straights.",
+        "Flop K♥9♥4♣ → Turn 2♥: flush completes; depending on heart distribution, this can shift nuts heavily one way."
+      ],
+      "relatedConcepts": ["nut_advantage", "dynamic_board"]
+    },
+    {
+      "key": "dry_board",
+      "displayName": "Dry board",
+      "category": "foundation",
+      "shortDef": "Few draws, equity is unlikely to swing on later streets.",
+      "longDef": "A dry board has low draw density and few possible improvements on later streets. Dry boards favor the player with range advantage (typically the preflop raiser) and support small, high-frequency c-bets because the bettor doesn't need to charge draws and has thin-value hands that benefit from being able to bet many streets cheaply.",
+      "examples": [
+        "A♥K♦5♣ rainbow: classic dry board.",
+        "K♥7♦2♠ rainbow: dry, range-advantaged toward raiser.",
+        "Q♥9♦4♣ rainbow: semi-dry — some backdoor straight potential but largely static."
+      ],
+      "relatedConcepts": ["small_cbet_freq", "static_board", "dry_high_card_strategy"]
+    },
+    {
+      "key": "wet_board",
+      "displayName": "Wet board",
+      "category": "foundation",
+      "shortDef": "High draw density; equity will swing significantly on later streets.",
+      "longDef": "A wet board offers many possible straights and/or flushes. The caller's range tends to contain more draws and combo hands, eroding the raiser's range advantage. Wet boards typically demand more polarized sizings (overbet bluffs + nuts, or check the medium portion of the range) and lower overall c-bet frequency.",
+      "examples": [
+        "J♥T♠9♣: highly connected, many straight draws, multiple flush draws across run-outs.",
+        "8♥7♥6♣: low-middle connected, every overcard makes a straight for someone.",
+        "9♥7♥5♣: gap-connector wet — many 8-x, 6-x, plus heart flush draws."
+      ],
+      "relatedConcepts": ["dynamic_board", "polar_big_strategy", "low_connected_caution"]
+    },
+    {
+      "key": "static_board",
+      "displayName": "Static board",
+      "category": "foundation",
+      "shortDef": "Equity rankings are unlikely to change on later streets.",
+      "longDef": "Static boards have a definite top of range that rarely loses ranking on the turn or river. Top pair on a static board remains top pair most run-outs. This stability supports thin-value c-bets and lower vigilance about protection.",
+      "examples": [
+        "A♥K♦5♣: top pair AK is rarely outdrawn.",
+        "K♥7♣2♠: top pair K stays best on most cards.",
+        "A♥7♦2♣: similar."
+      ],
+      "relatedConcepts": ["dry_board", "dry_high_card_strategy"]
+    },
+    {
+      "key": "dynamic_board",
+      "displayName": "Dynamic board",
+      "category": "foundation",
+      "shortDef": "Equity rankings can swing dramatically on the turn or river.",
+      "longDef": "Dynamic boards require active equity protection — bet the medium-strength hands to deny equity to draws and weak made hands. Mid-connected and suited textures are typically dynamic. Dynamic boards reduce range advantage and reward more polar sizings.",
+      "examples": [
+        "J♥T♠9♣: top pair can be drawing dead by the river.",
+        "9♥8♣7♦: medium pairs lose value as overcards arrive.",
+        "K♥9♥6♣: KK can lose to many turn cards (T, J, Q, A, hearts)."
+      ],
+      "relatedConcepts": ["wet_board", "equity_realization", "polar_big_strategy"]
+    },
+    {
+      "key": "small_cbet_freq",
+      "displayName": "Small high-frequency c-bet",
+      "category": "strategy",
+      "shortDef": "Bet small (25–33% pot) with most or all of your range.",
+      "longDef": "On boards where you have clear range advantage and the board is dry, betting small with very high frequency is GTO-optimal. The small size: (1) extracts thin value from many marginal calls, (2) denies equity to opponent's air, (3) allows you to bet your entire range without giving opponent enough fold equity to exploit, (4) keeps the pot small so future-street decisions remain manageable.",
+      "examples": [
+        "BTN vs BB SRP on A♥K♦5♣: bet 33% with ~80%+ frequency.",
+        "BTN vs BB SRP on K♥7♣2♠: bet 33% with ~75% frequency.",
+        "BTN vs BB SRP on A♥6♠2♣: bet 33% with ~85% frequency."
+      ],
+      "relatedConcepts": ["range_advantage", "dry_high_card_strategy", "ip_advantage"]
+    },
+    {
+      "key": "polar_big_strategy",
+      "displayName": "Polar big-bet strategy",
+      "category": "strategy",
+      "shortDef": "Use a big sizing (75–100%+) with a polarized range — nuts plus selected bluffs.",
+      "longDef": "On boards where nut advantage is strong but range advantage is shared, bet big with a polar range: nut hands and chosen bluff combos with good removal/equity. Keep medium-strength hands as checks. The big sizing maximizes value from opponent's bluff-catchers and applies maximum fold equity with the bluffs. Used selectively — over-using big sizings on the wrong board class is a common leak.",
+      "examples": [
+        "BTN vs BB on K♥9♥4♣ turn 2♥ (flush completes): polar big with nut flushes + air with no showdown value.",
+        "Some Q-high disconnected boards where BTN's nut advantage is concentrated."
+      ],
+      "relatedConcepts": ["nut_advantage", "wet_board"]
+    },
+    {
+      "key": "check_strategy",
+      "displayName": "Check / check-back strategy",
+      "category": "strategy",
+      "shortDef": "Check the flop with most or all of the range.",
+      "longDef": "On boards where you have neither range nor nut advantage (or the caller has both), checking the entire range — or the vast majority of it — is correct. Betting into a stronger range bleeds EV; checking realizes equity, keeps opponent's bluff-catchers in for showdown, and uses position to navigate later streets. Common on low/middle connected boards facing the caller.",
+      "examples": [
+        "BTN vs BB on 5♥4♦3♣: BB has clear range advantage. Check most or all combos.",
+        "BTN vs BB on 9♣8♣7♦: BB has range and equity advantage. Check-heavy.",
+        "BTN vs BB on 6♠5♠4♣: BB structure favors check."
+      ],
+      "relatedConcepts": ["range_advantage", "low_connected_caution", "equity_realization"]
+    },
+    {
+      "key": "mixed_small_check",
+      "displayName": "Mixed small-bet / check strategy",
+      "category": "strategy",
+      "shortDef": "Split between small bet and check, often 50/50 or 60/40.",
+      "longDef": "On boards where range advantage is real but modest, GTO mixes between a small bet and a check. The mix protects both lines and prevents exploitation. Typically mid-strength range advantage with shared nut advantage produces this distribution.",
+      "examples": [
+        "BTN vs BB on Q♥9♦4♣: small bet ~50%, check ~50%.",
+        "BTN vs BB on T♦9♣4♠: ~60% small bet, ~40% check.",
+        "Boards where BTN has slight edge but the caller has enough draws to make every-time betting suboptimal."
+      ],
+      "relatedConcepts": ["small_cbet_freq", "check_strategy"]
+    },
+    {
+      "key": "cbet_size_selection",
+      "displayName": "C-bet size selection",
+      "category": "strategy",
+      "shortDef": "Choosing among small (25–33%), medium (50–66%), big (75%+), or overbet (>100%).",
+      "longDef": "Sizing follows from range × board interaction. Small is for high-frequency thin-value plus denial on range-advantaged dry boards. Big/polar is for nut-advantaged, equity-protective spots. Medium sizings exist but are less common in modern solver play. The trap: over-using big sizings on the wrong boards (e.g., overbetting A-high dry where small with high freq is far better).",
+      "examples": [
+        "Small (33%) → A♥K♦5♣, K♥7♣2♠, A♥6♠2♣",
+        "Big (75%+) → some turn polar spots after flop check; rarely on flop in BTN vs BB SRP",
+        "Overbet → mostly turn/river spots"
+      ],
+      "relatedConcepts": ["small_cbet_freq", "polar_big_strategy"]
+    },
+    {
+      "key": "ip_advantage",
+      "displayName": "In-position advantage",
+      "category": "foundation",
+      "shortDef": "Acting last each street is worth real EV — informs c-bet frequency upward.",
+      "longDef": "Position lets the in-position player observe opponent's action before deciding, realize more equity with marginal hands, and apply pressure on later streets without the threat of being raised. The IP player can therefore c-bet more often than an equivalent OOP player would, and can profitably c-bet thinner-value and weaker bluff combinations.",
+      "examples": [
+        "BTN c-bets ~60–75% of flops in SRP vs BB; BB (when it's the preflop raiser, e.g., BB vs BTN limp) c-bets less.",
+        "Position effect compounds across streets — a flop check by IP doesn't lose much because IP can always c-bet later from position."
+      ],
+      "relatedConcepts": ["small_cbet_freq", "equity_realization"]
+    },
+    {
+      "key": "dry_high_card_strategy",
+      "displayName": "Dry high-card strategy",
+      "category": "strategy",
+      "shortDef": "On dry A-high or K-high boards, the preflop raiser bets small with very high frequency.",
+      "longDef": "Dry high-card boards (A-high or K-high, rainbow, disconnected, unpaired) are the textbook small-c-bet board class. The preflop raiser has clear range and nut advantage, the board is static, and there are few draws to charge. Optimal: bet 25–33% with 75–90% of the range.",
+      "examples": [
+        "A♥K♦5♣, A♥7♣2♠, K♥9♦3♠, K♥4♣2♦, A♥T♣4♠"
+      ],
+      "relatedConcepts": ["dry_board", "small_cbet_freq", "range_advantage", "nut_advantage"]
+    },
+    {
+      "key": "low_connected_caution",
+      "displayName": "Low connected caution",
+      "category": "strategy",
+      "shortDef": "On low/middle connected boards, raiser loses range advantage — check often.",
+      "longDef": "Low connected boards (e.g., 8♣7♦5♠, 6♠5♠4♣) shift range advantage toward the caller because the caller's flatting range contains more pairs, two-pair, sets, and straight combos. The preflop raiser should check a significantly higher portion of the range and use polar sizings sparingly when betting. Over-c-betting these boards is a common leak.",
+      "examples": [
+        "BTN vs BB on 8♣7♦5♠: check ~50–60% of range.",
+        "BTN vs BB on 6♠5♠4♣: check ~60–70% of range.",
+        "BTN vs BB on 9♣8♥7♦: check ~40–50%."
+      ],
+      "relatedConcepts": ["check_strategy", "wet_board", "range_advantage"]
+    },
+    {
+      "key": "equity_realization",
+      "displayName": "Equity realization",
+      "category": "foundation",
+      "shortDef": "How much of your raw equity you actually capture given position and strategy.",
+      "longDef": "Position and decision quality both increase realization. A hand with 30% equity at showdown often realizes more than 30% in position because the IP player can fold marginal hands, value-bet thin, and avoid being put to tough decisions. Realization is a key reason the preflop raiser can afford a wider opening range and the IP advantage compounds.",
+      "examples": [
+        "Suited connectors realize much more equity in position than out of position.",
+        "Pocket pairs realize closer to their raw equity in both positions because they often reach showdown easily."
+      ],
+      "relatedConcepts": ["ip_advantage", "check_strategy"]
+    },
+    {
+      "key": "board_texture_recognition",
+      "displayName": "Board texture recognition",
+      "category": "foundation",
+      "shortDef": "Reading the board's high-card class, suit pattern, connectedness, and dynamics quickly.",
+      "longDef": "The fundamental skill that powers every other postflop decision. Without accurate texture recognition, range and nut advantage assessments will be wrong, sizing decisions will be wrong, and frequencies will be wrong. The Board Texture Trainer module is dedicated to this skill in isolation.",
+      "examples": [
+        "A♥K♦5♣ → A-high dry rainbow disconnected static",
+        "J♥T♠9♣ → J-high wet rainbow highly-connected very-dynamic",
+        "K♥K♦7♣ → K-high paired"
+      ],
+      "relatedConcepts": ["range_advantage", "nut_advantage", "dry_board", "wet_board"]
+    },
+    {
+      "key": "paired_board_strategy",
+      "displayName": "Paired board strategy",
+      "category": "strategy",
+      "shortDef": "Paired boards favor the player with more of the paired card; range advantage usually shifts to raiser.",
+      "longDef": "When the flop pairs (e.g., K♥K♦7♣ or 7♠7♣2♦), the player whose preflop range contains more of the paired rank gains nut advantage (more trips combos). High-card pairs (KK_-, AA_-) typically favor the raiser. Low-card pairs (33_-, 44_-) are more neutral or favor the caller. C-bet frequency tends to be high but at modest sizes.",
+      "examples": [
+        "BTN vs BB on K♥K♦7♣: BTN has more K-x → strong c-bet small.",
+        "BTN vs BB on A♥A♦6♠: BTN has more A-x → strong c-bet small.",
+        "BTN vs BB on 5♥5♦9♣: more neutral; both players have small-pair-equivalents."
+      ],
+      "relatedConcepts": ["range_advantage", "small_cbet_freq"]
+    },
+    {
+      "key": "monotone_board_strategy",
+      "displayName": "Monotone board strategy",
+      "category": "strategy",
+      "shortDef": "All three flop cards same suit — the player with more high-suited combos has the edge.",
+      "longDef": "Monotone flops (♥♥♥, ♣♣♣, etc.) require careful range-vs-range analysis. The player who holds more high-suited combos in the suit (typically reflected by their suited-Broadway frequency) holds nut advantage. Sizing tends to be lower and frequency moderate — flushes are already made by some hands, dampening big-bet bluff equity. Often check-heavy or small-bet mixed.",
+      "examples": [
+        "BTN vs BB on A♥9♥4♥: BTN has slight range adv but BB's flatting range contains many suited Broadways with hearts (K♥Q♥, Q♥J♥) — close.",
+        "BTN vs BB on T♥8♥3♥: closer to neutral; BB has many suited connectors."
+      ],
+      "relatedConcepts": ["nut_advantage", "wet_board", "mixed_small_check"]
+    },
+    {
+      "key": "two_tone_board_strategy",
+      "displayName": "Two-tone board strategy",
+      "category": "strategy",
+      "shortDef": "Two cards of one suit; flush draws live and shift sizing toward protection.",
+      "longDef": "Two-tone boards add flush-draw equity to many hands. The preflop raiser usually still bets but at slightly larger sizings to charge draws (50–75% rather than 33%) on boards where both range and nut advantage are clear. On boards where the caller picks up many flush draws (low two-tone), check more.",
+      "examples": [
+        "A♥K♥5♣: BTN has range adv; small or medium bet still optimal but slightly more polarized.",
+        "Q♥J♥6♣: closer to neutral; BB picks up many flush draws.",
+        "8♥7♥3♣: BB has clear edge; check more."
+      ],
+      "relatedConcepts": ["wet_board", "cbet_size_selection"]
+    },
+    {
+      "key": "thin_value_betting",
+      "displayName": "Thin value betting",
+      "category": "intermediate",
+      "shortDef": "Betting marginal made hands for value because worse hands will still call.",
+      "longDef": "When the bettor has a marginal made hand (mid pair, weak top pair) and opponent's range contains many worse hands that will call a small bet, betting thin is +EV. Thin value works best in position with small sizings on dry boards. Checking a thin-value hand back risks giving free cards and missing a bet from worse.",
+      "examples": [
+        "BTN with 99 on K♦9♣4♥ → bet small for value; worse pocket pairs (88, 77) and gutshot/floats call.",
+        "BTN with A8s on A♥7♣2♠ → bet small; A-low, K-high hands call."
+      ],
+      "relatedConcepts": ["small_cbet_freq", "ip_advantage"]
+    },
+    {
+      "key": "semi_bluff_with_equity",
+      "displayName": "Semi-bluff with equity",
+      "category": "intermediate",
+      "shortDef": "Betting a draw or weak hand that has meaningful equity if called.",
+      "longDef": "A semi-bluff combines fold equity (opponent folds better) with showdown equity (you win sometimes when called). Combo draws (open-ended + flush draw) and overcards-with-backdoor are prime semi-bluff candidates. On wet boards, semi-bluffs are essential to balance the value range when betting big.",
+      "examples": [
+        "BTN with KhQh on AhJh3s → bet big as semi-bluff; flush draw + overcard + gutshot.",
+        "BTN with 76s on 854 rainbow → semi-bluff with combo draw."
+      ],
+      "relatedConcepts": ["polar_big_strategy", "wet_board"]
+    },
+    {
+      "key": "protection_betting",
+      "displayName": "Protection betting",
+      "category": "intermediate",
+      "shortDef": "Betting a vulnerable made hand to deny equity to live overcards / draws.",
+      "longDef": "Protection bets are common with hands like middle pairs, weak top pair, or overpairs on dynamic boards. The bet's EV comes from preventing free cards that would erode the hand's equity. Different from thin value (which targets calls from worse) — protection targets folds from live drawing hands.",
+      "examples": [
+        "BTN with TT on Q♣8♦5♠ → bet to protect against AK, KJ, J9 etc.",
+        "BTN with KK on T♥9♦7♣ → bet to deny equity to many overcards and straight draws."
+      ],
+      "relatedConcepts": ["dynamic_board", "cbet_size_selection"]
+    },
+    {
+      "key": "common_leaks",
+      "displayName": "Common postflop leaks",
+      "category": "meta",
+      "shortDef": "Recurring strategic mistakes the trainer flags as critical.",
+      "longDef": "A meta-tag for scenarios that highlight known leaks: overbet on dry A-high (instead of small high-freq), c-bet too often on low connected boards, fail to check polar nut hands when board favors that line, mis-classify range/nut advantage on monotone boards, etc. Use this tag on scenarios designed specifically to test for these leaks.",
+      "examples": [
+        "Polar overbet on A♥K♦5♣ → critical leak.",
+        "Bet 75% on 6♠5♠4♣ as BTN → critical leak.",
+        "Open-folding 76s preflop on BTN → critical leak (preflop)."
+      ],
+      "relatedConcepts": ["polar_big_strategy", "low_connected_caution", "dry_high_card_strategy"]
+    }
+  ]
+}

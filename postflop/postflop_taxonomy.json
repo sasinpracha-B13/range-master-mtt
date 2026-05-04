@@ -1,0 +1,227 @@
+{
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-05-04",
+  "description": "Enums and structured vocabulary for post-flop board taxonomy. Source of truth for audit rule R09, R10, R13.",
+
+  "highCardClass": [
+    "A_high",
+    "K_high",
+    "Q_high",
+    "J_high",
+    "T_high",
+    "low"
+  ],
+
+  "textureTags": [
+    "dry",
+    "semi_dry",
+    "wet",
+    "very_wet",
+    "connected",
+    "semi_connected",
+    "disconnected",
+    "highly_connected",
+    "paired",
+    "trips_possible",
+    "monotone",
+    "two_tone",
+    "rainbow",
+    "straightening",
+    "flushing",
+    "broadway_heavy",
+    "low_heavy",
+    "middle_heavy",
+    "ace_high_dry",
+    "ace_high_wet",
+    "low_connected",
+    "low_disconnected",
+    "broadway_dry",
+    "broadway_wet",
+    "high_card_dominant",
+    "set_heavy_for_caller",
+    "two_pair_heavy_for_caller",
+    "overpair_heavy_for_raiser"
+  ],
+
+  "suitTexture": [
+    "rainbow",
+    "two_tone",
+    "monotone"
+  ],
+
+  "connectedness": [
+    "disconnected",
+    "semi_connected",
+    "connected",
+    "highly_connected"
+  ],
+
+  "pairedStatus": [
+    "unpaired",
+    "paired",
+    "trips"
+  ],
+
+  "dynamicLevel": {
+    "1": "static",
+    "2": "semi_static",
+    "3": "dynamic",
+    "4": "very_dynamic"
+  },
+
+  "rangeAdvantage": [
+    "preflop_raiser",
+    "caller",
+    "neutral",
+    "split"
+  ],
+
+  "nutAdvantage": [
+    "preflop_raiser",
+    "caller",
+    "neutral",
+    "split"
+  ],
+
+  "sizingFamily": [
+    "range_small",
+    "mixed_small_check",
+    "polar_big",
+    "check_heavy",
+    "low_frequency"
+  ],
+
+  "potType": [
+    "SRP",
+    "3BP",
+    "4BP",
+    "limped"
+  ],
+
+  "street": [
+    "flop",
+    "turn",
+    "river"
+  ],
+
+  "position": [
+    "SB",
+    "BB",
+    "UTG",
+    "UTG1",
+    "LJ",
+    "HJ",
+    "CO",
+    "BTN"
+  ],
+
+  "actionMenuByModule": {
+    "pf_board_texture": {
+      "range_advantage":     ["preflop_raiser", "caller", "neutral", "split"],
+      "nut_advantage":       ["preflop_raiser", "caller", "neutral", "split"],
+      "dynamic_level":       ["static", "semi_static", "dynamic", "very_dynamic"],
+      "frequency_strategy":  ["range_small", "mixed_small_check", "polar_big", "check_heavy", "low_frequency"],
+      "sizing_family":       ["range_small", "mixed_small_check", "polar_big", "check_heavy", "low_frequency"]
+    },
+    "pf_flop_cbet_ip": {
+      "action_choice":       ["check", "bet_33", "bet_75"]
+    },
+    "pf_bb_def_vs_cbet": {
+      "action_choice":       ["fold", "call", "raise"]
+    }
+  },
+
+  "contradictoryPairs": [
+    ["monotone", "rainbow"],
+    ["monotone", "two_tone"],
+    ["rainbow", "two_tone"],
+    ["paired", "trips"],
+    ["dry", "wet"],
+    ["dry", "very_wet"],
+    ["disconnected", "highly_connected"],
+    ["disconnected", "connected"],
+    ["broadway_heavy", "low_heavy"],
+    ["broadway_dry", "broadway_wet"],
+    ["ace_high_dry", "ace_high_wet"],
+    ["low_connected", "low_disconnected"]
+  ],
+
+  "highCardDerivation": {
+    "_comment": "Mechanically derived from board cards; audit rule R02 verifies highCardClass matches highest rank on board",
+    "A": "A_high",
+    "K": "K_high",
+    "Q": "Q_high",
+    "J": "J_high",
+    "T": "T_high",
+    "9": "low",
+    "8": "low",
+    "7": "low",
+    "6": "low",
+    "5": "low",
+    "4": "low",
+    "3": "low",
+    "2": "low"
+  },
+
+  "validRanks": ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"],
+
+  "validSuits": ["s", "h", "d", "c"],
+
+  "sourceConfidenceLevels": [
+    "consensus_gto",
+    "solver_verified",
+    "expert_judgment",
+    "community_consensus",
+    "experimental"
+  ],
+
+  "auditStatusValues": [
+    "draft",
+    "needs_review",
+    "approved",
+    "deprecated"
+  ],
+
+  "difficultyRange": {
+    "min": 1,
+    "max": 5,
+    "labels": {
+      "1": "foundation",
+      "2": "intermediate",
+      "3": "solid",
+      "4": "advanced",
+      "5": "expert"
+    }
+  },
+
+  "scoringTiers": {
+    "best":       { "value": 1.0,  "fixed": true },
+    "acceptable": { "value": null, "allowed": [0.25, 0.5, 0.75] },
+    "bad":        { "value": 0,    "fixed": true },
+    "critical":   { "value": 0,    "fixed": true, "flag": true }
+  },
+
+  "modules": {
+    "pf_board_texture": {
+      "displayName": "Board Texture Trainer",
+      "shortDesc":   "Read the board before any action — range adv, nut adv, dynamic vs static, sizing family.",
+      "v": "v4.0.0",
+      "supportedQuestionTypes": ["range_advantage", "nut_advantage", "dynamic_level", "frequency_strategy", "sizing_family"]
+    },
+    "pf_flop_cbet_ip": {
+      "displayName": "Flop C-bet IP",
+      "shortDesc":   "BTN open vs BB call, 100BB SRP, flop only. Choose check / bet 33% / bet 75%.",
+      "spot":        "BTN_open_2.5x_BB_call",
+      "v": "v4.0.0",
+      "supportedQuestionTypes": ["action_choice"]
+    },
+    "pf_bb_def_vs_cbet": {
+      "displayName": "BB Defense vs C-bet",
+      "shortDesc":   "(planned v4.1) BB facing BTN c-bet on the flop.",
+      "spot":        "BTN_open_2.5x_BB_call",
+      "v": "v4.1.0_planned",
+      "supportedQuestionTypes": ["action_choice"]
+    }
+  }
+}

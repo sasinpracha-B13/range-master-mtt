@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Postflop Audit Tool — Range Master MTT</title>
+<style>
+  :root {
+    --bg: #0a0e16;
+    --surface: #131826;
+    --surface-2: #1a2030;
+    --border: rgba(255,255,255,0.10);
+    --text: #e7eaf3;
+    --text-secondary: #98a2b3;
+    --mint: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --purple: #a855f7;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.45;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  h2 { font-size: 16px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); margin: 24px 0 12px; }
+  h3 { font-size: 14px; margin: 16px 0 8px; color: var(--mint); }
+  .subtitle { color: var(--text-secondary); font-size: 13px; margin: 0 0 24px; }
+
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .btn {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 150ms ease;
+  }
+  .btn:hover { background: var(--surface-2); border-color: var(--blue); }
+  .btn.primary { background: var(--mint); color: black; border-color: var(--mint); }
+  .btn.primary:hover { background: #6df09c; }
+  .btn.warn { color: var(--amber); }
+  .btn.danger { color: var(--red); }
+
+  .status-banner {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  .status-banner.ok { background: rgba(74,222,128,0.10); border: 1px solid var(--mint); color: var(--mint); }
+  .status-banner.fail { background: rgba(248,113,113,0.10); border: 1px solid var(--red); color: var(--red); }
+  .status-banner.warn { background: rgba(251,191,36,0.10); border: 1px solid var(--amber); color: var(--amber); }
+  .status-banner.idle { background: var(--surface); border: 1px solid var(--border); color: var(--text-secondary); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .stat-card .label { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; }
+  .stat-card .value { font-size: 26px; font-weight: 800; }
+  .stat-card .value.ok { color: var(--mint); }
+  .stat-card .value.fail { color: var(--red); }
+  .stat-card .value.warn { color: var(--amber); }
+
+  .table {
+    width: 100%; border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .table th, .table td {
+    padding: 10px 12px; text-align: left; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table th { background: var(--surface-2); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); }
+  .table tr:last-child td { border-bottom: none; }
+  .table .num { font-family: 'JetBrains Mono', monospace; text-align: right; }
+
+  .issue-row { padding: 10px 14px; margin-bottom: 6px; border-radius: 6px; font-size: 13px; }
+  .issue-row.error   { background: rgba(248,113,113,0.10); border-left: 3px solid var(--red); }
+  .issue-row.warning { background: rgba(251,191,36,0.10); border-left: 3px solid var(--amber); }
+  .issue-row .rule-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; background: rgba(0,0,0,0.3); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-right: 8px; font-weight: 700; }
+  .issue-row .scenario-id { color: var(--blue); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  .scenario-card {
+    padding: 14px; margin-bottom: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .scenario-card.has-error { border-left: 3px solid var(--red); }
+  .scenario-card.has-warn { border-left: 3px solid var(--amber); }
+  .scenario-card.clean { border-left: 3px solid var(--mint); }
+  .scenario-card .id { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--blue); }
+  .scenario-card .meta { font-size: 12px; color: var(--text-secondary); margin: 4px 0 8px; }
+  .scenario-card .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge.module    { background: rgba(96,165,250,0.20); color: var(--blue); }
+  .badge.diff      { background: rgba(168,85,247,0.20); color: var(--purple); }
+  .badge.status    { background: rgba(74,222,128,0.20); color: var(--mint); }
+  .badge.status.draft { background: rgba(251,191,36,0.20); color: var(--amber); }
+  .badge.status.deprecated { background: rgba(248,113,113,0.20); color: var(--red); }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .filter-bar input { padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 6px; font-size: 13px; flex: 1; }
+  .filter-bar select { padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 6px; font-size: 13px; }
+
+  .empty-state { padding: 40px; text-align: center; color: var(--text-secondary); }
+
+  .source-info {
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  details { margin: 8px 0; }
+  summary { cursor: pointer; padding: 8px; background: var(--surface-2); border-radius: 6px; font-weight: 600; font-size: 13px; }
+  summary:hover { background: rgba(255,255,255,0.05); }
+  details[open] summary { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Postflop Scenario Audit</h1>
+  <p class="subtitle">Self-contained browser audit tool. Loads scenarios + taxonomy + concepts via fetch (works under any local server) or via file picker (works on file://).</p>
+
+  <div class="controls">
+    <button class="btn primary" id="btnAutoLoad">Auto-load &amp; Audit</button>
+    <button class="btn" id="btnFileLoad">Load Files Manually…</button>
+    <input type="file" id="filePicker" multiple accept=".json" style="display:none">
+    <button class="btn" id="btnExportJson">Export JSON Report</button>
+    <button class="btn" id="btnExportMd">Export Markdown Report</button>
+  </div>
+
+  <div class="status-banner idle" id="statusBanner">No audit run yet. Click <strong>Auto-load &amp; Audit</strong> to begin.</div>
+
+  <div id="sourceInfo" class="source-info" style="display:none"></div>
+
+  <h2>Aggregate stats</h2>
+  <div class="stat-grid" id="statGrid"></div>
+
+  <h2>Distribution tables</h2>
+  <div id="distributions"></div>
+
+  <h2>Issues</h2>
+  <div class="filter-bar">
+    <input type="text" id="filterText" placeholder="Filter by id / message / rule…">
+    <select id="filterSeverity">
+      <option value="">All severities</option>
+      <option value="error">Errors only</option>
+      <option value="warning">Warnings only</option>
+    </select>
+  </div>
+  <div id="issueList"></div>
+
+  <h2>Per-scenario detail</h2>
+  <div id="scenarioList"></div>
+</div>
+
+<!-- Audit rules -->
+<script src="postflop_audit_rules.js"></script>
+
+<script>
+let lastReport = null;
+let lastData = null;
+let lastTaxonomy = null;
+let lastConcepts = null;
+
+// ============================================================
+// LOADERS
+// ============================================================
+
+async function autoLoad() {
+  setBanner('idle', 'Loading via fetch…');
+  try {
+    const [data, taxonomy, concepts] = await Promise.all([
+      fetch('postflop_scenarios.json').then(r => r.json()),
+      fetch('postflop_taxonomy.json').then(r => r.json()),
+      fetch('postflop_concepts.json').then(r => r.json())
+    ]);
+    runReport(data, taxonomy, concepts, 'fetch');
+  } catch (e) {
+    setBanner('fail',
+      'Auto-load failed (likely opened via file://). Use <strong>Load Files Manually</strong> ' +
+      'to pick the 3 JSON files, or open this page through a local server. Error: ' + e.message);
+  }
+}
+
+function manualLoad() {
+  document.getElementById('filePicker').click();
+}
+
+document.getElementById('filePicker').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  setBanner('idle', `Reading ${files.length} file(s)…`);
+  let data = null, taxonomy = null, concepts = null;
+  for (const f of files) {
+    try {
+      const txt = await f.text();
+      const parsed = JSON.parse(txt);
+      if (f.name.includes('scenario')) data = parsed;
+      else if (f.name.includes('taxonomy')) taxonomy = parsed;
+      else if (f.name.includes('concept')) concepts = parsed;
+    } catch (err) {
+      setBanner('fail', `Could not parse ${f.name}: ${err.message}`);
+      return;
+    }
+  }
+  if (!data || !taxonomy || !concepts) {
+    setBanner('fail', 'Need all three files: postflop_scenarios.json, postflop_taxonomy.json, postflop_concepts.json');
+    return;
+  }
+  runReport(data, taxonomy, concepts, 'file picker');
+});
+
+document.getElementById('btnAutoLoad').addEventListener('click', autoLoad);
+document.getElementById('btnFileLoad').addEventListener('click', manualLoad);
+
+// ============================================================
+// RUN AUDIT
+// ============================================================
+
+function runReport(data, taxonomy, concepts, sourceLabel) {
+  lastData = data; lastTaxonomy = taxonomy; lastConcepts = concepts;
+  const report = window.PostflopAudit.runAudit(data, taxonomy, concepts);
+  lastReport = report;
+
+  // Banner
+  if (report.stats.errorCount === 0) {
+    setBanner('ok', `✅ AUDIT PASSED — ${report.totalScenarios} scenarios, ${report.stats.warningCount} warning(s), 0 errors.`);
+  } else {
+    setBanner('fail', `❌ AUDIT FAILED — ${report.totalScenarios} scenarios, ${report.stats.errorCount} error(s), ${report.stats.warningCount} warning(s).`);
+  }
+
+  // Source info
+  document.getElementById('sourceInfo').style.display = 'block';
+  document.getElementById('sourceInfo').innerHTML =
+    `Loaded via <strong>${sourceLabel}</strong> · ` +
+    `schemaVersion: <strong>${report.schemaVersion}</strong> · ` +
+    `taxonomy.version: <strong>${taxonomy.version}</strong> · ` +
+    `concepts.version: <strong>${concepts.version}</strong> · ` +
+    `generatedAt: <strong>${report.generatedAt}</strong>`;
+
+  renderStats(report);
+  renderDistributions(report);
+  renderIssues(report);
+  renderScenarios(report);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+
+function setBanner(cls, html) {
+  const el = document.getElementById('statusBanner');
+  el.className = 'status-banner ' + cls;
+  el.innerHTML = html;
+}
+
+function renderStats(r) {
+  const g = document.getElementById('statGrid');
+  const st = r.stats;
+  const cards = [
+    { label: 'Total scenarios', value: r.totalScenarios, cls: '' },
+    { label: 'Pass (no errors)', value: st.passCount, cls: 'ok' },
+    { label: 'Fail (≥1 error)', value: st.failCount, cls: st.failCount ? 'fail' : '' },
+    { label: 'Warnings', value: st.warningCount, cls: st.warningCount ? 'warn' : '' },
+    { label: 'Errors', value: st.errorCount, cls: st.errorCount ? 'fail' : 'ok' },
+    { label: 'Approved', value: st.approvedCount, cls: 'ok' },
+    { label: 'Drafts', value: st.draftCount, cls: '' }
+  ];
+  g.innerHTML = cards.map(c =>
+    `<div class="stat-card"><div class="label">${c.label}</div><div class="value ${c.cls}">${c.value}</div></div>`
+  ).join('');
+}
+
+function renderDistributions(r) {
+  const c = document.getElementById('distributions');
+  const st = r.stats;
+
+  function table(title, obj) {
+    const rows = Object.entries(obj).sort((a,b) => b[1] - a[1])
+      .map(([k,v]) => `<tr><td>${k}</td><td class="num">${v}</td></tr>`).join('');
+    return `<h3>${title}</h3><table class="table"><thead><tr><th>Value</th><th class="num">Count</th></tr></thead><tbody>${rows || '<tr><td colspan="2" class="empty-state">No data</td></tr>'}</tbody></table>`;
+  }
+
+  let html = '';
+  html += table('By module', st.byModule);
+  html += table('By difficulty', st.byDifficulty);
+  html += table('By high-card class', st.byHighCardClass);
+  html += table('By suit texture', st.bySuitTexture);
+  html += table('By range advantage', st.byRangeAdvantage);
+  html += table('By nut advantage', st.byNutAdvantage);
+  html += table('By audit status', st.byAuditStatus);
+  html += table('By source confidence', st.bySourceConfidence);
+
+  // Concept coverage
+  const ccRows = Object.entries(st.conceptCoverage).sort((a,b) => b[1] - a[1])
+    .map(([k,v]) => `<tr><td>${k}</td><td class="num">${v}</td></tr>`).join('');
+  html += `<h3>Concept coverage</h3>` +
+    `<details><summary>Show all (${Object.keys(st.conceptCoverage).length} concepts)</summary>` +
+    `<table class="table"><thead><tr><th>Concept</th><th class="num">Scenarios</th></tr></thead><tbody>${ccRows}</tbody></table></details>`;
+
+  if (st.conceptCoverageStarved.length > 0) {
+    html += `<h3 style="color:var(--amber)">⚠ Starved concepts (&lt; 3 scenarios) — ${st.conceptCoverageStarved.length}</h3>`;
+    html += `<table class="table"><thead><tr><th>Concept</th><th class="num">Count</th></tr></thead><tbody>` +
+      st.conceptCoverageStarved.map(x => `<tr><td>${x.tag}</td><td class="num">${x.count}</td></tr>`).join('') +
+      `</tbody></table>`;
+  }
+
+  c.innerHTML = html;
+}
+
+function renderIssues(r) {
+  const ft = document.getElementById('filterText').value.trim().toLowerCase();
+  const fs = document.getElementById('filterSeverity').value;
+  const list = document.getElementById('issueList');
+  let issues = r.issues;
+  if (fs) issues = issues.filter(i => i.severity === fs);
+  if (ft) issues = issues.filter(i =>
+    (i.scenarioId || '').toLowerCase().includes(ft) ||
+    (i.message || '').toLowerCase().includes(ft) ||
+    (i.rule || '').toLowerCase().includes(ft)
+  );
+  if (issues.length === 0) {
+    list.innerHTML = `<div class="empty-state">No issues match current filter.</div>`;
+    return;
+  }
+  list.innerHTML = issues.map(i =>
+    `<div class="issue-row ${i.severity}">
+      <span class="rule-tag">${i.rule}</span>
+      <span class="scenario-id">${i.scenarioId || '<unknown>'}</span><br>
+      ${escape(i.message)}
+    </div>`
+  ).join('');
+}
+
+function renderScenarios(r) {
+  const list = document.getElementById('scenarioList');
+  const html = (lastData.scenarios || []).map(s => {
+    const issues = r.perScenario[s.id] || [];
+    const errors = issues.filter(i => i.severity === 'error');
+    const warns = issues.filter(i => i.severity === 'warning');
+    const cls = errors.length ? 'has-error' : (warns.length ? 'has-warn' : 'clean');
+    const issueHtml = issues.length > 0
+      ? issues.map(i => `<div class="issue-row ${i.severity}"><span class="rule-tag">${i.rule}</span> ${escape(i.message)}</div>`).join('')
+      : '<div style="color:var(--mint); font-size:12px;">✓ No issues</div>';
+    return `<div class="scenario-card ${cls}">
+      <div class="id">${s.id}</div>
+      <div class="meta">${s.module} · ${s.street} · ${s.board ? s.board.cards.join(' ') : '?'} · ${s.question ? s.question.type : '?'}</div>
+      <div class="badges">
+        <span class="badge module">${s.module || '?'}</span>
+        <span class="badge diff">DIFF ${s.difficulty || '?'}</span>
+        <span class="badge status ${s.auditStatus || ''}">${s.auditStatus || '?'}</span>
+      </div>
+      ${issueHtml}
+    </div>`;
+  }).join('');
+  list.innerHTML = html;
+}
+
+function escape(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Filter listeners
+['filterText','filterSeverity'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => { if (lastReport) renderIssues(lastReport); });
+});
+
+// ============================================================
+// EXPORT
+// ============================================================
+
+document.getElementById('btnExportJson').addEventListener('click', () => {
+  if (!lastReport) { alert('Run audit first.'); return; }
+  download('postflop-audit-report.json', JSON.stringify(lastReport, null, 2), 'application/json');
+});
+
+document.getElementById('btnExportMd').addEventListener('click', () => {
+  if (!lastReport) { alert('Run audit first.'); return; }
+  download('postflop-audit-report.md', toMarkdown(lastReport), 'text/markdown');
+});
+
+function download(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function toMarkdown(r) {
+  const st = r.stats;
+  let md = `# Postflop Audit Report\n\n`;
+  md += `- **Schema version**: ${r.schemaVersion}\n`;
+  md += `- **Generated**: ${r.generatedAt}\n`;
+  md += `- **Total scenarios**: ${r.totalScenarios}\n`;
+  md += `- **Errors**: ${st.errorCount}\n`;
+  md += `- **Warnings**: ${st.warningCount}\n`;
+  md += `- **Passing**: ${st.passCount} / ${r.totalScenarios}\n\n`;
+
+  md += `## Distribution\n\n`;
+  md += `### By module\n${objToMd(st.byModule)}\n\n`;
+  md += `### By difficulty\n${objToMd(st.byDifficulty)}\n\n`;
+  md += `### By high-card class\n${objToMd(st.byHighCardClass)}\n\n`;
+  md += `### By suit texture\n${objToMd(st.bySuitTexture)}\n\n`;
+  md += `### By range advantage\n${objToMd(st.byRangeAdvantage)}\n\n`;
+  md += `### By nut advantage\n${objToMd(st.byNutAdvantage)}\n\n`;
+  md += `### By audit status\n${objToMd(st.byAuditStatus)}\n\n`;
+  md += `### By source confidence\n${objToMd(st.bySourceConfidence)}\n\n`;
+
+  if (st.conceptCoverageStarved.length) {
+    md += `## Starved concepts (< 3 scenarios)\n\n`;
+    for (const c of st.conceptCoverageStarved) md += `- \`${c.tag}\`: ${c.count}\n`;
+    md += `\n`;
+  }
+
+  if (r.issues.length === 0) {
+    md += `## ✅ Issues — none\n\nAll scenarios pass.\n`;
+  } else {
+    md += `## Issues (${r.issues.length})\n\n`;
+    for (const i of r.issues) {
+      md += `- **${i.rule}** [${i.severity}] \`${i.scenarioId}\` — ${i.message}\n`;
+    }
+  }
+  return md;
+}
+
+function objToMd(obj) {
+  return Object.entries(obj).sort((a,b) => b[1]-a[1])
+    .map(([k,v]) => `- \`${k}\`: ${v}`).join('\n') || '_(none)_';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+# Project State — Range Master MTT
+
+> **READ THIS FIRST** before doing any work in this repo.
+> Subagents: this file is your single source of truth for project context, current scope, and what is/is not allowed.
+> Last updated: 2026-05-04
+
+---
+
+## 1. Current Version
+
+- **Latest shipped (deployed to Netlify)**: `v3.8.2` — Viewport-Dominant Field FX (full-screen canvas, 5 animated layers).
+- **Pending review (NOT shipped, NOT committed)**: `v4.0.0` Post-flop GTO Foundation Architecture — planning package only. Lives in `postflop/`. Awaiting human approval before commit.
+- **Service worker `VERSION`**: `'v3.8.2'` (in `service-worker.js`).
+- **App backup `appVersion`**: `'3.8.2'` (in `index.html`).
+
+> ⚠️ Do not bump these versions until v4.0.0 implementation actually ships.
+
+---
+
+## 2. Current App Summary
+
+The shipped app (`v3.8.2`) is a single-file PWA poker training tool focused on **MTT preflop** decisions. Capabilities:
+
+- **Preflop drill engine** — quick / deep / weakness / challenge / overall_exam / marginal modes
+- **Boss tests** + **Overall exams** + **Mission system** + **Challenges**
+- **XP / Chips / Levels / Rank progression**
+- **Wardrobe** cosmetic system (trainer character outfit)
+- **Boss / Achievement / Rank / Source rewards** with reveal ceremonies
+- **Collection Book** (long-term cosmetic progression with milestone rewards — v3.7.0)
+- **Answer FX** + **Field FX** (per-pack themed atmosphere across drill flow — v3.8.0–v3.8.2)
+- **Aura system** (cosmetic effect rendered around trainer character — v3.6.0)
+- **SRS** (spaced repetition per hand) + **stats breakdown**
+- **Settings** (FX intensity, reduced motion, exports/imports)
+
+**Not yet built**:
+- ❌ Post-flop training (in planning — see Active Epic).
+- ❌ ICM-aware ranges.
+- ❌ Multi-language UI.
+- ❌ Cloud sync / accounts.
+
+---
+
+## 3. Current Active Epic
+
+**v4.0.0 — Post-flop GTO Foundation Architecture**
+
+A new training domain (sibling to preflop) for No Limit Hold'em MTT post-flop decisions. The first round is a **planning / data / audit package only** — no production integration in v4.0.0.
+
+The epic is tracked in `TASK_BOARD.md`.
+
+---
+
+## 4. Current Execution Gate
+
+**Round 1 (v4.0.0 planning) — what was authorized:**
+
+1. Architecture proposal
+2. Strict scenario schema
+3. Board / suit / dynamic / advantage / sizing taxonomy
+4. Concept taxonomy (with definitions + cross-refs)
+5. 20–40 hand-authored sample scenarios
+6. Audit script (17 rules) + browser audit viewer
+7. Human-readable audit report
+8. Risks & mitigations register
+
+**Round 1 — what is NOT authorized:**
+
+- ❌ Full drill engine integration in `index.html`
+- ❌ Postflop boss/mission/challenge/reward integration
+- ❌ Cosmetic rewards for postflop modules
+- ❌ FX / Aura / Collection extensions for postflop
+- ❌ Service worker version bump
+- ❌ Modifying preflop ranges, scoring, SRS, or any existing reward logic
+
+The gate stays closed until human review approves the planning package.
+
+---
+
+## 5. Latest Completed Work
+
+### v4.0.0 Postflop Planning Package — staged in `postflop/`, not committed
+
+| File | Purpose | Status |
+|---|---|---|
+| `postflop/ARCHITECTURE.md` | Full architecture proposal + module plan + integration map | ✅ Done |
+| `postflop/postflop_schema.md` | Strict schema spec + scoring + UI plan | ✅ Done |
+| `postflop/postflop_taxonomy.json` | Board / suit / dynamic / advantage / sizing enums | ✅ Done |
+| `postflop/postflop_concepts.json` | 24 concepts with short + long defs + cross-refs | ✅ Done |
+| `postflop/postflop_scenarios.json` | 31 audited seed scenarios (20 Module 1 + 11 Module 2) | ✅ Done |
+| `postflop/postflop_audit_rules.js` | 17 audit rules as pure JS functions | ✅ Done |
+| `postflop/postflop_audit.html` | Self-contained browser audit viewer | ✅ Done |
+| `postflop/audit-report-sample.md` | Example audit output | ✅ Done |
+| `postflop/RISKS.md` | 13 risks rated by severity + mitigations | ✅ Done |
+
+**Audit result on the seed dataset**: `31 scenarios · 0 errors · 0 warnings · 31 approved` (after fixing 2 misuses of textureTags as conceptTags during the run).
+
+### Recent shipped versions (latest 5)
+
+- `v3.8.2` — Viewport-Dominant Field FX (canvas with 5 animated layers)
+- `v3.8.1` — Anime Battle Field FX (intensity surge + page shake)
+- `v3.8.0` — Field FX pivot + lifecycle bug fix
+- `v3.7.4` — Aura Identity + Premium Hierarchy + 3 new auras
+- `v3.7.3` — Anime FX + Premium Hierarchy
+
+---
+
+## 6. Hard Guardrails
+
+The following surfaces require explicit per-task approval to modify. **Subagents cannot touch them on their own initiative.**
+
+| Surface | File / Concept | Why locked |
+|---|---|---|
+| Preflop ranges | `ranges.json` | Source of truth for the entire preflop trainer; any change cascades through SRS and stats |
+| Scoring formula | `classifyAnswer()` in `index.html` (line ~11219) | Touches every drill answer; regression risk to thousands of stored SRS entries |
+| SRS state | `getSRSKey()` + `updateSRS()` in `index.html` (line ~12584) | Player-progress data; backward compat critical |
+| Cooldowns | Boss-fail cooldowns in `index.html` (line ~28405) | Anti-grind rule that gates progression |
+| Rank progression | Rank/Level XP curves | Player progression curve already tuned |
+| Chips formula | Chip grant logic in `index.html` (~line 12267 area) | Economy balance |
+| Existing reward grant | `_grantCosmeticByKey()` and surrounding hooks | Cosmetic ownership integrity |
+| Cosmetic ownership | `App.state.profile.owned*` arrays | Player inventory; corruption is irreversible |
+| Production UI shell | `index.html`, `service-worker.js` | Single-file PWA; one bad edit breaks the live deploy |
+| Manifest / PWA | `manifest.json`, icon files | PWA install behavior |
+
+**Rule**: any task touching the above must explicitly cite the surface in its scope and pass through Orchestrator before a subagent edits it.
+
+---
+
+## 7. File Ownership Rules
+
+- Every subagent has an explicit **allowed file pattern** (declared in `AGENTS.md`).
+- A subagent that needs to edit a file outside its pattern must **stop and request Orchestrator escalation**.
+- **No subagent except DEV Integration Agent may edit `index.html` or `service-worker.js`**, and only when Orchestrator has assigned a controlled implementation task with explicit scope.
+- Multiple subagents may edit different files in parallel as long as their patterns don't overlap.
+- Orchestrator is the only role that may edit `PROJECT_STATE.md`, `AGENTS.md`, `TASK_BOARD.md`.
+
+---
+
+## 8. Open Questions (carried forward, awaiting human input)
+
+Tagged from `postflop/postflop_schema.md` "Open questions for review":
+
+1. **Acceptable-score granularity** — locked to `{0.25, 0.5, 0.75}`, or allow any value in `[0, 1]`?
+2. **Critical-flag UI** — flag-only in stats, or block progression / force review?
+3. **ICM in v4.0** — confirm out-of-scope (chipEV-only foundation)?
+4. **Hand-class enum location** — separate file, or stays inside `postflop_concepts.json`?
+5. **`mixing` block format** — is `{ choiceId: freq }` enough, or richer `{ freq, ev }` per choice?
+
+Plus, before commit:
+
+6. **Spot-check of 3–5 sample scenarios** by a human reviewer.
+7. **Approval to commit** the v4.0.0 planning package.
+
+---
+
+## 9. Next Recommended Step
+
+1. ✅ Create the workflow files (this round — done).
+2. ⏸️ Human review of `postflop/ARCHITECTURE.md` + 3–5 sample scenarios + `RISKS.md`.
+3. ⏸️ Resolve the 5 open questions above (or defer with explicit notes).
+4. ⏸️ Approval gate → if approved, Orchestrator commits the v4.0.0 planning package.
+5. ⏸️ Begin v4.0.1 (schema loader + audit gate in app, no UI yet) — this WILL touch `index.html`, requires DEV Integration Agent.
+
+---
+
+**Maintained by**: Orchestrator Agent. Update on every state change. Do not delete entries — annotate with status.
