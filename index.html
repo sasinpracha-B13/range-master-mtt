@@ -9803,6 +9803,384 @@
     .test-hist-row .th-name small { color: var(--text-secondary); font-weight: 400; }
     .test-hist-row .th-acc { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); font-size: 13px; }
     .test-hist-row .th-date { font-size: 10px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+
+    /* ========================================================================
+       v4.0.2 — POSTFLOP MODULE 1 (Board Texture Trainer) UI
+       Beta-gated, mobile-first, analytical surface (no FX bleed).
+       All classes prefixed `postflop-` to avoid collision with existing styles.
+       ======================================================================== */
+
+    /* Field FX suppression while postflop is active.
+       Postflop is an analytical trainer; the body-level field-fx-canvas should
+       not paint behind it. Toggle via body[data-postflop-active="true"]. */
+    body[data-postflop-active="true"] .field-fx-canvas { display: none !important; }
+
+    /* ----- Home tab entry card ----- */
+    .postflop-home-card {
+      margin-top: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.06) 0%, var(--surface) 100%);
+      border: 1px solid rgba(168,85,247,0.30);
+      border-radius: 12px;
+    }
+    .postflop-home-card .postflop-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      background: rgba(168,85,247,0.20);
+      color: #a855f7;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .postflop-home-card .postflop-module-tag {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .postflop-home-card .postflop-module-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .postflop-home-card .postflop-module-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .postflop-home-card .postflop-module-stats {
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .postflop-home-card .postflop-start-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--mint);
+      color: #0a0e16;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .postflop-home-card .postflop-start-btn:hover { background: #6df09c; }
+    .postflop-home-card .postflop-start-btn:active { transform: scale(0.98); }
+    .postflop-home-card.postflop-disabled {
+      opacity: 0.6;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 12px 16px;
+    }
+
+    /* ----- Question screen layout ----- */
+    .postflop-context-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .postflop-context-bar .postflop-context-label { font-weight: 600; }
+    .postflop-context-bar .postflop-exit-btn {
+      background: rgba(248,113,113,0.10);
+      border: 1px solid rgba(248,113,113,0.30);
+      color: #f87171;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .postflop-progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .postflop-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      transition: width 200ms ease;
+    }
+
+    .postflop-spot-card,
+    .postflop-question-card,
+    .postflop-feedback-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .postflop-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .postflop-spot-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .postflop-spot-tag {
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .postflop-spot-tag.tag-stack { background: rgba(74,222,128,0.15); color: #4ade80; }
+    .postflop-spot-tag.tag-action { background: rgba(96,165,250,0.15); color: #60a5fa; }
+    .postflop-spot-tag.tag-pos { background: rgba(251,146,60,0.15); color: #fb923c; }
+    .postflop-spot-hero { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+
+    /* Board cards — visual focal point */
+    .postflop-board-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 14px 0 4px;
+    }
+    .postflop-board-card {
+      width: 56px;
+      height: 80px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .postflop-board-card.suit-h, .postflop-board-card.suit-d { color: #dc2626; }
+    .postflop-board-card .pf-rank { font-size: 24px; line-height: 1; }
+    .postflop-board-card .pf-suit { font-size: 22px; line-height: 1; margin-top: 2px; }
+
+    .postflop-question-prompt {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Choice buttons */
+    .postflop-choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .postflop-choice-btn {
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 150ms ease;
+      font-family: inherit;
+    }
+    .postflop-choice-btn:hover {
+      border-color: var(--mint);
+      background: rgba(74,222,128,0.06);
+    }
+    .postflop-choice-btn:active { transform: scale(0.98); }
+    .postflop-choice-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ----- Feedback screen ----- */
+    .postflop-result-row {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+    .postflop-result-row.tier-best { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.40); color: #4ade80; }
+    .postflop-result-row.tier-acceptable { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.40); color: #fbbf24; }
+    .postflop-result-row.tier-bad { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.40); color: #f87171; }
+    .postflop-result-row.tier-critical {
+      background: rgba(220,38,38,0.18);
+      border: 2px solid rgba(251,191,36,0.60);
+      color: #fbbf24;
+      box-shadow: 0 0 18px rgba(251,191,36,0.20);
+    }
+    .postflop-result-row .pf-result-label { font-size: 16px; letter-spacing: 1px; }
+    .postflop-result-row .pf-result-meta {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 6px;
+      opacity: 0.85;
+    }
+
+    .postflop-short-explain {
+      padding: 12px 14px;
+      background: rgba(96,165,250,0.06);
+      border-left: 3px solid #60a5fa;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .postflop-tags-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 14px;
+      font-size: 11px;
+    }
+    .postflop-tags-row .pf-tag-label { color: var(--text-secondary); margin-right: 4px; }
+    .postflop-tags-row .pf-tag-pill {
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+    }
+
+    .postflop-explanation-section {
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .postflop-explanation-section summary {
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      list-style: none;
+    }
+    .postflop-explanation-section summary::-webkit-details-marker { display: none; }
+    .postflop-explanation-section summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 10px;
+      transition: transform 150ms ease;
+    }
+    .postflop-explanation-section[open] summary::before { transform: rotate(90deg); }
+    .postflop-explanation-section .pf-section-body {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      background: var(--surface);
+    }
+    .postflop-explanation-section.pf-common-mistake[open] summary,
+    .postflop-explanation-section.pf-common-mistake summary {
+      background: rgba(251,191,36,0.08);
+      color: #fbbf24;
+    }
+
+    .postflop-next-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--mint);
+      color: #0a0e16;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .postflop-next-btn:hover { background: #6df09c; }
+    .postflop-next-btn:active { transform: scale(0.99); }
+
+    /* ----- Summary screen ----- */
+    .postflop-summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .postflop-summary-card .pf-score {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--mint);
+    }
+    .postflop-summary-card .pf-score.low { color: #f87171; }
+    .postflop-summary-card .pf-score.mid { color: #fbbf24; }
+    .postflop-summary-card .pf-score-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .postflop-summary-card hr.pf-divider {
+      width: 80px; border: none; border-top: 1px solid var(--mint);
+      margin: 12px auto;
+    }
+
+    .postflop-tier-counts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .postflop-tier-counts .pf-tier-cell {
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .postflop-tier-counts .pf-tier-cell .pf-tier-num { font-size: 22px; font-weight: 800; }
+    .postflop-tier-counts .pf-tier-cell .pf-tier-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .postflop-tier-counts .pf-tier-cell.tier-best .pf-tier-num { color: #4ade80; }
+    .postflop-tier-counts .pf-tier-cell.tier-acceptable .pf-tier-num { color: #fbbf24; }
+    .postflop-tier-counts .pf-tier-cell.tier-bad .pf-tier-num { color: #f87171; }
+    .postflop-tier-counts .pf-tier-cell.tier-critical .pf-tier-num { color: #fbbf24; }
+    .postflop-tier-counts .pf-tier-cell.tier-critical {
+      border-color: rgba(251,191,36,0.50);
+      background: rgba(251,191,36,0.05);
+    }
+
+    .postflop-summary-actions { display: flex; flex-direction: column; gap: 8px; }
+    .postflop-summary-actions .postflop-secondary-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .postflop-summary-actions .postflop-secondary-btn:hover { background: rgba(255,255,255,0.08); }
+
+    /* ----- Settings beta toggle ----- */
+    .postflop-beta-toggle-section { margin-top: 16px; }
+    .postflop-beta-toggle-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #a855f7;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* ========================================================================
+       END v4.0.2 — POSTFLOP MODULE 1 UI
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -10102,6 +10480,13 @@
     </div>
 
     <div id="drillComplete" class="container" style="display:none">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- v4.0.2 — Post-flop Module 1 (Board Texture Trainer) screen container.
+         Filled by renderPostflopQuestion / renderPostflopAnswer / renderPostflopComplete.
+         Hidden by default; shown only when player enters via Home → Postflop Beta card. -->
+    <div id="postflopScreen" class="container" style="display:none">
       <!-- Filled by JS -->
     </div>
 
@@ -29275,6 +29660,8 @@ function renderMastery() {
     // call so a Mastery render failure cannot blank the identity entry, and
     // an avatar render failure cannot blank Mastery.
     try { renderHomeHeaderAvatar(); } catch (e) { console.warn('[HomeHeaderAvatar]', e); }
+    // v4.0.2: append postflop beta entry card (defensive — never blocks Mastery render)
+    try { if (typeof renderPostflopHomeCardMount === 'function') renderPostflopHomeCardMount(); } catch (e) { console.warn('[PostflopHomeCard]', e); }
     return out;
   } catch (e) {
     console.error('[Mastery] render error:', e);
@@ -31094,6 +31481,8 @@ function renderSettings() {
       </div>
     </div>
   `;
+  // v4.0.2: append postflop beta toggle (defensive — never blocks Settings render)
+  try { if (typeof renderPostflopBetaToggleMount === 'function') renderPostflopBetaToggleMount(); } catch (e) { console.warn('[PostflopBetaToggle]', e); }
 }
 
 function updateSetting(key, value) {
@@ -31216,7 +31605,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.1',
+    appVersion: '4.0.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -31853,6 +32242,492 @@ if (typeof document !== 'undefined') {
 }
 // =================================================================
 // END v4.0.1 — POSTFLOP SCHEMA LOADER
+// =================================================================
+
+// =================================================================
+// v4.0.2 — POSTFLOP MODULE 1 (Board Texture Trainer) — UI surface
+// Reads frozen App.postflop. Beta-gated via App.state.settings.postflopBeta.
+// Renders module entry on Home tab, question/answer/summary screens via
+// new postflop drill state. Does NOT touch preflop drill engine,
+// classifyAnswer, getSRSKey, SRS storage, or any existing render path.
+//
+// Architecture details: docs/specs/brief-v4.0.2-implementation-ready.md
+// =================================================================
+
+// ----- Read-only data accessors -----
+function getPostflopReady() {
+  return !!(window.App && App.postflop && App.postflop.ready === true && App.postflop.scenarios && App.postflop.scenarios.length > 0);
+}
+function getModule1Scenarios() {
+  if (!getPostflopReady()) return [];
+  return App.postflop.scenarios.filter(function (s) { return s.module === 'pf_board_texture'; });
+}
+function getConceptByKey(key) {
+  if (!getPostflopReady()) return null;
+  var concepts = (App.postflop.concepts && App.postflop.concepts.concepts) || [];
+  for (var i = 0; i < concepts.length; i++) { if (concepts[i].key === key) return concepts[i]; }
+  return null;
+}
+
+// ----- Session state (separate namespace from App.state.drill) -----
+App.state.postflopDrill = {
+  active: false,
+  module: null,
+  queue: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: null,
+  phase: 'idle',
+  lastChoiceId: null,
+  lastClassification: null
+};
+
+// ----- Builders -----
+function buildPostflopQueue(scenarios, sessionLength) {
+  // Fisher-Yates shuffle on a shallow copy of the read-only array (we never
+  // mutate App.postflop.scenarios — slice() returns a new array).
+  var pool = scenarios.slice();
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  }
+  return pool.slice(0, Math.min(sessionLength, pool.length));
+}
+
+function startPostflopDrill(moduleId, sessionLength) {
+  if (!getPostflopReady()) {
+    if (typeof showToast === 'function') showToast('Post-flop data not loaded. Try again.');
+    return;
+  }
+  if (!App.state.settings.postflopBeta) {
+    if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
+    return;
+  }
+  var pool = (moduleId === 'pf_board_texture') ? getModule1Scenarios() : [];
+  if (pool.length === 0) {
+    if (typeof showToast === 'function') showToast('No scenarios available for this module.');
+    return;
+  }
+  var queue = buildPostflopQueue(pool, sessionLength || 15);
+  App.state.postflopDrill = {
+    active: true,
+    module: moduleId,
+    queue: queue,
+    currentIndex: 0,
+    answers: [],
+    startTime: Date.now(),
+    phase: 'question',
+    lastChoiceId: null,
+    lastClassification: null
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+
+// ----- Multi-tier classifier (independent of preflop classifyAnswer) -----
+function classifyPostflopAnswer(scenario, choiceId) {
+  var ans = scenario.answer || {};
+  if ((ans.best || []).indexOf(choiceId) !== -1) {
+    return { tier: 'best', score: scenario.scoring.best, isCritical: false };
+  }
+  if ((ans.acceptable || []).indexOf(choiceId) !== -1) {
+    return { tier: 'acceptable', score: scenario.scoring.acceptable, isCritical: false };
+  }
+  if ((ans.critical || []).indexOf(choiceId) !== -1) {
+    return { tier: 'critical', score: scenario.scoring.critical, isCritical: true };
+  }
+  if ((ans.bad || []).indexOf(choiceId) !== -1) {
+    return { tier: 'bad', score: scenario.scoring.bad, isCritical: false };
+  }
+  // Defensive fallback (shouldn't happen if R04/R15 audit passes)
+  return { tier: 'bad', score: 0, isCritical: false };
+}
+
+function recordPostflopAnswer(scenario, choiceId, cls) {
+  App.state.postflopDrill.answers.push({
+    scenarioId: scenario.id,
+    questionType: scenario.question.type,
+    choiceId: choiceId,
+    tier: cls.tier,
+    score: cls.score,
+    isCritical: cls.isCritical,
+    conceptTags: scenario.conceptTags ? scenario.conceptTags.slice() : []
+  });
+}
+
+// ----- Answer click handler -----
+function handlePostflopChoice(choiceId) {
+  var d = App.state.postflopDrill;
+  if (!d.active || d.phase !== 'question') return;
+  var scenario = d.queue[d.currentIndex];
+  if (!scenario) return;
+  var cls = classifyPostflopAnswer(scenario, choiceId);
+  recordPostflopAnswer(scenario, choiceId, cls);
+  d.lastChoiceId = choiceId;
+  d.lastClassification = cls;
+  d.phase = 'answer';
+  renderPostflopAnswer(scenario, choiceId, cls);
+}
+
+function advancePostflopDrill() {
+  var d = App.state.postflopDrill;
+  if (!d.active) return;
+  d.currentIndex++;
+  if (d.currentIndex >= d.queue.length) {
+    d.phase = 'complete';
+    renderPostflopComplete();
+  } else {
+    d.phase = 'question';
+    d.lastChoiceId = null;
+    d.lastClassification = null;
+    renderPostflopQuestion();
+  }
+}
+
+// ----- Navigation (hide tabs / show postflop screen and back) -----
+// #postflopScreen lives inside tab-drill (sibling of #drillScreen / #drillComplete).
+// To show it: activate tab-drill panel, hide all OTHER sub-screens inside it,
+// reveal #postflopScreen. To exit: hide it + return to Home (tab-mastery).
+function showPostflopScreen() {
+  document.body.setAttribute('data-postflop-active', 'true');
+  // Make tab-drill the active panel so its children render
+  document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+  var drillTab = document.getElementById('tab-drill');
+  if (drillTab) drillTab.classList.add('active');
+  App.state.tab = 'drill';
+  // Sync nav highlight
+  try {
+    document.querySelectorAll('.bottom-nav-item').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === 'drill'); });
+    document.querySelectorAll('.top-nav-tab').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === 'drill'); });
+  } catch (e) { /* swallow */ }
+  // Hide all other sub-screens inside tab-drill
+  ['drillSetup','drillScreen','drillComplete','challengeSetup','missionBrief'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Show postflop
+  var s = document.getElementById('postflopScreen');
+  if (s) s.style.display = 'block';
+  try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
+}
+function exitPostflopScreen() {
+  document.body.removeAttribute('data-postflop-active');
+  var s = document.getElementById('postflopScreen');
+  if (s) { s.style.display = 'none'; s.innerHTML = ''; }
+  // Reset session state
+  App.state.postflopDrill = {
+    active: false, module: null, queue: [], currentIndex: 0, answers: [],
+    startTime: null, phase: 'idle', lastChoiceId: null, lastClassification: null
+  };
+  // Return to Home tab — switchTab handles re-render + sub-screen restoration
+  if (typeof switchTab === 'function') switchTab('mastery');
+}
+function confirmExitPostflop() {
+  var d = App.state.postflopDrill;
+  if (!d.active || d.phase === 'complete') {
+    exitPostflopScreen();
+    return;
+  }
+  var msg = 'Exit Drill? You\'re on Q ' + (d.currentIndex + 1) + ' of ' + d.queue.length + '. Progress will be discarded.';
+  if (window.confirm(msg)) exitPostflopScreen();
+}
+
+// ----- HTML escape helper (defensive) -----
+function _pfEscape(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+  });
+}
+function _pfSuitClass(suit) {
+  return 'suit-' + suit;
+}
+function _pfSuitChar(suit) {
+  return ({ s:'♠', h:'♥', d:'♦', c:'♣' })[suit] || suit;
+}
+
+// ----- Renderers -----
+function renderPostflopHomeCardMount() {
+  // Append entry card to Home tab content. Only renders when beta on + ready.
+  var host = document.getElementById('masteryContent');
+  if (!host) return;
+  // Remove any existing card to avoid duplicates on re-render
+  var existing = host.querySelector('.postflop-home-card');
+  if (existing) existing.remove();
+  if (!App.state.settings.postflopBeta) return;  // beta off → nothing rendered
+  var ready = getPostflopReady();
+  var pool = getModule1Scenarios();
+  if (!ready) {
+    host.insertAdjacentHTML('beforeend',
+      '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · loading data…</div>'
+    );
+    return;
+  }
+  if (pool.length === 0) {
+    host.insertAdjacentHTML('beforeend',
+      '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · no scenarios available for this module</div>'
+    );
+    return;
+  }
+  var html =
+    '<div class="postflop-home-card">' +
+      '<span class="postflop-pill">🧪 Postflop Beta</span>' +
+      '<div class="postflop-module-tag">Module 1</div>' +
+      '<div class="postflop-module-title">Board Texture Trainer</div>' +
+      '<div class="postflop-module-desc">Read the board first. Range advantage · nut advantage · c-bet sizing family.</div>' +
+      '<div class="postflop-module-stats">' + pool.length + ' scenarios · ~10 min</div>' +
+      '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
+    '</div>';
+  host.insertAdjacentHTML('beforeend', html);
+}
+
+function renderPostflopBetaToggleMount() {
+  // Append beta toggle row to Settings panel.
+  var host = document.getElementById('settingsContent');
+  if (!host) return;
+  var existing = host.querySelector('.postflop-beta-toggle-section');
+  if (existing) existing.remove();
+  var enabled = !!App.state.settings.postflopBeta;
+  var ready = getPostflopReady();
+  var poolSize = ready ? getModule1Scenarios().length : 0;
+  var statusLine = ready
+    ? (poolSize + ' Module 1 scenarios audited · alpha quality')
+    : 'Post-flop data not yet loaded';
+  var html =
+    '<div class="postflop-beta-toggle-section">' +
+      '<div class="postflop-beta-toggle-title">🧪 Beta Features</div>' +
+      '<div class="card">' +
+        '<div class="settings-row">' +
+          '<div>' +
+            '<div class="settings-label">Enable post-flop beta modules</div>' +
+            '<div class="settings-sublabel">' + _pfEscape(statusLine) + '</div>' +
+          '</div>' +
+          '<label class="toggle">' +
+            '<input type="checkbox" ' + (enabled ? 'checked' : '') +
+              ' onchange="togglePostflopBeta(this.checked)">' +
+            '<div class="toggle-track"><div class="toggle-thumb"></div></div>' +
+          '</label>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  host.insertAdjacentHTML('beforeend', html);
+}
+
+function togglePostflopBeta(enabled) {
+  App.state.settings.postflopBeta = !!enabled;
+  try { App.saveProgress(); } catch (e) { /* swallow */ }
+  if (typeof showToast === 'function') {
+    showToast(enabled ? 'Post-flop beta enabled — Home tab now shows Module 1.' : 'Post-flop beta disabled.');
+  }
+  // If currently on Home, re-render to show/hide entry card
+  if (App.state.tab === 'mastery') {
+    try { renderMastery(); } catch (e) { /* swallow */ }
+  }
+  // If user disables beta while in postflop session, exit cleanly
+  if (!enabled && App.state.postflopDrill && App.state.postflopDrill.active) {
+    exitPostflopScreen();
+  }
+}
+
+function renderPostflopQuestion() {
+  var d = App.state.postflopDrill;
+  var scenario = d.queue[d.currentIndex];
+  if (!scenario) {
+    document.getElementById('postflopScreen').innerHTML =
+      '<div style="padding:40px;text-align:center;color:var(--text-secondary)">No question available. <button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button></div>';
+    return;
+  }
+  var qNum = d.currentIndex + 1;
+  var total = d.queue.length;
+  var pct = Math.round((d.currentIndex / total) * 100);
+  var spot = scenario.spot || {};
+  var board = scenario.board || {};
+  var question = scenario.question || {};
+
+  var boardHtml = (board.cards || []).map(function (card) {
+    var rank = card.charAt(0);
+    var suit = card.charAt(1);
+    return '<div class="postflop-board-card ' + _pfSuitClass(suit) + '">' +
+      '<span class="pf-rank">' + _pfEscape(rank) + '</span>' +
+      '<span class="pf-suit">' + _pfSuitChar(suit) + '</span>' +
+      '</div>';
+  }).join('');
+
+  var heroLine = (scenario.heroHand && scenario.heroHand.length)
+    ? 'Hero: ' + scenario.heroHand.join(' ')
+    : 'Hero: — (board read)';
+
+  var choicesHtml = (question.choices || []).map(function (ch) {
+    return '<button class="postflop-choice-btn" onclick="handlePostflopChoice(' +
+      JSON.stringify(ch.id) + ')">' + _pfEscape(ch.label) + '</button>';
+  }).join('');
+
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
+      '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
+    '</div>' +
+    '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="postflop-spot-card">' +
+      '<div class="postflop-section-title">📋 Spot</div>' +
+      '<div class="postflop-spot-tags">' +
+        '<span class="postflop-spot-tag tag-stack">' + _pfEscape(spot.effectiveStackBB || '?') + 'BB</span>' +
+        '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || '?') + ' open</span>' +
+        '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
+        '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>' +
+      '</div>' +
+      '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' +
+    '</div>' +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">🎴 Board</div>' +
+      '<div class="postflop-board-row">' + boardHtml + '</div>' +
+    '</div>' +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">❓ Question</div>' +
+      '<div class="postflop-question-prompt">' + _pfEscape(question.prompt || '') + '</div>' +
+    '</div>' +
+    '<div class="postflop-choices">' + choicesHtml + '</div>';
+
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
+}
+
+function _tierLabel(tier) {
+  return ({ best: '✅ BEST', acceptable: '≈ ACCEPTABLE', bad: '❌ BAD', critical: '🚨 CRITICAL LEAK' })[tier] || tier;
+}
+function _findChoiceLabel(scenario, choiceId) {
+  var choices = (scenario.question && scenario.question.choices) || [];
+  for (var i = 0; i < choices.length; i++) { if (choices[i].id === choiceId) return choices[i].label; }
+  return choiceId;
+}
+
+function renderPostflopAnswer(scenario, choiceId, cls) {
+  var d = App.state.postflopDrill;
+  var qNum = d.currentIndex + 1;
+  var total = d.queue.length;
+  var pct = Math.round(((d.currentIndex + 1) / total) * 100);
+  var bestLabel = ((scenario.answer.best || []).map(function (id) { return _findChoiceLabel(scenario, id); })).join(', ');
+  var pickedLabel = _findChoiceLabel(scenario, choiceId);
+  var explanation = scenario.explanation || {};
+  var isLast = (d.currentIndex + 1) >= total;
+
+  // Build expandable sections (only for non-null fields)
+  var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
+  var openAttr = isMobile ? '' : ' open';
+  var sections = [];
+  if (explanation.rangeLogic) {
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Range Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.rangeLogic) + '</div></details>');
+  }
+  if (explanation.nutLogic) {
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Nut Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.nutLogic) + '</div></details>');
+  }
+  if (explanation.handLogic) {
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Hand Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.handLogic) + '</div></details>');
+  }
+  if (explanation.sizingLogic) {
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Sizing Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.sizingLogic) + '</div></details>');
+  }
+  if (explanation.commonMistake) {
+    var openCM = (cls.tier === 'critical') ? ' open' : openAttr;
+    sections.push('<details class="postflop-explanation-section pf-common-mistake"' + openCM + '><summary>Common Mistake</summary><div class="pf-section-body">' + _pfEscape(explanation.commonMistake) + '</div></details>');
+  }
+
+  var tagsHtml = (scenario.conceptTags || []).map(function (t) {
+    return '<span class="pf-tag-pill">' + _pfEscape(t) + '</span>';
+  }).join('');
+
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
+      '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
+    '</div>' +
+    '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="postflop-feedback-card">' +
+      '<div class="postflop-result-row tier-' + cls.tier + '">' +
+        '<span class="pf-result-label">' + _tierLabel(cls.tier) + ' · ' + cls.score.toFixed(2) + ' pts</span>' +
+        '<span class="pf-result-meta">Your pick: ' + _pfEscape(pickedLabel) + '<br>GTO best: ' + _pfEscape(bestLabel) + '</span>' +
+      '</div>' +
+      (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(explanation.short) + '</div>' : '') +
+      (tagsHtml ? '<div class="postflop-tags-row"><span class="pf-tag-label">Concept tags:</span>' + tagsHtml + '</div>' : '') +
+      sections.join('') +
+      '<button class="postflop-next-btn" onclick="advancePostflopDrill()">' + (isLast ? 'Finish →' : 'Next →') + '</button>' +
+    '</div>';
+
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
+}
+
+function renderPostflopComplete() {
+  var d = App.state.postflopDrill;
+  var total = d.queue.length;
+  var totalScore = d.answers.reduce(function (sum, a) { return sum + a.score; }, 0);
+  var maxScore = total * 1.0;
+  var pct = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+  var counts = { best: 0, acceptable: 0, bad: 0, critical: 0 };
+  d.answers.forEach(function (a) { counts[a.tier] = (counts[a.tier] || 0) + 1; });
+  var scoreCls = pct >= 80 ? '' : (pct >= 50 ? 'mid' : 'low');
+
+  // Concept mastery aggregation
+  var conceptTally = {};
+  d.answers.forEach(function (a) {
+    a.conceptTags.forEach(function (tag) {
+      if (!conceptTally[tag]) conceptTally[tag] = { seen: 0, scoreSum: 0 };
+      conceptTally[tag].seen++;
+      conceptTally[tag].scoreSum += a.score;
+    });
+  });
+  var conceptRows = Object.keys(conceptTally).sort(function (a, b) { return conceptTally[b].seen - conceptTally[a].seen; }).map(function (tag) {
+    var t = conceptTally[tag];
+    var p = Math.round((t.scoreSum / t.seen) * 100);
+    var icon = p >= 80 ? '✅' : (p >= 50 ? '≈' : '❌');
+    return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-family:monospace;color:var(--text-secondary)">' + _pfEscape(tag) + '</span><span>' + t.seen + '× &nbsp; ' + p + '% &nbsp; ' + icon + '</span></div>';
+  }).join('');
+
+  // Critical leaks list
+  var criticalLeaks = d.answers.filter(function (a) { return a.isCritical; });
+  var leaksHtml = '';
+  if (criticalLeaks.length > 0) {
+    leaksHtml = '<details class="postflop-explanation-section pf-common-mistake" open><summary>🚨 Critical leaks (' + criticalLeaks.length + ')</summary><div class="pf-section-body">' +
+      criticalLeaks.map(function (a, i) {
+        var sc = (App.postflop.scenarios || []).find(function (s) { return s.id === a.scenarioId; });
+        var pickedLabel = sc ? _findChoiceLabel(sc, a.choiceId) : a.choiceId;
+        var bestLabel = sc ? ((sc.answer.best || []).map(function (id) { return _findChoiceLabel(sc, id); }).join(', ')) : '?';
+        var board = sc ? (sc.board.cards || []).join(' ') : '?';
+        var shortExp = sc ? (sc.explanation && sc.explanation.short || '') : '';
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong>Q' + (d.answers.indexOf(a) + 1) + '</strong> on ' + _pfEscape(board) + ': you picked "' + _pfEscape(pickedLabel) + '"; GTO: "' + _pfEscape(bestLabel) + '"<br><span style="opacity:0.85;font-size:12px">' + _pfEscape(shortExp) + '</span></div>';
+      }).join('') +
+    '</div></details>';
+  }
+
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🧪 Board Texture Trainer · Complete</span>' +
+    '</div>' +
+    '<div class="postflop-summary-card">' +
+      '<div style="font-size:14px;color:var(--text-secondary);margin-bottom:6px">✅ Drill Complete</div>' +
+      '<div class="pf-score ' + scoreCls + '">' + totalScore.toFixed(1) + ' / ' + maxScore.toFixed(1) + '</div>' +
+      '<div class="pf-score-label">(' + pct + '%)</div>' +
+      '<hr class="pf-divider">' +
+      '<div class="postflop-tier-counts">' +
+        '<div class="pf-tier-cell tier-best"><div class="pf-tier-num">' + counts.best + '</div><div class="pf-tier-label">Best ✅</div></div>' +
+        '<div class="pf-tier-cell tier-acceptable"><div class="pf-tier-num">' + counts.acceptable + '</div><div class="pf-tier-label">Acceptable ≈</div></div>' +
+        '<div class="pf-tier-cell tier-bad"><div class="pf-tier-num">' + counts.bad + '</div><div class="pf-tier-label">Bad ❌</div></div>' +
+        '<div class="pf-tier-cell tier-critical"><div class="pf-tier-num">' + counts.critical + '</div><div class="pf-tier-label">Critical 🚨</div></div>' +
+      '</div>' +
+    '</div>' +
+    (conceptRows ? '<details class="postflop-explanation-section" open><summary>Concept mastery (this session)</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
+    leaksHtml +
+    '<div class="postflop-summary-actions" style="margin-top:14px">' +
+      '<button class="postflop-next-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Drill again</button>' +
+      '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
+    '</div>';
+
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
+}
+
+// =================================================================
+// END v4.0.2 — POSTFLOP MODULE 1 UI
 // =================================================================
 
 // ============================================================

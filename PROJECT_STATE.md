@@ -8,11 +8,11 @@
 
 ## 1. Current Version
 
-- **Latest committed + pushed**: `v4.0.1` (commit `2593e5c`) — postflop schema loader + audit gate. App boots a frozen `App.postflop` namespace; no UI surface activated. On `origin/main`.
-- **Latest deployed to Netlify**: `v3.8.2` (will become `v4.0.1` after Netlify picks up the new commit; player-visible behavior identical).
-- **Active planning (no production code yet)**: `v4.0.2` — Module 1 Board Texture Trainer first UI. Planning sprint in progress; deliverables in `docs/specs/`.
-- **Service worker `VERSION`**: `'v4.0.1'` (in `service-worker.js`).
-- **App backup `appVersion`**: `'4.0.1'` (in `index.html`).
+- **Latest committed + pushed**: `v4.0.2-data` (commit `473ce9a`) — postflop seed scenario data fixes (#20 nutLogic artifact, choice label hint stripping, #10 sourceConfidence downgrade). On `origin/main`.
+- **Pending review (STAGED, NOT committed)**: `v4.0.2` — Module 1 Board Texture Trainer UI. Beta-gated entry on Home + question/feedback/summary screens + Settings beta toggle. Live browser QA passed.
+- **Latest deployed to Netlify**: `v3.8.2` (will become `v4.0.2-data` then `v4.0.2` after the next Netlify deploys).
+- **Service worker `VERSION`**: `'v4.0.2'` (in `service-worker.js`) — staged, will be active once committed/deployed.
+- **App backup `appVersion`**: `'4.0.2'` (in `index.html`) — staged.
 
 ---
 
@@ -77,7 +77,36 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.2-data Postflop Seed Fix — STAGED, awaiting commit approval
+### v4.0.2 Postflop Module 1 (Board Texture Trainer) UI — STAGED, awaiting commit approval
+
+First visible postflop UI. Beta-gated via `App.state.settings.postflopBeta` (default `false`). Implementation per `docs/specs/brief-v4.0.2-implementation-ready.md`.
+
+**Changes**:
+- `index.html` (~960 lines added in single fenced v4.0.2 block + 2 one-liner appends to renderMastery/renderSettings + `appVersion` bump):
+  - New `#postflopScreen` container (sibling to `#drillScreen` inside tab-drill panel)
+  - CSS block for all `.postflop-*` classes (~290 lines)
+  - JS block: `getPostflopReady`, `getModule1Scenarios`, `getConceptByKey`, `App.state.postflopDrill` state, `buildPostflopQueue`, `startPostflopDrill`, `classifyPostflopAnswer` (multi-tier), `recordPostflopAnswer`, `handlePostflopChoice`, `advancePostflopDrill`, `showPostflopScreen`, `exitPostflopScreen`, `confirmExitPostflop`, `renderPostflopHomeCardMount`, `renderPostflopBetaToggleMount`, `togglePostflopBeta`, `renderPostflopQuestion`, `renderPostflopAnswer`, `renderPostflopComplete`
+  - Field FX suppression: `body[data-postflop-active="true"] .field-fx-canvas { display: none !important; }`
+  - Wiring: 1-line defensive append in `renderMastery` wrapper (line 29279) + 1-line defensive append in `renderSettings` (line 31484)
+- `service-worker.js`: VERSION `'v4.0.1'` → `'v4.0.2'`
+
+**Live browser QA result** (29-item subset of 52-item matrix):
+- ✅ Loader: ready=true, scenarios=31, schema=1.0.0, getModule1Count=20, all functions exist
+- ✅ Beta default off: no postflop UI when off
+- ✅ Toggle on: home card appears + Settings shows beta section
+- ✅ Drill flow: question→feedback→advance→summary all render
+- ✅ All 4 scoring tiers verified (best=1.0/best, acceptable=0.5/acceptable, critical=0/critical+flag, bad path also exercised)
+- ✅ Multi-section feedback renders all 4 expandable sections + short explanation + concept tag pills
+- ✅ Summary screen: score banner + per-tier counts + 17-row concept mastery + critical leaks list
+- ✅ Preflop drill regression: 5 hands played, all classified correctly, progress key created, App.postflop untouched
+- ✅ All 5 tabs render after postflop session
+- ✅ Settings panel: existing FX/Aura/etc. controls intact + beta toggle appended
+- ✅ Console clean: only the expected `[postflop] loaded 31/31 scenarios (schema 1.0.0)` from v4.0.1 loader; zero new errors/warnings
+- ✅ Field FX suppression rule present in CSS (verified via stylesheet inspection)
+
+**Implementation note**: One bug surfaced and was fixed in-flight — `#postflopScreen` lives inside `tab-drill` panel which gets hidden when other tabs become active. Fix: `showPostflopScreen()` now activates `tab-drill` panel + hides all OTHER drill sub-screens; `exitPostflopScreen()` returns to Home tab cleanly.
+
+### v4.0.2-data Postflop Seed Fix — committed (`473ce9a`) + pushed
 
 Pre-implementation data hygiene pass per `postflop-v4.0.2-scenario-review.md` findings + `brief-v4.0.2-implementation-ready.md` § 16. Three fix categories applied to `postflop/postflop_scenarios.json` only:
 
