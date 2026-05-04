@@ -10435,6 +10435,173 @@
     /* ========================================================================
        END v4.0.6 — POSTFLOP LOCAL HISTORY UI
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.8 — POSTFLOP TEACHING LAYER
+       Adds: pattern label (board family at-a-glance), Board Reading Checklist
+       (educational framework, expandable), pre-answer Hint (non-spoiler thinking
+       prompt), and a restructured 5-block feedback layout (Result / Board
+       Pattern / Core Reason / Takeaway / Common Mistake). All styles namespaced
+       with `.pf-teach-*` to avoid collisions with v4.0.2/v4.0.4/v4.0.6 styles.
+       ======================================================================== */
+    .pf-teach-mode-tag {
+      display: inline-block;
+      margin: 0 0 8px 0;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--accent, #f5a623);
+      background: rgba(245, 166, 35, 0.10);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+    .pf-teach-pattern-label {
+      margin: 0 0 10px 0;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(110, 168, 254, 0.10);
+      border-left: 3px solid var(--accent, #6ea8fe);
+      border-radius: 6px;
+      line-height: 1.4;
+    }
+    .pf-teach-pattern-label .pf-pattern-icon {
+      margin-right: 6px;
+    }
+    .pf-teach-pattern-label .pf-pattern-meta {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .pf-teach-checklist {
+      margin: 0 0 10px 0;
+      padding: 0;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pf-teach-checklist > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .pf-teach-checklist > summary::-webkit-details-marker { display: none; }
+    .pf-teach-checklist > summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 0.15s ease;
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+    .pf-teach-checklist[open] > summary::before { transform: rotate(90deg); }
+    .pf-teach-checklist ol {
+      margin: 4px 0 12px 28px;
+      padding: 0;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .pf-teach-checklist ol li { margin-bottom: 2px; }
+    .pf-teach-hint-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 12px 0;
+    }
+    .pf-teach-hint-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pf-teach-hint-btn:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.20); }
+    .pf-teach-hint-btn[aria-expanded="true"] {
+      background: rgba(110, 168, 254, 0.15);
+      border-color: rgba(110, 168, 254, 0.35);
+    }
+    .pf-teach-hint-body {
+      display: none;
+      margin: -4px 0 12px 0;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text);
+      background: rgba(110, 168, 254, 0.06);
+      border-left: 2px solid rgba(110, 168, 254, 0.4);
+      border-radius: 6px;
+    }
+    .pf-teach-hint-body.is-shown { display: block; }
+    .pf-teach-hint-body .pf-hint-pretext {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    /* Feedback layout v4.0.8: 5 named blocks with clear hierarchy */
+    .pf-teach-fb-block {
+      margin: 0 0 10px 0;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.18);
+      border-radius: 8px;
+      border-left: 3px solid rgba(255,255,255,0.10);
+    }
+    .pf-teach-fb-block .pf-fb-block-title {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pf-teach-fb-block .pf-fb-block-body {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .pf-teach-fb-block.pf-fb-takeaway {
+      background: rgba(110, 168, 254, 0.10);
+      border-left-color: var(--accent, #6ea8fe);
+    }
+    .pf-teach-fb-block.pf-fb-takeaway .pf-fb-block-body { font-weight: 600; }
+    .pf-teach-fb-block.pf-fb-mistake {
+      background: rgba(220, 80, 80, 0.10);
+      border-left-color: rgba(220, 80, 80, 0.55);
+    }
+    .pf-teach-fb-block.pf-fb-pattern .pf-fb-block-body { font-weight: 600; }
+    @media (max-width: 480px) {
+      .pf-teach-pattern-label { font-size: 13px; padding: 9px 10px; }
+      .pf-teach-fb-block { padding: 9px 10px; }
+      .pf-teach-fb-block .pf-fb-block-body { font-size: 12.5px; }
+    }
+    /* ========================================================================
+       END v4.0.8 — POSTFLOP TEACHING LAYER
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -31859,7 +32026,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.6',
+    appVersion: '4.0.8',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -32837,6 +33004,251 @@ function confirmExitPostflop() {
   if (window.confirm(msg)) exitPostflopScreen();
 }
 
+// ============================================================================
+// v4.0.8 — POSTFLOP TEACHING LAYER (helpers)
+// Pure-function helpers that derive teaching content from existing scenario
+// fields. No data schema changes; reads board.highCardClass, board.suitTexture,
+// board.textureTags, board.pairedStatus, board.dynamicLevel, board.rangeAdvantage.
+// ============================================================================
+
+// _pfPatternLabel — short human-readable label for the board family.
+// Used in question-screen header and feedback Board Pattern block.
+function _pfPatternLabel(board) {
+  if (!board) return 'Board';
+  var hcc = board.highCardClass || '';
+  var st = board.suitTexture || 'rainbow';
+  var tags = board.textureTags || [];
+  var paired = board.pairedStatus === 'paired';
+  var dyn = board.dynamicLevel || 1;
+  var hcLabel = ({A_high:'A-high', K_high:'K-high', Q_high:'Q-high', J_high:'J-high', T_high:'T-high', low:'Low'})[hcc] || 'Board';
+  var has = function(t){ return tags.indexOf(t) >= 0; };
+
+  if (paired) {
+    if (hcc === 'A_high' || hcc === 'K_high' || hcc === 'Q_high' || hcc === 'J_high') return 'Paired high board';
+    if (has('middle_heavy') || hcc === 'T_high') return 'Paired middle board';
+    return 'Paired low board';
+  }
+  if (st === 'monotone') {
+    return (hcc === 'low' ? 'Low monotone board' : (hcLabel + ' monotone board'));
+  }
+  // Highly connected / very wet
+  if (has('highly_connected') || dyn >= 4) {
+    if (has('broadway_heavy')) {
+      return st === 'two_tone' ? 'Broadway connected two-tone' : 'Broadway connected wet board';
+    }
+    if (st === 'two_tone') return 'Low connected two-tone';
+    return 'Very wet connected board';
+  }
+  // Two-tone semi-dry
+  if (st === 'two_tone') {
+    return hcLabel + ' two-tone semi-dry';
+  }
+  // Rainbow disconnected (default)
+  if (has('dry') || dyn <= 2) {
+    return hcLabel + ' dry board';
+  }
+  return hcLabel + ' board';
+}
+
+// _pfBoardMetaLine — small tag line under the pattern label
+// e.g. "rainbow · disconnected · static"
+function _pfBoardMetaLine(board) {
+  if (!board) return '';
+  var st = board.suitTexture || 'rainbow';
+  var conn = board.connectedness || 'disconnected';
+  var dynLbl = ({1:'static', 2:'semi-static', 3:'dynamic', 4:'very-dynamic'})[board.dynamicLevel || 1] || 'static';
+  return st + ' · ' + conn + ' · ' + dynLbl;
+}
+
+// _pfHintForBoard — non-spoiler thinking-prompt hint based on board family.
+// Returns a string. Must NOT directly state best/worst answer.
+function _pfHintForBoard(board) {
+  if (!board) return 'Ask: how does the board class shift range and nut advantage?';
+  var hcc = board.highCardClass || '';
+  var st = board.suitTexture || 'rainbow';
+  var tags = board.textureTags || [];
+  var paired = board.pairedStatus === 'paired';
+  var dyn = board.dynamicLevel || 1;
+  var has = function(t){ return tags.indexOf(t) >= 0; };
+
+  if (st === 'monotone') {
+    return 'Ask: who has more made flushes already, and who has the nut-flush blockers? Bluffs lose fold equity when many continuing hands are already flushes.';
+  }
+  if (paired) {
+    if (hcc === 'T_high' || has('middle_heavy')) {
+      return 'Ask: does BB have more trips combos with the paired rank? And does BTN overpair density (JJ-AA) compensate for the trips edge?';
+    }
+    return 'Ask: who has more trips combos with strong kickers? Paired boards favor whoever has more of the unpaired card in their range.';
+  }
+  if ((has('highly_connected') || dyn >= 4) && st === 'two_tone') {
+    return 'Ask: does BB have BOTH straight density AND flush-draw density? Compounding draws shift the board toward the caller.';
+  }
+  if (has('highly_connected') && (hcc === 'low' || has('low_connected'))) {
+    return 'Ask: does BB have more suited connectors, small pairs, and straight draws than BTN? Low connected boards usually belong to the caller.';
+  }
+  if (has('highly_connected') && has('broadway_heavy')) {
+    return 'Ask: does BB have more JT, QJ, T9, KQ-type combos that hit broadway-connected boards for top pair, two-pair, or made straights?';
+  }
+  if (st === 'two_tone' && (hcc === 'A_high' || hcc === 'K_high')) {
+    return 'Ask: does the flush draw reduce BTN ability to range-bet compared with rainbow? BTN still has the top-pair edge but may want slightly bigger sizing.';
+  }
+  if (st === 'two_tone') {
+    return 'Ask: who picks up the most flush-draw equity from this two-tone? Two-tone shifts sizing slightly larger on raiser-favored boards and toward checking on caller-favored ones.';
+  }
+  if (hcc === 'A_high' || hcc === 'K_high') {
+    return 'Ask: does BTN have more A-x or K-x combos than BB has in the calling range? High-card dry boards usually favor the raiser.';
+  }
+  if (hcc === 'low' && !has('highly_connected')) {
+    return 'Ask: do BTN overpairs (TT-AA) dominate the BB calling range here? Disconnected low boards still favor BTN despite the low cards.';
+  }
+  return 'Ask: how does high-card density, connectivity, and suit texture shift range and nut advantage on this board?';
+}
+
+// _pfTakeawayForBoard — one-sentence generalizable lesson for the feedback screen.
+function _pfTakeawayForBoard(board) {
+  if (!board) return 'Focus on how high-card density, connectivity, and suit texture shift range and nut advantage.';
+  var hcc = board.highCardClass || '';
+  var st = board.suitTexture || 'rainbow';
+  var tags = board.textureTags || [];
+  var paired = board.pairedStatus === 'paired';
+  var dyn = board.dynamicLevel || 1;
+  var has = function(t){ return tags.indexOf(t) >= 0; };
+
+  if (paired) {
+    return 'Paired boards require separating range advantage from trips/nut density — whoever has more of the paired rank in their range gets the trips edge.';
+  }
+  if (st === 'monotone') {
+    return 'Monotone boards require caution because made flushes and nut-flush blockers matter more than simple top-pair advantage.';
+  }
+  if ((has('highly_connected') || dyn >= 4) && st === 'two_tone') {
+    return 'Low connected two-tone boards are dangerous for BTN: BB has straight density AND flush-draw density combined.';
+  }
+  if (st === 'two_tone' && (hcc === 'A_high' || hcc === 'K_high')) {
+    return 'Two-tone high boards still often favor BTN, but the flush draw makes pure range-betting less automatic than rainbow.';
+  }
+  if (has('highly_connected') && has('low_connected')) {
+    return 'Low connected boards often favor BB because the caller has more suited connectors, small pairs, and straight density.';
+  }
+  if (has('highly_connected') && has('broadway_heavy')) {
+    return 'Broadway-connected wet boards favor BB because the caller has more JT, QJ, T9 combos hitting top pair, two-pair, and made straights.';
+  }
+  if ((hcc === 'A_high' || hcc === 'K_high') && (has('dry') || dyn <= 2)) {
+    return 'High-card dry boards usually favor BTN because the raiser has more top-pair and overpair density.';
+  }
+  if (hcc === 'low' && !has('highly_connected')) {
+    return 'Low disconnected boards still favor BTN because overpairs (TT-AA) dominate; small high-frequency c-bet works.';
+  }
+  return 'Focus on how high-card density, connectivity, and suit texture shift range and nut advantage on this board.';
+}
+
+// _pfBoardChecklistHtml — collapsible educational framework, same for every
+// scenario. Teaches the reading process; does NOT reveal the answer.
+function _pfBoardChecklistHtml() {
+  return '<details class="pf-teach-checklist">' +
+           '<summary>📚 Board Reading Checklist</summary>' +
+           '<ol>' +
+             '<li>High card: A / K / Q / J / T / low?</li>' +
+             '<li>Texture: dry / semi-dry / wet?</li>' +
+             '<li>Connectivity: disconnected / connected / very connected?</li>' +
+             '<li>Suit: rainbow / two-tone / monotone?</li>' +
+             '<li>Who has range advantage?</li>' +
+             '<li>Who has nut advantage?</li>' +
+             '<li>What does that imply for c-bet frequency / sizing?</li>' +
+           '</ol>' +
+         '</details>';
+}
+
+// _pfPatternLabelHtml — pattern label block for the question screen
+function _pfPatternLabelHtml(board) {
+  var label = _pfPatternLabel(board);
+  var meta = _pfBoardMetaLine(board);
+  return '<div class="pf-teach-pattern-label">' +
+           '<span class="pf-pattern-icon">🎯</span>' + _pfEscape(label) +
+           (meta ? '<span class="pf-pattern-meta">' + _pfEscape(meta) + '</span>' : '') +
+         '</div>';
+}
+
+// _pfHintRowHtml — "Need a hint?" button + hidden hint body
+function _pfHintRowHtml(board) {
+  var hint = _pfHintForBoard(board);
+  return '<div class="pf-teach-hint-row">' +
+           '<button type="button" class="pf-teach-hint-btn" id="pfTeachHintBtn" aria-expanded="false" onclick="_pfTeachingToggleHint()">' +
+             '💭 Need a hint?' +
+           '</button>' +
+         '</div>' +
+         '<div class="pf-teach-hint-body" id="pfTeachHintBody">' +
+           '<span class="pf-hint-pretext">Hint · think it through</span>' +
+           _pfEscape(hint) +
+         '</div>';
+}
+
+// Toggle hint visibility (no-spoiler)
+function _pfTeachingToggleHint() {
+  var btn = document.getElementById('pfTeachHintBtn');
+  var body = document.getElementById('pfTeachHintBody');
+  if (!btn || !body) return;
+  var shown = body.classList.toggle('is-shown');
+  btn.setAttribute('aria-expanded', shown ? 'true' : 'false');
+  if (shown) { btn.innerHTML = '💭 Hide hint'; } else { btn.innerHTML = '💭 Need a hint?'; }
+}
+
+// _pfTeachingFeedbackBlocksHtml — restructured 5-block feedback layout
+// Returns A/B/C/D/E block stack. Result block is rendered separately
+// (existing tier banner) — this function returns only B/C/D/E blocks.
+function _pfTeachingFeedbackBlocksHtml(scenario) {
+  var board = scenario && scenario.board ? scenario.board : {};
+  var explanation = scenario && scenario.explanation ? scenario.explanation : {};
+  var label = _pfPatternLabel(board);
+  var meta = _pfBoardMetaLine(board);
+  var takeaway = _pfTakeawayForBoard(board);
+
+  var coreReason = '';
+  if (explanation.rangeLogic) coreReason += '<strong>Range logic:</strong> ' + _pfEscape(explanation.rangeLogic);
+  if (explanation.nutLogic) {
+    if (coreReason) coreReason += '<br><br>';
+    coreReason += '<strong>Nut logic:</strong> ' + _pfEscape(explanation.nutLogic);
+  }
+  if (explanation.sizingLogic) {
+    if (coreReason) coreReason += '<br><br>';
+    coreReason += '<strong>Sizing logic:</strong> ' + _pfEscape(explanation.sizingLogic);
+  }
+  if (!coreReason && explanation.short) {
+    coreReason = _pfEscape(explanation.short);
+  }
+  if (!coreReason) coreReason = '(See concept tags below for context.)';
+
+  var html = '';
+  // B. Board Pattern
+  html += '<div class="pf-teach-fb-block pf-fb-pattern">' +
+            '<span class="pf-fb-block-title">Board Pattern</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(label) +
+              (meta ? ' <span style="font-weight:400;color:var(--text-secondary);font-size:11px;">(' + _pfEscape(meta) + ')</span>' : '') +
+            '</div>' +
+          '</div>';
+  // C. Core Reason
+  html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+            '<span class="pf-fb-block-title">Core Reason</span>' +
+            '<div class="pf-fb-block-body">' + coreReason + '</div>' +
+          '</div>';
+  // D. Takeaway
+  html += '<div class="pf-teach-fb-block pf-fb-takeaway">' +
+            '<span class="pf-fb-block-title">💡 Takeaway</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(takeaway) + '</div>' +
+          '</div>';
+  // E. Common Mistake (only if present)
+  if (explanation.commonMistake) {
+    html += '<div class="pf-teach-fb-block pf-fb-mistake">' +
+              '<span class="pf-fb-block-title">⚠️ Common Mistake</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(explanation.commonMistake) + '</div>' +
+            '</div>';
+  }
+  return html;
+}
+
+// ============================================================================
+// END v4.0.8 — POSTFLOP TEACHING LAYER (helpers)
+// ============================================================================
+
 // v4.0.4: Choice guide — ALWAYS-VISIBLE 1-line summary + optional expandable
 // details. Previous v4.0.3 used <details> closed-by-default; mobile users
 // reported the guide "wasn't visible" — they didn't see the small summary
@@ -33057,12 +33469,19 @@ function renderPostflopQuestion() {
   // hidden behind a collapsed <details> on mobile). Expandable details remain.
   var guideHtml = _pfChoiceGuide(question.type);
 
+  // v4.0.8: teaching layer — pattern label + board reading checklist + hint
+  var patternHtml = (typeof _pfPatternLabelHtml === 'function') ? _pfPatternLabelHtml(board) : '';
+  var checklistHtml = (typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '';
+  var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
+  var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
+
   var html =
     '<div class="postflop-context-bar">' +
       '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
+    modeTagHtml +
     '<div class="postflop-spot-card">' +
       '<div class="postflop-section-title">📋 Spot</div>' +
       '<div class="postflop-spot-tags">' +
@@ -33076,12 +33495,15 @@ function renderPostflopQuestion() {
     '<div class="postflop-question-card">' +
       '<div class="postflop-section-title">🎴 Board</div>' +
       '<div class="postflop-board-row">' + boardHtml + '</div>' +
+      patternHtml +
+      checklistHtml +
     '</div>' +
     '<div class="postflop-question-card">' +
       '<div class="postflop-section-title">❓ Question</div>' +
       '<div class="postflop-question-prompt">' + _pfEscape(question.prompt || '') + '</div>' +
     '</div>' +
     guideHtml +
+    hintHtml +
     '<div class="postflop-choices">' + choicesHtml + '</div>';
 
   document.getElementById('postflopScreen').innerHTML = html;
@@ -33132,6 +33554,14 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
     return '<span class="pf-tag-pill">' + _pfEscape(t) + '</span>';
   }).join('');
 
+  // v4.0.8: 5-block teaching feedback layout (Result / Board Pattern / Core Reason / Takeaway / Common Mistake).
+  // Replaces the previous per-strand <details> sections — the same content is now surfaced
+  // in the Core Reason and Common Mistake teaching blocks (no longer hidden behind extra clicks).
+  // The `sections` variable is intentionally unused on this path.
+  var teachingBlocksHtml = (typeof _pfTeachingFeedbackBlocksHtml === 'function')
+    ? _pfTeachingFeedbackBlocksHtml(scenario)
+    : '';
+
   var html =
     '<div class="postflop-context-bar">' +
       '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
@@ -33139,13 +33569,16 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
     '<div class="postflop-feedback-card">' +
+      // Block A: Result
       '<div class="postflop-result-row tier-' + cls.tier + '">' +
         '<span class="pf-result-label">' + _tierLabel(cls.tier) + ' · ' + cls.score.toFixed(2) + ' pts</span>' +
         '<span class="pf-result-meta">Your pick: ' + _pfEscape(pickedLabel) + '<br>GTO best: ' + _pfEscape(bestLabel) + '</span>' +
       '</div>' +
       (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(explanation.short) + '</div>' : '') +
+      // Blocks B/C/D/E: pattern / reason / takeaway / mistake
+      teachingBlocksHtml +
+      // Concept tags
       (tagsHtml ? '<div class="postflop-tags-row"><span class="pf-tag-label">Concept tags:</span>' + tagsHtml + '</div>' : '') +
-      sections.join('') +
       '<button class="postflop-next-btn" onclick="advancePostflopDrill()">' + (isLast ? 'Finish →' : 'Next →') + '</button>' +
     '</div>';
 

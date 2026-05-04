@@ -15,7 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.7 final pass staged.** Module 1 = **251 scenarios** / total postflop = **262**. Audit: **0/0**. Includes template-correction (split generic two_tone into 5 sub-families) + micro-fix (monotone_low nut wording corrected; paired_mid + monotone_low + similar solver-sensitive families have opposite as `bad` not `critical` for nut_advantage; `neutral` in acceptable). SourceConfidence: 133 `consensus_gto` / 118 `expert_judgment` / 0 `solver_verified` / 0 `needs_review`. SuitTexture: 140 rainbow (55.8%) / 96 two_tone (38.2%) / 15 monotone (6%). All GPT-flagged issues addressed. Ready for commit + push.
+🟢 **v4.0.7 committed + pushed** (`1f5fe99`). Module 1 = **251 scenarios** / total postflop = **262**. Audit 0/0.
+
+🟡 **v4.0.8 staged — Postflop Teaching Layer.** Module 1 question/feedback UI gains: pattern label (e.g. "🎯 J-high two-tone semi-dry"), Board Reading Checklist (collapsible 7-item educational framework), pre-answer "💭 Need a hint?" button (non-spoiler thinking-prompts), 5-block feedback layout (Result / Board Pattern / Core Reason / 💡 Takeaway / ⚠️ Common Mistake), and "LEARN MODE" mode tag. Pattern + hint + takeaway derived from existing scenario fields via 8 new pure helper functions. No data changes, no answer-key changes, no scoring changes. Audit clean (262/0/0 — data unchanged). Mobile 375px verified. Awaiting commit/push approval.
 
 | Metric | Value |
 |---|---|
@@ -70,7 +72,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.7-template-correction STAGED. Generic two_tone family split into 5 sub-families per rank-class + connectedness. paired_mid wording fixed. 9 GPT-named samples re-verified. Audit 0/0. Awaiting GPT re-review.
+- 2026-05-04: v4.0.8 Postflop Teaching Layer STAGED. Pattern label + Board Reading Checklist + Hint button + 5-block feedback + Takeaway generator. UI-only patch (no data changes). Awaiting commit.
+- 2026-05-04: v4.0.7 Module 1 expansion 20→251 scenarios COMMITTED (`1f5fe99`) + pushed. Audit 0/0. Template-correction + micro-fix incorporated.
+- 2026-05-04: v4.0.7-template-correction STAGED (folded into v4.0.7 commit). Generic two_tone family split into 5 sub-families per rank-class + connectedness. paired_mid wording fixed.
 - 2026-05-04: v4.0.7-hardened (superseded by template-correction pass). SourceConfidence rebalanced (97/146/0/0). SuitTexture rebalanced (130/98/15). Tracked tools/generate-postflop-module1.ps1 + tools/audit-postflop-ps.ps1. 30-sample GPT review package.
 - 2026-05-04: v4.0.7 initial staging (superseded).
 - 2026-05-04: v4.0.6 postflop repeat control + local history STAGED. Awaiting commit approval.

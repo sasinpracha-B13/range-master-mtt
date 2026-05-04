@@ -9,9 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Pending push (STAGED)**: `v4.0.7-template-correction` — Module 1 Board Texture Trainer expansion 20→**251 scenarios**. Third pass corrects GPT-flagged generic-two_tone overgeneralization by splitting into 5 sub-families: `high_two_tone_dry` (A/K-high disconnected), `mid_two_tone_dry` (Q/J/T-high disconnected — neutral answer), `broadway_two_tone_connected` (QJT/KQJ/AQJ/JT8 — caller answer), `low_dry_two_tone` (9-high or below disconnected), `low_connected_two_tone` (8-7-x suited / 9-8-x suited — caller answer). Each board re-classified by `ClassifyTwoTone()` based on rank-class + connectedness. Plus `paired_mid` wording fixed ("set combos" → "trips combos with the paired rank"). Audit clean (0/0 across 262 total postflop scenarios). SourceConfidence: 133 `consensus_gto` / 118 `expert_judgment` / 0 `solver_verified` / 0 `needs_review`. SuitTexture: 140 rainbow (55.8%) / 96 two_tone (38.2%) / 15 monotone (6%). All 9 GPT-named samples re-verified.
-- **Service worker `VERSION`**: `'v4.0.7'` (staged).
-- **App backup `appVersion`**: `'4.0.7'` (staged via service-worker only; `index.html` postflop loader unchanged in this sprint).
+- **Last committed + pushed**: `v4.0.7` — Module 1 expanded 20→251 scenarios (`1f5fe99`).
+- **Pending push (STAGED)**: `v4.0.8` — Postflop Teaching Layer. Module 1 question/feedback UI adds 5 teaching components: (1) pattern label header derived from board fields, (2) collapsible Board Reading Checklist (7-item framework), (3) "💭 Need a hint?" button with non-spoiler thinking-prompts per board family, (4) 5-block feedback layout (Result / Board Pattern / Core Reason / 💡 Takeaway / ⚠️ Common Mistake), (5) one-sentence Takeaway generator. Plus "LEARN MODE · explanations enabled" copy tag. All teaching content derived from existing scenario fields via 8 new pure helper functions in `index.html`. No data changes, no answer-key changes, no scoring/economy changes. Audit clean (262/0/0 — data unchanged). Mobile 375px QA passed. Live preview verified all flows.
+- **Service worker `VERSION`**: `'v4.0.8'` (staged).
+- **App backup `appVersion`**: `'4.0.8'` (staged in `index.html`).
 
 ---
 
@@ -76,7 +77,40 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.7-template-correction Module 1 Scenario Expansion — STAGED
+### v4.0.8 Postflop Teaching Layer — STAGED
+
+Module 1 (Board Texture Trainer) UI patch. After v4.0.7 expanded the scenario pool to 251, human tester reported: *"I can play it now, but I do not understand the principles behind the answers."* The app was asking questions but not teaching the underlying board-reading framework.
+
+**Five teaching components added** (all in `index.html`, additive in a fenced v4.0.8 CSS + JS block):
+
+1. **Pattern Label** — short header above each board (e.g. "🎯 J-high two-tone semi-dry") with meta-line ("two_tone · disconnected · semi-static"). Derived from `board.highCardClass`, `board.suitTexture`, `board.textureTags`, `board.pairedStatus`, `board.dynamicLevel` via `_pfPatternLabel(board)`. Reads field values only — no schema changes.
+2. **Board Reading Checklist** — collapsible 7-item educational framework (high card / texture / connectivity / suit / range adv / nut adv / sizing implication). Same for every scenario; teaches the reading PROCESS rather than the answer.
+3. **Pre-answer Hint** — "💭 Need a hint?" button reveals a non-spoiler thinking-prompt based on board family (e.g. "Ask: does BB have BOTH straight density AND flush-draw density?"). Verified to never directly state the answer.
+4. **5-block Feedback Layout** — `renderPostflopAnswer` restructured into Result / Board Pattern / Core Reason / 💡 Takeaway / ⚠️ Common Mistake. Replaces the previous separate `<details>` per logic strand — same content surfaced more readably without extra clicks.
+5. **Takeaway Generator** — `_pfTakeawayForBoard(board)` produces a one-sentence generalizable lesson per board family (e.g. "Low connected two-tone boards are dangerous for BTN: BB has straight density AND flush-draw density combined.").
+
+Plus a small "LEARN MODE · EXPLANATIONS ENABLED" mode tag pill. Full Test Mode (toggle to hide hints/explanations) deferred to v4.0.9 if needed.
+
+**Helpers added** (8 pure functions, all `_pf*` namespaced):
+`_pfPatternLabel`, `_pfBoardMetaLine`, `_pfHintForBoard`, `_pfTakeawayForBoard`, `_pfBoardChecklistHtml`, `_pfPatternLabelHtml`, `_pfHintRowHtml`, `_pfTeachingToggleHint`, `_pfTeachingFeedbackBlocksHtml`.
+
+**Live QA result**:
+- ✅ Postflop audit 262/0/0 (data unchanged)
+- ✅ Module 1 loads 251 scenarios; all 8 helpers resolve to functions
+- ✅ Pattern + hint + takeaway match correctly across 5 sample board families (A-high dry, low connected two-tone, low monotone, paired mid, broadway connected)
+- ✅ Beta OFF: postflop screen hidden, no Beta Lab section
+- ✅ Beta ON: question screen shows pattern label, checklist, hint button, mode tag
+- ✅ Hint toggle open/close; verified no answer leak
+- ✅ Choice click → 5-block feedback renders with correct content per scenario
+- ✅ Mobile 375px: no horizontal overflow; all teaching elements render cleanly
+- ✅ All 5 tabs render
+- ✅ Console: 0 errors
+
+**Files modified**: `index.html` (CSS + JS additive block + 2 render-fn modifications + appVersion 4.0.6→4.0.8), `service-worker.js` (VERSION v4.0.7→v4.0.8), `PROJECT_STATE.md`, `TASK_BOARD.md`, `docs/specs/brief-v4.0.8-postflop-teaching-layer.md` (NEW).
+
+**Untouched**: `ranges.json`, `manifest.json`, all postflop data files, audit infrastructure, generator scripts, preflop systems, scoring, cosmetics.
+
+### v4.0.7 Module 1 Scenario Expansion — COMMITTED + PUSHED (`1f5fe99`)
 
 Third pass on the largest data sprint to date. Corrects GPT-flagged template overgeneralization in the generic `two_tone` family.
 
