@@ -8,11 +8,10 @@
 
 ## 1. Current Version
 
-- **Latest committed + pushed**: `v4.0.2-data` (commit `473ce9a`) — postflop seed scenario data fixes (#20 nutLogic artifact, choice label hint stripping, #10 sourceConfidence downgrade). On `origin/main`.
-- **Pending review (STAGED, NOT committed)**: `v4.0.2` — Module 1 Board Texture Trainer UI. Beta-gated entry on Home + question/feedback/summary screens + Settings beta toggle. Live browser QA passed.
-- **Latest deployed to Netlify**: `v3.8.2` (will become `v4.0.2-data` then `v4.0.2` after the next Netlify deploys).
-- **Service worker `VERSION`**: `'v4.0.2'` (in `service-worker.js`) — staged, will be active once committed/deployed.
-- **App backup `appVersion`**: `'4.0.2'` (in `index.html`) — staged.
+- **Latest deployed to Netlify**: `v4.0.2` (live at `https://range-master-mtt.netlify.app/`).
+- **Pending push (STAGED)**: `v4.0.3` — postflop Module 1 first-session hotfix. 4 fixes from real-play feedback: loader callback re-render + 3-state card, per-question-type Choice Guide, pressed/disabled button state, repositioned to TOP of Home as Beta Lab section.
+- **Service worker `VERSION`**: `'v4.0.3'` (staged).
+- **App backup `appVersion`**: `'4.0.3'` (staged).
 
 ---
 
@@ -77,7 +76,22 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.2 Postflop Module 1 (Board Texture Trainer) UI — STAGED, awaiting commit approval
+### v4.0.3 Implementation — STAGED, awaiting commit approval
+
+Real-play hotfix per human tester feedback. Fixes 4 issues:
+
+| # | Issue | Fix |
+|---|---|---|
+| 1 | Loading feels slow | Loader (`loadPostflopData`) now re-renders Home if user is on it AND beta is on (success and error paths). Card has 3 states: loading (spinner) / ready / error (with reload button). |
+| 2 | Choice meanings unclear | New `_pfChoiceGuide(qType)` helper renders an expandable "What are we choosing?" panel above choice buttons. 5 question types × per-type explanations. |
+| 3 | Buttons feel unresponsive | `handlePostflopChoice` now disables all buttons synchronously + adds `postflop-choice-pressed` class to tapped button BEFORE classify/render. Uses `requestAnimationFrame` so the pressed visual paints before the heavy innerHTML swap. New phase `'answering'` blocks rapid re-entry. |
+| 4 | Home placement too low | `renderPostflopHomeCardMount` now uses `insertAdjacentHTML('afterbegin', ...)` to prepend at TOP of Home; wraps card in `.postflop-betalab-section` with "🧪 BETA LAB" header for clear beta status. |
+
+**Files modified**: `index.html` (~250 lines added/modified across 6 surgical edits + 1 CSS block), `service-worker.js` (VERSION bump).
+
+**Audit re-confirmed**: 31 scenarios · 0 errors · 0 warnings (no data files touched).
+
+### v4.0.2 Postflop Module 1 (Board Texture Trainer) UI — committed (`5d21128`) + pushed
 
 First visible postflop UI. Beta-gated via `App.state.settings.postflopBeta` (default `false`). Implementation per `docs/specs/brief-v4.0.2-implementation-ready.md`.
 

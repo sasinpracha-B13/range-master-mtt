@@ -10181,6 +10181,155 @@
     /* ========================================================================
        END v4.0.2 — POSTFLOP MODULE 1 UI
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.3 — POSTFLOP MODULE 1 POLISH
+       Beta Lab section + 3-state home card + choice guide + pressed/disabled
+       button states. Additive — does not modify v4.0.2 styles.
+       ======================================================================== */
+
+    /* Beta Lab section wrapper — sits at TOP of Home */
+    .postflop-betalab-section {
+      margin: 0 0 18px 0;
+      padding: 12px;
+      border: 1px dashed rgba(168,85,247,0.30);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.04) 0%, transparent 100%);
+    }
+    .postflop-betalab-header {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #a855f7;
+      margin-bottom: 8px;
+      opacity: 0.85;
+    }
+    .postflop-betalab-section .postflop-home-card {
+      margin-top: 0;  /* was 16px in v4.0.2 — now sits inside the labeled section */
+    }
+
+    /* Loading state (placeholder while App.postflop.ready === false) */
+    .postflop-home-card.postflop-state-loading {
+      text-align: left;
+    }
+    .postflop-loading-spinner {
+      width: 28px;
+      height: 28px;
+      margin: 12px 0 4px;
+      border: 3px solid rgba(168,85,247,0.20);
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: postflop-spin 800ms linear infinite;
+    }
+    @keyframes postflop-spin {
+      to { transform: rotate(360deg); }
+    }
+    body[data-fx-respect-motion="true"] .postflop-loading-spinner {
+      animation: none;
+      border-top-color: rgba(168,85,247,0.45);
+    }
+
+    /* Error state */
+    .postflop-home-card.postflop-state-error {
+      border-color: rgba(248,113,113,0.45);
+      background: linear-gradient(135deg, rgba(248,113,113,0.06) 0%, var(--surface) 100%);
+    }
+    .postflop-pill.postflop-pill-error {
+      background: rgba(248,113,113,0.20);
+      color: #f87171;
+    }
+    .postflop-error-detail {
+      margin: 8px 0 12px;
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.30);
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      word-break: break-word;
+    }
+    .postflop-state-error .postflop-secondary-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(248,113,113,0.10);
+      border: 1px solid rgba(248,113,113,0.40);
+      color: #f87171;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Choice Guide — expandable panel above answer choices */
+    .postflop-choice-guide {
+      margin: -4px 0 12px;
+      padding: 0;
+      background: rgba(96,165,250,0.04);
+      border: 1px solid rgba(96,165,250,0.20);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .postflop-choice-guide summary {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #60a5fa;
+      list-style: none;
+      line-height: 1.4;
+    }
+    .postflop-choice-guide summary::-webkit-details-marker { display: none; }
+    .postflop-choice-guide summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 6px;
+      font-size: 9px;
+      transition: transform 150ms ease;
+    }
+    .postflop-choice-guide[open] summary::before { transform: rotate(90deg); }
+    .postflop-choice-guide .pf-guide-summary {
+      display: block;
+      margin-top: 4px;
+      font-weight: 500;
+      color: var(--text);
+      font-size: 12px;
+    }
+    .postflop-choice-guide .pf-guide-body {
+      padding: 8px 14px 12px 28px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      border-top: 1px solid rgba(96,165,250,0.12);
+    }
+    .postflop-choice-guide .pf-guide-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Choice button — pressed state (instant visual feedback on tap) */
+    .postflop-choice-btn[data-choice-id] {
+      transition: background 100ms ease, border-color 100ms ease, transform 100ms ease, opacity 150ms ease;
+      -webkit-tap-highlight-color: rgba(74,222,128,0.20);
+    }
+    .postflop-choice-btn.postflop-choice-pressed {
+      background: rgba(74,222,128,0.18) !important;
+      border-color: var(--mint) !important;
+      color: var(--mint) !important;
+      transform: scale(0.98);
+      box-shadow: 0 0 0 3px rgba(74,222,128,0.12);
+    }
+    .postflop-choice-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .postflop-choice-btn.postflop-choice-pressed:disabled {
+      opacity: 1;  /* keep pressed button fully visible */
+    }
+
+    /* ========================================================================
+       END v4.0.3 — POSTFLOP MODULE 1 POLISH
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -31605,7 +31754,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.2',
+    appVersion: '4.0.3',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -32229,9 +32378,23 @@ async function loadPostflopData() {
     });
     console.log('[postflop] loaded ' + approved.length + '/' + data.scenarios.length +
                 ' scenarios (schema ' + data.schemaVersion + ')');
+    // v4.0.3: re-render Home if user is on it and beta is on, so the
+    // "loading…" placeholder swaps to the ready card without manual action.
+    try {
+      if (App.state && App.state.tab === 'mastery' && App.state.settings && App.state.settings.postflopBeta && typeof renderMastery === 'function') {
+        renderMastery();
+      }
+    } catch (e) { /* swallow */ }
   } catch (e) {
     App.postflop = { ready: false, error: e.message };
     console.error('[postflop] load failed:', e.message);
+    // v4.0.3: re-render Home so the user sees the error card instead of
+    // a permanent "loading…" placeholder.
+    try {
+      if (App.state && App.state.tab === 'mastery' && App.state.settings && App.state.settings.postflopBeta && typeof renderMastery === 'function') {
+        renderMastery();
+      }
+    } catch (e2) { /* swallow */ }
     // Do NOT throw — failure must not break the existing preflop app.
   }
 }
@@ -32356,17 +32519,38 @@ function recordPostflopAnswer(scenario, choiceId, cls) {
 }
 
 // ----- Answer click handler -----
+// v4.0.3: immediate visual feedback + double-tap guard. Add pressed class to
+// the tapped button + disable all buttons synchronously BEFORE classify/render
+// so the user sees instant response even if the feedback re-render takes a
+// few ms on slow devices.
 function handlePostflopChoice(choiceId) {
   var d = App.state.postflopDrill;
   if (!d.active || d.phase !== 'question') return;
   var scenario = d.queue[d.currentIndex];
   if (!scenario) return;
+  // Immediate UI feedback (synchronous; happens before render swap)
+  try {
+    var btns = document.querySelectorAll('.postflop-choice-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      if (btns[i].dataset.choiceId === choiceId) {
+        btns[i].classList.add('postflop-choice-pressed');
+      }
+    }
+  } catch (e) { /* swallow */ }
+  // Mark phase as 'answering' to block any rapid re-entry while we render
+  d.phase = 'answering';
   var cls = classifyPostflopAnswer(scenario, choiceId);
   recordPostflopAnswer(scenario, choiceId, cls);
   d.lastChoiceId = choiceId;
   d.lastClassification = cls;
   d.phase = 'answer';
-  renderPostflopAnswer(scenario, choiceId, cls);
+  // Use rAF so the pressed visual paints before the heavy innerHTML swap
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(function () { renderPostflopAnswer(scenario, choiceId, cls); });
+  } else {
+    setTimeout(function () { renderPostflopAnswer(scenario, choiceId, cls); }, 0);
+  }
 }
 
 function advancePostflopDrill() {
@@ -32432,6 +32616,55 @@ function confirmExitPostflop() {
   if (window.confirm(msg)) exitPostflopScreen();
 }
 
+// v4.0.3: Per-question-type choice guide. Compact, always-visible 1-line
+// summary + collapsible details. Covers all 5 Module 1 question types.
+function _pfChoiceGuide(qType) {
+  var guides = {
+    range_advantage: {
+      summary: '"Range advantage" = whose preflop range hits this board harder, on average.',
+      details: '<strong>Preflop raiser (BTN)</strong> — usually has more high-card / overpair density (AK, KK, AA, broadway). ' +
+               '<br><strong>Caller (BB)</strong> — defends wider; often has more low connectors, suited gappers, and pairs that flop sets on low boards. ' +
+               '<br><strong>Neutral / Split</strong> — both sides have meaningful claims; neither dominates clearly.'
+    },
+    nut_advantage: {
+      summary: '"Nut advantage" = whose range has more of the absolute strongest hands on this board.',
+      details: 'Different from range advantage. A player can have more equity overall (range adv) without holding the most nuts. ' +
+               'Look for sets, top-two, straights, flushes — who has more of those combos here?'
+    },
+    dynamic_level: {
+      summary: 'How much can equity shift on later streets?',
+      details: '<strong>Static (1)</strong> — top pair stays best on most run-outs. ' +
+               '<br><strong>Semi-static (2)</strong> — some draws live, but limited swing. ' +
+               '<br><strong>Dynamic (3)</strong> — many turn cards change rankings. ' +
+               '<br><strong>Very dynamic (4)</strong> — equity swings every street.'
+    },
+    frequency_strategy: {
+      summary: 'How often should the pre-flop raiser bet vs check, and at what size family?',
+      details: '<strong>Small high-freq</strong> — bet ~33% with most of range (range betting). ' +
+               '<br><strong>Mixed small/check</strong> — split between small bet and check. ' +
+               '<br><strong>Polar big</strong> — large size with strong value + selected bluffs only. ' +
+               '<br><strong>Check-heavy</strong> — most hands prefer checking on this board.'
+    },
+    sizing_family: {
+      summary: 'When the raiser bets, which size family is best?',
+      details: '<strong>Small</strong> — 25–40% pot. ' +
+               '<br><strong>Medium</strong> — ~50–66% pot. ' +
+               '<br><strong>Big / Polar</strong> — 75%+ pot, used selectively with nutted/bluff combos. ' +
+               '<br><strong>Check-heavy</strong> — checking dominates this spot.'
+    },
+    action_choice: {
+      summary: 'What action should hero take with this specific hand?',
+      details: 'Choose check, a small bet, or a big bet. The right answer depends on hand class, board texture, and the range vs range dynamic.'
+    }
+  };
+  var g = guides[qType];
+  if (!g) return '';
+  return '<details class="postflop-choice-guide">' +
+           '<summary>💡 What are we choosing? <span class="pf-guide-summary">' + g.summary + '</span></summary>' +
+           '<div class="pf-guide-body">' + g.details + '</div>' +
+         '</details>';
+}
+
 // ----- HTML escape helper (defensive) -----
 function _pfEscape(s) {
   if (s == null) return '';
@@ -32447,38 +32680,64 @@ function _pfSuitChar(suit) {
 }
 
 // ----- Renderers -----
+// v4.0.3: card moves to TOP of Home (afterbegin) inside a "Beta Lab" section
+// so it's visible without scrolling. Uses 3 states (loading/ready/error) with
+// improved copy. Loader callback re-renders this when App.postflop transitions.
 function renderPostflopHomeCardMount() {
-  // Append entry card to Home tab content. Only renders when beta on + ready.
   var host = document.getElementById('masteryContent');
   if (!host) return;
-  // Remove any existing card to avoid duplicates on re-render
-  var existing = host.querySelector('.postflop-home-card');
+  // Remove any existing Beta Lab section to avoid duplicates on re-render
+  var existing = host.querySelector('.postflop-betalab-section');
   if (existing) existing.remove();
   if (!App.state.settings.postflopBeta) return;  // beta off → nothing rendered
+
   var ready = getPostflopReady();
-  var pool = getModule1Scenarios();
-  if (!ready) {
-    host.insertAdjacentHTML('beforeend',
-      '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · loading data…</div>'
-    );
-    return;
+  var pool = ready ? getModule1Scenarios() : [];
+  var hasError = !!(App.postflop && App.postflop.error);
+  var bodyHtml;
+
+  if (hasError) {
+    // ERROR state — friendly recovery message
+    bodyHtml =
+      '<div class="postflop-home-card postflop-state-error">' +
+        '<span class="postflop-pill postflop-pill-error">⚠ Post-flop data error</span>' +
+        '<div class="postflop-module-title">Could not load Board Texture Trainer</div>' +
+        '<div class="postflop-module-desc">Reload the app to try again. If the error persists, check the console.</div>' +
+        '<div class="postflop-error-detail">' + _pfEscape(App.postflop.error) + '</div>' +
+        '<button class="postflop-secondary-btn" onclick="location.reload()">↻ Reload app</button>' +
+      '</div>';
+  } else if (!ready) {
+    // LOADING state — placeholder with spinner; loader callback will re-render
+    bodyHtml =
+      '<div class="postflop-home-card postflop-state-loading">' +
+        '<span class="postflop-pill">🧪 Postflop Beta</span>' +
+        '<div class="postflop-module-title">Loading Post-flop Trainer…</div>' +
+        '<div class="postflop-module-desc">Preparing Board Texture scenarios.</div>' +
+        '<div class="postflop-loading-spinner" aria-hidden="true"></div>' +
+      '</div>';
+  } else if (pool.length === 0) {
+    bodyHtml =
+      '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · no scenarios available for this module</div>';
+  } else {
+    // READY state — full entry card
+    bodyHtml =
+      '<div class="postflop-home-card postflop-state-ready">' +
+        '<span class="postflop-pill">🧪 Postflop Beta</span>' +
+        '<div class="postflop-module-tag">Module 1 · Board Texture Trainer</div>' +
+        '<div class="postflop-module-title">Train board reading</div>' +
+        '<div class="postflop-module-desc">Range advantage · nut advantage · c-bet sizing family. Quick 15-question session.</div>' +
+        '<div class="postflop-module-stats">✓ Ready · ' + pool.length + ' scenarios · ~10 min</div>' +
+        '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
+      '</div>';
   }
-  if (pool.length === 0) {
-    host.insertAdjacentHTML('beforeend',
-      '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · no scenarios available for this module</div>'
-    );
-    return;
-  }
-  var html =
-    '<div class="postflop-home-card">' +
-      '<span class="postflop-pill">🧪 Postflop Beta</span>' +
-      '<div class="postflop-module-tag">Module 1</div>' +
-      '<div class="postflop-module-title">Board Texture Trainer</div>' +
-      '<div class="postflop-module-desc">Read the board first. Range advantage · nut advantage · c-bet sizing family.</div>' +
-      '<div class="postflop-module-stats">' + pool.length + ' scenarios · ~10 min</div>' +
-      '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
+
+  // Wrap in Beta Lab section + insert at TOP of masteryContent (afterbegin)
+  var sectionHtml =
+    '<div class="postflop-betalab-section">' +
+      '<div class="postflop-betalab-header">🧪 BETA LAB · new training modes being tested</div>' +
+      bodyHtml +
     '</div>';
-  host.insertAdjacentHTML('beforeend', html);
+  host.insertAdjacentHTML('afterbegin', sectionHtml);
 }
 
 function renderPostflopBetaToggleMount() {
@@ -32557,10 +32816,13 @@ function renderPostflopQuestion() {
     ? 'Hero: ' + scenario.heroHand.join(' ')
     : 'Hero: — (board read)';
 
+  // v4.0.3: data-choice-id used by handlePostflopChoice for instant pressed state
   var choicesHtml = (question.choices || []).map(function (ch) {
-    return '<button class="postflop-choice-btn" onclick="handlePostflopChoice(' +
+    return '<button class="postflop-choice-btn" data-choice-id="' + _pfEscape(ch.id) + '" onclick="handlePostflopChoice(' +
       JSON.stringify(ch.id) + ')">' + _pfEscape(ch.label) + '</button>';
   }).join('');
+  // v4.0.3: per-question-type choice guide (collapsible, mobile-friendly)
+  var guideHtml = _pfChoiceGuide(question.type);
 
   var html =
     '<div class="postflop-context-bar">' +
@@ -32586,6 +32848,7 @@ function renderPostflopQuestion() {
       '<div class="postflop-section-title">❓ Question</div>' +
       '<div class="postflop-question-prompt">' + _pfEscape(question.prompt || '') + '</div>' +
     '</div>' +
+    guideHtml +
     '<div class="postflop-choices">' + choicesHtml + '</div>';
 
   document.getElementById('postflopScreen').innerHTML = html;

@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.2 implementation STAGED, awaiting commit approval.** v4.0.2-data fix and planning sprint committed + pushed. v4.0.2 production implementation completed per `brief-v4.0.2-implementation-ready.md`; 29-item live browser QA passed; one navigation bug found+fixed in-flight (postflopScreen activation inside tab-drill panel).
+🟡 **v4.0.3 implementation STAGED, awaiting commit approval.** Real-play feedback received from tester; 4 issues diagnosed; smallest-safe-fix implemented for all 4 (loader callback + 3-state card, choice guide, pressed button, Home reposition to Beta Lab top). Audit clean. Awaiting local QA run + commit/push approval.
 
 | Metric | Value |
 |---|---|
@@ -70,7 +70,10 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.2 Module 1 UI implementation staged (index.html + service-worker.js; live browser QA 29/29). Awaiting commit approval.
+- 2026-05-04: v4.0.3 first-session hotfix STAGED (loader/choice-guide/pressed-button/home-reposition). Awaiting QA + commit approval.
+- 2026-05-04: v4.0.2 deployed live to Netlify; tester real-play surfaced 4 UX issues feeding v4.0.3.
+- 2026-05-04: v4.0.3 brief + checklist published (UNTRACKED → folded into v4.0.3 commit).
+- 2026-05-04: v4.0.2 Module 1 UI committed (`5d21128`) + pushed to origin/main.
 - 2026-05-04: v4.0.2-data seed fix committed (`473ce9a`) + pushed.
 - 2026-05-04: v4.0.2 planning sprint committed (`377c844`) + pushed.
 - 2026-05-04: v4.0.1 schema loader committed (`2593e5c`) + pushed; live browser QA 9/9 PASS.
