@@ -8,10 +8,10 @@
 
 ## 1. Current Version
 
-- **Latest deployed to Netlify**: `v4.0.3` (live at `https://range-master-mtt.netlify.app/`).
-- **Pending push (STAGED)**: `v4.0.4` — CRITICAL HOTFIX. v4.0.2/v4.0.3 had a broken inline `onclick` attribute on choice buttons (`JSON.stringify` quote conflict with `onclick="..."` attribute) — clicks NEVER fired the handler. v4.0.4 replaces with delegated event listener on `#postflopScreen`; promotes Choice Guide summary to always-visible; adds touch-action + z-index hardening; adds fail-safe error fallback.
-- **Service worker `VERSION`**: `'v4.0.4'` (staged).
-- **App backup `appVersion`**: `'4.0.4'` (staged).
+- **Latest deployed to Netlify**: `v4.0.4` (live at `https://range-master-mtt.netlify.app/` — postflop answer interaction hotfix).
+- **Active planning (UNTRACKED docs only)**: `v4.0.5` — Post-flop GTO Data Validation Pass. Validation report + data patch plan published. **No data files modified.** Awaiting approval before applying the proposed `v4.0.5-data` single-line patch.
+- **Service worker `VERSION`**: `'v4.0.4'` (in `service-worker.js`).
+- **App backup `appVersion`**: `'4.0.4'` (in `index.html`).
 
 ---
 
@@ -76,7 +76,22 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.4 Critical Hotfix — STAGED, awaiting commit approval
+### v4.0.5 GTO Data Validation Pass — REPORT PUBLISHED, no data changes
+
+Walked all 20 Module 1 Board Texture Trainer scenarios with GTO scrutiny. Findings published in `docs/specs/postflop-v4.0.5-gto-validation-report.md` and `docs/specs/postflop-v4.0.5-data-patch-plan.md`.
+
+**Verdict tally**:
+- 17 KEEP (no change)
+- 2 KEEP-with-caveat (#11 Th8h3h_nutadv monotone, #20 7d7s3c_rangeadv paired-low — both already at expert_judgment + difficulty 3-4; honest hedging acceptable)
+- 1 DOWNGRADE (#14 Qd9c4h_rangeadv — proposed sourceConfidence: consensus_gto → expert_judgment)
+- 0 REVISE answer keys
+- 0 HOLD from production
+
+**Net production-ready**: 20 / 20 scenarios remain shippable. The proposed edit is a metadata honesty tag with zero player-visible impact.
+
+**Audit re-confirmed**: 31 scenarios · 0 errors · 0 warnings (no data files touched in this pass).
+
+### v4.0.4 Critical Hotfix — committed (`519df53`) + pushed
 
 Real-play feedback after v4.0.3: tester reported answer buttons unresponsive on BOTH desktop and mobile, AND Choice Guide invisible on mobile.
 

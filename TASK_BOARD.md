@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.4 critical hotfix STAGED.** Tester reported v4.0.3 answer buttons unresponsive on desktop AND mobile. Root cause: broken inline onclick in v4.0.2 (JSON.stringify quote conflict) — clicks never fired the handler. My v4.0.2/v4.0.3 QA missed this because tests called the handler directly, bypassing the broken HTML attribute. v4.0.4 replaces inline onclick with a delegated event listener on `#postflopScreen`, promotes Choice Guide summary to always-visible (mobile fix), adds touch-action + z-index hardening, and adds fail-safe error fallback. Real-click QA verified end-to-end. Audit clean.
+🟢 **v4.0.4 deployed live + working.** v4.0.5 GTO Data Validation Pass complete: validation report + patch plan published, **no data files modified**. 17/20 KEEP, 2 KEEP-with-caveat, 1 proposed metadata downgrade (#14 sourceConfidence). Awaiting human approval to apply the v4.0.5-data single-line patch.
 
 | Metric | Value |
 |---|---|
@@ -70,9 +70,10 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.3 first-session hotfix STAGED (loader/choice-guide/pressed-button/home-reposition). Awaiting QA + commit approval.
-- 2026-05-04: v4.0.2 deployed live to Netlify; tester real-play surfaced 4 UX issues feeding v4.0.3.
-- 2026-05-04: v4.0.3 brief + checklist published (UNTRACKED → folded into v4.0.3 commit).
+- 2026-05-04: v4.0.5 GTO Validation Pass complete (report + patch plan UNTRACKED). No data files modified.
+- 2026-05-04: v4.0.4 critical hotfix committed (`519df53`) + pushed; postflop answer interaction now works on desktop + mobile.
+- 2026-05-04: v4.0.3 polish committed (`25fb45e`) + pushed.
+- 2026-05-04: v4.0.2 deployed live to Netlify; tester real-play surfaced 4 UX issues feeding v4.0.3 + critical onclick bug feeding v4.0.4.
 - 2026-05-04: v4.0.2 Module 1 UI committed (`5d21128`) + pushed to origin/main.
 - 2026-05-04: v4.0.2-data seed fix committed (`473ce9a`) + pushed.
 - 2026-05-04: v4.0.2 planning sprint committed (`377c844`) + pushed.

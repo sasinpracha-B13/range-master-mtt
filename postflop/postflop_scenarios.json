@@ -687,7 +687,7 @@
       },
       "conceptTags": ["range_advantage", "dry_board", "board_texture_recognition"],
       "difficulty": 3,
-      "sourceConfidence": "consensus_gto",
+      "sourceConfidence": "expert_judgment",
       "auditStatus": "approved"
     },
 
