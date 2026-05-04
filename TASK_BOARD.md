@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.6 staged.** Postflop repeat control via local session history. New `localStorage.rmtt_postflop_history` schema + history-aware queue builder reduces back-to-back overlap to theoretical minimum. `App.postflopHistorySummary()` console helper. "Saved locally on this device" honest copy. Audit clean. Awaiting commit/push approval.
+🟡 **v4.0.7 final pass staged.** Module 1 = **251 scenarios** / total postflop = **262**. Audit: **0/0**. Includes template-correction (split generic two_tone into 5 sub-families) + micro-fix (monotone_low nut wording corrected; paired_mid + monotone_low + similar solver-sensitive families have opposite as `bad` not `critical` for nut_advantage; `neutral` in acceptable). SourceConfidence: 133 `consensus_gto` / 118 `expert_judgment` / 0 `solver_verified` / 0 `needs_review`. SuitTexture: 140 rainbow (55.8%) / 96 two_tone (38.2%) / 15 monotone (6%). All GPT-flagged issues addressed. Ready for commit + push.
 
 | Metric | Value |
 |---|---|
@@ -70,6 +70,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
+- 2026-05-04: v4.0.7-template-correction STAGED. Generic two_tone family split into 5 sub-families per rank-class + connectedness. paired_mid wording fixed. 9 GPT-named samples re-verified. Audit 0/0. Awaiting GPT re-review.
+- 2026-05-04: v4.0.7-hardened (superseded by template-correction pass). SourceConfidence rebalanced (97/146/0/0). SuitTexture rebalanced (130/98/15). Tracked tools/generate-postflop-module1.ps1 + tools/audit-postflop-ps.ps1. 30-sample GPT review package.
+- 2026-05-04: v4.0.7 initial staging (superseded).
 - 2026-05-04: v4.0.6 postflop repeat control + local history STAGED. Awaiting commit approval.
 - 2026-05-04: v4.0.5-data committed (`87c741e`) + pushed (#14 sourceConfidence honesty downgrade).
 - 2026-05-04: v4.0.5 GTO Validation Pass complete (report + patch plan committed alongside v4.0.5-data).

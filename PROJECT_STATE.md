@@ -9,9 +9,9 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Pending push (STAGED)**: `v4.0.6` — postflop repeat control + local session history. New `localStorage.rmtt_postflop_history` schema; history-aware queue builder reduces back-to-back overlap to theoretical minimum (10/15 in pool=20 sessionLength=15); `App.postflopHistorySummary()` console helper; "Saved locally on this device" honest copy.
-- **Service worker `VERSION`**: `'v4.0.6'` (staged).
-- **App backup `appVersion`**: `'4.0.6'` (staged).
+- **Pending push (STAGED)**: `v4.0.7-template-correction` — Module 1 Board Texture Trainer expansion 20→**251 scenarios**. Third pass corrects GPT-flagged generic-two_tone overgeneralization by splitting into 5 sub-families: `high_two_tone_dry` (A/K-high disconnected), `mid_two_tone_dry` (Q/J/T-high disconnected — neutral answer), `broadway_two_tone_connected` (QJT/KQJ/AQJ/JT8 — caller answer), `low_dry_two_tone` (9-high or below disconnected), `low_connected_two_tone` (8-7-x suited / 9-8-x suited — caller answer). Each board re-classified by `ClassifyTwoTone()` based on rank-class + connectedness. Plus `paired_mid` wording fixed ("set combos" → "trips combos with the paired rank"). Audit clean (0/0 across 262 total postflop scenarios). SourceConfidence: 133 `consensus_gto` / 118 `expert_judgment` / 0 `solver_verified` / 0 `needs_review`. SuitTexture: 140 rainbow (55.8%) / 96 two_tone (38.2%) / 15 monotone (6%). All 9 GPT-named samples re-verified.
+- **Service worker `VERSION`**: `'v4.0.7'` (staged).
+- **App backup `appVersion`**: `'4.0.7'` (staged via service-worker only; `index.html` postflop loader unchanged in this sprint).
 
 ---
 
@@ -75,6 +75,65 @@ The gate stays closed until human review approves the planning package.
 ---
 
 ## 5. Latest Completed Work
+
+### v4.0.7-template-correction Module 1 Scenario Expansion — STAGED
+
+Third pass on the largest data sprint to date. Corrects GPT-flagged template overgeneralization in the generic `two_tone` family.
+
+**Template-correction summary**:
+- Split `two_tone` family into 5 sub-families based on rank-class + connectedness (`high_two_tone_dry`, `mid_two_tone_dry`, `broadway_two_tone_connected`, `low_dry_two_tone`, `low_connected_two_tone`)
+- Each board re-classified into the right sub-family by `ClassifyTwoTone()` in the generator
+- Fixed `paired_mid` wording: "set combos for the paired rank" → "trips combos with the paired rank" (technically correct since you can't have a "set" of an already-paired board card)
+- All 9 GPT-named samples re-verified (5 fixed answers, 1 wording fix only, 3 kept with documented reasoning)
+- Module 1 grew from 243 → **251 scenarios** as a side-effect of bumping plan to use more two-tone boards
+- **Micro-fix pass (final)**: monotone_low nut wording corrected ("essentially zero nut combos" → acknowledges Axs nut-flush combos); paired_mid + monotone_low + similar solver-sensitive families now have `preflop_raiser`/`caller` opposite as `bad` not `critical` for nut_advantage; `neutral` added to acceptable for nut_advantage on those families
+- See `docs/specs/postflop-v4.0.7-template-correction-report.md` for full reasoning
+
+**Final canonical counts (template-correction + micro-fix)**:
+- Module 1 scenarios: **251**
+- Module 2 scenarios (unchanged): **11**
+- Total postflop scenarios: **262**
+- Audit: **0 errors / 0 warnings**
+- sourceConfidence: 133 `consensus_gto` / 118 `expert_judgment` / 0 `solver_verified` / 0 `needs_review`
+- suitTexture: 140 rainbow (55.8%) / 96 two_tone (38.2%) / 15 monotone (6%)
+- difficulty: 30/100/43/55/23 across diff 1–5
+- qtype: ra=58, na=57, fs=48, sf=39, dl=49
+
+**Hardening pass summary** (second pass, intermediate — superseded by template-correction; numbers below are historical for the hardening pass only):
+
+**Module 1 pool**: 20 → **243 scenarios** (+223 net). All 14 board family/suit combinations and all 5 question types covered.
+
+**Hardening corrections** (vs initial v4.0.7 staging):
+
+1. **sourceConfidence rebalanced.** Was 239 `consensus_gto` / 4 `expert_judgment` (98% overclaim). Now 97 `consensus_gto` (39.9%) / 146 `expert_judgment` (60.1%) / 0 `solver_verified` / 0 `needs_review` — all in target ranges. Per-family per-qtype confidence rules encoded in the generator: only universally-agreed reads (A/K-high dry rangeAdv, low-connected check-heavy, etc.) keep `consensus_gto`; everything else (sizing, monotone, two-tone, paired_mid, J/T_medium) honestly tagged `expert_judgment`.
+2. **suitTexture rebalanced.** Was 200 rainbow (82%) / 25 two_tone (10%) / 18 monotone (7%) — too rainbow-heavy. Now 130 rainbow (53.5%) / 98 two_tone (40.3%) / 15 monotone (6.2%) — all in target ranges. ~75 new two-tone boards added across all families (genuine new boards, not trivial card-swap duplicates of rainbow). Rainbow plan trimmed to keep total Module 1 ~240.
+3. **Generator tooling tracked.** Was `.gen-postflop.ps1` + `.audit-postflop.ps1` at repo root (gitignored). Now `tools/generate-postflop-module1.ps1` + `tools/audit-postflop-ps.ps1` (tracked, documented, deterministic, idempotent — re-runs strip + replace `*_v407` ids; baseline preserved).
+4. **GPT review package expanded.** Was 20 samples, no risk breakdown. Now 30 samples (5 easy + 10 medium + 10 hard + 5 highest-risk) with coverage requirements (≥5 rainbow, ≥10 two-tone, ≥5 monotone, ≥5 paired, ≥5 very-wet/connected) and dedicated "Scenarios most likely to be disputed by strong players" section calling out 5 named risk categories.
+
+**Audit result**: 0 errors / 0 warnings across all 254 total postflop scenarios. Zero board-card duplicates. Zero (board, qtype) duplicates.
+
+**[HARDENING PASS HISTORICAL]** Distribution at end of hardening pass (Module 1 = 243; superseded by template-correction final = 251):
+- qtype: ra=49, na=47, fs=53, sf=49, dl=45 (all 45-53)
+- diff: 27/84/59/58/15 across 1-5
+- suitTexture: rainbow 130 (53.5%) / two_tone 98 (40.3%) / monotone 15 (6.2%)
+- sourceConfidence: consensus_gto 97 / expert_judgment 146 / solver_verified 0 / needs_review 0
+- All `auditStatus="approved"`
+
+**[HARDENING PASS HISTORICAL] Files modified at end of hardening pass** (final stage list above is canonical):
+- `postflop/postflop_scenarios.json` (+223 scenarios at end of hardening; 31 → 254)
+- `service-worker.js` (`v4.0.6` → `v4.0.7`)
+- `tools/generate-postflop-module1.ps1` (NEW, tracked)
+- `tools/audit-postflop-ps.ps1` (NEW, tracked)
+- `docs/specs/postflop-v4.0.7-scenario-expansion-report.md` (NEW, hardened)
+- `docs/specs/postflop-v4.0.7-gpt-review-package.md` (NEW, 30 samples)
+- `PROJECT_STATE.md`, `TASK_BOARD.md` (this section + status row)
+
+**Untouched** (verified): `index.html`, `ranges.json`, `manifest.json`, `postflop/postflop_audit_rules.js`, `postflop/postflop_audit.html`, `tools/audit-postflop.js`.
+
+**Discovered work (tracked in TASK_BOARD)**:
+- `polar_big_strategy` concept tag has only 1 scenario (concept naturally surfaces on turn/river → reserved for v4.1)
+- Difficulty diff-5 only 15 scenarios (target 20) — bumping more would inflate honesty
+- 5 highest-risk categories enumerated for GPT review attention
 
 ### v4.0.6 Postflop Repeat Control + Local Session History — STAGED
 
