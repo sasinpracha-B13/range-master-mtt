@@ -10260,7 +10260,10 @@ const App = {
       // independently). Aura is steady visual around the trainer; intensity
       // scales glow/particle density. Respect-motion shares fxRespectMotion.
       auraEnabled: true,
-      auraIntensity: 'normal'
+      auraIntensity: 'normal',
+      // v4.0.1: Postflop beta flag. Default OFF. Reserved for future v4.0.2
+      // UI consumers — has no effect in v4.0.1 (no postflop UI yet).
+      postflopBeta: false
     },
     streaks: {
       current: 0,
@@ -31213,7 +31216,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '3.8.2',
+    appVersion: '4.0.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -31680,7 +31683,7 @@ function confirmReset() {
   // (Intentionally keep rmtt_disclaimer — user already accepted the legal
   // disclaimer; resetting progress isn't reason to re-prompt.)
   App.state.progress = {};
-  App.state.settings = { darkMode: true, dailyGoal: 30, notifications: false, defaultMode: 'quick', positionGrouping: 'grouped', fxEnabled: true, fxIntensity: 'normal', fxRespectMotion: true, auraEnabled: true, auraIntensity: 'normal' };
+  App.state.settings = { darkMode: true, dailyGoal: 30, notifications: false, defaultMode: 'quick', positionGrouping: 'grouped', fxEnabled: true, fxIntensity: 'normal', fxRespectMotion: true, auraEnabled: true, auraIntensity: 'normal', postflopBeta: false };
   App.state.streaks = { current: 0, daily: 0, personalBest: 0, bestAnswerStreak: 0, lastPracticeDate: null };
   App.state.stats = { totalHands: 0, totalTime: 0, dailyHistory: {} };
   // v1.9.7: also reset profile to defaults (mirrors App.state.profile init shape)
@@ -31786,6 +31789,71 @@ function showUpdateBanner(worker) {
     worker.postMessage({ type: 'SKIP_WAITING' });
   });
 }
+
+// =================================================================
+// v4.0.1 — POSTFLOP SCHEMA LOADER + AUDIT GATE (read-only, no UI)
+// Loads postflop_scenarios.json + taxonomy + concepts on app boot.
+// Validates schemaVersion. Filters to auditStatus === 'approved'.
+// Exposes Object.frozen App.postflop namespace for future v4.0.2 UI.
+// NO UI rendering. NO drill engine integration.
+// =================================================================
+const POSTFLOP_SCHEMA_VERSION = '1.0.0';
+
+// Initialize as not-ready — UI consumers in v4.0.2+ check ready before reading.
+window.App = window.App || {};
+App.postflop = { ready: false, error: null };
+
+async function loadPostflopData() {
+  try {
+    const [scenariosRes, taxonomyRes, conceptsRes] = await Promise.all([
+      fetch('postflop/postflop_scenarios.json'),
+      fetch('postflop/postflop_taxonomy.json'),
+      fetch('postflop/postflop_concepts.json')
+    ]);
+    if (!scenariosRes.ok || !taxonomyRes.ok || !conceptsRes.ok) {
+      throw new Error('postflop fetch failed: ' +
+        [scenariosRes.status, taxonomyRes.status, conceptsRes.status].join('/'));
+    }
+    const [data, taxonomy, concepts] = await Promise.all([
+      scenariosRes.json(), taxonomyRes.json(), conceptsRes.json()
+    ]);
+    // Schema version gate — refuse to activate if version mismatch
+    if (data.schemaVersion !== POSTFLOP_SCHEMA_VERSION) {
+      throw new Error('postflop schemaVersion mismatch: app expects ' +
+        POSTFLOP_SCHEMA_VERSION + ', data is ' + data.schemaVersion);
+    }
+    // Audit-status filter — only load scenarios marked approved by author + audit
+    const approved = data.scenarios.filter(function (s) { return s.auditStatus === 'approved'; });
+    // Build read-only API (frozen recursively at top level + sub-objects)
+    App.postflop = Object.freeze({
+      ready: true,
+      schemaVersion: data.schemaVersion,
+      scenarios: Object.freeze(approved),
+      taxonomy: Object.freeze(taxonomy),
+      concepts: Object.freeze(concepts),
+      stats: Object.freeze({
+        total: data.scenarios.length,
+        approved: approved.length,
+        skipped: data.scenarios.length - approved.length
+      }),
+      error: null
+    });
+    console.log('[postflop] loaded ' + approved.length + '/' + data.scenarios.length +
+                ' scenarios (schema ' + data.schemaVersion + ')');
+  } catch (e) {
+    App.postflop = { ready: false, error: e.message };
+    console.error('[postflop] load failed:', e.message);
+    // Do NOT throw — failure must not break the existing preflop app.
+  }
+}
+
+// Fire-and-forget on boot — does not block existing render path.
+if (typeof document !== 'undefined') {
+  setTimeout(loadPostflopData, 100);
+}
+// =================================================================
+// END v4.0.1 — POSTFLOP SCHEMA LOADER
+// =================================================================
 
 // ============================================================
 // INIT

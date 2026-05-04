@@ -1,11 +1,15 @@
-const VERSION = 'v3.8.2';
+const VERSION = 'v4.0.1';
 const CACHE_NAME = `range-master-${VERSION}`;
 
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/icon-maskable.png'
+  '/icon-maskable.png',
+  // v4.0.1 — postflop data files (read-only at runtime; loaded by index.html)
+  '/postflop/postflop_scenarios.json',
+  '/postflop/postflop_taxonomy.json',
+  '/postflop/postflop_concepts.json'
 ];
 
 const NETWORK_FIRST = ['/index.html', '/ranges.json', '/'];

@@ -7,25 +7,24 @@
 
 ## Active Epic
 
-**v4.0.0 — Post-flop GTO Foundation Architecture**
+**v4.0.1 — Post-flop Schema Loader + Audit Gate** (parent epic v4.0.x — Postflop Foundation)
 
-Build a data-first, auditable Post-flop NLH MTT training domain. v4.0.0 ships planning + data + audit only — no production integration.
+Make the app aware of postflop data files. Load + validate + freeze + expose `App.postflop` namespace. **No UI changes** in v4.0.1.
 
 ---
 
 ## Current Status
 
-🟡 **Planning package produced. Audit clean. Pending human review/approval. Not committed yet.**
+🟡 **v4.0.1 implementation STAGED in `index.html` + `service-worker.js`. Awaiting human review of the diff before commit.**
 
 | Metric | Value |
 |---|---|
-| Scenarios authored | 31 (target was 20–40) |
-| Audit errors | 0 |
-| Audit warnings | 0 |
-| Approved scenarios | 31 / 31 |
-| Concept coverage | 23 / 24 (96%) |
-| Files staged for commit | 9 in `postflop/` + 1 `.gitignore` change |
-| Production files modified | 0 (gate respected) |
+| v4.0.0 planning | ✅ committed (`7849741`) + pushed |
+| v4.0.1 implementation | 🟡 staged, awaiting commit approval |
+| Audit | ✅ 31/0/0 (re-confirmed pre + post implementation) |
+| Production files modified (v4.0.1) | `index.html` (+71/-3), `service-worker.js` (+5/-1) |
+| Diff scope | Matches v4.0.1 brief exactly — fenced loader block, settings flag, version bump, SW cache list |
+| Production behavior change | None visible — loader runs silently; no UI surface activated |
 
 ---
 
@@ -33,46 +32,48 @@ Build a data-first, auditable Post-flop NLH MTT training domain. v4.0.0 ships pl
 
 | Workstream | Owner | Status | Notes |
 |---|---|---|---|
-| Architecture Package | Architecture Subagent | ✅ Done | `postflop/ARCHITECTURE.md` (21.4 KB) |
-| GTO Data Package | GTO Data Subagent | ✅ Done | scenarios + concepts + taxonomy clean |
-| Audit Package | Audit Subagent | ✅ Done | rules + browser viewer + sample report |
-| UX / UI Plan | UX Subagent | 🟡 Partial | Plan included in `postflop/postflop_schema.md` § "UI / UX plan"; deeper wireframe pass deferred to v4.0.4 (post-implementation polish round) |
-| Orchestrator Workflow Files | Orchestrator | 🟡 In progress | This commit — `PROJECT_STATE.md`, `AGENTS.md`, `TASK_BOARD.md`, `docs/`, `tools/audit-postflop.js` |
-| Human Review | (human) | ⏸️ Pending | Architecture + 3–5 sample scenarios + RISKS.md |
-| Commit v4.0.0 planning package | Orchestrator | 🚫 Blocked | Awaiting approval |
-| v4.0.1 Implementation (schema loader + audit gate) | DEV Integration Agent | 🚫 Blocked | Awaiting approval of v4.0.0 planning |
+| Architecture Package | Architecture Subagent | ✅ Done + committed | `postflop/ARCHITECTURE.md` (21.4 KB) — committed in `7849741` |
+| GTO Data Package | GTO Data Subagent | ✅ Done + committed | scenarios + concepts + taxonomy clean — committed in `7849741` |
+| Audit Package | Audit Subagent | ✅ Done + committed | rules + browser viewer + sample report — committed in `7849741` |
+| UX / UI Plan | UX Subagent | 🟡 Partial | Plan in `postflop/postflop_schema.md` § "UI / UX plan"; deeper wireframe pass deferred to v4.0.4 |
+| Orchestrator Workflow Files | Orchestrator | ✅ Done + committed | All in `7849741` |
+| v4.0.0 Planning Commit + Push | Orchestrator | ✅ Done | `7849741` pushed to origin/main |
+| v4.0.1 Brief | Orchestrator | ✅ Done + committed | `docs/specs/brief-v4.0.1-schema-loader.md` — staged with v4.0.1 |
+| v4.0.1 Implementation | DEV Integration Agent | 🟡 Staged | per `brief-v4.0.1-schema-loader.md`, awaiting commit approval |
+| v4.0.1 QA | QA Agent | 🟡 Partial | All non-browser items pass; live browser load + console verification still needed |
+| v4.0.2 Brief (Module 1 UI) | Orchestrator | 🚫 Blocked | Wait for v4.0.1 commit approval |
 
 ---
 
 ## Blockers
 
-1. **Human review of `postflop/ARCHITECTURE.md`** — does the architecture proposal match the project's direction?
-2. **Human spot-check of 3–5 scenarios in `postflop/postflop_scenarios.json`** — do the GTO answers and explanations look right?
-3. **Resolution of 5 open questions** (carried in `PROJECT_STATE.md` § 8):
-   - Acceptable-score granularity locked to `{0.25, 0.5, 0.75}`?
-   - Critical-flag UI: flag-only or block progression?
-   - ICM out-of-scope confirmed?
-   - Hand-class enum location?
-   - `mixing` block format?
-4. **Approval to commit** the staged v4.0.0 planning package + workflow files.
+1. **Human review of v4.0.1 staged diff** (`index.html` +71/-3, `service-worker.js` +5/-1) — confirm the diff matches the brief exactly.
+2. **Live browser verification of loader** — open the app, check DevTools console for `[postflop] loaded 31/31 scenarios (schema 1.0.0)`, run `App.postflop.ready` etc. (QA items 2–7 in v4.0.1 brief).
+3. **Approval to commit** the staged v4.0.1 changes with message `v4.0.1: add postflop schema loader and audit gate`.
+4. **Resolution of 5 open questions** (carried in `PROJECT_STATE.md` § 8) — can be deferred until v4.0.2 if not blocking.
 
 ---
 
 ## Next Actions (in order)
 
-1. ✅ Create workflow files (`PROJECT_STATE.md`, `AGENTS.md`, `TASK_BOARD.md`, `docs/`, `tools/audit-postflop.js`).
-2. ✅ Update `.gitignore` to make `tools/*.js` and `postflop/*.js` trackable.
-3. ✅ Re-run postflop audit; confirm still 0 errors / 0 warnings.
-4. ⏸️ Report and stop. Wait for human approval.
-5. ⏸️ On approval → Orchestrator commits the v4.0.0 planning package + workflow files in **one** commit.
-6. ⏸️ On approval of v4.0.1 brief → DEV Integration Agent implements schema loader + audit gate (NOT Module 1/2 UI yet).
+1. ✅ Workflow files created.
+2. ✅ v4.0.0 planning package committed (`7849741`) and pushed.
+3. ✅ v4.0.1 brief written and approved.
+4. ✅ v4.0.1 implementation: 4 edits in `index.html` + 2 edits in `service-worker.js`. Audit re-confirmed 31/0/0.
+5. ✅ State files updated (PROJECT_STATE.md, TASK_BOARD.md).
+6. ⏸️ Human reviews staged diff, then approves the v4.0.1 commit.
+7. ⏸️ Orchestrator commits with message `v4.0.1: add postflop schema loader and audit gate`.
+8. ⏸️ Push happens only on a separate explicit "push" instruction.
+9. ⏸️ On v4.0.1 commit + push: prepare `docs/specs/brief-v4.0.2-module1-board-texture-trainer.md` (planning only — first actual UI work).
 
 ---
 
 ## Recently Completed
 
+- 2026-05-04: v4.0.1 implementation staged (loader + audit gate; no UI). Audit still 31/0/0. Awaiting commit approval.
+- 2026-05-04: v4.0.0 planning package committed (`7849741`) + pushed to origin/main.
+- 2026-05-04: Orchestrator workflow files created (PROJECT_STATE.md, AGENTS.md, TASK_BOARD.md, docs/, tools/audit-postflop.js).
 - 2026-05-04: Postflop planning package (9 files, ~206 KB) — Audit Subagent verified 0/0.
-- 2026-05-04: Started Orchestrator workflow files.
 - 2026-05-04 (prior): v3.8.2 shipped to Netlify (Viewport-Dominant Field FX).
 - 2026-05-04 (prior): v3.8.1 (Anime Battle Field) shipped.
 - 2026-05-04 (prior): v3.8.0 (Field FX pivot + lifecycle bug fix) shipped.

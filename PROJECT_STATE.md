@@ -9,11 +9,12 @@
 ## 1. Current Version
 
 - **Latest shipped (deployed to Netlify)**: `v3.8.2` — Viewport-Dominant Field FX (full-screen canvas, 5 animated layers).
-- **Pending review (NOT shipped, NOT committed)**: `v4.0.0` Post-flop GTO Foundation Architecture — planning package only. Lives in `postflop/`. Awaiting human approval before commit.
-- **Service worker `VERSION`**: `'v3.8.2'` (in `service-worker.js`).
-- **App backup `appVersion`**: `'3.8.2'` (in `index.html`).
+- **Latest committed + pushed**: `v4.0.0` (commit `7849741`) — postflop planning package + orchestrator workflow files. No production behavior change; pushed to `origin/main`.
+- **Pending review (staged, NOT committed)**: `v4.0.1` Postflop Schema Loader + Audit Gate — index.html and service-worker.js edits ready. Awaiting human approval to commit.
+- **Service worker `VERSION`**: `'v4.0.1'` (in `service-worker.js`) — bumped in v4.0.1 staging; will be active once committed/deployed.
+- **App backup `appVersion`**: `'4.0.1'` (in `index.html`) — bumped in v4.0.1 staging.
 
-> ⚠️ Do not bump these versions until v4.0.0 implementation actually ships.
+> ⚠️ v4.0.1 changes are staged but not committed. The deployed Netlify app is still v3.8.2.
 
 ---
 
@@ -78,7 +79,22 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.0 Postflop Planning Package — staged in `postflop/`, not committed
+### v4.0.1 Postflop Schema Loader + Audit Gate — STAGED, awaiting commit approval
+
+| Change | File | Diff |
+|---|---|---|
+| Loader block (POSTFLOP_SCHEMA_VERSION + App.postflop init + loadPostflopData + boot setTimeout) | `index.html` | +63 lines (one fenced v4.0.1 block) |
+| `postflopBeta: false` in settings defaults (App.state) + confirmReset | `index.html` | +4 lines / -2 modified |
+| `appVersion: '3.8.2'` → `'4.0.1'` | `index.html` | 1 string |
+| `VERSION` bump + 3 postflop paths in STATIC_ASSETS | `service-worker.js` | +5 lines / -1 modified |
+
+**Total**: 2 files modified; 71 insertions / 3 deletions in `index.html`; 6 insertions / 2 deletions in `service-worker.js`. All within the v4.0.1 brief scope.
+
+**QA result**: audit re-confirmed clean (31/0/0); loader logic simulated successfully (`[postflop] loaded 31/31 scenarios (schema 1.0.0)`); production data files unchanged; postflop_audit_rules.js unchanged; preflop code paths untouched.
+
+**Not yet done**: actual browser load + console verification of `App.postflop.ready === true` (requires a human or QA Agent with browser access).
+
+### v4.0.0 Postflop Planning Package — committed (`7849741`) + pushed
 
 | File | Purpose | Status |
 |---|---|---|
@@ -154,11 +170,13 @@ Plus, before commit:
 
 ## 9. Next Recommended Step
 
-1. ✅ Create the workflow files (this round — done).
-2. ⏸️ Human review of `postflop/ARCHITECTURE.md` + 3–5 sample scenarios + `RISKS.md`.
-3. ⏸️ Resolve the 5 open questions above (or defer with explicit notes).
-4. ⏸️ Approval gate → if approved, Orchestrator commits the v4.0.0 planning package.
-5. ⏸️ Begin v4.0.1 (schema loader + audit gate in app, no UI yet) — this WILL touch `index.html`, requires DEV Integration Agent.
+1. ✅ Workflow files created (DEC-001, etc.).
+2. ✅ v4.0.0 planning package reviewed + approved + committed (`7849741`) + pushed.
+3. ✅ v4.0.1 implementation (schema loader + audit gate) staged per brief.
+4. ⏸️ **Human review of staged v4.0.1 diff**, then approve the commit.
+5. ⏸️ On approval: stage commit message `v4.0.1: add postflop schema loader and audit gate`; commit; await separate "push" instruction.
+6. ⏸️ Resolve the 5 open questions above (or defer with explicit notes).
+7. ⏸️ After v4.0.1 commit: prepare `docs/specs/brief-v4.0.2-module1-board-texture-trainer.md` (planning only — actual UI work).
 
 ---
 
