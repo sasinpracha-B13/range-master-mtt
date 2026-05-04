@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.4 deployed live + working.** v4.0.5 GTO Data Validation Pass complete: validation report + patch plan published, **no data files modified**. 17/20 KEEP, 2 KEEP-with-caveat, 1 proposed metadata downgrade (#14 sourceConfidence). Awaiting human approval to apply the v4.0.5-data single-line patch.
+🟡 **v4.0.6 staged.** Postflop repeat control via local session history. New `localStorage.rmtt_postflop_history` schema + history-aware queue builder reduces back-to-back overlap to theoretical minimum. `App.postflopHistorySummary()` console helper. "Saved locally on this device" honest copy. Audit clean. Awaiting commit/push approval.
 
 | Metric | Value |
 |---|---|
@@ -70,7 +70,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.5 GTO Validation Pass complete (report + patch plan UNTRACKED). No data files modified.
+- 2026-05-04: v4.0.6 postflop repeat control + local history STAGED. Awaiting commit approval.
+- 2026-05-04: v4.0.5-data committed (`87c741e`) + pushed (#14 sourceConfidence honesty downgrade).
+- 2026-05-04: v4.0.5 GTO Validation Pass complete (report + patch plan committed alongside v4.0.5-data).
 - 2026-05-04: v4.0.4 critical hotfix committed (`519df53`) + pushed; postflop answer interaction now works on desktop + mobile.
 - 2026-05-04: v4.0.3 polish committed (`25fb45e`) + pushed.
 - 2026-05-04: v4.0.2 deployed live to Netlify; tester real-play surfaced 4 UX issues feeding v4.0.3 + critical onclick bug feeding v4.0.4.

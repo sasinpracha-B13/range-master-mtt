@@ -10420,6 +10420,21 @@
     /* ========================================================================
        END v4.0.4 — POSTFLOP ANSWER INTERACTION HOTFIX
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.6 — POSTFLOP LOCAL HISTORY UI
+       Tiny additive copy block on the home card. No new layout primitives.
+       ======================================================================== */
+    .postflop-local-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      opacity: 0.75;
+    }
+    /* ========================================================================
+       END v4.0.6 — POSTFLOP LOCAL HISTORY UI
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -31844,7 +31859,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.4',
+    appVersion: '4.0.6',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -32536,15 +32551,42 @@ App.state.postflopDrill = {
 };
 
 // ----- Builders -----
+// v4.0.6: history-aware queue builder. Replaces the v4.0.2 pure Fisher-Yates
+// shuffle. Scores each candidate scenario based on local history (never-seen
+// gets the highest score; scenarios in the immediately previous session get
+// a strong penalty). No duplicates within a session (each scenario appears
+// at most once because we sort and slice). Falls back gracefully when pool
+// is small (returns whatever we have, up to sessionLength).
 function buildPostflopQueue(scenarios, sessionLength) {
-  // Fisher-Yates shuffle on a shallow copy of the read-only array (we never
-  // mutate App.postflop.scenarios — slice() returns a new array).
-  var pool = scenarios.slice();
-  for (var i = pool.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  var pool = scenarios.slice();  // shallow copy; never mutate App.postflop.scenarios
+  if (pool.length === 0) return [];
+  var history = _pfHistoryLoad();
+  var lastSession = (history.sessions && history.sessions.length > 0)
+    ? history.sessions[history.sessions.length - 1]
+    : null;
+  var lastSessionIds = {};
+  if (lastSession && Array.isArray(lastSession.scenarioIds)) {
+    for (var k = 0; k < lastSession.scenarioIds.length; k++) {
+      lastSessionIds[lastSession.scenarioIds[k]] = true;
+    }
   }
-  return pool.slice(0, Math.min(sessionLength, pool.length));
+  var scored = pool.map(function (s) {
+    var stat = (history.scenarios && history.scenarios[s.id]) || { attempts: 0 };
+    var attempts = stat.attempts || 0;
+    var score = 0;
+    if (attempts === 0) score += 100;
+    if (!lastSessionIds[s.id]) score += 30;
+    if (attempts < 3) score += 10;
+    if (lastSessionIds[s.id]) score -= 50;
+    score -= attempts * 3;
+    score += Math.random() * 20;  // light randomness so identical-score scenarios still vary
+    return { scenario: s, score: score };
+  });
+  scored.sort(function (a, b) { return b.score - a.score; });
+  var n = Math.min(sessionLength, pool.length);
+  var queue = [];
+  for (var i = 0; i < n; i++) queue.push(scored[i].scenario);
+  return queue;
 }
 
 function startPostflopDrill(moduleId, sessionLength) {
@@ -32606,6 +32648,8 @@ function recordPostflopAnswer(scenario, choiceId, cls) {
     isCritical: cls.isCritical,
     conceptTags: scenario.conceptTags ? scenario.conceptTags.slice() : []
   });
+  // v4.0.6: also write to local history (best-effort; never throw)
+  try { if (typeof _pfHistoryRecordAnswer === 'function') _pfHistoryRecordAnswer(scenario, cls); } catch (e) { /* swallow */ }
 }
 
 // ----- Answer click handler (v4.0.4 robust) -----
@@ -32912,6 +32956,7 @@ function renderPostflopHomeCardMount() {
         '<div class="postflop-module-desc">Range advantage · nut advantage · c-bet sizing family. Quick 15-question session.</div>' +
         '<div class="postflop-module-stats">✓ Ready · ' + pool.length + ' scenarios · ~10 min</div>' +
         '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
+        '<div class="postflop-local-note">Progress is saved locally on this device.</div>' +
       '</div>';
   }
 
@@ -33117,6 +33162,18 @@ function renderPostflopComplete() {
   var counts = { best: 0, acceptable: 0, bad: 0, critical: 0 };
   d.answers.forEach(function (a) { counts[a.tier] = (counts[a.tier] || 0) + 1; });
   var scoreCls = pct >= 80 ? '' : (pct >= 50 ? 'mid' : 'low');
+  // v4.0.6: save compact session summary to local history (best-effort)
+  try {
+    if (typeof _pfHistoryRecordSession === 'function') {
+      _pfHistoryRecordSession({
+        module: d.module,
+        queue: d.queue,
+        answers: d.answers,
+        totalScore: totalScore,
+        counts: counts
+      });
+    }
+  } catch (e) { /* swallow */ }
 
   // Concept mastery aggregation
   var conceptTally = {};
@@ -33179,6 +33236,149 @@ function renderPostflopComplete() {
 
 // =================================================================
 // END v4.0.2 — POSTFLOP MODULE 1 UI
+// =================================================================
+
+// =================================================================
+// v4.0.6 — POSTFLOP REPEAT CONTROL + LOCAL SESSION HISTORY
+// Local-only (per-device, per-browser). NO backend, NO sync.
+// Updates rmtt_postflop_history in localStorage on every answer + on
+// session completion. buildPostflopQueue (in v4.0.2 block above) reads
+// this history to reduce repetition across back-to-back sessions.
+// =================================================================
+var POSTFLOP_HISTORY_KEY = 'rmtt_postflop_history';
+var POSTFLOP_HISTORY_VERSION = '1.0.0';
+var POSTFLOP_HISTORY_MAX_SESSIONS = 50;
+
+function _pfHistoryDefault() {
+  return {
+    version: POSTFLOP_HISTORY_VERSION,
+    scenarios: {},  // scenarioId -> { attempts, best, acceptable, bad, critical, totalScore, lastTier, lastScore, lastSeenAt, lastSessionId }
+    concepts:  {},  // conceptTag -> { attempts, best, acceptable, bad, critical, totalScore, lastSeenAt }
+    sessions:  []   // capped to POSTFLOP_HISTORY_MAX_SESSIONS most recent
+  };
+}
+
+function _pfHistoryLoad() {
+  try {
+    var raw = localStorage.getItem(POSTFLOP_HISTORY_KEY);
+    if (!raw) return _pfHistoryDefault();
+    var parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return _pfHistoryDefault();
+    // Defensive: ensure required shape (handles older versions or partial corruption)
+    if (!parsed.scenarios || typeof parsed.scenarios !== 'object') parsed.scenarios = {};
+    if (!parsed.concepts  || typeof parsed.concepts  !== 'object') parsed.concepts  = {};
+    if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
+    if (!parsed.version) parsed.version = POSTFLOP_HISTORY_VERSION;
+    return parsed;
+  } catch (e) {
+    // Corrupt JSON or storage error — return fresh default; don't throw
+    return _pfHistoryDefault();
+  }
+}
+
+function _pfHistorySave(h) {
+  try {
+    localStorage.setItem(POSTFLOP_HISTORY_KEY, JSON.stringify(h));
+    return true;
+  } catch (e) {
+    // QuotaExceededError or storage disabled — fail silently
+    return false;
+  }
+}
+
+function _pfHistoryRecordAnswer(scenario, cls) {
+  if (!scenario || !cls) return;
+  var h = _pfHistoryLoad();
+  var now = Date.now();
+  var sid = scenario.id;
+  // --- scenario stats ---
+  if (!h.scenarios[sid]) {
+    h.scenarios[sid] = {
+      attempts: 0, best: 0, acceptable: 0, bad: 0, critical: 0,
+      totalScore: 0, lastTier: null, lastScore: 0, lastSeenAt: 0, lastSessionId: null
+    };
+  }
+  var sStat = h.scenarios[sid];
+  sStat.attempts++;
+  sStat[cls.tier] = (sStat[cls.tier] || 0) + 1;
+  sStat.totalScore += (cls.score || 0);
+  sStat.lastTier = cls.tier;
+  sStat.lastScore = cls.score || 0;
+  sStat.lastSeenAt = now;
+  // lastSessionId is set when session is recorded at completion
+  // --- concept stats ---
+  var tags = scenario.conceptTags || [];
+  for (var i = 0; i < tags.length; i++) {
+    var tag = tags[i];
+    if (!h.concepts[tag]) {
+      h.concepts[tag] = {
+        attempts: 0, best: 0, acceptable: 0, bad: 0, critical: 0,
+        totalScore: 0, lastSeenAt: 0
+      };
+    }
+    var cStat = h.concepts[tag];
+    cStat.attempts++;
+    cStat[cls.tier] = (cStat[cls.tier] || 0) + 1;
+    cStat.totalScore += (cls.score || 0);
+    cStat.lastSeenAt = now;
+  }
+  _pfHistorySave(h);
+}
+
+function _pfHistoryRecordSession(s) {
+  // s = { module, queue (array of scenarios), answers, totalScore, counts }
+  if (!s || !s.queue || !s.answers) return;
+  var h = _pfHistoryLoad();
+  var sessionId = 'pfs_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  var session = {
+    id: sessionId,
+    date: new Date().toISOString(),
+    module: s.module || 'pf_board_texture',
+    scenarioIds: s.queue.map(function (x) { return x.id; }),
+    answered: s.answers.length,
+    score: s.totalScore || 0,
+    best: (s.counts && s.counts.best) || 0,
+    acceptable: (s.counts && s.counts.acceptable) || 0,
+    bad: (s.counts && s.counts.bad) || 0,
+    critical: (s.counts && s.counts.critical) || 0
+  };
+  h.sessions.push(session);
+  // Cap to most recent N sessions to prevent unbounded growth
+  if (h.sessions.length > POSTFLOP_HISTORY_MAX_SESSIONS) {
+    h.sessions = h.sessions.slice(-POSTFLOP_HISTORY_MAX_SESSIONS);
+  }
+  // Backfill lastSessionId on the scenarios that were in this session
+  for (var i = 0; i < session.scenarioIds.length; i++) {
+    var sid = session.scenarioIds[i];
+    if (h.scenarios[sid]) h.scenarios[sid].lastSessionId = sessionId;
+  }
+  _pfHistorySave(h);
+}
+
+// Dev console helper — App.postflopHistorySummary() for quick inspection.
+// Returns a compact object; safe to call from DevTools at any time.
+function _pfHistorySummary() {
+  var h = _pfHistoryLoad();
+  var scenarioIds = Object.keys(h.scenarios);
+  var topSeen = scenarioIds.map(function (id) {
+    return { id: id, attempts: h.scenarios[id].attempts || 0 };
+  }).sort(function (a, b) { return b.attempts - a.attempts; }).slice(0, 5);
+  var lastSession = h.sessions.length > 0 ? h.sessions[h.sessions.length - 1] : null;
+  return {
+    version: h.version,
+    totalScenariosTracked: scenarioIds.length,
+    totalConceptsTracked: Object.keys(h.concepts).length,
+    sessionsCount: h.sessions.length,
+    mostSeenScenarios: topSeen,
+    lastSessionScenarioIds: lastSession ? lastSession.scenarioIds : []
+  };
+}
+// Attach to App namespace for DevTools access
+if (typeof App !== 'undefined') {
+  App.postflopHistorySummary = _pfHistorySummary;
+}
+// =================================================================
+// END v4.0.6 — POSTFLOP REPEAT CONTROL + LOCAL SESSION HISTORY
 // =================================================================
 
 // ============================================================

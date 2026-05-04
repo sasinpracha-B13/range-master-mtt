@@ -8,10 +8,10 @@
 
 ## 1. Current Version
 
-- **Latest deployed to Netlify**: `v4.0.4` (live at `https://range-master-mtt.netlify.app/` — postflop answer interaction hotfix).
-- **Active planning (UNTRACKED docs only)**: `v4.0.5` — Post-flop GTO Data Validation Pass. Validation report + data patch plan published. **No data files modified.** Awaiting approval before applying the proposed `v4.0.5-data` single-line patch.
-- **Service worker `VERSION`**: `'v4.0.4'` (in `service-worker.js`).
-- **App backup `appVersion`**: `'4.0.4'` (in `index.html`).
+- **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
+- **Pending push (STAGED)**: `v4.0.6` — postflop repeat control + local session history. New `localStorage.rmtt_postflop_history` schema; history-aware queue builder reduces back-to-back overlap to theoretical minimum (10/15 in pool=20 sessionLength=15); `App.postflopHistorySummary()` console helper; "Saved locally on this device" honest copy.
+- **Service worker `VERSION`**: `'v4.0.6'` (staged).
+- **App backup `appVersion`**: `'4.0.6'` (staged).
 
 ---
 
@@ -76,7 +76,38 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.5 GTO Data Validation Pass — REPORT PUBLISHED, no data changes
+### v4.0.6 Postflop Repeat Control + Local Session History — STAGED
+
+Tester reported postflop questions felt repetitive after ~3 sessions. Module 1 has 20 scenarios; sessions use 15. Pure Fisher-Yates random meant ~75% overlap between back-to-back sessions on average.
+
+**Implementation** (all in `index.html`, additive in a new v4.0.6 fenced block + 4 in-place edits to v4.0.2 functions):
+
+1. **Local history schema** in `localStorage.rmtt_postflop_history`:
+   - `scenarios[scenarioId]` — attempts, per-tier counts, totalScore, lastTier, lastScore, lastSeenAt, lastSessionId
+   - `concepts[conceptTag]` — same shape, aggregated per tag
+   - `sessions[]` — capped to most recent 50 sessions (id, date, module, scenarioIds, score, tier counts)
+   - Defensive load with shape recovery; defensive save with try/catch
+2. **`recordPostflopAnswer` hook** — calls `_pfHistoryRecordAnswer(scenario, cls)` after the in-memory record. Best-effort; never throws.
+3. **`renderPostflopComplete` hook** — calls `_pfHistoryRecordSession({module, queue, answers, totalScore, counts})` to save the compact session summary.
+4. **History-aware `buildPostflopQueue`**: scores each candidate (`+100` if never seen, `+30` if not in last session, `+10` if attempts<3, `-50` if in last session, `-attempts*3`, `+random*20`); sorts and slices. Result: back-to-back overlap reduced to **theoretical minimum** (10/15 with pool=20, sessionLength=15).
+5. **`App.postflopHistorySummary()`** — dev console helper returns scenarios tracked, concepts tracked, sessions count, top 5 most-seen, last session ids.
+6. **"Progress is saved locally on this device."** — honest copy on the home card; no overclaim about sync/cloud/account.
+
+**QA verified** (live local server):
+- ✅ Audit 31/0/0
+- ✅ Within-session: zero duplicates (`new Set(queue.ids).size === 15`)
+- ✅ Back-to-back overlap: 10/15 (67%) = theoretical minimum, ~12% better than pure-random expected ~11.25
+- ✅ History persists in localStorage
+- ✅ History tracking: 15 scenarios + 17 concepts + 1 session after a single completed run
+- ✅ Beta toggle off→hides UI, on→UI back
+- ✅ All 5 tabs render
+- ✅ Preflop drill 5 hands all classified correctly + preflop SRS storage grew (independent of postflop history)
+- ✅ Postflop history + preflop progress in separate localStorage keys (no collision)
+- ✅ Console clean
+
+**Files modified**: `index.html` (+218 / -10), `service-worker.js` (VERSION bump only). Postflop data files + audit infrastructure all 0-diff.
+
+### v4.0.5 GTO Data Validation Pass — committed (`87c741e`) + pushed
 
 Walked all 20 Module 1 Board Texture Trainer scenarios with GTO scrutiny. Findings published in `docs/specs/postflop-v4.0.5-gto-validation-report.md` and `docs/specs/postflop-v4.0.5-data-patch-plan.md`.
 
