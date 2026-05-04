@@ -7,24 +7,24 @@
 
 ## Active Epic
 
-**v4.0.1 — Post-flop Schema Loader + Audit Gate** (parent epic v4.0.x — Postflop Foundation)
+**v4.0.2 — Post-flop Module 1: Board Texture Trainer UI** (parent epic v4.0.x — Postflop Foundation)
 
-Make the app aware of postflop data files. Load + validate + freeze + expose `App.postflop` namespace. **No UI changes** in v4.0.1.
+First visible postflop UI surface. Consumes `App.postflop` namespace shipped in v4.0.1. Delivers: module entry point + question card + board cards + answer choices + multi-tier scoring + multi-section feedback. Mobile-first (375px). Reuses existing drill chrome where possible.
 
 ---
 
 ## Current Status
 
-🟡 **v4.0.1 implementation STAGED in `index.html` + `service-worker.js`. Awaiting human review of the diff before commit.**
+🟡 **v4.0.2 planning sprint in progress.** v4.0.1 committed (`2593e5c`) + pushed to origin/main; loader live and verified by browser QA (9/9 PASS).
 
 | Metric | Value |
 |---|---|
 | v4.0.0 planning | ✅ committed (`7849741`) + pushed |
-| v4.0.1 implementation | 🟡 staged, awaiting commit approval |
-| Audit | ✅ 31/0/0 (re-confirmed pre + post implementation) |
-| Production files modified (v4.0.1) | `index.html` (+71/-3), `service-worker.js` (+5/-1) |
-| Diff scope | Matches v4.0.1 brief exactly — fenced loader block, settings flag, version bump, SW cache list |
-| Production behavior change | None visible — loader runs silently; no UI surface activated |
+| v4.0.1 implementation | ✅ committed (`2593e5c`) + pushed |
+| `App.postflop` runtime | ✅ live; 31/31 approved scenarios loaded; frozen API |
+| Browser QA result | ✅ 9/9 PASS (live verified at `http://localhost:8765/index.html`) |
+| v4.0.2 planning sprint | 🟡 in progress — Architecture / UX / Data review / QA / Consolidation |
+| v4.0.2 production code | ❌ not started; planning only |
 
 ---
 

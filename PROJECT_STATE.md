@@ -8,13 +8,11 @@
 
 ## 1. Current Version
 
-- **Latest shipped (deployed to Netlify)**: `v3.8.2` — Viewport-Dominant Field FX (full-screen canvas, 5 animated layers).
-- **Latest committed + pushed**: `v4.0.0` (commit `7849741`) — postflop planning package + orchestrator workflow files. No production behavior change; pushed to `origin/main`.
-- **Pending review (staged, NOT committed)**: `v4.0.1` Postflop Schema Loader + Audit Gate — index.html and service-worker.js edits ready. Awaiting human approval to commit.
-- **Service worker `VERSION`**: `'v4.0.1'` (in `service-worker.js`) — bumped in v4.0.1 staging; will be active once committed/deployed.
-- **App backup `appVersion`**: `'4.0.1'` (in `index.html`) — bumped in v4.0.1 staging.
-
-> ⚠️ v4.0.1 changes are staged but not committed. The deployed Netlify app is still v3.8.2.
+- **Latest committed + pushed**: `v4.0.1` (commit `2593e5c`) — postflop schema loader + audit gate. App boots a frozen `App.postflop` namespace; no UI surface activated. On `origin/main`.
+- **Latest deployed to Netlify**: `v3.8.2` (will become `v4.0.1` after Netlify picks up the new commit; player-visible behavior identical).
+- **Active planning (no production code yet)**: `v4.0.2` — Module 1 Board Texture Trainer first UI. Planning sprint in progress; deliverables in `docs/specs/`.
+- **Service worker `VERSION`**: `'v4.0.1'` (in `service-worker.js`).
+- **App backup `appVersion`**: `'4.0.1'` (in `index.html`).
 
 ---
 
