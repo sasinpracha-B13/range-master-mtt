@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.3 implementation STAGED, awaiting commit approval.** Real-play feedback received from tester; 4 issues diagnosed; smallest-safe-fix implemented for all 4 (loader callback + 3-state card, choice guide, pressed button, Home reposition to Beta Lab top). Audit clean. Awaiting local QA run + commit/push approval.
+🟡 **v4.0.4 critical hotfix STAGED.** Tester reported v4.0.3 answer buttons unresponsive on desktop AND mobile. Root cause: broken inline onclick in v4.0.2 (JSON.stringify quote conflict) — clicks never fired the handler. My v4.0.2/v4.0.3 QA missed this because tests called the handler directly, bypassing the broken HTML attribute. v4.0.4 replaces inline onclick with a delegated event listener on `#postflopScreen`, promotes Choice Guide summary to always-visible (mobile fix), adds touch-action + z-index hardening, and adds fail-safe error fallback. Real-click QA verified end-to-end. Audit clean.
 
 | Metric | Value |
 |---|---|

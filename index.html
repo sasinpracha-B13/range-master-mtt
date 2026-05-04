@@ -10330,6 +10330,96 @@
     /* ========================================================================
        END v4.0.3 — POSTFLOP MODULE 1 POLISH
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.4 — POSTFLOP ANSWER INTERACTION HOTFIX
+       Always-visible Choice Guide summary (mobile fix) + touch-action +
+       z-index hardening so taps never miss.
+       ======================================================================== */
+
+    /* New always-visible guide layout */
+    .postflop-choice-guide-v2 {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      background: rgba(96,165,250,0.08);
+      border-left: 3px solid #60a5fa;
+      border-radius: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .postflop-choice-guide-v2 .pf-guide-summary-line {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .postflop-choice-guide-v2 .pf-guide-details {
+      margin-top: 8px;
+    }
+    .postflop-choice-guide-v2 .pf-guide-details summary {
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: #60a5fa;
+      list-style: none;
+      padding: 4px 0;
+      letter-spacing: 0.3px;
+    }
+    .postflop-choice-guide-v2 .pf-guide-details summary::-webkit-details-marker { display: none; }
+    .postflop-choice-guide-v2 .pf-guide-details summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 6px;
+      font-size: 9px;
+      transition: transform 150ms ease;
+    }
+    .postflop-choice-guide-v2 .pf-guide-details[open] summary::before { transform: rotate(90deg); }
+    .postflop-choice-guide-v2 .pf-guide-body {
+      margin-top: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      background: rgba(0,0,0,0.20);
+      border-radius: 6px;
+    }
+    .postflop-choice-guide-v2 .pf-guide-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Touch / pointer reliability — prevent any layout above buttons from
+       capturing taps; ensure choice buttons sit on top of decorative layers
+       and react to touch immediately on mobile. */
+    .postflop-choices {
+      position: relative;
+      z-index: 1;  /* above any v3.8.x decorative canvases */
+    }
+    .postflop-choice-btn {
+      touch-action: manipulation;  /* disables 300ms tap delay on iOS */
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    /* Field FX canvas suppression already exists from v4.0.2; reinforce here
+       so postflop screen is never overlaid by decorative fixed-position elements */
+    body[data-postflop-active="true"] .field-fx-canvas,
+    body[data-postflop-active="true"] .answer-fx-canvas,
+    body[data-postflop-active="true"] .aura-canvas {
+      display: none !important;
+      pointer-events: none !important;
+    }
+    /* Ensure postflop screen container is the click target, not a parent */
+    #postflopScreen {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========================================================================
+       END v4.0.4 — POSTFLOP ANSWER INTERACTION HOTFIX
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -31754,7 +31844,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.3',
+    appVersion: '4.0.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -32518,38 +32608,122 @@ function recordPostflopAnswer(scenario, choiceId, cls) {
   });
 }
 
-// ----- Answer click handler -----
-// v4.0.3: immediate visual feedback + double-tap guard. Add pressed class to
-// the tapped button + disable all buttons synchronously BEFORE classify/render
-// so the user sees instant response even if the feedback re-render takes a
-// few ms on slow devices.
-function handlePostflopChoice(choiceId) {
+// ----- Answer click handler (v4.0.4 robust) -----
+// CRITICAL FIX (v4.0.4): the prior inline onclick="handlePostflopChoice(...)"
+// approach was broken because JSON.stringify(choiceId) returns "..." with
+// double quotes, conflicting with the onclick="..." attribute quotes. The
+// HTML parser truncated onclick to "handlePostflopChoice(" — clicks never
+// fired the handler. Replaced with a delegated listener attached once to
+// #postflopScreen below; the listener reads dataset.choiceId from the
+// nearest button ancestor of the click target.
+//
+// handlePostflopChoiceById(choiceId, btn) — the single safe entry point.
+// Handles both real click events and programmatic invocation.
+// btn is optional; if present, it's the actual element clicked (used for
+// instant pressed state). If absent (programmatic call), the function
+// finds the matching button by data-choice-id.
+function handlePostflopChoiceById(choiceId, btn) {
   var d = App.state.postflopDrill;
-  if (!d.active || d.phase !== 'question') return;
+  if (!d || !d.active) return;
+  if (d.phase !== 'question') return;  // double-tap guard (silently ignored)
   var scenario = d.queue[d.currentIndex];
   if (!scenario) return;
-  // Immediate UI feedback (synchronous; happens before render swap)
+  // Immediate synchronous UI feedback BEFORE any classify/render work
+  try {
+    var btns = document.querySelectorAll('.postflop-choice-btn');
+    var pressedBtn = btn || null;
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      if (!pressedBtn && btns[i].dataset && btns[i].dataset.choiceId === choiceId) {
+        pressedBtn = btns[i];
+      }
+    }
+    if (pressedBtn) pressedBtn.classList.add('postflop-choice-pressed');
+  } catch (e) { /* visual feedback failure — proceed anyway */ }
+  // Mark phase as 'answering' to block rapid re-entry between this point
+  // and the rAF-deferred render below
+  d.phase = 'answering';
+  // Classify + record + render with fail-safe error fallback
+  try {
+    var cls = classifyPostflopAnswer(scenario, choiceId);
+    recordPostflopAnswer(scenario, choiceId, cls);
+    d.lastChoiceId = choiceId;
+    d.lastClassification = cls;
+    d.phase = 'answer';
+    // rAF defers the heavy innerHTML swap so the pressed visual paints first
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(function () {
+        try { renderPostflopAnswer(scenario, choiceId, cls); }
+        catch (e) { _pfShowAnswerError('Render failed: ' + e.message); }
+      });
+    } else {
+      setTimeout(function () {
+        try { renderPostflopAnswer(scenario, choiceId, cls); }
+        catch (e) { _pfShowAnswerError('Render failed: ' + e.message); }
+      }, 0);
+    }
+  } catch (e) {
+    console.error('[postflop] answer failed:', e.message);
+    _pfShowAnswerError('Could not process answer. Tap again.');
+    d.phase = 'question';  // restore question phase so retry works
+  }
+}
+
+// Backward-compat alias (in case anything references the v4.0.2/v4.0.3 name)
+function handlePostflopChoice(choiceId) {
+  return handlePostflopChoiceById(choiceId, null);
+}
+
+// Inline error banner shown above choices if classify/render fails. Re-enables
+// buttons so user can retry without navigating away.
+function _pfShowAnswerError(msg) {
   try {
     var btns = document.querySelectorAll('.postflop-choice-btn');
     for (var i = 0; i < btns.length; i++) {
-      btns[i].disabled = true;
-      if (btns[i].dataset.choiceId === choiceId) {
-        btns[i].classList.add('postflop-choice-pressed');
-      }
+      btns[i].disabled = false;
+      btns[i].classList.remove('postflop-choice-pressed');
     }
-  } catch (e) { /* swallow */ }
-  // Mark phase as 'answering' to block any rapid re-entry while we render
-  d.phase = 'answering';
-  var cls = classifyPostflopAnswer(scenario, choiceId);
-  recordPostflopAnswer(scenario, choiceId, cls);
-  d.lastChoiceId = choiceId;
-  d.lastClassification = cls;
-  d.phase = 'answer';
-  // Use rAF so the pressed visual paints before the heavy innerHTML swap
-  if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(function () { renderPostflopAnswer(scenario, choiceId, cls); });
+    var existing = document.getElementById('postflopAnswerError');
+    if (existing) existing.remove();
+    var choices = document.querySelector('.postflop-choices');
+    if (choices) {
+      var err = document.createElement('div');
+      err.id = 'postflopAnswerError';
+      err.style.cssText = 'padding:10px 12px;margin-bottom:10px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.40);border-radius:8px;color:#f87171;font-size:12px;font-weight:600;';
+      err.textContent = '⚠ ' + msg;
+      choices.parentNode.insertBefore(err, choices);
+    }
+  } catch (e) { /* last-resort: at least the console.error fired */ }
+}
+
+// v4.0.4: delegated event listener on #postflopScreen. One handler for
+// the whole postflop UI; survives re-renders since we attach it once on
+// load and #postflopScreen itself is never destroyed (only its innerHTML).
+// Uses 'click' which fires reliably on both desktop mouse and mobile tap.
+function _pfInstallDelegatedClickListener() {
+  var screen = document.getElementById('postflopScreen');
+  if (!screen) return;
+  if (screen.dataset.pfListenerInstalled === '1') return;  // idempotent
+  screen.addEventListener('click', function (ev) {
+    // Find the choice button (may be a child element clicked, e.g., text span)
+    var btn = ev.target && ev.target.closest && ev.target.closest('.postflop-choice-btn');
+    if (!btn) return;
+    if (btn.disabled) return;
+    var choiceId = btn.dataset && btn.dataset.choiceId;
+    if (!choiceId) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    handlePostflopChoiceById(choiceId, btn);
+  });
+  screen.dataset.pfListenerInstalled = '1';
+}
+// Install on boot (DOM is parsed by the time this script runs since we're at
+// end of <body>) AND defensively on every showPostflopScreen() call.
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _pfInstallDelegatedClickListener);
   } else {
-    setTimeout(function () { renderPostflopAnswer(scenario, choiceId, cls); }, 0);
+    _pfInstallDelegatedClickListener();
   }
 }
 
@@ -32574,6 +32748,9 @@ function advancePostflopDrill() {
 // reveal #postflopScreen. To exit: hide it + return to Home (tab-mastery).
 function showPostflopScreen() {
   document.body.setAttribute('data-postflop-active', 'true');
+  // v4.0.4: ensure delegated click listener is installed (defensive — boot
+  // installation should have done it, but reinstall is idempotent)
+  try { _pfInstallDelegatedClickListener(); } catch (e) { /* swallow */ }
   // Make tab-drill the active panel so its children render
   document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
   var drillTab = document.getElementById('tab-drill');
@@ -32616,23 +32793,27 @@ function confirmExitPostflop() {
   if (window.confirm(msg)) exitPostflopScreen();
 }
 
-// v4.0.3: Per-question-type choice guide. Compact, always-visible 1-line
-// summary + collapsible details. Covers all 5 Module 1 question types.
+// v4.0.4: Choice guide — ALWAYS-VISIBLE 1-line summary + optional expandable
+// details. Previous v4.0.3 used <details> closed-by-default; mobile users
+// reported the guide "wasn't visible" — they didn't see the small summary
+// line. v4.0.4 promotes the summary to a prominent always-visible block;
+// a separate tappable "What do these choices mean?" reveals the longer per-
+// choice breakdown.
 function _pfChoiceGuide(qType) {
   var guides = {
     range_advantage: {
-      summary: '"Range advantage" = whose preflop range hits this board harder, on average.',
+      summary: 'Range advantage = whose entire preflop range hits this board harder.',
       details: '<strong>Preflop raiser (BTN)</strong> — usually has more high-card / overpair density (AK, KK, AA, broadway). ' +
                '<br><strong>Caller (BB)</strong> — defends wider; often has more low connectors, suited gappers, and pairs that flop sets on low boards. ' +
                '<br><strong>Neutral / Split</strong> — both sides have meaningful claims; neither dominates clearly.'
     },
     nut_advantage: {
-      summary: '"Nut advantage" = whose range has more of the absolute strongest hands on this board.',
+      summary: 'Nut advantage = whose range has more of the absolute strongest hands on this board.',
       details: 'Different from range advantage. A player can have more equity overall (range adv) without holding the most nuts. ' +
                'Look for sets, top-two, straights, flushes — who has more of those combos here?'
     },
     dynamic_level: {
-      summary: 'How much can equity shift on later streets?',
+      summary: 'How much can equity shift on later streets (turn / river)?',
       details: '<strong>Static (1)</strong> — top pair stays best on most run-outs. ' +
                '<br><strong>Semi-static (2)</strong> — some draws live, but limited swing. ' +
                '<br><strong>Dynamic (3)</strong> — many turn cards change rankings. ' +
@@ -32646,7 +32827,7 @@ function _pfChoiceGuide(qType) {
                '<br><strong>Check-heavy</strong> — most hands prefer checking on this board.'
     },
     sizing_family: {
-      summary: 'When the raiser bets, which size family is best?',
+      summary: 'When the raiser bets, which size family is best for this board?',
       details: '<strong>Small</strong> — 25–40% pot. ' +
                '<br><strong>Medium</strong> — ~50–66% pot. ' +
                '<br><strong>Big / Polar</strong> — 75%+ pot, used selectively with nutted/bluff combos. ' +
@@ -32659,10 +32840,13 @@ function _pfChoiceGuide(qType) {
   };
   var g = guides[qType];
   if (!g) return '';
-  return '<details class="postflop-choice-guide">' +
-           '<summary>💡 What are we choosing? <span class="pf-guide-summary">' + g.summary + '</span></summary>' +
-           '<div class="pf-guide-body">' + g.details + '</div>' +
-         '</details>';
+  // v4.0.4 layout: prominent always-visible summary box + collapsible details
+  return '<div class="postflop-choice-guide-v2">' +
+           '<div class="pf-guide-summary-line">💡 ' + g.summary + '</div>' +
+           '<details class="pf-guide-details"><summary>What do these choices mean?</summary>' +
+             '<div class="pf-guide-body">' + g.details + '</div>' +
+           '</details>' +
+         '</div>';
 }
 
 // ----- HTML escape helper (defensive) -----
@@ -32816,12 +33000,16 @@ function renderPostflopQuestion() {
     ? 'Hero: ' + scenario.heroHand.join(' ')
     : 'Hero: — (board read)';
 
-  // v4.0.3: data-choice-id used by handlePostflopChoice for instant pressed state
+  // v4.0.4: NO inline onclick (broken in v4.0.2/v4.0.3 due to JSON.stringify
+  // quote conflict with onclick="..." attribute). Use data-choice-id only;
+  // delegated listener on #postflopScreen handles the click reliably on
+  // both desktop and mobile.
   var choicesHtml = (question.choices || []).map(function (ch) {
-    return '<button class="postflop-choice-btn" data-choice-id="' + _pfEscape(ch.id) + '" onclick="handlePostflopChoice(' +
-      JSON.stringify(ch.id) + ')">' + _pfEscape(ch.label) + '</button>';
+    return '<button type="button" class="postflop-choice-btn" data-choice-id="' + _pfEscape(ch.id) + '">' +
+      _pfEscape(ch.label) + '</button>';
   }).join('');
-  // v4.0.3: per-question-type choice guide (collapsible, mobile-friendly)
+  // v4.0.4: choice guide always shows a 1-line summary above buttons (no longer
+  // hidden behind a collapsed <details> on mobile). Expandable details remain.
   var guideHtml = _pfChoiceGuide(question.type);
 
   var html =

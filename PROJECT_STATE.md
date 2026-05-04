@@ -8,10 +8,10 @@
 
 ## 1. Current Version
 
-- **Latest deployed to Netlify**: `v4.0.2` (live at `https://range-master-mtt.netlify.app/`).
-- **Pending push (STAGED)**: `v4.0.3` — postflop Module 1 first-session hotfix. 4 fixes from real-play feedback: loader callback re-render + 3-state card, per-question-type Choice Guide, pressed/disabled button state, repositioned to TOP of Home as Beta Lab section.
-- **Service worker `VERSION`**: `'v4.0.3'` (staged).
-- **App backup `appVersion`**: `'4.0.3'` (staged).
+- **Latest deployed to Netlify**: `v4.0.3` (live at `https://range-master-mtt.netlify.app/`).
+- **Pending push (STAGED)**: `v4.0.4` — CRITICAL HOTFIX. v4.0.2/v4.0.3 had a broken inline `onclick` attribute on choice buttons (`JSON.stringify` quote conflict with `onclick="..."` attribute) — clicks NEVER fired the handler. v4.0.4 replaces with delegated event listener on `#postflopScreen`; promotes Choice Guide summary to always-visible; adds touch-action + z-index hardening; adds fail-safe error fallback.
+- **Service worker `VERSION`**: `'v4.0.4'` (staged).
+- **App backup `appVersion`**: `'4.0.4'` (staged).
 
 ---
 
@@ -76,7 +76,25 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.3 Implementation — STAGED, awaiting commit approval
+### v4.0.4 Critical Hotfix — STAGED, awaiting commit approval
+
+Real-play feedback after v4.0.3: tester reported answer buttons unresponsive on BOTH desktop and mobile, AND Choice Guide invisible on mobile.
+
+**Root cause** (introduced in v4.0.2, not caught in v4.0.2 or v4.0.3 QA): the inline `onclick="handlePostflopChoice(' + JSON.stringify(ch.id) + ')"` had a quote conflict — `JSON.stringify("range_small")` returns `"range_small"` with double quotes, embedded into double-quoted onclick attribute, breaking HTML parsing. The browser truncated `onclick` to `handlePostflopChoice(` (just the partial stub) and parsed the rest as garbage attributes. **Real clicks never fired the handler.** My v4.0.2 and v4.0.3 QA passed because I called `handlePostflopChoice(bestId)` directly via JS, bypassing the broken onclick path. The bug was invisible to my automated tests and only surfaced in human real-play.
+
+**Fixes applied**:
+1. **Delegated event listener** on `#postflopScreen` (one handler for all clicks; reads `dataset.choiceId` from nearest `.postflop-choice-btn` ancestor of click target). Survives re-renders since it's attached to the persistent screen element. Idempotent re-installation via `_pfInstallDelegatedClickListener()` called on boot AND on every `showPostflopScreen()`.
+2. **Renamed handler** to `handlePostflopChoiceById(choiceId, btn)` — accepts optional button reference for instant pressed state. Backward-compat alias `handlePostflopChoice(choiceId)` retained.
+3. **Choice Guide v2** — always-visible 1-line summary block (`.postflop-choice-guide-v2 .pf-guide-summary-line`) above choice buttons; expandable `<details>` for per-choice breakdown below. Replaces v4.0.3's collapsed-by-default `<details>` that mobile users didn't see.
+4. **Touch reliability**: `touch-action: manipulation` (eliminates iOS 300ms tap delay), `position: relative; z-index: 1` on `.postflop-choices` and `.postflop-choice-btn` (prevents decorative canvas layers from intercepting taps), `-webkit-tap-highlight-color`, `user-select: none`.
+5. **Reinforced FX suppression**: `body[data-postflop-active="true"]` now hides `.field-fx-canvas`, `.answer-fx-canvas`, `.aura-canvas` AND sets `pointer-events: none` on them.
+6. **Fail-safe error fallback**: try/catch around classify+record+render. If render fails, `_pfShowAnswerError()` shows inline red banner ("Could not process answer. Tap again."), re-enables buttons, restores `phase = 'question'` so user can retry.
+
+**Files modified**: `index.html` (+225 lines / -37, all inside existing v4.0.2/v4.0.3 fenced blocks), `service-worker.js` (VERSION bump).
+
+**Audit re-confirmed**: 31/0/0 (no data files touched).
+
+### v4.0.3 Implementation — committed (`25fb45e`) + pushed
 
 Real-play hotfix per human tester feedback. Fixes 4 issues:
 
