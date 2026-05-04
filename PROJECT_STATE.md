@@ -77,7 +77,21 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.1 Postflop Schema Loader + Audit Gate — STAGED, awaiting commit approval
+### v4.0.2-data Postflop Seed Fix — STAGED, awaiting commit approval
+
+Pre-implementation data hygiene pass per `postflop-v4.0.2-scenario-review.md` findings + `brief-v4.0.2-implementation-ready.md` § 16. Three fix categories applied to `postflop/postflop_scenarios.json` only:
+
+1. **Scenario #20** (`pf_btn_v_bb_srp_100bb_flop_7d7s3c_rangeadv_001`) — replaced the leftover authoring artifact `"Trips-7 even (both have 77 — wait, 77 impossible; ..."` in `nutLogic` with a clean GTO-facing explanation covering trips-7 distribution, impossible 77, full-house combinatorics, and overpair density.
+2. **Choice label hint stripping** — removed all 14 rationale parentheticals from Module 1 answer-choice labels (e.g., `"Preflop raiser (BTN) — overpairs dominate"` → `"Preflop raiser (BTN)"`). Choices now have neutral labels; reasoning belongs in `explanation` fields.
+3. **#10 `sourceConfidence` downgrade** — `Qh9d6s_freq_001` changed from `consensus_gto` → `expert_judgment` (the answer depends on solver-mix interpretation; confidence overclaim risk per scenario review B1/E3). #11 (`Th8h3h_nutadv_001`) was already `expert_judgment` — no change needed.
+
+**Audit result**: 31 scenarios · 0 errors · 0 warnings. All 16 fixes applied; verified spot-checks confirm targets corrected.
+
+**Files modified**: `postflop/postflop_scenarios.json` only. No other surface touched.
+
+### v4.0.2 Planning Sprint — committed (`377c844`) + pushed
+
+### v4.0.1 Postflop Schema Loader + Audit Gate — committed (`2593e5c`) + pushed
 
 | Change | File | Diff |
 |---|---|---|

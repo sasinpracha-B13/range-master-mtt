@@ -34,7 +34,7 @@
           { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral / split" },
-          { "id": "split", "label": "Split — both have meaningful equity" }
+          { "id": "split", "label": "Split" }
         ]
       },
       "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": ["caller"] },
@@ -83,7 +83,7 @@
           { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
-          { "id": "split", "label": "Split — both have nutted regions" }
+          { "id": "split", "label": "Split" }
         ]
       },
       "answer": { "best": ["preflop_raiser"], "acceptable": [], "bad": ["caller", "neutral", "split"], "critical": [] },
@@ -132,7 +132,7 @@
           { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral / very close" },
-          { "id": "split", "label": "Split — BTN has overpairs but BB has more connectors" }
+          { "id": "split", "label": "Split" }
         ]
       },
       "answer": { "best": ["caller"], "acceptable": ["neutral"], "bad": ["preflop_raiser", "split"], "critical": ["preflop_raiser"] },
@@ -178,7 +178,7 @@
         "type": "range_advantage",
         "prompt": "On 5♥ 4♦ 3♣ (low connected), who has range advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpairs dominate" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
           { "id": "split", "label": "Split" }
@@ -227,7 +227,7 @@
         "type": "range_advantage",
         "prompt": "On A♥ A♦ 6♠ (paired ace), who has range advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — much more A-x" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
           { "id": "split", "label": "Split" }
@@ -276,10 +276,10 @@
         "type": "dynamic_level",
         "prompt": "On 8♥ 7♣ 6♠, how dynamic is this board?",
         "choices": [
-          { "id": "static", "label": "Static (1) — equity rarely changes" },
+          { "id": "static", "label": "Static (1)" },
           { "id": "semi_static", "label": "Semi-static (2)" },
           { "id": "dynamic", "label": "Dynamic (3)" },
-          { "id": "very_dynamic", "label": "Very dynamic (4) — equity swings every street" }
+          { "id": "very_dynamic", "label": "Very dynamic (4)" }
         ]
       },
       "answer": { "best": ["very_dynamic"], "acceptable": ["dynamic"], "bad": ["static", "semi_static"], "critical": [] },
@@ -325,7 +325,7 @@
         "type": "range_advantage",
         "prompt": "On 9♣ 5♦ 2♥ (low dry rainbow), who has range advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpair-heavy" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
           { "id": "split", "label": "Split" }
@@ -374,7 +374,7 @@
         "type": "range_advantage",
         "prompt": "On K♥ K♦ 7♠ (paired king), who has range advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — much more K-x" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
           { "id": "split", "label": "Split" }
@@ -491,7 +491,7 @@
       },
       "conceptTags": ["mixed_small_check", "cbet_size_selection", "range_advantage"],
       "difficulty": 3,
-      "sourceConfidence": "consensus_gto",
+      "sourceConfidence": "expert_judgment",
       "auditStatus": "approved"
     },
 
@@ -521,7 +521,7 @@
         "type": "nut_advantage",
         "prompt": "On T♥ 8♥ 3♥ (monotone), who has nut advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — more high suited Broadways" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
           { "id": "split", "label": "Split" }
@@ -573,7 +573,7 @@
           { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
           { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
-          { "id": "split", "label": "Split — overpairs vs flushes" }
+          { "id": "split", "label": "Split" }
         ]
       },
       "answer": { "best": ["caller"], "acceptable": [], "bad": ["preflop_raiser", "neutral", "split"], "critical": ["preflop_raiser"] },
@@ -962,10 +962,10 @@
         "type": "range_advantage",
         "prompt": "On 7♦ 7♠ 3♣ (paired low), who has range advantage?",
         "choices": [
-          { "id": "preflop_raiser", "label": "Preflop raiser (BTN) — overpairs dominate" },
-          { "id": "caller", "label": "Caller (BB) — small pairs / 7-x" },
+          { "id": "preflop_raiser", "label": "Preflop raiser (BTN)" },
+          { "id": "caller", "label": "Caller (BB)" },
           { "id": "neutral", "label": "Neutral" },
-          { "id": "split", "label": "Split — both have meaningful equity" }
+          { "id": "split", "label": "Split" }
         ]
       },
       "answer": { "best": ["split"], "acceptable": ["neutral", "preflop_raiser"], "bad": ["caller"], "critical": [] },
@@ -974,7 +974,7 @@
       "explanation": {
         "short": "Split / mostly neutral. BTN has overpairs, BB has more 7-x and small pairs — they roughly balance.",
         "rangeLogic": "BTN's overpair density (88-AA) is real but BB's 7-x combos (97s, 87s, 76s, 75s, 74s, 73s rare) and 33 sets (BTN's 33 mostly opens too — even split) keep things close. BB has slightly more underpairs (22, 33, 44, 55, 66) which all have meaningful showdown value but trail 88+.",
-        "nutLogic": "Trips-7 even (both have 77 — wait, 77 impossible; 7-x distribution slightly favors BB due to wider flatting range with 87s, 76s, 97s). Full house (33, 77 — 77 impossible) — 33 even.",
+        "nutLogic": "Trips-7 require holding a 7 (77 is impossible — both 7s are on the board). Both ranges contain 7-x suited combos (87s, 76s, 97s, A7s, K7s) at similar rates; BB's wider flatting range gives a small edge on low 7-x density. Full house (33 + 7-x kicker) is rare in both ranges since pocket 33 is sparse and 3-x without a 7 doesn't make a boat. Overpairs (88-AA) lean BTN at the very top because BB 3-bets QQ+ heavily — BB's overpair density caps near JJ. Net nut advantage is roughly neutral with a slight BTN edge from premium overpairs.",
         "handLogic": null,
         "sizingLogic": null,
         "commonMistake": "Overweighting overpairs as 'range advantage' on paired low boards. Underpairs and trips combos balance things significantly. The texture supports a c-bet because BTN can fold equity from BB's many missed broadways, but the underlying range advantage is split."

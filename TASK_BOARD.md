@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.0.2 planning sprint in progress.** v4.0.1 committed (`2593e5c`) + pushed to origin/main; loader live and verified by browser QA (9/9 PASS).
+🟡 **v4.0.2-data fix STAGED, awaiting commit approval.** Planning sprint committed (`377c844`) + pushed. Pre-implementation data hygiene applied per scenario review findings: #20 nutLogic artifact fixed, 14 choice label hints stripped, #10 sourceConfidence downgraded. Audit re-confirmed 31/0/0. Next step (after commit + approval): v4.0.2 implementation.
 
 | Metric | Value |
 |---|---|
@@ -70,7 +70,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.1 implementation staged (loader + audit gate; no UI). Audit still 31/0/0. Awaiting commit approval.
+- 2026-05-04: v4.0.2-data seed fix staged (postflop_scenarios.json; 16 fixes; audit 31/0/0). Awaiting commit approval.
+- 2026-05-04: v4.0.2 planning sprint committed (`377c844`) + pushed.
+- 2026-05-04: v4.0.1 schema loader committed (`2593e5c`) + pushed; live browser QA 9/9 PASS.
 - 2026-05-04: v4.0.0 planning package committed (`7849741`) + pushed to origin/main.
 - 2026-05-04: Orchestrator workflow files created (PROJECT_STATE.md, AGENTS.md, TASK_BOARD.md, docs/, tools/audit-postflop.js).
 - 2026-05-04: Postflop planning package (9 files, ~206 KB) — Audit Subagent verified 0/0.
