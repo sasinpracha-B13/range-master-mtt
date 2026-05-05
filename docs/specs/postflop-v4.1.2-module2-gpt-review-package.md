@@ -375,3 +375,76 @@ Monotone (Jh 8h 4h):
 ```
 
 Total: **24 scenarios** across 6 boards. Post-fix-pass audit verification: 30/30 hard rules pass, 8/8 soft rules pass, 5/5 coverage rules pass (with 5 `[planned]` concept tags warning per audit-plan § 2.24). Fix-pass corrected 5 mechanical errors and applied 5 labelling improvements.
+
+---
+
+# v4.1.4 Review Addendum — strategic re-review + baseline migration decision
+
+**Status of this addendum:** Appended on 2026-05-05. Previous history above is unchanged.
+
+## A1. Latest audit results
+
+| Audit | Result | Status |
+|---|---|---|
+| Production audit (`tools/audit-postflop-ps.ps1`) | 262 / 0 / 0 | unchanged from v4.1.3 |
+| Module 2 seed audit (`tools/audit-postflop-module2-seed.ps1`) | 24 / 0 hard errors / 11 warnings, **15 PASS / 9 WARN / 0 FAIL** | unchanged from v4.1.3 |
+
+## A2. Strategic review verdict (overlay on top of mechanical audit)
+
+| Verdict | Count | Scenarios |
+|---|---|---|
+| **PASS** (mechanical + strategic) | 20 | #1, #2, #3, #4, #5, #6, #7, #8, #10, #11, #13, #14, #15, #16, #18, #19, #21, #22, #23, #24 |
+| **WARN** (defensible but reviewer-sensitive) | 4 | #9, #12, #17, #20 |
+| **FAIL** | 0 | — |
+
+Note: this strategic verdict **differs** from the audit verdict (15 PASS / 9 WARN / 0 FAIL) because some scenarios have audit warnings (about labeling precision: backdoor_only vs no_pair_no_draw, sizingLogic optional, made-flush wording) but pass strategically. Full reconciliation in `postflop-v4.1.4-module2-seed-review-report.md` § 3.
+
+## A3. Remaining warnings — disposition
+
+| Code | Count | Disposition for v4.1.5 |
+|---|---|---|
+| M2.HC11 (no_pair_no_draw vs backdoor_only) | 4 | **3 fixes** (#4, #8, #18 → backdoor_only). #10 stays no_pair_no_draw (backdoor not strategically relevant). |
+| M2.HC09 (underpair vs mid_pair on QQ on K-K-7) | 1 | Keep #17 as underpair; extend `underpair` definition in schema-taxonomy.md to allow paired-board exception. |
+| M2.H14 (sizingLogic optional for reason_choice) | 3 | Keep as warning. Optionally add `actionLogic` field for reason_choice in v4.1.6 schema refinement. |
+| M2.SC05 (made-flush wording in negation) | 3 | Keep as warning. Audit text-match is fuzzy; explanation negations are intentional. Re-examine if in-browser auditor adopts the rule. |
+
+## A4. Strategic WARN — disposition
+
+| # | Scenario | Disposition |
+|---|---|---|
+| 9 | JJ on 8-7-5 (critical=bet_big) | **KEEP** — bet_big IS the textbook leak; pedagogically correct |
+| 12 | KK on 8-7-5 reason_choice (critical=protection) | **KEEP** — protection-bet frame is the leak we teach against |
+| 17 | QQ on K-K-7 (best=bet_small) | **KEEP** — solver mixes; bet_small as best with check acceptable is one defensible position |
+| 20 | AhKh trips reason_choice (best=value) | **REWORD** — change prompt to make trap framing explicit ("when BTN checks trip Ks back as a trap...") so "value" reason reads naturally |
+
+## A5. Baseline migration decision
+
+The 11 legacy Module 2 scenarios in `postflop/postflop_scenarios.json` use older schema (choice ids `bet_33`/`bet_75`, missing v4.1.2 fields like `heroHandRole` / `recommendedAction` / `actionReason` / `drawCategory` / `showdownValue` / `takeaway`).
+
+**Decision: Option C — Refactor / Migrate** (per `postflop-v4.1.4-module2-baseline-migration-plan.md`).
+
+| Reason | Detail |
+|---|---|
+| Preserve consensus_gto work | Baseline-11 are tagged `consensus_gto`; discarding them wastes high-confidence content |
+| Schema unity | Avoids dual answer-id sets (`bet_33` and `bet_small` both live) |
+| No board overlap | Baseline-11 boards (Ah Kd 5c, Kh Td 2s, 8h 7c 6s, Jh Ts 9c, Ah Jh 3s, 6c 5c 4s) don't overlap v4.1.2 seed boards → 12 distinct boards × ~3 hands/board after merge = good production base |
+| Mechanical mapping | `bet_33 → bet_small`, `bet_75 → bet_big`, `handClass` already valid v4.1.2 vocab. Judgment-required only for `heroHandRole` and `actionReason` |
+
+After the v4.1.5 migration sprint, production Module 2 set will be **35 scenarios** (24 v4.1.2 seeds + 11 migrated baseline) across **12 distinct boards**. Production audit gate will move from **262 / 0 / 0** to **286 / 0 / 0**.
+
+## A6. Recommendation for v4.1.5
+
+**v4.1.5 — Module 2 Seed Cleanup + Baseline Migration + Audit Extension** (data + audit only, no runtime).
+
+Atomic scope:
+1. Apply 3 `backdoor_only` relabels + 1 reword to seed JSON.
+2. Extend `underpair` definition + document `actionLogic` field in schema-taxonomy.
+3. Add 5 `[planned]` concepts to `postflop/postflop_concepts.json`.
+4. Migrate 11 baseline scenarios per the migration plan.
+5. Extend `tools/audit-postflop-ps.ps1` with v4.1.2 Module 2 rules.
+6. Audit gates: production 286/0/0 + seed (now reading production) 35/0 hard errors.
+7. GPT review pass on the 11 migrated scenarios.
+8. Commit + push.
+9. Stop.
+
+After v4.1.5: production gate is 286/0/0, Module 2 is `consensus_gto`-quality data in production JSON, and Module 2 is **still not playable** (runtime not wired). Module 2 plays around **v4.1.7** — see § 9 of `postflop-v4.1.4-module2-seed-review-report.md`.
