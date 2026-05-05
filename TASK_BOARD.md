@@ -15,9 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.11 committed + pushed** (`a2e4fae`). Postflop Session Learning Summary.
+🟢 **v4.0.12 committed + pushed** (`79cfc2a`). Postflop Drill Weak Spots Button.
 
-🟡 **v4.0.12 staged — Postflop Drill Weak Spots Button.** Closes the end-to-end teaching loop: when a Module 1 session has any bad/critical answer, the completion screen shows a "🎯 Drill Weak Spots" amber button. Tapping it builds a 12-scenario focused review queue from the just-completed session's mistakes (priorities: +100 exact missed scenario, +60 same weak family, +40 shared weak concept tag, −30 recent-session repeat penalty). Review session shows a "🎯 Review Mode · Weak Spots" badge above the question. Summary header changes to "Review session complete" / "REVIEW SESSION SUMMARY". Four new pure helpers: `_pfCurrentSessionWeakProfile`, `_pfWeakScenarioScore`, `_pfBuildWeakSpotQueue`, `startPostflopWeakSpotReview`. Soft fallback: if hardMisses<2, also includes acceptable answers as weak signals. Defensive: returns null/empty when no weakness; falls back to normal session if pool empty. Audit 262/0/0. 23/23 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
+🟡 **v4.1.0 staged — Postflop Academy Foundation.** Evolves Postflop from a single quiz into a structured learning academy. New "Postflop Academy" panel replaces the simple Beta Lab entry: curriculum map (6 modules with status pills — M1 Active, M2 Preview, M3 Locked, M4-M6 Future), Module 1 mastery checklist (5 display-only criteria), academy progress snapshot (sessions / latest score / quality / weak families), recommendation engine with 6 rule-driven messages, 10-concept Concept Library drawer, "Progress is saved locally on this device." note. Ten new pure helpers + 2 declarative arrays (`_PF_CURRICULUM`, `_PF_CONCEPT_LIBRARY`). Module 1 actions wired to existing `startPostflopDrill` + `startPostflopWeakSpotReview`; Module 2 preview opens inline syllabus details; locked/future modules show disabled state. Audit 262/0/0 (data unchanged). 25/25 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
 
 | Metric | Value |
 |---|---|
@@ -72,7 +72,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.12 Postflop Drill Weak Spots Button STAGED. End-to-end teaching loop closed (recommend → click → drill weak family/concepts). Awaiting commit.
+- 2026-05-04: v4.1.0 Postflop Academy Foundation STAGED. Curriculum map + mastery + recommendation engine + concept library. Awaiting commit.
+- 2026-05-04: v4.0.12 Postflop Drill Weak Spots Button COMMITTED (`79cfc2a`) + pushed. End-to-end teaching loop closed.
 - 2026-05-04: v4.0.11 Postflop Session Learning Summary COMMITTED (`a2e4fae`) + pushed. Quality label + strongest/weakest concepts + family pattern notes + recommended next move.
 - 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix COMMITTED (`53eae80`) + pushed. CP874 mojibake reverser + clean prompt rebuilder.
 - 2026-05-04: v4.0.9 Postflop Teaching Polish COMMITTED (`c38aafc`) + pushed. M1/M3/M4/L1/M2 fixes addressing v4.0.8 QA gaps.

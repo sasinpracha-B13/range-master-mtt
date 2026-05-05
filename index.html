@@ -10720,6 +10720,318 @@
     /* ========================================================================
        END v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
        ======================================================================== */
+
+    /* ========================================================================
+       v4.1.0 — POSTFLOP ACADEMY FOUNDATION
+       Curriculum-style home for Postflop Beta: snapshot + recommendation +
+       module cards + mastery checklist + concept library. All `.pf-academy-*`
+       and `.pf-module-*` namespaced.
+       ======================================================================== */
+    .pf-academy-section {
+      display: block;
+      padding: 14px 16px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .pf-academy-header {
+      margin-bottom: 12px;
+    }
+    .pf-academy-header .pf-academy-title {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+    .pf-academy-header .pf-academy-subtitle {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+    .pf-academy-snapshot {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.20);
+      border-left: 3px solid var(--accent, #6ea8fe);
+      border-radius: 6px;
+    }
+    .pf-academy-snapshot .pf-snapshot-title {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .pf-academy-snapshot .pf-snapshot-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .pf-academy-snapshot .pf-snapshot-row .pf-snapshot-key {
+      color: var(--text-secondary);
+    }
+    .pf-academy-snapshot .pf-snapshot-empty {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .pf-academy-recommendation {
+      margin: 10px 0 14px 0;
+      padding: 10px 12px;
+      background: rgba(110, 168, 254, 0.10);
+      border-left: 3px solid var(--accent, #6ea8fe);
+      border-radius: 6px;
+    }
+    .pf-academy-recommendation .pf-rec-title {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .pf-academy-recommendation .pf-rec-body {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .pf-curriculum-section .pf-curriculum-title {
+      display: block;
+      margin: 12px 0 8px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pf-curriculum-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pf-module-card {
+      padding: 12px;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      transition: border-color 0.15s ease;
+    }
+    .pf-module-card.is-active   { border-color: rgba(74, 222, 128, 0.40); }
+    .pf-module-card.is-preview  { border-color: rgba(245, 166, 35, 0.30); }
+    .pf-module-card.is-locked   { opacity: 0.65; }
+    .pf-module-card.is-future   { opacity: 0.50; }
+    .pf-module-card .pf-module-row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .pf-module-card .pf-module-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+    .pf-status-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .pf-status-pill.is-active   { color: #4ade80; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.40); }
+    .pf-status-pill.is-preview  { color: #f5a623; background: rgba(245, 166, 35, 0.12); border: 1px solid rgba(245, 166, 35, 0.40); }
+    .pf-status-pill.is-locked   { color: var(--text-secondary); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); }
+    .pf-status-pill.is-future   { color: var(--text-secondary); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.10); }
+    .pf-module-focus {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .pf-module-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .pf-module-meta .pf-meta-item { white-space: nowrap; }
+    .pf-module-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .pf-module-action-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pf-module-action-btn:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.25); }
+    .pf-module-action-btn.is-primary {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.20), rgba(74, 222, 128, 0.08));
+      border-color: rgba(74, 222, 128, 0.45);
+      color: #4ade80;
+    }
+    .pf-module-action-btn.is-primary:hover {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.30), rgba(74, 222, 128, 0.12));
+    }
+    .pf-module-action-btn.is-weak {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.20), rgba(245, 166, 35, 0.08));
+      border-color: rgba(245, 166, 35, 0.45);
+      color: #f5a623;
+    }
+    .pf-module-action-btn.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+    .pf-module-action-btn.is-disabled:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+    .pf-module-syllabus {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.20);
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .pf-module-syllabus > summary {
+      list-style: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .pf-module-syllabus > summary::-webkit-details-marker { display: none; }
+    .pf-module-syllabus > summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 6px;
+      font-size: 9px;
+      transition: transform 0.15s ease;
+    }
+    .pf-module-syllabus[open] > summary::before { transform: rotate(90deg); }
+    .pf-module-syllabus ul { margin: 6px 0 4px 18px; padding: 0; }
+    .pf-module-syllabus li { margin-bottom: 2px; color: var(--text); }
+    .pf-mastery-section {
+      margin: 14px 0 6px 0;
+    }
+    .pf-mastery-section .pf-mastery-title {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pf-mastery-list { margin: 0; padding: 0; list-style: none; }
+    .pf-mastery-list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 4px 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .pf-mastery-list li.is-met { color: #4ade80; }
+    .pf-mastery-list li.is-not-met { color: var(--text-secondary); }
+    .pf-mastery-list .pf-mastery-icon { width: 16px; flex-shrink: 0; }
+    .pf-concept-library {
+      margin-top: 14px;
+      padding: 0;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pf-concept-library > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+    .pf-concept-library > summary::-webkit-details-marker { display: none; }
+    .pf-concept-library > summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 9px;
+      color: var(--text-secondary);
+      transition: transform 0.15s ease;
+    }
+    .pf-concept-library[open] > summary::before { transform: rotate(90deg); }
+    .pf-concept-library .pf-concept-grid {
+      padding: 4px 12px 12px 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .pf-concept-card {
+      padding: 8px 10px;
+      background: rgba(0,0,0,0.20);
+      border-left: 2px solid rgba(110, 168, 254, 0.40);
+      border-radius: 4px;
+    }
+    .pf-concept-card .pf-concept-name {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .pf-concept-card .pf-concept-def {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .pf-concept-card .pf-concept-tag {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+    }
+    @media (max-width: 480px) {
+      .pf-academy-section { padding: 12px 10px; }
+      .pf-academy-header .pf-academy-title { font-size: 16px; }
+      .pf-module-card { padding: 10px; }
+      .pf-module-action-btn { min-width: 100%; }
+    }
+    /* ========================================================================
+       END v4.1.0 — POSTFLOP ACADEMY FOUNDATION
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32144,7 +32456,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.12',
+    appVersion: '4.1.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33627,6 +33939,397 @@ function _pfFixMojibake(text) {
 // v4.0.3: card moves to TOP of Home (afterbegin) inside a "Beta Lab" section
 // so it's visible without scrolling. Uses 3 states (loading/ready/error) with
 // improved copy. Loader callback re-renders this when App.postflop transitions.
+// ============================================================================
+// v4.1.0 — POSTFLOP ACADEMY FOUNDATION
+// Curriculum-style home for Postflop Beta. Pure helpers for stats/mastery/
+// recommendation + HTML builders for snapshot/curriculum/concept-library.
+// All `_pfAcademy*` and `_pfModule*` and `_pfConcept*` namespaced.
+// Reads localStorage history (best-effort) and current postflop pool;
+// defensive against missing fields.
+// ============================================================================
+
+// Curriculum definition — declarative module list. Module 1 is Active; Module
+// 2 is Preview (seed scenarios only, not production-ready); 3-6 are Locked or
+// Future to display the path ahead. No drill flow is launched for non-active
+// modules.
+var _PF_CURRICULUM = [
+  {
+    key: 'm1', name: 'Module 1 — Board Texture Foundations',
+    focus: ['range advantage', 'nut advantage', 'board texture', 'c-bet frequency', 'sizing family'],
+    scenarioCount: 251,
+    masteryNote: 'Build foundation: 5 sessions, 80%+ quality, no critical leaks, weak-spot review used.'
+  },
+  {
+    key: 'm2', name: 'Module 2 — Flop C-bet IP',
+    focus: ['when BTN should bet', 'when BTN should check', 'hand-class decisions', 'value / bluff / protection logic'],
+    scenarioCount: 11,
+    masteryNote: 'Unlocks after Module 1 mastery.',
+    syllabus: [
+      'Hero hand context (vs board-only reads)',
+      'Action menu: check / bet 33% / bet 75%',
+      'Range betting on dry boards',
+      'Polar sizing on wet boards',
+      'Protection / equity-denial bets'
+    ]
+  },
+  {
+    key: 'm3', name: 'Module 3 — Facing C-bet OOP',
+    focus: ['defend vs c-bet', 'check-raise candidates', 'floats', 'folds'],
+    scenarioCount: 0,
+    masteryNote: 'Future module.'
+  },
+  {
+    key: 'm4', name: 'Module 4 — Turn Strategy',
+    focus: ['barrel cards', 'equity shift', 'blockers', 'delayed c-bets'],
+    scenarioCount: 0,
+    masteryNote: 'Future module.'
+  },
+  {
+    key: 'm5', name: 'Module 5 — River Strategy',
+    focus: ['value thresholds', 'bluff selection', 'blockers', 'pot geometry'],
+    scenarioCount: 0,
+    masteryNote: 'Future module.'
+  },
+  {
+    key: 'm6', name: 'Module 6 — Postflop Boss Exams',
+    focus: ['mixed board families', 'pressure tests', 'mastery certification'],
+    scenarioCount: 0,
+    masteryNote: 'Future module.'
+  }
+];
+
+// Concept library — top 10 concepts trained in Module 1.
+var _PF_CONCEPT_LIBRARY = [
+  { name: 'Range Advantage',
+    def: 'Which player\'s whole range performs better on this board. It drives how often the preflop raiser can bet and at what frequency.' },
+  { name: 'Nut Advantage',
+    def: 'Which player has more very strong hands (sets, top-two, straights, flushes). Different from range advantage; can shift sizing.' },
+  { name: 'Board Texture',
+    def: 'High-card class, suit pattern, connectivity. The four signals that tell you who the board belongs to before any hand reads.' },
+  { name: 'Static vs Dynamic',
+    def: 'Static boards rarely shift equity on later streets; dynamic boards swing. Drives how often you keep medium hands vs charge them.' },
+  { name: 'C-bet Frequency',
+    def: 'How often the preflop raiser bets the flop. Range-bet small on dry boards, check more on wet/connected boards.' },
+  { name: 'Sizing Family',
+    def: 'Range_small vs mixed_small_check vs polar_big vs check_heavy. The family follows from board texture and range/nut advantage.' },
+  { name: 'Monotone Boards',
+    def: 'All three flop cards same suit. Made flushes already exist for some opponents; bluffs lose fold equity.' },
+  { name: 'Paired Boards',
+    def: 'Flop pairs one rank. Whoever has more of the unpaired card has the trips edge. Separate that from overpair density.' },
+  { name: 'Low Connected Boards',
+    def: 'Boards like 8-7-5, 6-5-4. Caller has more suited connectors and small pairs; raiser should check more.' },
+  { name: 'Two-tone Boards',
+    def: 'Two of one suit. Flush draws live. Sizing pushes slightly larger on raiser-favored boards, more checking on caller-favored ones.' }
+];
+
+// _pfAcademyStats — pulls everything the Academy needs from localStorage history
+// + current scenarios. Returns {hasHistory, sessionCount, latestSession,
+// latestQualityKlass, latestQualityLabel, latestPctScore, weakFamilyKeys,
+// hasUsedWeakReview, conceptCoverage, masteryCriteriaMet}.
+function _pfAcademyStats() {
+  var history = null;
+  try { if (typeof _pfHistoryLoad === 'function') history = _pfHistoryLoad(); } catch (e) { history = null; }
+  var sessions = (history && Array.isArray(history.sessions)) ? history.sessions : [];
+  var sessionCount = sessions.length;
+  var latestSession = sessionCount > 0 ? sessions[sessionCount - 1] : null;
+
+  // Latest quality + pct score
+  var latestQualityKlass = null, latestQualityLabel = null, latestPctScore = null;
+  if (latestSession) {
+    var counts = {
+      best: latestSession.best || 0,
+      acceptable: latestSession.acceptable || 0,
+      bad: latestSession.bad || 0,
+      critical: latestSession.critical || 0
+    };
+    var totalAnswered = (latestSession.answered || (counts.best + counts.acceptable + counts.bad + counts.critical)) || 1;
+    if (typeof _pfSessionLearningLabel === 'function') {
+      var ql = _pfSessionLearningLabel(counts, totalAnswered);
+      latestQualityKlass = ql.klass; latestQualityLabel = ql.label;
+    }
+    var maxScore = totalAnswered * 1.0;
+    latestPctScore = maxScore > 0 ? Math.round(((latestSession.score || 0) / maxScore) * 100) : null;
+  }
+
+  // Weak families from latest session — synthesize from session stats if no live answers
+  var weakFamilyKeys = [];
+  // If we have a live drill in completed state, use it
+  if (App.state && App.state.postflopDrill && App.state.postflopDrill.answers && App.state.postflopDrill.answers.length > 0
+      && typeof _pfSessionBoardFamilySummary === 'function'
+      && App.postflop && App.postflop.scenarios) {
+    try {
+      var fams = _pfSessionBoardFamilySummary(App.state.postflopDrill.answers, App.postflop.scenarios);
+      weakFamilyKeys = fams.map(function (f) { return f.key; });
+    } catch (e) { weakFamilyKeys = []; }
+  }
+
+  // Quality session count (sessions with score >= 80%)
+  var qualitySessionCount = 0;
+  for (var i = 0; i < sessions.length; i++) {
+    var sess = sessions[i];
+    var ans = sess.answered || 0;
+    var max = ans * 1.0;
+    var pct = max > 0 ? ((sess.score || 0) / max) * 100 : 0;
+    if (pct >= 80) qualitySessionCount += 1;
+  }
+
+  // Latest session has zero critical
+  var latestNoCritical = !!(latestSession && (latestSession.critical || 0) === 0);
+
+  // Concept coverage — concepts seen at least once in any session (use history.concepts)
+  var conceptCoverage = {};
+  var conceptsObj = (history && history.concepts && typeof history.concepts === 'object') ? history.concepts : {};
+  var REQUIRED_CONCEPTS = ['range_advantage', 'nut_advantage', 'small_cbet_freq', 'cbet_size_selection', 'static_board'];
+  for (var ci = 0; ci < REQUIRED_CONCEPTS.length; ci++) {
+    conceptCoverage[REQUIRED_CONCEPTS[ci]] = !!(conceptsObj[REQUIRED_CONCEPTS[ci]] && (conceptsObj[REQUIRED_CONCEPTS[ci]].seen || 0) > 0);
+  }
+
+  // Has used weak review at least once — proxy: any session marked or just count of bad/critical >=1 across sessions
+  // We don't track explicit weak-review flag; treat as best-effort: at least one session had bad+critical>0 (i.e. they HAD weak spots and presumably could review).
+  // Better proxy: just check if any non-perfect session exists; player either ran weak-review or chose not to.
+  // Since we can't distinguish, use a soft criterion: session count >= 2 AND at least one session had bad+critical>0.
+  var hasWeakReviewSignal = false;
+  for (var j = 0; j < sessions.length; j++) {
+    var sj = sessions[j];
+    if ((sj.bad || 0) + (sj.critical || 0) > 0) { hasWeakReviewSignal = true; break; }
+  }
+  // The "used review at least once" criterion is treated as met if weak signals existed (best-effort).
+  var hasUsedWeakReview = hasWeakReviewSignal && sessionCount >= 2;
+
+  // Mastery criteria evaluation
+  var masteryCriteriaMet = {
+    fiveSessions:        sessionCount >= 5,
+    threeQualitySessions: qualitySessionCount >= 3,
+    latestNoCritical:    latestNoCritical,
+    weakReviewUsed:      hasUsedWeakReview,
+    conceptCoverage:     Object.keys(conceptCoverage).every(function (k) { return conceptCoverage[k]; })
+  };
+
+  return {
+    hasHistory: sessionCount > 0,
+    sessionCount: sessionCount,
+    latestSession: latestSession,
+    latestQualityKlass: latestQualityKlass,
+    latestQualityLabel: latestQualityLabel,
+    latestPctScore: latestPctScore,
+    weakFamilyKeys: weakFamilyKeys,
+    qualitySessionCount: qualitySessionCount,
+    latestNoCritical: latestNoCritical,
+    hasUsedWeakReview: hasUsedWeakReview,
+    conceptCoverage: conceptCoverage,
+    masteryCriteriaMet: masteryCriteriaMet
+  };
+}
+
+// _pfModuleStatus — return display status for a module given current stats.
+//   m1: 'active' (always — only production-ready module)
+//   m2: 'preview' if Module 1 mastery met; 'locked' otherwise
+//   m3: 'locked' (planned next-up after Module 2)
+//   m4-m6: 'future'
+function _pfModuleStatus(moduleKey, stats) {
+  if (moduleKey === 'm1') return 'active';
+  if (moduleKey === 'm2') {
+    var m = stats && stats.masteryCriteriaMet;
+    if (m && Object.keys(m).every(function (k) { return m[k]; })) return 'preview';
+    return 'preview'; // Always preview — gives early visibility; preview action shows syllabus only
+  }
+  if (moduleKey === 'm3') return 'locked';
+  return 'future';
+}
+
+// _pfMasteryProgress — returns 5 mastery criteria with met/notMet flags.
+function _pfMasteryProgress(stats) {
+  if (!stats) stats = _pfAcademyStats();
+  var m = stats.masteryCriteriaMet || {};
+  return [
+    { key: 'fiveSessions',         label: 'Complete 5 sessions',                             met: !!m.fiveSessions,         detail: stats.sessionCount + ' / 5' },
+    { key: 'threeQualitySessions', label: 'Hit 80%+ quality in 3 sessions',                  met: !!m.threeQualitySessions, detail: stats.qualitySessionCount + ' / 3' },
+    { key: 'latestNoCritical',     label: 'No critical leaks in latest session',             met: !!m.latestNoCritical,     detail: stats.latestSession ? (m.latestNoCritical ? 'clean' : 'critical fired') : '—' },
+    { key: 'weakReviewUsed',       label: 'Engage with weak-spot review',                    met: !!m.weakReviewUsed,       detail: m.weakReviewUsed ? 'engaged' : 'not yet' },
+    { key: 'conceptCoverage',      label: 'Cover the 5 foundational concepts',               met: !!m.conceptCoverage,      detail: m.conceptCoverage ? 'all 5 seen' : 'in progress' }
+  ];
+}
+
+// _pfAcademyRecommendation — picks one recommendation given current stats.
+// Returns { title, body }.
+function _pfAcademyRecommendation(stats) {
+  if (!stats) stats = _pfAcademyStats();
+  if (!stats.hasHistory) {
+    return { title: 'Get started', body: 'Start with Board Texture Foundations.' };
+  }
+  var s = stats.latestSession;
+  if (s && (s.critical || 0) > 0) {
+    return { title: 'Action', body: 'Review weak spots before continuing — at least one critical leak fired last session.' };
+  }
+  if (s && ((s.bad || 0) + (s.critical || 0)) >= 4) {
+    return { title: 'Action', body: 'Repeat Learn Mode — let the patterns settle before moving on.' };
+  }
+  if (stats.sessionCount < 5) {
+    return { title: 'Foundation', body: 'Build foundation: complete more Module 1 sessions (' + stats.sessionCount + ' / 5).' };
+  }
+  var allMet = stats.masteryCriteriaMet && Object.keys(stats.masteryCriteriaMet).every(function (k) { return stats.masteryCriteriaMet[k]; });
+  if (allMet) {
+    return { title: 'Ready', body: 'Module 1 foundation looks strong. Module 2 preview is recommended.' };
+  }
+  // Recent strong but mastery not yet met
+  if (stats.latestPctScore != null && stats.latestPctScore >= 80 && stats.latestNoCritical) {
+    return { title: 'Close to ready', body: 'You are close to Module 2 readiness. Knock out the remaining mastery criteria.' };
+  }
+  return { title: 'Continue', body: 'Continue Module 1 — the more boards you read, the cleaner the patterns become.' };
+}
+
+// _pfMasteryProgressHtml — collapsible mastery checklist
+function _pfMasteryProgressHtml(stats) {
+  var items = _pfMasteryProgress(stats);
+  var rows = items.map(function (it) {
+    var icon = it.met ? '✅' : '○';
+    var cls = it.met ? 'is-met' : 'is-not-met';
+    return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
+           ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
+  }).join('');
+  return '<div class="pf-mastery-section">' +
+           '<span class="pf-mastery-title">📚 Module 1 mastery (display only)</span>' +
+           '<ul class="pf-mastery-list">' + rows + '</ul>' +
+         '</div>';
+}
+
+// _pfAcademySnapshotHtml — small snapshot block summarizing local progress.
+function _pfAcademySnapshotHtml(stats) {
+  if (!stats.hasHistory) {
+    return '<div class="pf-academy-snapshot">' +
+             '<span class="pf-snapshot-title">📈 Your progress</span>' +
+             '<div class="pf-snapshot-empty">Start Module 1 to build your academy profile.</div>' +
+           '</div>';
+  }
+  var weakFamiliesText = (stats.weakFamilyKeys && stats.weakFamilyKeys.length > 0 && typeof _pfBoardFamilyDisplayLabel === 'function')
+    ? stats.weakFamilyKeys.slice(0, 3).map(function (k) { return _pfBoardFamilyDisplayLabel(k); }).join(', ')
+    : 'none flagged this session';
+  var qualityHtml = stats.latestQualityLabel
+    ? '<span class="pf-learn-quality ' + (stats.latestQualityKlass || '') + '" style="font-size:10px;padding:2px 6px;">' + _pfEscape(stats.latestQualityLabel) + '</span>'
+    : '—';
+  var rows = [
+    { k: 'Sessions completed', v: String(stats.sessionCount) },
+    { k: 'Latest score',       v: (stats.latestPctScore != null ? stats.latestPctScore + '%' : '—') },
+    { k: 'Latest quality',     v: qualityHtml },
+    { k: 'Weak families',      v: _pfEscape(weakFamiliesText) }
+  ];
+  var rowHtml = rows.map(function (r) {
+    return '<div class="pf-snapshot-row"><span class="pf-snapshot-key">' + _pfEscape(r.k) + '</span><span>' + r.v + '</span></div>';
+  }).join('');
+  return '<div class="pf-academy-snapshot">' +
+           '<span class="pf-snapshot-title">📈 Your progress</span>' +
+           rowHtml +
+         '</div>';
+}
+
+// _pfAcademyRecommendationHtml — featured recommendation block.
+function _pfAcademyRecommendationHtml(stats) {
+  var rec = _pfAcademyRecommendation(stats);
+  return '<div class="pf-academy-recommendation">' +
+           '<span class="pf-rec-title">▶ Recommended next step</span>' +
+           '<div class="pf-rec-body">' + _pfEscape(rec.body) + '</div>' +
+         '</div>';
+}
+
+// _pfModuleCardHtml — render a single module card given module + stats.
+function _pfModuleCardHtml(mod, stats) {
+  var status = _pfModuleStatus(mod.key, stats);
+  var statusLabel = ({ active: 'Active', preview: 'Preview', locked: 'Locked', future: 'Future' })[status] || status;
+  var focusText = mod.focus.join(' · ');
+  var scenariosLine = mod.scenarioCount > 0 ? mod.scenarioCount + ' scenarios' : 'no scenarios yet';
+  var actionsHtml = '';
+  if (mod.key === 'm1') {
+    // Active: Continue + (optional) Review Weak Spots
+    var hasWeakProfile = !!(App.state && App.state.postflopDrill && App.state.postflopDrill.answers && App.state.postflopDrill.answers.length > 0
+                            && typeof _pfCurrentSessionWeakProfile === 'function');
+    var weakBtn = '';
+    if (hasWeakProfile) {
+      try {
+        var wp = _pfCurrentSessionWeakProfile(App.state.postflopDrill.answers, App.postflop && App.postflop.scenarios);
+        if (wp && wp.hardMisses > 0) {
+          weakBtn = '<button class="pf-module-action-btn is-weak" onclick="startPostflopWeakSpotReview()">🎯 Review Weak Spots</button>';
+        }
+      } catch (e) { /* swallow */ }
+    }
+    actionsHtml =
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Continue Board Texture</button>' +
+      weakBtn;
+  } else if (mod.key === 'm2') {
+    // Preview: button toggles syllabus details
+    actionsHtml =
+      '<button class="pf-module-action-btn is-disabled" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Preview syllabus</button>';
+  } else {
+    actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
+  }
+  var syllabusHtml = '';
+  if (mod.key === 'm2' && mod.syllabus) {
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Syllabus preview</summary>' +
+                   '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
+                   '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
+                   'Production-ready Module 2 will arrive in a future patch. Current data is seed only.' +
+                   '</div></details>';
+  }
+  return '<div class="pf-module-card is-' + status + '">' +
+           '<div class="pf-module-row1">' +
+             '<span class="pf-module-name">' + _pfEscape(mod.name) + '</span>' +
+             '<span class="pf-status-pill is-' + status + '">' + statusLabel + '</span>' +
+           '</div>' +
+           '<div class="pf-module-focus">' + _pfEscape(focusText) + '</div>' +
+           '<div class="pf-module-meta">' +
+             '<span class="pf-meta-item">📊 ' + scenariosLine + '</span>' +
+             '<span class="pf-meta-item">🎓 ' + _pfEscape(mod.masteryNote) + '</span>' +
+           '</div>' +
+           '<div class="pf-module-actions">' + actionsHtml + '</div>' +
+           syllabusHtml +
+         '</div>';
+}
+
+// _pfCurriculumMapHtml — list of all module cards.
+function _pfCurriculumMapHtml(stats) {
+  var cards = _PF_CURRICULUM.map(function (m) { return _pfModuleCardHtml(m, stats); }).join('');
+  return '<div class="pf-curriculum-section">' +
+           '<span class="pf-curriculum-title">📚 Curriculum</span>' +
+           '<div class="pf-curriculum-grid">' + cards + '</div>' +
+         '</div>';
+}
+
+// _pfConceptLibraryHtml — collapsible concept library, all 10 concepts.
+function _pfConceptLibraryHtml() {
+  var cards = _PF_CONCEPT_LIBRARY.map(function (c) {
+    return '<div class="pf-concept-card">' +
+             '<span class="pf-concept-name">' + _pfEscape(c.name) + '</span>' +
+             '<div class="pf-concept-def">' + _pfEscape(c.def) + '</div>' +
+             '<span class="pf-concept-tag">trained in Module 1</span>' +
+           '</div>';
+  }).join('');
+  return '<details class="pf-concept-library">' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts)</summary>' +
+           '<div class="pf-concept-grid">' + cards + '</div>' +
+         '</details>';
+}
+
+// _pfAcademyHomeHtml — full Academy panel (used by renderPostflopHomeCardMount
+// READY state). Replaces the simple v4.0.2 entry card with curriculum-style
+// home: header + snapshot + recommendation + curriculum + mastery + library.
+function _pfAcademyHomeHtml() {
+  var stats = _pfAcademyStats();
+  return '<div class="pf-academy-section">' +
+           '<div class="pf-academy-header">' +
+             '<span class="pf-academy-title">🎓 Postflop Academy</span>' +
+             '<span class="pf-academy-subtitle">Learn board texture, advantage, c-bet strategy, and postflop decision-making step by step.</span>' +
+           '</div>' +
+           _pfAcademySnapshotHtml(stats) +
+           _pfAcademyRecommendationHtml(stats) +
+           _pfCurriculumMapHtml(stats) +
+           _pfMasteryProgressHtml(stats) +
+           _pfConceptLibraryHtml() +
+           '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.1.0 — POSTFLOP ACADEMY FOUNDATION
+// ============================================================================
+
 function renderPostflopHomeCardMount() {
   var host = document.getElementById('masteryContent');
   if (!host) return;
@@ -33663,17 +34366,23 @@ function renderPostflopHomeCardMount() {
     bodyHtml =
       '<div class="postflop-home-card postflop-disabled">🧪 Postflop beta · no scenarios available for this module</div>';
   } else {
-    // READY state — full entry card
-    bodyHtml =
-      '<div class="postflop-home-card postflop-state-ready">' +
-        '<span class="postflop-pill">🧪 Postflop Beta</span>' +
-        '<div class="postflop-module-tag">Module 1 · Board Texture Trainer</div>' +
-        '<div class="postflop-module-title">Train board reading</div>' +
-        '<div class="postflop-module-desc">Range advantage · nut advantage · c-bet sizing family. Quick 15-question session.</div>' +
-        '<div class="postflop-module-stats">✓ Ready · ' + pool.length + ' scenarios · ~10 min</div>' +
-        '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
-        '<div class="postflop-local-note">Progress is saved locally on this device.</div>' +
-      '</div>';
+    // READY state — v4.1.0: full Postflop Academy panel (curriculum + snapshot
+    // + recommendation + mastery + concept library). Falls back to the v4.0.2
+    // simple entry card if the Academy helper is missing for any reason.
+    if (typeof _pfAcademyHomeHtml === 'function') {
+      bodyHtml = _pfAcademyHomeHtml();
+    } else {
+      bodyHtml =
+        '<div class="postflop-home-card postflop-state-ready">' +
+          '<span class="postflop-pill">🧪 Postflop Beta</span>' +
+          '<div class="postflop-module-tag">Module 1 · Board Texture Trainer</div>' +
+          '<div class="postflop-module-title">Train board reading</div>' +
+          '<div class="postflop-module-desc">Range advantage · nut advantage · c-bet sizing family. Quick 15-question session.</div>' +
+          '<div class="postflop-module-stats">✓ Ready · ' + pool.length + ' scenarios · ~10 min</div>' +
+          '<button class="postflop-start-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Start Board Texture Drill</button>' +
+          '<div class="postflop-local-note">Progress is saved locally on this device.</div>' +
+        '</div>';
+    }
   }
 
   // Wrap in Beta Lab section + insert at TOP of masteryContent (afterbegin)

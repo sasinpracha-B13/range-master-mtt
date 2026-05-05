@@ -9,10 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.11` — Postflop Session Learning Summary (`a2e4fae`).
-- **Pending push (STAGED)**: `v4.0.12` — Postflop Drill Weak Spots Button. Closes the end-to-end teaching loop: when a Module 1 session has any bad/critical answer, the completion screen shows a "🎯 Drill Weak Spots" button. Tapping it builds a 12-scenario focused review queue from the just-completed session's mistakes (priorities: +100 exact missed scenario, +60 same weak board family, +40 shared weak concept tag, −30 recent-session repeat, +0..10 randomness). Review session shows a "🎯 Review Mode · Weak Spots" amber badge above the question. Summary header changes to "Review session complete" / "REVIEW SESSION SUMMARY". Four new pure helpers: `_pfCurrentSessionWeakProfile`, `_pfWeakScenarioScore`, `_pfBuildWeakSpotQueue`, `startPostflopWeakSpotReview`. Soft fallback: if hardMisses < 2, also includes acceptable answers as weak signals (weight 0.5). Defensive: returns null/empty when no weakness; falls back to normal session if pool empty; never crashes on missing conceptTags / scenarios / history. When no weak spots detected, shows "No weak spots detected this session." note instead of disabled button. Audit 262/0/0 (data unchanged). 23/23 QA checks pass. Mobile 375px: weak button 343×49px tappable; review badge renders cleanly.
-- **Service worker `VERSION`**: `'v4.0.12'` (staged).
-- **App backup `appVersion`**: `'4.0.12'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.0.12` — Postflop Drill Weak Spots Button (`79cfc2a`).
+- **Pending push (STAGED)**: `v4.1.0` — Postflop Academy Foundation. Evolves Postflop from a single quiz into a structured learning academy. The Beta Lab area now hosts a curriculum-style **Postflop Academy** with: header (title + subtitle), progress snapshot (sessions completed, latest score %, latest quality pill, weak families), recommendation engine (6 rule-driven messages picked from history), curriculum map (6 modules — M1 Active with start + optional Review Weak Spots; M2 Preview with inline syllabus details; M3 Locked; M4-M6 Future, all dimmed but visible), Module 1 mastery checklist (5 display-only criteria with met/not-met state), 10-concept Concept Library drawer, "Progress is saved locally on this device." note. Ten new pure helpers + 2 declarative arrays (`_PF_CURRICULUM`, `_PF_CONCEPT_LIBRARY`). Module 1 actions still wired to existing `startPostflopDrill` + `startPostflopWeakSpotReview`. Audit 262/0/0 (data unchanged). 25/25 QA checks pass. Mobile 375px verified.
+- **Service worker `VERSION`**: `'v4.1.0'` (staged).
+- **App backup `appVersion`**: `'4.1.0'` (staged in `index.html`).
 
 ---
 
@@ -77,7 +77,38 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.12 Postflop Drill Weak Spots Button — STAGED
+### v4.1.0 Postflop Academy Foundation — STAGED
+
+Evolves Postflop from a single quiz module into a structured learning academy. Per human direction: "Lay the foundation like a school. Make it robust and grow gradually."
+
+**What was added**:
+1. **Postflop Academy panel** replaces the simple Beta Lab entry card. Header with title + subtitle.
+2. **Progress snapshot** — sessions completed, latest score %, latest quality pill (reuses `_pfSessionLearningLabel`), weak families from current drill state. Empty-state copy: "Start Module 1 to build your academy profile."
+3. **Recommendation engine** (`_pfAcademyRecommendation`) — 6 rule-driven messages: no-history → start; latest critical → review weak; many bad → repeat Learn Mode; <5 sessions → build foundation; all 5 mastery met → Module 2 preview ready; recent strong but not all met → close to ready; default → continue.
+4. **Curriculum map** (6 modules with status pills): Module 1 Active (Continue + optional Review Weak Spots buttons); Module 2 Preview (Preview syllabus toggles inline `<details>`); Module 3 Locked; Module 4-6 Future. Locked/Future cards dimmed (opacity 0.65/0.50) but still visible — "a school should show the path ahead."
+5. **Module 1 mastery checklist** (5 display-only criteria): 5 sessions, 80%+ in 3 sessions, no critical leaks latest, weak-spot review engaged, foundational concepts covered. Each row shows met/not-met icon + detail string. No enforcement.
+6. **Concept Library drawer** — 10 concepts (Range Advantage, Nut Advantage, Board Texture, Static vs Dynamic, C-bet Frequency, Sizing Family, Monotone, Paired, Low Connected, Two-tone). Each card has short definition + "trained in Module 1" tag.
+7. **"Progress is saved locally on this device."** note pinned to the bottom. Honest copy — no implication of cloud sync.
+
+**Helpers added** (10 + 2 declarative arrays, all `_pf*` namespaced):
+`_PF_CURRICULUM`, `_PF_CONCEPT_LIBRARY`, `_pfAcademyStats`, `_pfModuleStatus`, `_pfMasteryProgress`, `_pfAcademyRecommendation`, `_pfMasteryProgressHtml`, `_pfAcademySnapshotHtml`, `_pfAcademyRecommendationHtml`, `_pfModuleCardHtml`, `_pfCurriculumMapHtml`, `_pfConceptLibraryHtml`, `_pfAcademyHomeHtml`.
+
+All defensive against: missing localStorage, missing `App.postflop.scenarios`, malformed history JSON, missing concept tags. All output goes through `_pfEscape`.
+
+**Live QA result** (25/25 checks pass):
+- Helpers loaded; recommendation engine returns correct messages across no-history / critical / poor / mastery-met / strong-recent / default cases (6/6 paths verified)
+- Beta off hides Academy; beta on shows full Academy (title, snapshot, recommendation, 6 module cards, mastery, 10 concepts, local-only note)
+- Module 1 "Continue Board Texture" button starts the existing drill
+- Mastery checklist updates correctly with no-history vs sample-strong-history
+- Mobile 375px: academy 317px wide, no overflow, action buttons 273px tappable
+- Console: 0 errors throughout
+- Tab regression + preflop drill + boss UI: all working
+
+**Files modified**: `index.html` (CSS block ~280 lines + 10 new helpers + 2 declarative arrays + edit in `renderPostflopHomeCardMount` to call new helper + appVersion 4.0.12 → 4.1.0), `service-worker.js` (VERSION v4.0.12 → v4.1.0), `PROJECT_STATE.md`, `TASK_BOARD.md`, `docs/specs/brief-v4.1.0-postflop-academy-foundation.md` (NEW).
+
+**Untouched**: all postflop data files, audit infrastructure, generator scripts, ranges, manifest, preflop systems, scoring, cosmetics. service-worker diff is solely VERSION bump.
+
+### v4.0.12 Postflop Drill Weak Spots Button — COMMITTED + PUSHED (`79cfc2a`)
 
 After v4.0.11 added a "Recommended next move: replay weak spots first" line, the only available action was the existing "Drill again" button which built a fresh queue ignoring the player's mistakes. v4.0.12 closes the loop with an actual weak-spot replay flow.
 
