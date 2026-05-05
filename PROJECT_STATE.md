@@ -9,10 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.9` — Postflop Teaching Polish (`c38aafc`).
-- **Pending push (STAGED)**: `v4.0.10` — Postflop Card Text Encoding Hotfix. Tester found broken suit characters in Postflop question text. Root cause: v4.0.0 baseline scenarios have **CP874 (Thai Windows) → UTF-8 mojibake** — bytes for `♥`, `♦`, `♠`, `♣` (and `—`) were corrupted to multi-codepoint Thai/Latin sequences during authoring round-trip. Per user instruction, fix at render time without editing data. New helpers in `index.html`: `_pfCardText(card)`, `_pfBoardText(cards)`, `_pfBuildQuestionPrompt(scenario)` (reconstructs sentence from clean `board.cards` + qtype), and `_pfFixMojibake(text)` (CP874 reverse decoder using TextDecoder). Render-path rewires in `renderPostflopQuestion` (1 site) and `_pfTeachingFeedbackBlocksHtml` + `renderPostflopAnswer` (5 sites for explanation text). Card graphics unchanged. Audit 262/0/0 (data unchanged). All 5 required test cases verified live (`6c 5c 4s` → `6♣ 5♣ 4♠`, etc.). Em-dash recovery verified (`โ€"` → `—`). Zero mojibake codepoints in rendered output.
-- **Service worker `VERSION`**: `'v4.0.10'` (staged).
-- **App backup `appVersion`**: `'4.0.10'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.0.10` — Postflop Card Text Encoding Hotfix (`53eae80`).
+- **Pending push (STAGED)**: `v4.0.11` — Postflop Session Learning Summary. Closes the learning loop after a Module 1 session by replacing the static "Drill Complete" subtitle with a dynamic learning summary: a colour-coded quality pill ("Clean read" / "Good pattern recognition" / "Mixed session" / "Needs review" / "High-risk leaks found"); a "Strongest concepts" green block (top 3 conceptTags with seen ≥ 2 AND pct ≥ 80); a "Review signals" amber block (worst 3 by pct, or an empty-state when nothing is flagged); a "Board family patterns to revisit" red block (families with miss-cluster ≥ 2 OR critical ≥ 1, each with a one-sentence coaching lesson from a 18-entry family map); and a "Recommended next move" blue block (single coaching action picked by tier-count rules). Eight new pure helpers: `_pfBoardFamilyKey`, `_pfBoardFamilyDisplayLabel`, `_pfBoardFamilyLesson`, `_pfLearnPrettyConcept`, `_pfSessionConceptSummary`, `_pfSessionBoardFamilySummary`, `_pfSessionLearningLabel`, `_pfSessionNextMove`, `_pfRenderLearningSummary`. Defensive against missing `conceptTags` / cleared localStorage / empty answers / null `App.postflop.scenarios`. Audit 262/0/0 (data unchanged). 20/20 QA checks pass. Mobile 375px verified.
+- **Service worker `VERSION`**: `'v4.0.11'` (staged).
+- **App backup `appVersion`**: `'4.0.11'` (staged in `index.html`).
 
 ---
 
@@ -77,7 +77,37 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.10 Postflop Card Text Encoding Hotfix — STAGED
+### v4.0.11 Postflop Session Learning Summary — STAGED
+
+After a Module 1 session, the player should understand what they learned and what to focus on next. Prior summary screen showed score + tier counts + a flat concept-mastery list. v4.0.11 adds a learning-focused block stack between the score card and the existing details.
+
+**New sections** (all derived from existing session data; no schema changes; no data file edits):
+
+1. **Dynamic quality label** replaces the static "✅ Drill Complete" subtitle. Picks one of: "Clean read" / "Good pattern recognition" / "Mixed session" / "Needs review" / "High-risk leaks found" — colour-coded pill (green / blue / amber / red).
+2. **Strongest concepts** green block — top 3 conceptTags by score % where seen ≥ 2 AND pct ≥ 80.
+3. **Review signals** amber block — worst 3 conceptTags (lowest pct, then most bad+critical). Shows green-empty-state ("No major weak concept detected this session.") when clean.
+4. **Board family pattern notes** red block — surfaces up to 3 families where misses cluster (missCount ≥ 2 OR critical ≥ 1). Each row shows the family label + miss count + one-sentence coaching lesson from an 18-entry family map (e.g., "low connected — missed 2 of 3. BB has more suited connectors and straight density.")
+5. **Recommended next move** blue block — single coaching action: "Replay weak spots first..." (if critical), "Run another Learn Mode session..." (if 4+ bad/crit), "Focus on turning acceptable into best..." (if too many half-credit), "Good session..." (if 80%+ best), or "Keep going..." (default).
+
+The existing concept-mastery details + critical-leaks details are preserved below (collapsed by default for power users).
+
+**Helpers added** (8 pure functions, all `_pf*` namespaced):
+`_pfBoardFamilyKey(board)`, `_pfBoardFamilyDisplayLabel(key)`, `_pfBoardFamilyLesson(key)`, `_pfLearnPrettyConcept(tag)`, `_pfSessionConceptSummary(answers)`, `_pfSessionBoardFamilySummary(answers, scenarios)`, `_pfSessionLearningLabel(counts, total)`, `_pfSessionNextMove(counts, total)`, `_pfRenderLearningSummary(...)`.
+
+**Defensive fix**: legacy `conceptTally` line in `renderPostflopComplete` was crashing if an answer had no `conceptTags` (legacy localStorage). Added `(a && a.conceptTags) || []` guard. Per brief requirement #12.
+
+**Live QA result** (20/20):
+- Helpers loaded; perfect / poor / mixed session profiles all produce sensible labels + concepts + family clusters
+- Mobile 375px: no horizontal overflow; summary card 343px wide
+- Edge cases pass: missing conceptTags, cleared localStorage, empty answers, null `App.postflop.scenarios`
+- Console: 0 errors throughout
+- All 5 tabs render; preflop drill works; beta toggle hides/shows postflop
+
+**Files modified**: `index.html` (CSS block + 8 new helper functions + 2 edits in `renderPostflopComplete` + appVersion 4.0.10 → 4.0.11), `service-worker.js` (VERSION v4.0.10 → v4.0.11), `PROJECT_STATE.md`, `TASK_BOARD.md`, `docs/specs/brief-v4.0.11-postflop-session-learning-summary.md` (NEW).
+
+**Untouched**: all postflop data files, audit infrastructure, generator scripts, ranges, manifest, preflop systems, scoring, cosmetics.
+
+### v4.0.10 Postflop Card Text Encoding Hotfix — COMMITTED + PUSHED (`53eae80`)
 
 Tester reported that Postflop question text shows broken suit symbols (`Aโฅ Kโฆ 5โฃ`) while card graphics render correctly (`A♥ K♦ 5♣`). Root-cause investigation found **CP874 (Thai Windows) → UTF-8 mojibake** in the v4.0.0 baseline scenarios: original UTF-8 bytes were at some point read as CP874 then re-encoded as UTF-8, splitting each multi-byte char into 2-3 separate Thai/Latin codepoints. Affects `question.prompt` and `explanation.*` (rangeLogic / nutLogic / sizingLogic / commonMistake / short) on ~31 baseline scenarios. The 220 v4.0.7-generated scenarios are clean. `board.cards` is clean ASCII on all scenarios — that's why card graphics work.
 

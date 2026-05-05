@@ -10602,6 +10602,75 @@
     /* ========================================================================
        END v4.0.8 — POSTFLOP TEACHING LAYER
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY
+       Closes the learning loop after a Module 1 session: highlights what the
+       player did well, what to review, which board families produced misses,
+       and what to try next. All `.pf-learn-*` namespaced.
+       ======================================================================== */
+    .pf-learn-headline {
+      margin: 8px 0 6px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pf-learn-quality {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 12px;
+      letter-spacing: 0.02em;
+    }
+    .pf-learn-quality.q-clean   { color: #4ade80; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.40); }
+    .pf-learn-quality.q-good    { color: #6ea8fe; background: rgba(110, 168, 254, 0.12); border: 1px solid rgba(110, 168, 254, 0.40); }
+    .pf-learn-quality.q-review  { color: #f5a623; background: rgba(245, 166, 35, 0.12); border: 1px solid rgba(245, 166, 35, 0.40); }
+    .pf-learn-quality.q-leaks   { color: #f87171; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.40); }
+    .pf-learn-block {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.18);
+      border-radius: 8px;
+      border-left: 3px solid rgba(255,255,255,0.10);
+    }
+    .pf-learn-block .pf-learn-title {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .pf-learn-block .pf-learn-body {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .pf-learn-block.pf-learn-strong   { border-left-color: rgba(74, 222, 128, 0.55); background: rgba(74, 222, 128, 0.06); }
+    .pf-learn-block.pf-learn-weak     { border-left-color: rgba(245, 166, 35, 0.55); background: rgba(245, 166, 35, 0.06); }
+    .pf-learn-block.pf-learn-family   { border-left-color: rgba(248, 113, 113, 0.55); background: rgba(248, 113, 113, 0.06); }
+    .pf-learn-block.pf-learn-next     { border-left-color: var(--accent, #6ea8fe); background: rgba(110, 168, 254, 0.10); }
+    .pf-learn-block.pf-learn-next .pf-learn-body { font-weight: 600; }
+    .pf-learn-list {
+      margin: 0; padding-left: 18px;
+      font-size: 13px; line-height: 1.6; color: var(--text);
+    }
+    .pf-learn-list li { margin-bottom: 2px; }
+    .pf-learn-empty {
+      font-style: italic; color: var(--text-secondary); font-size: 12px;
+    }
+    @media (max-width: 480px) {
+      .pf-learn-block { padding: 9px 10px; }
+      .pf-learn-block .pf-learn-body, .pf-learn-list { font-size: 12.5px; }
+    }
+    /* ========================================================================
+       END v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32026,7 +32095,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.10',
+    appVersion: '4.0.11',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33772,6 +33841,259 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
 }
 
+// ============================================================================
+// v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY HELPERS
+// Pure functions that derive learning insights from session answers + scenario
+// metadata. No data file edits, no schema changes. All `_pfLearn*` namespaced.
+// ============================================================================
+
+// _pfBoardFamilyKey — canonical key for grouping boards by strategic family.
+// Mirrors the cascade in _pfPatternLabel but returns a stable key (not a label).
+function _pfBoardFamilyKey(board) {
+  if (!board) return 'unknown';
+  var hcc = board.highCardClass || '';
+  var st = board.suitTexture || 'rainbow';
+  var tags = board.textureTags || [];
+  var paired = board.pairedStatus === 'paired';
+  var dyn = board.dynamicLevel || 1;
+  var has = function (t) { return tags.indexOf(t) >= 0; };
+  if (paired) {
+    if (hcc === 'A_high' || hcc === 'K_high' || hcc === 'Q_high' || hcc === 'J_high') return 'paired_high';
+    if (has('middle_heavy') || hcc === 'T_high') return 'paired_mid';
+    return 'paired_low';
+  }
+  if (st === 'monotone') return hcc === 'low' ? 'monotone_low' : 'monotone_high';
+  if (has('highly_connected') || dyn >= 4) {
+    if (has('broadway_heavy')) return st === 'two_tone' ? 'broadway_two_tone_connected' : 'broadway_connected';
+    if (st === 'two_tone' && hcc === 'low') return 'low_connected_two_tone';
+    return 'very_wet';
+  }
+  if (st === 'two_tone') {
+    if (hcc === 'A_high' || hcc === 'K_high') return 'high_two_tone_dry';
+    if (hcc === 'low') return 'low_dry_two_tone';
+    return 'mid_two_tone_dry';
+  }
+  if (hcc === 'A_high') return 'A_high_dry';
+  if (hcc === 'K_high') return 'K_high_dry';
+  if (hcc === 'Q_high') return 'Q_high_dry';
+  if (hcc === 'J_high' || hcc === 'T_high') return 'J_T_medium';
+  return 'low_dry';
+}
+
+// _pfBoardFamilyDisplayLabel — short coaching-style label for a family key.
+function _pfBoardFamilyDisplayLabel(key) {
+  return ({
+    'A_high_dry':                  'A-high dry',
+    'K_high_dry':                  'K-high dry',
+    'Q_high_dry':                  'Q-high dry',
+    'J_T_medium':                  'J/T-high medium',
+    'low_dry':                     'low dry',
+    'paired_high':                 'paired high',
+    'paired_mid':                  'paired middle',
+    'paired_low':                  'paired low',
+    'broadway_connected':          'broadway-connected',
+    'low_connected':               'low connected',
+    'very_wet':                    'very wet connected',
+    'high_two_tone_dry':           'A/K-high two-tone',
+    'mid_two_tone_dry':            'Q/J/T-high two-tone',
+    'broadway_two_tone_connected': 'broadway-connected two-tone',
+    'low_dry_two_tone':            'low dry two-tone',
+    'low_connected_two_tone':      'low connected two-tone',
+    'monotone_high':               'high monotone',
+    'monotone_low':                'low monotone'
+  })[key] || key.replace(/_/g, ' ');
+}
+
+// _pfBoardFamilyLesson — one-sentence "remember this" coaching note per family.
+// Only used when mistakes cluster on a family in this session.
+function _pfBoardFamilyLesson(key) {
+  return ({
+    'A_high_dry':                  'BTN has more A-x and overpairs — small high-frequency c-bet wins.',
+    'K_high_dry':                  'BTN has more K-x and overpairs — small high-frequency c-bet wins.',
+    'Q_high_dry':                  'BTN has range edge but smaller than A/K-high; mix some checks.',
+    'J_T_medium':                  'Closer to neutral than high-card boards; mixed small/check is normal.',
+    'low_dry':                     'BTN overpairs (TT-AA) still dominate; small bet works.',
+    'paired_high':                 'BTN has more trips combos with strong kickers.',
+    'paired_mid':                  'BB has more trips density; separate that from BTN overpair density.',
+    'paired_low':                  'BTN dominates the kicker war — overpair density wins.',
+    'broadway_connected':          'BB has more JT/QJ/T9 combos — check more, polar when betting.',
+    'low_connected':               'BB has more suited connectors and straight density — check often.',
+    'very_wet':                    'BB has more straights and combo draws — avoid range-betting small.',
+    'high_two_tone_dry':           'Same as A/K-high dry but flush draws push sizing slightly larger.',
+    'mid_two_tone_dry':            'Q/J/T-high two-tone is closer to neutral — mixed small/check.',
+    'broadway_two_tone_connected': 'BB hits hardest here — straight density + flush density combine.',
+    'low_dry_two_tone':            'Overpair density still favors BTN, but mixed small/check beats range-small.',
+    'low_connected_two_tone':      'BB has straight density AND flush-draw density — check the majority.',
+    'monotone_high':               'Made flushes already exist for some BB combos; keep bluffs small.',
+    'monotone_low':                'BB has more flushes + low connector coverage; check often.'
+  })[key] || 'Re-read the board class and ask which range hits it harder.';
+}
+
+// _pfLearnPrettyConcept — render concept tag keys as readable phrases.
+function _pfLearnPrettyConcept(tag) {
+  if (!tag) return '';
+  var pretty = tag.replace(/_/g, ' ');
+  return pretty.charAt(0).toUpperCase() + pretty.slice(1);
+}
+
+// _pfSessionConceptSummary — derive strong/weak concept arrays from answers.
+// Returns: { strong: [{tag, pct, seen}], weak: [{tag, pct, seen, badCount}] }
+//   strong: concepts seen ≥ 2 with pct ≥ 80, top 3 by pct then by seen.
+//   weak:   concepts seen ≥ 1 with bad+critical answers OR pct < 50,
+//           top 3 worst (lowest pct first, ties broken by most-bad).
+function _pfSessionConceptSummary(answers) {
+  if (!answers || !answers.length) return { strong: [], weak: [] };
+  var tally = {};
+  for (var i = 0; i < answers.length; i++) {
+    var a = answers[i];
+    var tags = a.conceptTags || [];
+    for (var j = 0; j < tags.length; j++) {
+      var t = tags[j];
+      if (!tally[t]) tally[t] = { tag: t, seen: 0, scoreSum: 0, badCount: 0, critCount: 0 };
+      tally[t].seen += 1;
+      tally[t].scoreSum += a.score || 0;
+      if (a.tier === 'bad') tally[t].badCount += 1;
+      if (a.tier === 'critical') tally[t].critCount += 1;
+    }
+  }
+  var arr = Object.keys(tally).map(function (k) {
+    var t = tally[k];
+    t.pct = t.seen > 0 ? Math.round((t.scoreSum / t.seen) * 100) : 0;
+    return t;
+  });
+  // Strong: seen ≥ 2 AND pct ≥ 80
+  var strong = arr.filter(function (t) { return t.seen >= 2 && t.pct >= 80; })
+                  .sort(function (a, b) { return b.pct - a.pct || b.seen - a.seen; })
+                  .slice(0, 3);
+  // Weak: any bad/critical OR pct < 50; ranked by lowest pct then most bad+critical
+  var weak = arr.filter(function (t) { return t.badCount + t.critCount > 0 || t.pct < 50; })
+                .sort(function (a, b) {
+                  if (a.pct !== b.pct) return a.pct - b.pct;
+                  return (b.badCount + b.critCount) - (a.badCount + a.critCount);
+                })
+                .slice(0, 3);
+  return { strong: strong, weak: weak };
+}
+
+// _pfSessionBoardFamilySummary — group answers by board family, find clusters of misses.
+// Returns: [{key, label, lesson, seen, missCount, critCount}] sorted by miss-rate desc.
+// Only includes families with ≥ 2 misses OR ≥ 1 critical.
+function _pfSessionBoardFamilySummary(answers, scenarios) {
+  if (!answers || !answers.length || !scenarios) return [];
+  // Build scenarioId → board map
+  var byId = {};
+  for (var i = 0; i < scenarios.length; i++) { byId[scenarios[i].id] = scenarios[i]; }
+  var tally = {};
+  for (var k = 0; k < answers.length; k++) {
+    var a = answers[k];
+    var s = byId[a.scenarioId];
+    if (!s || !s.board) continue;
+    var key = _pfBoardFamilyKey(s.board);
+    if (!tally[key]) tally[key] = { key: key, seen: 0, missCount: 0, critCount: 0 };
+    tally[key].seen += 1;
+    if (a.tier === 'bad') tally[key].missCount += 1;
+    if (a.tier === 'critical') { tally[key].missCount += 1; tally[key].critCount += 1; }
+  }
+  var arr = Object.keys(tally).map(function (k) { return tally[k]; });
+  var clustered = arr.filter(function (t) { return t.missCount >= 2 || t.critCount >= 1; })
+                     .sort(function (a, b) {
+                       var aRate = a.missCount / a.seen;
+                       var bRate = b.missCount / b.seen;
+                       if (aRate !== bRate) return bRate - aRate;
+                       return b.missCount - a.missCount;
+                     })
+                     .slice(0, 3);
+  return clustered.map(function (t) {
+    return {
+      key: t.key, label: _pfBoardFamilyDisplayLabel(t.key), lesson: _pfBoardFamilyLesson(t.key),
+      seen: t.seen, missCount: t.missCount, critCount: t.critCount
+    };
+  });
+}
+
+// _pfSessionLearningLabel — pick a one-line quality label for the session header.
+// Returns { label, klass } where klass is one of q-clean / q-good / q-review / q-leaks.
+function _pfSessionLearningLabel(counts, total) {
+  total = total || 1;
+  var bestPlusOk = (counts.best || 0) + (counts.acceptable || 0);
+  var badPlusCrit = (counts.bad || 0) + (counts.critical || 0);
+  if ((counts.critical || 0) > 0)             return { label: 'High-risk leaks found', klass: 'q-leaks' };
+  if (badPlusCrit / total >= 0.40)            return { label: 'Needs review',          klass: 'q-review' };
+  if ((counts.best || 0) / total >= 0.80)     return { label: 'Clean read',            klass: 'q-clean' };
+  if (bestPlusOk / total >= 0.70)             return { label: 'Good pattern recognition', klass: 'q-good' };
+  return { label: 'Mixed session', klass: 'q-review' };
+}
+
+// _pfSessionNextMove — pick a single recommended next action.
+function _pfSessionNextMove(counts, total) {
+  total = total || 1;
+  var crit = counts.critical || 0;
+  var bad = counts.bad || 0;
+  var best = counts.best || 0;
+  var acceptable = counts.acceptable || 0;
+  if (crit > 0)                                 return 'Replay weak spots first — at least one critical leak fired this session.';
+  if ((bad + crit) >= 4)                        return 'Run another Learn Mode session before moving on; let the patterns stick.';
+  if (acceptable > best && best / total < 0.60) return 'Focus on turning acceptable reads into best reads — read the family signal more decisively.';
+  if (best / total >= 0.80)                     return 'Good session. Continue to the next pool, or revisit the weakest family below.';
+  return 'Keep going — vary the boards and re-test the families you missed.';
+}
+
+// _pfRenderLearningSummary — build the new learning summary HTML block.
+// Returns string. Designed to be inserted between the existing summary card
+// and the existing concept-mastery <details>.
+function _pfRenderLearningSummary(answers, scenarios, counts, total) {
+  var concept = _pfSessionConceptSummary(answers);
+  var families = _pfSessionBoardFamilySummary(answers, scenarios);
+  var nextMove = _pfSessionNextMove(counts, total);
+  var html = '';
+  // Strongest concepts
+  if (concept.strong.length > 0) {
+    var strongList = concept.strong.map(function (c) {
+      return '<li>' + _pfEscape(_pfLearnPrettyConcept(c.tag)) + ' <span style="opacity:0.7;font-size:11px">(' + c.pct + '% over ' + c.seen + ')</span></li>';
+    }).join('');
+    html += '<div class="pf-learn-block pf-learn-strong">' +
+              '<span class="pf-learn-title">💪 Strongest concepts</span>' +
+              '<ul class="pf-learn-list">' + strongList + '</ul>' +
+            '</div>';
+  }
+  // Weakest concepts / review signals
+  if (concept.weak.length > 0) {
+    var weakList = concept.weak.map(function (c) {
+      var detail = c.critCount > 0 ? c.critCount + ' critical' : (c.badCount > 0 ? c.badCount + ' bad' : c.pct + '%');
+      return '<li>' + _pfEscape(_pfLearnPrettyConcept(c.tag)) + ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + c.seen + ')</span></li>';
+    }).join('');
+    html += '<div class="pf-learn-block pf-learn-weak">' +
+              '<span class="pf-learn-title">🔍 Review signals</span>' +
+              '<ul class="pf-learn-list">' + weakList + '</ul>' +
+            '</div>';
+  } else {
+    html += '<div class="pf-learn-block pf-learn-strong">' +
+              '<span class="pf-learn-title">🔍 Review signals</span>' +
+              '<div class="pf-learn-empty">No major weak concept detected this session.</div>' +
+            '</div>';
+  }
+  // Board family pattern notes
+  if (families.length > 0) {
+    var famHtml = families.map(function (f) {
+      var critTag = f.critCount > 0 ? ' <span style="color:#f87171;font-weight:600">(critical)</span>' : '';
+      return '<li><strong>' + _pfEscape(f.label) + '</strong> — missed ' + f.missCount + ' of ' + f.seen + critTag + '. <em style="opacity:0.85">' + _pfEscape(f.lesson) + '</em></li>';
+    }).join('');
+    html += '<div class="pf-learn-block pf-learn-family">' +
+              '<span class="pf-learn-title">🎴 Board family patterns to revisit</span>' +
+              '<ul class="pf-learn-list">' + famHtml + '</ul>' +
+            '</div>';
+  }
+  // Recommended next move (always shown)
+  html += '<div class="pf-learn-block pf-learn-next">' +
+            '<span class="pf-learn-title">▶ Recommended next move</span>' +
+            '<div class="pf-learn-body">' + _pfEscape(nextMove) + '</div>' +
+          '</div>';
+  return html;
+}
+// ============================================================================
+// END v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY HELPERS
+// ============================================================================
+
 function renderPostflopComplete() {
   var d = App.state.postflopDrill;
   var total = d.queue.length;
@@ -33794,13 +34116,14 @@ function renderPostflopComplete() {
     }
   } catch (e) { /* swallow */ }
 
-  // Concept mastery aggregation
+  // Concept mastery aggregation (v4.0.11: defensive against missing conceptTags)
   var conceptTally = {};
   d.answers.forEach(function (a) {
-    a.conceptTags.forEach(function (tag) {
+    var tags = (a && a.conceptTags) || [];
+    tags.forEach(function (tag) {
       if (!conceptTally[tag]) conceptTally[tag] = { seen: 0, scoreSum: 0 };
       conceptTally[tag].seen++;
-      conceptTally[tag].scoreSum += a.score;
+      conceptTally[tag].scoreSum += (a.score || 0);
     });
   });
   var conceptRows = Object.keys(conceptTally).sort(function (a, b) { return conceptTally[b].seen - conceptTally[a].seen; }).map(function (tag) {
@@ -33826,13 +34149,22 @@ function renderPostflopComplete() {
     '</div></details>';
   }
 
+  // v4.0.11: dynamic learning-quality label + new learning summary blocks
+  var learnLabel = (typeof _pfSessionLearningLabel === 'function')
+    ? _pfSessionLearningLabel(counts, total)
+    : { label: 'Drill Complete', klass: '' };
+  var learnSummaryHtml = (typeof _pfRenderLearningSummary === 'function')
+    ? _pfRenderLearningSummary(d.answers, App.postflop && App.postflop.scenarios, counts, total)
+    : '';
+
   var html =
     '<div class="postflop-context-bar">' +
       '<span class="postflop-context-label">🧪 Board Texture Trainer · Complete</span>' +
     '</div>' +
     '<div class="postflop-summary-card">' +
-      '<div style="font-size:14px;color:var(--text-secondary);margin-bottom:6px">✅ Drill Complete</div>' +
-      '<div class="pf-score ' + scoreCls + '">' + totalScore.toFixed(1) + ' / ' + maxScore.toFixed(1) + '</div>' +
+      '<div class="pf-learn-headline">Session Learning Summary</div>' +
+      '<div class="pf-learn-quality ' + learnLabel.klass + '">' + _pfEscape(learnLabel.label) + '</div>' +
+      '<div class="pf-score ' + scoreCls + '" style="margin-top:10px">' + totalScore.toFixed(1) + ' / ' + maxScore.toFixed(1) + '</div>' +
       '<div class="pf-score-label">(' + pct + '%)</div>' +
       '<hr class="pf-divider">' +
       '<div class="postflop-tier-counts">' +
@@ -33842,7 +34174,8 @@ function renderPostflopComplete() {
         '<div class="pf-tier-cell tier-critical"><div class="pf-tier-num">' + counts.critical + '</div><div class="pf-tier-label">Critical 🚨</div></div>' +
       '</div>' +
     '</div>' +
-    (conceptRows ? '<details class="postflop-explanation-section" open><summary>Concept mastery (this session)</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
+    learnSummaryHtml +
+    (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
       '<button class="postflop-next-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Drill again</button>' +

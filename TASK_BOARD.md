@@ -15,9 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.9 committed + pushed** (`c38aafc`). Postflop Teaching Polish.
+🟢 **v4.0.10 committed + pushed** (`53eae80`). Postflop Card Text Encoding Hotfix.
 
-🟡 **v4.0.10 staged — Postflop Card Text Encoding Hotfix.** Tester reported broken suit characters in Postflop question text. Root cause: v4.0.0 baseline scenarios in `postflop_scenarios.json` have **CP874 (Thai Windows) → UTF-8 mojibake** — bytes `E2 99 A5` (♥) became `U+0E42 U+0099 U+0E05` (`โฅ`), and em-dash `—` (E2 80 94) became `U+0E42 U+20AC U+201D` (`โ€"`). Card graphics already render fine because they read clean ASCII `board.cards`. Per user instruction, fix at render time without editing data: (a) new `_pfBuildQuestionPrompt(scenario)` reconstructs the question sentence from clean `board.cards` + `question.type`; (b) new `_pfFixMojibake(text)` reverses the CP874 round-trip via TextDecoder so explanation text (rangeLogic / nutLogic / sizingLogic / commonMistake / short) renders clean too. Audit 262/0/0 (data unchanged). All 5 question-text test cases pass. Em-dash recovery verified. Console clean. Awaiting commit/push.
+🟡 **v4.0.11 staged — Postflop Session Learning Summary.** Closes the learning loop after a Module 1 session: dynamic quality label ("Clean read" / "Good pattern recognition" / "Mixed session" / "Needs review" / "High-risk leaks found"), top-3 strongest concepts, top-3 review signals (with empty-state when clean), board-family pattern notes (with one-line lesson per family), and a single recommended next move. Eight new pure helpers: `_pfBoardFamilyKey`, `_pfBoardFamilyDisplayLabel`, `_pfBoardFamilyLesson`, `_pfLearnPrettyConcept`, `_pfSessionConceptSummary`, `_pfSessionBoardFamilySummary`, `_pfSessionLearningLabel`, `_pfSessionNextMove`, `_pfRenderLearningSummary`. Defensive against missing `conceptTags` / missing localStorage history / empty answers / missing `App.postflop.scenarios`. Audit 262/0/0 (data unchanged). 20/20 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
 
 | Metric | Value |
 |---|---|
@@ -72,7 +72,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix STAGED. CP874 mojibake reverser + clean prompt rebuilder. Awaiting commit.
+- 2026-05-04: v4.0.11 Postflop Session Learning Summary STAGED. Quality label + strongest/weakest concepts + family pattern notes + recommended next move. Awaiting commit.
+- 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix COMMITTED (`53eae80`) + pushed. CP874 mojibake reverser + clean prompt rebuilder.
 - 2026-05-04: v4.0.9 Postflop Teaching Polish COMMITTED (`c38aafc`) + pushed. M1/M3/M4/L1/M2 fixes addressing v4.0.8 QA gaps.
 - 2026-05-04: v4.0.8 Postflop Teaching Layer COMMITTED (`479b775`) + pushed.
 - 2026-05-04: v4.0.8 Extended QA pass — 26/26 regression checks passed; identified 4 medium + 2 low severity issues feeding v4.0.9.
