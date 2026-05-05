@@ -173,9 +173,9 @@
       "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
       "board": { "cards": ["As","8d","3h"], "highCardClass": "A_high", "textureTags": ["dry","disconnected","rainbow","ace_high_dry","high_card_dominant"], "suitTexture": "rainbow", "connectedness": "disconnected", "pairedStatus": "unpaired", "dynamicLevel": 1, "rangeAdvantage": "preflop_raiser", "nutAdvantage": "preflop_raiser" },
       "heroHand": ["Qc","Jh"],
-      "handClass": "no_pair_no_draw",
+      "handClass": "backdoor_only",
       "heroHandRole": "air",
-      "drawCategory": "none",
+      "drawCategory": "backdoor_only",
       "showdownValue": "none",
       "blockerNote": null,
       "actionHistory": [],
@@ -353,7 +353,7 @@
       "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
       "board": { "cards": ["Kh","9c","4s"], "highCardClass": "K_high", "textureTags": ["semi_dry","disconnected","rainbow","high_card_dominant"], "suitTexture": "rainbow", "connectedness": "disconnected", "pairedStatus": "unpaired", "dynamicLevel": 2, "rangeAdvantage": "preflop_raiser", "nutAdvantage": "preflop_raiser" },
       "heroHand": ["Ac","Qh"],
-      "handClass": "no_pair_no_draw",
+      "handClass": "backdoor_only",
       "heroHandRole": "air",
       "drawCategory": "backdoor_only",
       "showdownValue": "none",
@@ -803,7 +803,7 @@
       "spot": { "preflopAction": "BTN_open_2.5x_BB_call", "heroPosition": "BTN", "villainPosition": "BB", "effectiveStackBB": 100, "potType": "SRP", "playerCount": 2 },
       "board": { "cards": ["Kc","Kd","7s"], "highCardClass": "K_high", "textureTags": ["paired","dry","rainbow","high_card_dominant"], "suitTexture": "rainbow", "connectedness": "disconnected", "pairedStatus": "paired", "dynamicLevel": 1, "rangeAdvantage": "preflop_raiser", "nutAdvantage": "preflop_raiser" },
       "heroHand": ["As","Qs"],
-      "handClass": "no_pair_no_draw",
+      "handClass": "backdoor_only",
       "heroHandRole": "blocker_bluff",
       "drawCategory": "backdoor_only",
       "showdownValue": "low",
@@ -901,12 +901,12 @@
       "actionHistory": [],
       "question": {
         "type": "reason_choice",
-        "prompt": "With AhKh on Kc Kd 7s, BTN's recommended strategy mixes between bet_small and check. When BTN does check, what is the main reason?",
+        "prompt": "With AhKh on Kc Kd 7s, BTN holds trip Kings with the top kicker. The recommended strategy mixes between bet_small and check. When BTN checks back trip Ks as a deliberate trap, what is the main reason?",
         "choices": [
+          { "id": "value", "label": "Value (delayed) — induce future barrels / keep dominated hands in" },
           { "id": "pot_control", "label": "Pot control — keep pot small with marginal value" },
-          { "id": "value", "label": "Value — get worse to call later" },
-          { "id": "give_up", "label": "Give up — no equity" },
-          { "id": "thin_value", "label": "Thin value — extract from worse" }
+          { "id": "thin_value", "label": "Thin value — extract from worse" },
+          { "id": "give_up", "label": "Give up — no equity" }
         ]
       },
       "answer": { "best": ["value"], "acceptable": ["pot_control"], "bad": ["thin_value"], "critical": ["give_up"] },

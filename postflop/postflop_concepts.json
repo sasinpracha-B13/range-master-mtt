@@ -307,6 +307,71 @@
         "Open-folding 76s preflop on BTN → critical leak (preflop)."
       ],
       "relatedConcepts": ["polar_big_strategy", "low_connected_caution", "dry_high_card_strategy"]
+    },
+    {
+      "key": "value_betting",
+      "displayName": "Value betting",
+      "category": "module2",
+      "shortDef": "Betting a strong made hand because worse hands will call.",
+      "longDef": "A value bet is +EV when the called range contains enough hands worse than ours that the bet collects more chips than it loses to the better-hand portion of the call. Value betting is the fundamental engine of profitable post-flop play with strong made hands. In Module 2, this concept tags scenarios where the player must recognize that a bet is for value (not protection or bluff) and pick the sizing that maximizes the call rate from worse hands.",
+      "examples": [
+        "BTN with AK on A♥K♦5♣ → small bet for value; thin-calling Ax and Kx pay off.",
+        "BTN with QQ on K♣K♦7♠ → small bet for thin value; underpairs and 7-x call.",
+        "BTN with TT on K♥T♦2♠ (set) → bet for value; one-pair K-x and overcards call."
+      ],
+      "relatedConcepts": ["thin_value_betting", "small_cbet_freq", "range_advantage"]
+    },
+    {
+      "key": "pot_control",
+      "displayName": "Pot control",
+      "category": "module2",
+      "shortDef": "Checking with medium showdown value to keep the pot small.",
+      "longDef": "Pot control is checking back with a hand that has medium showdown value but does not want to face raises or build a pot we cannot defend on later streets. Used heavily with mid pairs, weak top pair, and overpairs on dynamic / BB-favored boards. Different from give_up: pot control plans to call most river bets at showdown; give_up plans to fold to pressure.",
+      "examples": [
+        "BTN with 99 on A♥8♦3♥ → check for pot control; A-x calls, weaker hands fold.",
+        "BTN with KK on 8♣7♦5♥ → check for pot control; sets/straights raise, draws call cheaply.",
+        "BTN with 77 on K♥9♣4♠ → check for pot control; betting folds out worse and gets called by better."
+      ],
+      "relatedConcepts": ["check_strategy", "low_connected_caution", "ip_advantage"]
+    },
+    {
+      "key": "blocker_pressure",
+      "displayName": "Blocker pressure",
+      "category": "module2",
+      "shortDef": "Bluffing or thin-betting with hands that block opponent's strong calling range.",
+      "longDef": "Blocker pressure leverages card removal: by holding a key card (Ace of the flush suit on a monotone, A-blocker on a paired Ax, K-blocker on AK-x boards), we reduce the combinatorial weight of opponent's strong continuing range. The bet's fold equity comes both from generic pressure and from the specific knowledge that opponent is less likely to hold the calling combos. Used as a supplement to range-based betting, not a primary engine.",
+      "examples": [
+        "BTN with A♥X on a monotone hearts board → blocks opponent's nut flush draws.",
+        "BTN with A-x on paired K♥K♣ → A-blocker reduces BB's AK trips combos.",
+        "BTN with K♥Q♣ on A♥7♥3♣ → K-blocker reduces BB's K-flush combos."
+      ],
+      "relatedConcepts": ["semi_bluff_with_equity", "polar_big_strategy", "common_leaks"]
+    },
+    {
+      "key": "give_up_strategy",
+      "displayName": "Give-up strategy",
+      "category": "module2",
+      "shortDef": "Checking with the intent to fold to most pressure, conserving chips with a hand that has neither equity nor showdown value.",
+      "longDef": "Give-up is correct when a hand has no real draw, minimal showdown value, and the spot doesn't support a profitable range stab. Most common with low cards on BB-favored boards, dominated draws (e.g., 6-high flush draw on monotone hearts), and overcards-no-equity on low connected textures. Different from pot_control: give_up assumes folding most river bets; pot_control assumes calling.",
+      "examples": [
+        "BTN with AQ on 8♣7♦5♥ → check, plan to fold most turns.",
+        "BTN with 44 on T♥6♥2♣ → check, give up; underpair on flushy board.",
+        "BTN with 6♥5♣ on J♥8♥4♥ → check, dominated low flush draw."
+      ],
+      "relatedConcepts": ["check_strategy", "low_connected_caution", "pot_control"]
+    },
+    {
+      "key": "range_advantage_stab",
+      "displayName": "Range-advantage stab",
+      "category": "module2",
+      "shortDef": "Betting small as part of a high-frequency range strategy on boards where the preflop raiser has clear range advantage.",
+      "longDef": "On range-advantaged boards (dry A-high, K-high, paired Kx, etc.), the preflop raiser bets small (~25–33% pot) at high frequency with most of the range. The bet's EV comes from range advantage rather than hand-by-hand merit. The concept frames air hands and weak made hands as part of a range-bet strategy, not as isolated bluffs or thin value. Distinct from pure bluffing because the strategic engine is range, not fold equity per hand.",
+      "examples": [
+        "BTN with QJo on A♥8♦3♥ → small range stab; air carried by range advantage.",
+        "BTN with A-Qo on K♥9♣4♠ → small range stab; A-blocker is supporting evidence.",
+        "BTN with A♣Q♠ on K♣K♦7♠ → small range stab; paired K board favors raiser."
+      ],
+      "relatedConcepts": ["range_advantage", "small_cbet_freq", "dry_high_card_strategy"]
     }
   ]
 }

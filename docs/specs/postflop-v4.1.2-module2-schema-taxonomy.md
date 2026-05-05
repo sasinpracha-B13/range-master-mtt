@@ -106,7 +106,12 @@ This means:
     "handLogic":     "string",   // existing slot, REQUIRED in M2 — explains the hand's role here
     "sizingLogic":   "string",   // existing slot, REQUIRED in M2 when recommendedAction is bet_small/bet_big
     "commonMistake": "string",   // existing slot, REQUIRED in M2 when answer.critical is non-empty
-    "takeaway":      "string"    // NEW slot — single-sentence summary line; REQUIRED in M2
+    "takeaway":      "string",   // NEW slot — single-sentence summary line; REQUIRED in M2
+    "actionLogic":   "string"    // NEW slot (v4.1.5) — optional; covers "why this action" rationale
+                                 // for reason_choice scenarios where sizingLogic is not naturally
+                                 // applicable (the question is about reason, not sizing).
+                                 // sizingLogic remains required/preferred for action_choice
+                                 // where bet-size choice is central.
   }
 }
 ```
@@ -155,7 +160,7 @@ These are *what the hand IS* on this board, regardless of strategy.
 | `top_pair_weak_kicker` | Top pair with a marginal kicker (e.g., K5 on K-9-x) |
 | `second_pair` | Pair with the second-highest board card |
 | `third_pair_or_lower` | Pair with the third board card or lower |
-| `underpair` | Pocket pair lower than the bottom board card |
+| `underpair` | Pocket pair lower than the bottom board card. **Paired-board exception:** on a paired high-card board (e.g., K-K-7), an overpair to the unpaired side card (e.g., QQ on K-K-7) may also be labeled `underpair` when pedagogically useful — Q is "underpair" relative to the dominant paired rank (KK = trips region). The mechanical `mid_pair` label also applies; both are accepted by the audit on paired boards. |
 | `mid_pair` | Pocket pair between top and bottom board cards |
 | `combo_draw` | Two real draws combined (e.g., flush draw + open-ender) |
 | `flush_draw` | Flush draw, no straight component (4 cards of same suit, need 1 more) |

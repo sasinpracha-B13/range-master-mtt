@@ -448,3 +448,55 @@ Atomic scope:
 9. Stop.
 
 After v4.1.5: production gate is 286/0/0, Module 2 is `consensus_gto`-quality data in production JSON, and Module 2 is **still not playable** (runtime not wired). Module 2 plays around **v4.1.7** — see § 9 of `postflop-v4.1.4-module2-seed-review-report.md`.
+
+---
+
+# v4.1.5 Migration Addendum — baseline shipped to production
+
+**Status of this addendum:** Appended on 2026-05-05 after v4.1.5 sprint. Previous history above unchanged.
+
+## B1. Migration result
+
+The 11 legacy Module 2 baseline scenarios were refactored to v4.1.2 schema and merged with the 24 v4.1.2 seeds into production data. Production audit gate raised from **262 / 0 / 0** to **286 / 0 / 0**.
+
+| Audit | Before v4.1.5 | After v4.1.5 |
+|---|---|---|
+| Production audit | 262 / 0 / 0 | **286 / 0 / 0** |
+| Module 2 in production | 11 (legacy schema) | **35 (v4.1.2 schema: 11 migrated + 24 seeds)** |
+| Module 2 seed audit | 24 / 0 hard errors / 11 warnings | **24 / 0 hard errors / 8 warnings** |
+
+## B2. Baseline migration verdict
+
+11 / 11 PASS. See `postflop-v4.1.5-baseline-migration-review.md` for full per-scenario detail.
+
+## B3. Notable migration-time fixes
+
+1. **Card-collision typo on baseline #1**: `_action_AhKc` had `Ah` in both heroHand and board. Caught by new R21 rule. Renamed id to `_action_AsKc`, heroHand changed to `[As, Kc]` — same strategic content (top two pair on Ah-Kd-5c), no card collision.
+2. **Mechanical handClass corrections** (2 baseline scenarios):
+   - `_action_76s`: `no_pair_no_draw` → `backdoor_only` (3 hearts + bdsd present)
+   - `_action_QJs`: `gutshot` → `oesd` (Q-J-T-K = 4 consecutive, 8 outs, OESD not gutshot)
+3. **Seed cleanup applied** (per v4.1.4 plan):
+   - Seeds #4, #8, #18: `no_pair_no_draw` → `backdoor_only` (precision)
+   - Seed #20: question prompt reworded for trap-value framing clarity
+
+## B4. Production auditor extension (R18-R28)
+
+The production auditor `tools/audit-postflop-ps.ps1` now enforces v4.1.2 Module 2 rules R18-R28 on scenarios where `module === 'pf_flop_cbet_ip'`. Hard-error subset of the seed auditor; soft warnings (HC08-HC11, SC04, SC05, S01-S04) intentionally excluded — those stay in the seed auditor as reviewer guidance.
+
+## B5. Concepts added to production
+
+`postflop/postflop_concepts.json` gained 5 new concept entries (category `module2`):
+- `value_betting`
+- `pot_control`
+- `blocker_pressure`
+- `give_up_strategy`
+- `range_advantage_stab`
+
+These were previously `[planned]` references in the seed audit. Now in production, all M2 conceptTags pass R07.
+
+## B6. What remains
+
+- Module 2 is **NOT playable** — runtime not wired.
+- 8 warnings remain in seed audit (down from 11). All documented and pedagogically defensible per v4.1.4 disposition.
+- v4.1.6 (next): expand `_PF_CONCEPT_LIBRARY` in `index.html` to include the 5 new concepts; extend `_pfBuildConceptQueue` to consider Module 2 scenarios.
+- v4.1.7 (later): wire the runtime drill engine to actually start Module 2 sessions.

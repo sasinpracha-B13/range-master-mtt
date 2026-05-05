@@ -231,6 +231,198 @@ foreach($s in $data.scenarios){
     Add-Issue $local 'R17' 'warning' $sid 'sourceConfidence=experimental + auditStatus=approved - needs justification' | Out-Null
   }
 
+  # ========================================================================
+  # R18-R30 — Module 2 (pf_flop_cbet_ip) v4.1.2 schema rules
+  # Apply only to Module 2 scenarios. Mirror the hard-error subset of
+  # tools/audit-postflop-module2-seed.ps1 (M2.H01-H14 + M2.SC01-SC03 +
+  # M2.HC01-HC07). Pedagogical / labeling-precision warnings (HC08-HC11,
+  # SC04, SC05, S01-S04, H14-soft) intentionally excluded — those live in
+  # the seed auditor only and are reviewer guidance, not production gates.
+  # ========================================================================
+  if ($s.module -eq 'pf_flop_cbet_ip') {
+    $m2ValidHandClasses = @('set','straight','flush','nut_flush','top_two_pair','two_pair','overpair',
+      'top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker',
+      'second_pair','third_pair_or_lower','underpair','mid_pair',
+      'combo_draw','flush_draw','nut_flush_draw','oesd','gutshot',
+      'backdoor_only','no_pair_no_draw','trips')
+    $m2ValidHandRoles = @('strong_value','thin_value','medium_showdown','weak_showdown',
+      'nut_draw','strong_draw','weak_draw','air','blocker_bluff','trap_check')
+    $m2ValidDrawCats = @('nut_fd','fd','oesd','gutshot','combo','backdoor_only','none')
+    $m2ValidShowdown = @('high','medium','low','none')
+    $m2ValidActions = @('bet_small','bet_big','check','mixed')
+    $m2ValidReasons = @('value','thin_value','protection','bluff','equity_realization',
+      'pot_control','blocker_pressure','range_advantage_stab','give_up','semi_bluff')
+    $m2ValidQTypes = @('action_choice','reason_choice','sizing_choice','hand_class')
+
+    # R18 — required Module 2 fields
+    $m2Req = @('heroHand','handClass','heroHandRole','drawCategory','showdownValue','recommendedAction','actionReason')
+    foreach ($f in $m2Req) {
+      if (-not ($s.PSObject.Properties.Name -contains $f) -or $null -eq $s.$f) {
+        Add-Issue $local 'R18' 'error' $sid ("Module 2 required field missing: " + $f) | Out-Null
+      }
+    }
+
+    # R19 — Module 2 spot assumption (BTN-vs-BB SRP IP 100BB flop)
+    if ($s.street -ne 'flop') {
+      Add-Issue $local 'R19' 'error' $sid ("Module 2 expects street=flop, got " + $s.street) | Out-Null
+    }
+    if ($s.spot) {
+      if ($s.spot.heroPosition    -and $s.spot.heroPosition    -ne 'BTN') { Add-Issue $local 'R19' 'error' $sid ("Module 2 expects spot.heroPosition=BTN, got " + $s.spot.heroPosition) | Out-Null }
+      if ($s.spot.villainPosition -and $s.spot.villainPosition -ne 'BB')  { Add-Issue $local 'R19' 'error' $sid ("Module 2 expects spot.villainPosition=BB, got " + $s.spot.villainPosition) | Out-Null }
+      if ($s.spot.potType         -and $s.spot.potType         -ne 'SRP') { Add-Issue $local 'R19' 'error' $sid ("Module 2 expects spot.potType=SRP, got " + $s.spot.potType) | Out-Null }
+      if ($s.spot.effectiveStackBB -and $s.spot.effectiveStackBB -ne 100) { Add-Issue $local 'R19' 'error' $sid ("Module 2 expects spot.effectiveStackBB=100, got " + $s.spot.effectiveStackBB) | Out-Null }
+    }
+
+    # R20 — heroHand structure (2 valid distinct cards)
+    if ($s.heroHand) {
+      if ($s.heroHand.Count -ne 2) {
+        Add-Issue $local 'R20' 'error' $sid ("heroHand has " + $s.heroHand.Count + " cards, expected 2") | Out-Null
+      } else {
+        $heroSeen = @{}
+        foreach ($c in $s.heroHand) {
+          if (-not $c -or $c.Length -ne 2) { Add-Issue $local 'R20' 'error' $sid ("invalid hero card '" + $c + "'") | Out-Null; continue }
+          $r = $c.Substring(0,1); $u = $c.Substring(1,1)
+          if ($validRanks -notcontains $r) { Add-Issue $local 'R20' 'error' $sid ("invalid rank in hero card '" + $c + "'") | Out-Null }
+          if ($validSuits -notcontains $u) { Add-Issue $local 'R20' 'error' $sid ("invalid suit in hero card '" + $c + "'") | Out-Null }
+          if ($heroSeen.ContainsKey("$c")) { Add-Issue $local 'R20' 'error' $sid ("duplicate hero card '" + $c + "'") | Out-Null }
+          $heroSeen["$c"] = $true
+        }
+      }
+    }
+
+    # R21 — heroHand vs board collision
+    if ($s.heroHand -and $s.board -and $s.board.cards) {
+      $boardSet = @{}
+      foreach ($c in $s.board.cards) { $boardSet["$c"] = $true }
+      foreach ($c in $s.heroHand) {
+        if ($boardSet.ContainsKey("$c")) {
+          Add-Issue $local 'R21' 'error' $sid ("hero card '" + $c + "' also on board") | Out-Null
+        }
+      }
+    }
+
+    # R22 — question.type valid for Module 2
+    $qtype = $null
+    if ($s.question -and $s.question.type) {
+      $qtype = $s.question.type
+      if ($m2ValidQTypes -notcontains $qtype) {
+        Add-Issue $local 'R22' 'error' $sid ("Module 2 question.type '" + $qtype + "' not in valid set") | Out-Null
+      }
+    }
+
+    # R23 — choice id set per question type
+    if ($qtype -eq 'action_choice') {
+      $choiceIds = if ($s.question.choices) { @($s.question.choices | ForEach-Object { $_.id }) } else { @() }
+      $missing = @($m2ValidActions | Where-Object { $choiceIds -notcontains $_ })
+      $extra = @($choiceIds | Where-Object { $m2ValidActions -notcontains $_ })
+      if ($missing.Count -gt 0) {
+        Add-Issue $local 'R23' 'error' $sid ("action_choice missing required ids: " + ($missing -join ',')) | Out-Null
+      }
+      if ($extra.Count -gt 0) {
+        Add-Issue $local 'R23' 'error' $sid ("action_choice has unexpected ids: " + ($extra -join ',')) | Out-Null
+      }
+    } elseif ($qtype -eq 'reason_choice') {
+      $choiceIds = if ($s.question.choices) { @($s.question.choices | ForEach-Object { $_.id }) } else { @() }
+      $invalid = @($choiceIds | Where-Object { $m2ValidReasons -notcontains $_ })
+      if ($invalid.Count -gt 0) {
+        Add-Issue $local 'R23' 'error' $sid ("reason_choice has invalid ids: " + ($invalid -join ',')) | Out-Null
+      }
+    }
+
+    # R24 — handClass / heroHandRole / drawCategory / showdownValue vocab
+    if ($s.handClass     -and ($m2ValidHandClasses -notcontains $s.handClass))     { Add-Issue $local 'R24' 'error' $sid ("handClass '" + $s.handClass + "' not in v4.1.2 vocab") | Out-Null }
+    if ($s.heroHandRole  -and ($m2ValidHandRoles   -notcontains $s.heroHandRole))  { Add-Issue $local 'R24' 'error' $sid ("heroHandRole '" + $s.heroHandRole + "' not in v4.1.2 vocab") | Out-Null }
+    if ($s.drawCategory  -and ($m2ValidDrawCats    -notcontains $s.drawCategory))  { Add-Issue $local 'R24' 'error' $sid ("drawCategory '" + $s.drawCategory + "' not in v4.1.2 vocab") | Out-Null }
+    if ($s.showdownValue -and ($m2ValidShowdown    -notcontains $s.showdownValue)) { Add-Issue $local 'R24' 'error' $sid ("showdownValue '" + $s.showdownValue + "' not in v4.1.2 vocab") | Out-Null }
+
+    # R25 — recommendedAction / actionReason vocab + consistency with answer.best
+    if ($s.recommendedAction -and ($m2ValidActions -notcontains $s.recommendedAction)) {
+      Add-Issue $local 'R25' 'error' $sid ("recommendedAction '" + $s.recommendedAction + "' not in valid set") | Out-Null
+    }
+    if ($s.actionReason -and ($m2ValidReasons -notcontains $s.actionReason)) {
+      Add-Issue $local 'R25' 'error' $sid ("actionReason '" + $s.actionReason + "' not in valid set") | Out-Null
+    }
+    if ($qtype -eq 'action_choice' -and $s.recommendedAction -and $s.answer -and $s.answer.best) {
+      if (@($s.answer.best) -notcontains $s.recommendedAction) {
+        Add-Issue $local 'R25' 'error' $sid ("recommendedAction '" + $s.recommendedAction + "' not in answer.best (" + ((@($s.answer.best)) -join ',') + ")") | Out-Null
+      }
+    }
+    if ($qtype -eq 'reason_choice' -and $s.actionReason -and $s.answer -and $s.answer.best) {
+      if (@($s.answer.best) -notcontains $s.actionReason) {
+        Add-Issue $local 'R25' 'error' $sid ("actionReason '" + $s.actionReason + "' not in answer.best for reason_choice") | Out-Null
+      }
+    }
+
+    # R26 — explanation completeness for Module 2
+    if ($s.explanation) {
+      if (-not $s.explanation.handLogic) {
+        Add-Issue $local 'R26' 'error' $sid 'Module 2 explanation.handLogic missing' | Out-Null
+      }
+      if (-not $s.explanation.takeaway) {
+        Add-Issue $local 'R26' 'error' $sid 'Module 2 explanation.takeaway missing' | Out-Null
+      }
+      # sizingLogic required only for action_choice with bet recommendedAction
+      if ($qtype -eq 'action_choice' -and $s.recommendedAction -in @('bet_small','bet_big')) {
+        if (-not $s.explanation.sizingLogic) {
+          Add-Issue $local 'R26' 'error' $sid ("Module 2 explanation.sizingLogic required when recommendedAction=" + $s.recommendedAction) | Out-Null
+        }
+      }
+    }
+
+    # R27 — suit-count discipline (made flush vs flush draw)
+    if ($s.heroHand -and $s.board -and $s.board.cards -and $s.heroHand.Count -eq 2 -and $s.board.cards.Count -eq 3) {
+      $allCards = @() + $s.board.cards + $s.heroHand
+      $valid = $true
+      foreach ($c in $allCards) { if (-not $c -or $c.Length -ne 2 -or ($validRanks -notcontains $c.Substring(0,1)) -or ($validSuits -notcontains $c.Substring(1,1))) { $valid = $false } }
+      if ($valid) {
+        $sc = @{ h=0; d=0; c=0; s=0 }
+        foreach ($cd in $allCards) { $sc[$cd.Substring(1,1)] += 1 }
+        $maxSuitCount = 0
+        $flushSuit = $null
+        foreach ($k in 'h','d','c','s') { if ($sc[$k] -gt $maxSuitCount) { $maxSuitCount = $sc[$k]; $flushSuit = $k } }
+        # Made flush requires >=5 of one suit
+        if ($s.handClass -in @('flush','nut_flush')) {
+          if ($maxSuitCount -lt 5) {
+            Add-Issue $local 'R27' 'error' $sid ("handClass='" + $s.handClass + "' but max suit count is " + $maxSuitCount + " (need 5+)") | Out-Null
+          } elseif ($s.handClass -eq 'nut_flush' -and $flushSuit) {
+            $aceOfSuit = "A$flushSuit"
+            if (@($s.heroHand) -notcontains $aceOfSuit) {
+              Add-Issue $local 'R27' 'error' $sid ("handClass='nut_flush' but hero does not hold " + $aceOfSuit) | Out-Null
+            }
+          }
+        }
+        # Flush draw requires exactly 4 of one suit
+        if ($s.handClass -in @('flush_draw','nut_flush_draw')) {
+          if ($maxSuitCount -ne 4) {
+            Add-Issue $local 'R27' 'error' $sid ("handClass='" + $s.handClass + "' but max suit count is " + $maxSuitCount + " (need exactly 4)") | Out-Null
+          } elseif ($s.handClass -eq 'nut_flush_draw' -and $flushSuit) {
+            $aceOfSuit = "A$flushSuit"
+            if (@($s.heroHand) -notcontains $aceOfSuit) {
+              Add-Issue $local 'R27' 'error' $sid ("handClass='nut_flush_draw' but hero does not hold " + $aceOfSuit) | Out-Null
+            }
+          }
+        }
+        # drawCategory consistency
+        if ($s.drawCategory -in @('fd','nut_fd')) {
+          if ($maxSuitCount -ne 4) {
+            Add-Issue $local 'R27' 'error' $sid ("drawCategory='" + $s.drawCategory + "' but max suit count is " + $maxSuitCount + " (need exactly 4)") | Out-Null
+          } elseif ($s.drawCategory -eq 'nut_fd' -and $flushSuit) {
+            $aceOfSuit = "A$flushSuit"
+            if (@($s.heroHand) -notcontains $aceOfSuit) {
+              Add-Issue $local 'R27' 'error' $sid ("drawCategory='nut_fd' but hero does not hold " + $aceOfSuit) | Out-Null
+            }
+          }
+        }
+      }
+    }
+
+    # R28 — sourceConfidence/auditStatus honesty for Module 2
+    # sourceConfidence already validated by R17. Add: solver_verified requires solverRunRef.
+    if ($s.sourceConfidence -eq 'solver_verified' -and -not $s.solverRunRef) {
+      Add-Issue $local 'R28' 'error' $sid 'sourceConfidence=solver_verified requires solverRunRef field' | Out-Null
+    }
+  }
+
   # R16 finalizer
   $errs = @($local | Where-Object { $_.severity -eq 'error' })
   if($s.auditStatus -eq 'approved' -and $errs.Count -gt 0){
