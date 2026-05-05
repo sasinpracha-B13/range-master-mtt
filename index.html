@@ -11129,6 +11129,68 @@
     /* ========================================================================
        END v4.1.1 — POSTFLOP CONCEPT DRILL ACTIONS
        ======================================================================== */
+
+    /* ========================================================================
+       v4.1.6 — CONCEPT LIBRARY MODULE 2 BRIDGE
+       Visual grouping of Module 1 (Board Reading) vs Module 2 (Hand Action).
+       Module 2 cards use a "Coming in Module 2 Beta" lock badge instead of
+       the drill button. Drillable cards (M1) are unchanged from v4.1.1.
+       ======================================================================== */
+    .pf-concept-library .pf-concept-grid .pf-concept-group-header {
+      grid-column: 1 / -1;
+      margin: 6px 0 2px 0;
+      padding: 4px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .pf-concept-library .pf-concept-grid .pf-concept-group-header:first-child {
+      margin-top: 0;
+    }
+    .pf-concept-library .pf-concept-grid .pf-concept-group-header-m2 {
+      margin-top: 12px;
+      color: rgba(245, 166, 35, 0.85);
+      border-bottom-color: rgba(245, 166, 35, 0.25);
+    }
+    .pf-concept-library .pf-concept-grid .pf-concept-group-count {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      text-transform: none;
+      margin-left: 6px;
+    }
+    .pf-concept-card-locked {
+      border-left-color: rgba(245, 166, 35, 0.35);
+      background: rgba(245, 166, 35, 0.04);
+    }
+    .pf-concept-tag-m2 {
+      color: #f5a623 !important;
+      background: rgba(245, 166, 35, 0.10) !important;
+      border: 1px solid rgba(245, 166, 35, 0.30);
+    }
+    .pf-concept-locked-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: rgba(245, 166, 35, 0.85);
+      background: rgba(245, 166, 35, 0.08);
+      border: 1px solid rgba(245, 166, 35, 0.30);
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: not-allowed;
+      white-space: nowrap;
+    }
+    @media (max-width: 480px) {
+      .pf-concept-locked-badge { padding: 6px 10px; flex: 1 1 auto; text-align: center; }
+    }
+    /* ========================================================================
+       END v4.1.6 — CONCEPT LIBRARY MODULE 2 BRIDGE
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32553,7 +32615,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.1.1',
+    appVersion: '4.1.6',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34180,7 +34242,67 @@ var _PF_CONCEPT_LIBRARY = [
     relatedTags: ['wet_board', 'nut_advantage'],
     questionTypes: [],
     suitTextures: ['two_tone'],
-    textureTags: ['flushing', 'two_tone'] }
+    textureTags: ['flushing', 'two_tone'] },
+  // ============================================================================
+  // v4.1.6 — Module 2 concepts (Flop C-bet IP — Hand Action)
+  // Bridged into the Concept Library as PREVIEW-ONLY: visible + grouped, but
+  // the drill button is replaced by a "Coming in Module 2 Beta" lock badge.
+  // The runtime question/answer rendering is Module-1-flavored and would need
+  // a v4.1.7 patch to safely render Module 2 question types (action_choice /
+  // reason_choice with bet_small / bet_big / value / protection / etc.).
+  // Each entry carries the same drill-mapping fields as Module 1 entries so
+  // a future patch can flip `previewOnly: false` to enable the drill.
+  // ============================================================================
+  { key: 'value_betting',
+    name: 'Value Betting',
+    def: 'Betting a strong made hand because worse hands will call. The fundamental engine of profitable play with strong hands on flops where BTN has range advantage.',
+    module: 'm2',
+    previewOnly: true,
+    tags: ['value_betting'],
+    relatedTags: ['thin_value_betting', 'small_cbet_freq', 'range_advantage'],
+    questionTypes: ['action_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'pot_control',
+    name: 'Pot Control',
+    def: 'Checking with medium showdown value to keep the pot small. Used with mid pairs, weak top pair, and overpairs on dynamic / BB-favored boards where the hand wants showdown but does not want to face raises.',
+    module: 'm2',
+    previewOnly: true,
+    tags: ['pot_control'],
+    relatedTags: ['check_strategy', 'low_connected_caution', 'ip_advantage'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['low_connected', 'low_heavy'] },
+  { key: 'blocker_pressure',
+    name: 'Blocker Pressure',
+    def: 'Bluffing or thin-betting with hands that block opponent\'s strong calling range. Most common with the Ace of the flush suit on monotone boards or A-blocker on paired Ax boards.',
+    module: 'm2',
+    previewOnly: true,
+    tags: ['blocker_pressure'],
+    relatedTags: ['semi_bluff_with_equity', 'polar_big_strategy', 'common_leaks'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['monotone', 'two_tone'],
+    textureTags: ['paired'] },
+  { key: 'give_up_strategy',
+    name: 'Give-up Strategy',
+    def: 'Checking with the intent to fold to most pressure. Conserves chips with hands that have neither equity nor showdown value on BB-favored boards or with dominated draws.',
+    module: 'm2',
+    previewOnly: true,
+    tags: ['give_up_strategy'],
+    relatedTags: ['check_strategy', 'low_connected_caution', 'pot_control'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['low_connected', 'monotone'] },
+  { key: 'range_advantage_stab',
+    name: 'Range-Advantage Stab',
+    def: 'Betting small as part of a high-frequency range strategy on boards where the preflop raiser has clear range advantage. The bet\'s EV comes from range, not hand-by-hand merit.',
+    module: 'm2',
+    previewOnly: true,
+    tags: ['range_advantage_stab'],
+    relatedTags: ['range_advantage', 'small_cbet_freq', 'dry_high_card_strategy'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['ace_high_dry', 'high_card_dominant', 'paired'] }
 ];
 
 // _pfAcademyStats — pulls everything the Academy needs from localStorage history
@@ -34651,6 +34773,20 @@ function startPostflopConceptDrill(conceptKey) {
     if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
     return;
   }
+  // v4.1.6 — defense in depth: refuse to start a drill for any preview-only
+  // (Module 2) concept. The Concept Library renders these with a lock badge
+  // instead of a drill button, but a stale onclick or programmatic call
+  // should also be rejected. Module 2 concept drills will be enabled in
+  // v4.1.7 once hand-aware question / answer rendering ships.
+  if (typeof _PF_CONCEPT_LIBRARY !== 'undefined' && Array.isArray(_PF_CONCEPT_LIBRARY)) {
+    for (var pi = 0; pi < _PF_CONCEPT_LIBRARY.length; pi++) {
+      var entry = _PF_CONCEPT_LIBRARY[pi];
+      if (entry && entry.key === conceptKey && entry.previewOnly) {
+        if (typeof showToast === 'function') showToast('Module 2 concept drill is in preview. Coming in v4.1.7.');
+        return;
+      }
+    }
+  }
   var pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
   if (pool.length === 0) {
     if (typeof showToast === 'function') showToast('No scenarios available for this module.');
@@ -34686,37 +34822,64 @@ function startPostflopConceptDrill(conceptKey) {
 // ============================================================================
 
 function _pfConceptLibraryHtml() {
-  // v4.1.1: each card is now an actionable drill entry point. Optional
-  // "Review signal" pill surfaces concepts the player struggled with last
-  // session (derived from rmtt_postflop_history).
+  // v4.1.1: each card is an actionable drill entry point.
+  // v4.1.6: concepts are grouped into Module 1 (Board Reading) and Module 2
+  //         (Hand Action / Flop C-bet IP). Module 2 concepts are PREVIEW-ONLY
+  //         (drill button replaced by "Coming in Module 2 Beta" lock badge)
+  //         until v4.1.7 ships hand-aware question / answer rendering.
   var stats = (typeof _pfAcademyStats === 'function') ? (function () {
     try { return _pfAcademyStats(); } catch (e) { return null; }
   })() : null;
-  var cards = _PF_CONCEPT_LIBRARY.map(function (c) {
+
+  function renderCard(c) {
     var key = c.key || '';
+    var module = c.module || 'm1';
+    var isPreview = !!c.previewOnly;
     var reviewSignal = false;
     try { reviewSignal = key ? _pfConceptReviewSignal(key, stats) : false; } catch (e) { reviewSignal = false; }
     var reviewPill = reviewSignal
       ? '<span class="pf-concept-review-pill" title="This concept showed up in your last session\'s weak spots.">🚨 Review signal</span>'
       : '';
-    var buttonHtml = key
-      ? '<button type="button" class="pf-concept-drill-btn" onclick="startPostflopConceptDrill(\'' + _pfEscape(key) + '\')">🎯 Drill this concept</button>'
-      : '';
-    return '<div class="pf-concept-card' + (reviewSignal ? ' pf-concept-card-review' : '') + '">' +
+    var actionHtml;
+    if (isPreview) {
+      actionHtml = '<span class="pf-concept-locked-badge" title="Module 2 concept drill ships in v4.1.7 once hand-aware question rendering lands.">🔒 Coming in Module 2 Beta</span>';
+    } else if (key) {
+      actionHtml = '<button type="button" class="pf-concept-drill-btn" onclick="startPostflopConceptDrill(\'' + _pfEscape(key) + '\')">🎯 Drill this concept</button>';
+    } else {
+      actionHtml = '';
+    }
+    var trainedTag = (module === 'm2')
+      ? '<span class="pf-concept-tag pf-concept-tag-m2">trained in Module 2</span>'
+      : '<span class="pf-concept-tag">trained in Module 1</span>';
+    var cardClass = 'pf-concept-card';
+    if (reviewSignal) cardClass += ' pf-concept-card-review';
+    if (isPreview) cardClass += ' pf-concept-card-locked';
+    return '<div class="' + cardClass + '">' +
              '<div class="pf-concept-card-head">' +
                '<span class="pf-concept-name">' + _pfEscape(c.name) + '</span>' +
                reviewPill +
              '</div>' +
              '<div class="pf-concept-def">' + _pfEscape(c.def) + '</div>' +
              '<div class="pf-concept-card-foot">' +
-               '<span class="pf-concept-tag">trained in Module 1</span>' +
-               buttonHtml +
+               trainedTag +
+               actionHtml +
              '</div>' +
            '</div>';
-  }).join('');
+  }
+
+  var m1List = _PF_CONCEPT_LIBRARY.filter(function (c) { return (c.module || 'm1') === 'm1'; });
+  var m2List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm2'; });
+  var m1Cards = m1List.map(renderCard).join('');
+  var m2Cards = m2List.map(renderCard).join('');
+
+  var m1Section = '<div class="pf-concept-group-header">Module 1 — Board Reading <span class="pf-concept-group-count">(' + m1List.length + ')</span></div>' + m1Cards;
+  var m2Section = m2List.length > 0
+    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 2 — Flop C-bet IP · Hand Action <span class="pf-concept-group-count">(' + m2List.length + ' · preview)</span></div>' + m2Cards)
+    : '';
+
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts) · tap to drill</summary>' +
-           '<div class="pf-concept-grid">' + cards + '</div>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 preview) · tap to drill</summary>' +
+           '<div class="pf-concept-grid">' + m1Section + m2Section + '</div>' +
          '</details>';
 }
 
