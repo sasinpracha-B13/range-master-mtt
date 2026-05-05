@@ -9,10 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.10` — Postflop Card Text Encoding Hotfix (`53eae80`).
-- **Pending push (STAGED)**: `v4.0.11` — Postflop Session Learning Summary. Closes the learning loop after a Module 1 session by replacing the static "Drill Complete" subtitle with a dynamic learning summary: a colour-coded quality pill ("Clean read" / "Good pattern recognition" / "Mixed session" / "Needs review" / "High-risk leaks found"); a "Strongest concepts" green block (top 3 conceptTags with seen ≥ 2 AND pct ≥ 80); a "Review signals" amber block (worst 3 by pct, or an empty-state when nothing is flagged); a "Board family patterns to revisit" red block (families with miss-cluster ≥ 2 OR critical ≥ 1, each with a one-sentence coaching lesson from a 18-entry family map); and a "Recommended next move" blue block (single coaching action picked by tier-count rules). Eight new pure helpers: `_pfBoardFamilyKey`, `_pfBoardFamilyDisplayLabel`, `_pfBoardFamilyLesson`, `_pfLearnPrettyConcept`, `_pfSessionConceptSummary`, `_pfSessionBoardFamilySummary`, `_pfSessionLearningLabel`, `_pfSessionNextMove`, `_pfRenderLearningSummary`. Defensive against missing `conceptTags` / cleared localStorage / empty answers / null `App.postflop.scenarios`. Audit 262/0/0 (data unchanged). 20/20 QA checks pass. Mobile 375px verified.
-- **Service worker `VERSION`**: `'v4.0.11'` (staged).
-- **App backup `appVersion`**: `'4.0.11'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.0.11` — Postflop Session Learning Summary (`a2e4fae`).
+- **Pending push (STAGED)**: `v4.0.12` — Postflop Drill Weak Spots Button. Closes the end-to-end teaching loop: when a Module 1 session has any bad/critical answer, the completion screen shows a "🎯 Drill Weak Spots" button. Tapping it builds a 12-scenario focused review queue from the just-completed session's mistakes (priorities: +100 exact missed scenario, +60 same weak board family, +40 shared weak concept tag, −30 recent-session repeat, +0..10 randomness). Review session shows a "🎯 Review Mode · Weak Spots" amber badge above the question. Summary header changes to "Review session complete" / "REVIEW SESSION SUMMARY". Four new pure helpers: `_pfCurrentSessionWeakProfile`, `_pfWeakScenarioScore`, `_pfBuildWeakSpotQueue`, `startPostflopWeakSpotReview`. Soft fallback: if hardMisses < 2, also includes acceptable answers as weak signals (weight 0.5). Defensive: returns null/empty when no weakness; falls back to normal session if pool empty; never crashes on missing conceptTags / scenarios / history. When no weak spots detected, shows "No weak spots detected this session." note instead of disabled button. Audit 262/0/0 (data unchanged). 23/23 QA checks pass. Mobile 375px: weak button 343×49px tappable; review badge renders cleanly.
+- **Service worker `VERSION`**: `'v4.0.12'` (staged).
+- **App backup `appVersion`**: `'4.0.12'` (staged in `index.html`).
 
 ---
 
@@ -77,7 +77,41 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.11 Postflop Session Learning Summary — STAGED
+### v4.0.12 Postflop Drill Weak Spots Button — STAGED
+
+After v4.0.11 added a "Recommended next move: replay weak spots first" line, the only available action was the existing "Drill again" button which built a fresh queue ignoring the player's mistakes. v4.0.12 closes the loop with an actual weak-spot replay flow.
+
+**What was added**:
+1. **"🎯 Drill Weak Spots" button** on the completion summary, only shown when the just-completed session has at least one bad or critical answer (`hardMisses > 0`). Amber-styled to differentiate from the standard "Drill again" button.
+2. **"No weak spots detected this session."** italic note shown when no bad/critical answers — positive feedback rather than a disabled-button anti-pattern.
+3. **"🎯 Review Mode · Weak Spots" badge** on the question screen during a weak-spot review session. Subcopy: "Focused on concepts and board families missed last session."
+4. **Dynamic completion-screen header** when in weak-spot mode: "Board Texture Trainer · Review session complete" + "REVIEW SESSION SUMMARY".
+
+**Helpers added** (4 pure functions, all `_pf*` namespaced):
+- `_pfCurrentSessionWeakProfile(answers, scenarios)` → null OR `{mode, sourceSessionId, hardMisses, targetScenarioIds, targetConceptTags, targetFamilyKeys}`. Soft fallback when hardMisses < 2 includes acceptable answers as weak signals (weight 0.5).
+- `_pfWeakScenarioScore(scenario, weakProfile, lastSessionIds)` → numeric score (+100 exact missed / +60 weak family / +40 weak concept / −30 recent repeat / +0..10 random).
+- `_pfBuildWeakSpotQueue(weakProfile, allScenarios, targetLen=12)` → up to 12 scenarios, weak-prioritized then filled with general scenarios if pool too small. Always returns an array, no duplicates.
+- `startPostflopWeakSpotReview()` — entry point wired to the button. Falls back to `startPostflopDrill('pf_board_texture')` when no weakness or pool empty.
+
+**Defensive behavior**: returns null on perfect session; soft-fallback works when hardMisses=0 but acceptable answers exist; missing `conceptTags` / cleared localStorage / null `App.postflop.scenarios` all handled without crash; weak button hidden when no hard misses.
+
+**Live QA result** (23/23 checks pass):
+- Helpers loaded; weak profile derives correctly from POOR (10 hard misses → 9 target scenarios, 11 concept tags, 6 family keys), ONE-BAD (1 hard miss → 1 target + 11 fillers), ALL-ACCEPTABLE (soft fallback: 15 scenarios + 17 concepts as 0.5-weight signals)
+- Queue properties verified: 12 unique scenarios; 100% family coverage on 10-bad session; 9/9 missed scenarios surfaced first
+- Perfect session: weak button hidden + "No weak spots detected" note shown
+- One-critical session: weak button visible
+- Click weak button → `mode === 'weak_spots'`, badge appears, 12-question queue starts
+- Answer → feedback → next still works; all 5 feedback blocks render in review mode
+- Review summary header changes to "Review session complete" + "REVIEW SESSION SUMMARY"
+- Mobile 375px: weak button 343×49px tappable; badge 343px wide, no overflow
+- Console: 0 errors throughout
+- Tab regression + preflop drill + boss UI + beta toggle: all working
+
+**Files modified**: `index.html` (CSS block ~50 lines + 4 new helpers ~210 lines + Review Mode badge wire-in to `renderPostflopQuestion` + 4 edits to `renderPostflopComplete` for dynamic header/headline + weak button + empty note + appVersion 4.0.11 → 4.0.12), `service-worker.js` (VERSION v4.0.11 → v4.0.12), `PROJECT_STATE.md`, `TASK_BOARD.md`, `docs/specs/brief-v4.0.12-postflop-drill-weak-spots.md` (NEW).
+
+**Untouched**: all postflop data files, audit infrastructure, generator scripts, ranges, manifest, preflop systems, scoring, cosmetics.
+
+### v4.0.11 Postflop Session Learning Summary — COMMITTED + PUSHED (`a2e4fae`)
 
 After a Module 1 session, the player should understand what they learned and what to focus on next. Prior summary screen showed score + tier counts + a flat concept-mastery list. v4.0.11 adds a learning-focused block stack between the score card and the existing details.
 

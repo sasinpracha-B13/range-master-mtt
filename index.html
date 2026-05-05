@@ -10671,6 +10671,55 @@
     /* ========================================================================
        END v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY
        ======================================================================== */
+
+    /* ========================================================================
+       v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
+       Adds: Review Mode badge on the question screen, "🎯 Drill Weak Spots"
+       button on the completion summary. All `.pf-weak-*` namespaced.
+       ======================================================================== */
+    .pf-review-mode-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 0 0 10px 0;
+      padding: 8px 12px;
+      background: rgba(245, 166, 35, 0.10);
+      border: 1px solid rgba(245, 166, 35, 0.40);
+      border-left: 3px solid var(--accent, #f5a623);
+      border-radius: 6px;
+    }
+    .pf-review-mode-badge .pf-review-mode-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #f5a623;
+    }
+    .pf-review-mode-badge .pf-review-mode-subcopy {
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+    .postflop-next-btn.pf-weak-btn {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.25), rgba(245, 166, 35, 0.10));
+      border: 1px solid rgba(245, 166, 35, 0.50);
+      color: #f5a623;
+      font-weight: 700;
+    }
+    .postflop-next-btn.pf-weak-btn:hover {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.35), rgba(245, 166, 35, 0.15));
+      border-color: rgba(245, 166, 35, 0.70);
+    }
+    .pf-weak-empty-note {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 6px;
+      opacity: 0.75;
+      font-style: italic;
+    }
+    /* ========================================================================
+       END v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32095,7 +32144,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.11',
+    appVersion: '4.0.12',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33729,6 +33778,15 @@ function renderPostflopQuestion() {
   var checklistHtml = (typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '';
   var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
   var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
+  // v4.0.12: Review Mode badge when this is a weak-spot focused session
+  var reviewModeBadge = '';
+  if (App.state.postflopDrill && App.state.postflopDrill.mode === 'weak_spots') {
+    reviewModeBadge =
+      '<div class="pf-review-mode-badge">' +
+        '<span class="pf-review-mode-title">🎯 Review Mode · Weak Spots</span>' +
+        '<span class="pf-review-mode-subcopy">Focused on concepts and board families missed last session.</span>' +
+      '</div>';
+  }
 
   var html =
     '<div class="postflop-context-bar">' +
@@ -33736,6 +33794,7 @@ function renderPostflopQuestion() {
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
+    reviewModeBadge +
     modeTagHtml +
     '<div class="postflop-spot-card">' +
       '<div class="postflop-section-title">📋 Spot</div>' +
@@ -34094,6 +34153,224 @@ function _pfRenderLearningSummary(answers, scenarios, counts, total) {
 // END v4.0.11 — POSTFLOP SESSION LEARNING SUMMARY HELPERS
 // ============================================================================
 
+// ============================================================================
+// v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
+// Helpers + entry point for a focused review session derived from the just-
+// completed session's mistakes. Local-only, in-memory profile (no persistent
+// schema). Defensive against missing fields; falls back to a normal session
+// when no weakness is detected or pool is too small.
+// ============================================================================
+
+// _pfCurrentSessionWeakProfile — derive {targetScenarioIds, targetConceptTags,
+// targetFamilyKeys} from the current session answers. Returns null if the
+// session has no weakness signal at all.
+//   - bad/critical answers contribute their scenario id, concept tags, family key
+//   - if too few hard misses (< 2), acceptable answers also contribute as soft
+//     signals so the player can still get a useful focused queue
+function _pfCurrentSessionWeakProfile(answers, scenarios) {
+  if (!answers || answers.length === 0) return null;
+  scenarios = scenarios || [];
+  var byId = {};
+  for (var i = 0; i < scenarios.length; i++) byId[scenarios[i].id] = scenarios[i];
+
+  var targetScenarioIds = [];
+  var seenScenIds = {};
+  var conceptCounts = {};
+  var familyCounts = {};
+  var hardMisses = 0;
+
+  function addScenario(id) {
+    if (seenScenIds[id]) return;
+    seenScenIds[id] = true;
+    targetScenarioIds.push(id);
+  }
+
+  for (var j = 0; j < answers.length; j++) {
+    var a = answers[j];
+    if (a.tier === 'bad' || a.tier === 'critical') {
+      hardMisses += 1;
+      addScenario(a.scenarioId);
+      var tags = (a && a.conceptTags) || [];
+      for (var k = 0; k < tags.length; k++) {
+        conceptCounts[tags[k]] = (conceptCounts[tags[k]] || 0) + 1;
+      }
+      var s = byId[a.scenarioId];
+      if (s && s.board && typeof _pfBoardFamilyKey === 'function') {
+        var key = _pfBoardFamilyKey(s.board);
+        familyCounts[key] = (familyCounts[key] || 0) + 1;
+      }
+    }
+  }
+
+  // Soft fallback: include acceptable answers when fewer than 2 hard misses
+  if (hardMisses < 2) {
+    for (var m = 0; m < answers.length; m++) {
+      var a2 = answers[m];
+      if (a2.tier === 'acceptable') {
+        addScenario(a2.scenarioId);
+        var tags2 = (a2 && a2.conceptTags) || [];
+        for (var n = 0; n < tags2.length; n++) {
+          conceptCounts[tags2[n]] = (conceptCounts[tags2[n]] || 0) + 0.5;
+        }
+        var s2 = byId[a2.scenarioId];
+        if (s2 && s2.board && typeof _pfBoardFamilyKey === 'function') {
+          var key2 = _pfBoardFamilyKey(s2.board);
+          familyCounts[key2] = (familyCounts[key2] || 0) + 0.5;
+        }
+      }
+    }
+  }
+
+  var targetConceptTags = Object.keys(conceptCounts);
+  var targetFamilyKeys = Object.keys(familyCounts);
+
+  if (targetScenarioIds.length === 0 && targetConceptTags.length === 0 && targetFamilyKeys.length === 0) {
+    return null;
+  }
+
+  return {
+    mode: 'weak_spots',
+    sourceSessionId: 'session_' + Date.now(),
+    hardMisses: hardMisses,
+    targetScenarioIds: targetScenarioIds,
+    targetConceptTags: targetConceptTags,
+    targetFamilyKeys: targetFamilyKeys
+  };
+}
+
+// _pfWeakScenarioScore — pure function returning a numeric score indicating
+// how well a scenario fits the weak profile. Higher = better fit.
+//   +100 exact missed scenario
+//   + 60 same weak board family
+//   + 40 shares any weak concept tag
+//   - 30 if seen in immediately previous session (avoid recent repeats)
+//   +0..10 randomness for variety
+function _pfWeakScenarioScore(scenario, weakProfile, lastSessionIds) {
+  if (!scenario || !weakProfile) return 0;
+  var score = 0;
+  if (weakProfile.targetScenarioIds && weakProfile.targetScenarioIds.indexOf(scenario.id) >= 0) {
+    score += 100;
+  }
+  if (scenario.board && typeof _pfBoardFamilyKey === 'function') {
+    var fam = _pfBoardFamilyKey(scenario.board);
+    if (weakProfile.targetFamilyKeys && weakProfile.targetFamilyKeys.indexOf(fam) >= 0) {
+      score += 60;
+    }
+  }
+  var tags = scenario.conceptTags || [];
+  for (var i = 0; i < tags.length; i++) {
+    if (weakProfile.targetConceptTags && weakProfile.targetConceptTags.indexOf(tags[i]) >= 0) {
+      score += 40;
+      break;
+    }
+  }
+  if (lastSessionIds && lastSessionIds[scenario.id]) score -= 30;
+  score += Math.random() * 10;
+  return score;
+}
+
+// _pfBuildWeakSpotQueue — assemble a focused review queue from the all-scenarios
+// pool. Prioritizes weak hits, then fills with general scenarios if the weak
+// pool is too small. Always returns an array (possibly empty).
+function _pfBuildWeakSpotQueue(weakProfile, allScenarios, targetLen) {
+  if (!weakProfile || !allScenarios || allScenarios.length === 0) return [];
+  targetLen = targetLen || 12;
+  // Avoid immediate-prev session repeats (best-effort)
+  var lastSessionIds = {};
+  try {
+    var hist = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+    var last = (hist && hist.sessions && hist.sessions.length > 0)
+      ? hist.sessions[hist.sessions.length - 1] : null;
+    if (last && Array.isArray(last.scenarioIds)) {
+      for (var k = 0; k < last.scenarioIds.length; k++) lastSessionIds[last.scenarioIds[k]] = true;
+    }
+  } catch (e) { /* swallow */ }
+
+  // Score every scenario; weak hits surface above the baseline noise (~10 random)
+  var scored = allScenarios.map(function (s) {
+    return { scenario: s, score: _pfWeakScenarioScore(s, weakProfile, lastSessionIds) };
+  });
+  // Threshold of 30 cleanly excludes scenarios that only got randomness (max 10)
+  // and lets in any concept-tag match (40+) or higher.
+  var weakHits = scored.filter(function (x) { return x.score > 30; });
+  weakHits.sort(function (a, b) { return b.score - a.score; });
+
+  var seen = {};
+  var queue = [];
+  for (var i = 0; i < weakHits.length && queue.length < targetLen; i++) {
+    var s = weakHits[i].scenario;
+    if (!seen[s.id]) { seen[s.id] = true; queue.push(s); }
+  }
+  // Fallback fill: if weak pool too small, add normal scenarios (avoiding
+  // recent repeats, no scenario duplicates).
+  if (queue.length < targetLen) {
+    var fill = scored
+      .filter(function (x) { return !seen[x.scenario.id]; })
+      .map(function (x) {
+        return {
+          scenario: x.scenario,
+          score: (lastSessionIds[x.scenario.id] ? -50 : 30) + Math.random() * 20
+        };
+      });
+    fill.sort(function (a, b) { return b.score - a.score; });
+    for (var j = 0; j < fill.length && queue.length < targetLen; j++) {
+      var s2 = fill[j].scenario;
+      if (!seen[s2.id]) { seen[s2.id] = true; queue.push(s2); }
+    }
+  }
+  return queue;
+}
+
+// startPostflopWeakSpotReview — entry point wired to the "Drill Weak Spots"
+// button on the completion summary. Computes the weak profile from the just-
+// completed session, builds a focused queue, and starts a new drill.
+// Falls back to a normal session if no weakness, no scenarios, or empty queue.
+function startPostflopWeakSpotReview() {
+  if (!getPostflopReady()) {
+    if (typeof showToast === 'function') showToast('Post-flop data not loaded. Try again.');
+    return;
+  }
+  if (!App.state.settings.postflopBeta) {
+    if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
+    return;
+  }
+  var prevDrill = App.state.postflopDrill;
+  var allScenarios = (App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+  var weakProfile = null;
+  if (prevDrill && prevDrill.answers && prevDrill.answers.length > 0) {
+    try {
+      weakProfile = _pfCurrentSessionWeakProfile(prevDrill.answers, allScenarios);
+    } catch (e) { weakProfile = null; }
+  }
+  if (!weakProfile) {
+    // Nothing weak to focus on — fall back to a normal session
+    return startPostflopDrill('pf_board_texture');
+  }
+  var pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+  var queue = _pfBuildWeakSpotQueue(weakProfile, pool, 12);
+  if (!queue || queue.length === 0) {
+    return startPostflopDrill('pf_board_texture');
+  }
+  App.state.postflopDrill = {
+    active: true,
+    module: 'pf_board_texture',
+    mode: 'weak_spots',
+    weakProfile: weakProfile,
+    queue: queue,
+    currentIndex: 0,
+    answers: [],
+    startTime: Date.now(),
+    phase: 'question',
+    lastChoiceId: null,
+    lastClassification: null
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+// ============================================================================
+// END v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
+// ============================================================================
+
 function renderPostflopComplete() {
   var d = App.state.postflopDrill;
   var total = d.queue.length;
@@ -34157,12 +34434,17 @@ function renderPostflopComplete() {
     ? _pfRenderLearningSummary(d.answers, App.postflop && App.postflop.scenarios, counts, total)
     : '';
 
+  // v4.0.12: differentiate header copy when this was a weak-spot review session
+  var isWeakReview = !!(d && d.mode === 'weak_spots');
+  var contextLabel = isWeakReview ? '🧪 Board Texture Trainer · Review session complete' : '🧪 Board Texture Trainer · Complete';
+  var summaryHeadline = isWeakReview ? 'Review Session Summary' : 'Session Learning Summary';
+
   var html =
     '<div class="postflop-context-bar">' +
-      '<span class="postflop-context-label">🧪 Board Texture Trainer · Complete</span>' +
+      '<span class="postflop-context-label">' + contextLabel + '</span>' +
     '</div>' +
     '<div class="postflop-summary-card">' +
-      '<div class="pf-learn-headline">Session Learning Summary</div>' +
+      '<div class="pf-learn-headline">' + summaryHeadline + '</div>' +
       '<div class="pf-learn-quality ' + learnLabel.klass + '">' + _pfEscape(learnLabel.label) + '</div>' +
       '<div class="pf-score ' + scoreCls + '" style="margin-top:10px">' + totalScore.toFixed(1) + ' / ' + maxScore.toFixed(1) + '</div>' +
       '<div class="pf-score-label">(' + pct + '%)</div>' +
@@ -34178,8 +34460,30 @@ function renderPostflopComplete() {
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
+      // v4.0.12: Drill Weak Spots button — only shown if there are weak signals.
+      // Falls back to normal Drill again button always.
+      (function () {
+        var wp = (typeof _pfCurrentSessionWeakProfile === 'function')
+          ? (function () {
+              try { return _pfCurrentSessionWeakProfile(d.answers, App.postflop && App.postflop.scenarios); }
+              catch (e) { return null; }
+            })()
+          : null;
+        var hasWeak = !!(wp && (wp.targetScenarioIds.length > 0 || wp.targetConceptTags.length > 0 || wp.targetFamilyKeys.length > 0));
+        var weakHasHardMisses = !!(wp && wp.hardMisses > 0);
+        if (hasWeak && weakHasHardMisses) {
+          return '<button class="postflop-next-btn pf-weak-btn" onclick="startPostflopWeakSpotReview()">🎯 Drill Weak Spots</button>';
+        }
+        return '';
+      })() +
       '<button class="postflop-next-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Drill again</button>' +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
+      // Inline note when no weak signals (positive feedback, no nag)
+      (function () {
+        var c = counts || {};
+        var noWeak = (c.bad || 0) === 0 && (c.critical || 0) === 0;
+        return noWeak ? '<div class="pf-weak-empty-note">No weak spots detected this session.</div>' : '';
+      })() +
     '</div>';
 
   document.getElementById('postflopScreen').innerHTML = html;

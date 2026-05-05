@@ -15,9 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.10 committed + pushed** (`53eae80`). Postflop Card Text Encoding Hotfix.
+🟢 **v4.0.11 committed + pushed** (`a2e4fae`). Postflop Session Learning Summary.
 
-🟡 **v4.0.11 staged — Postflop Session Learning Summary.** Closes the learning loop after a Module 1 session: dynamic quality label ("Clean read" / "Good pattern recognition" / "Mixed session" / "Needs review" / "High-risk leaks found"), top-3 strongest concepts, top-3 review signals (with empty-state when clean), board-family pattern notes (with one-line lesson per family), and a single recommended next move. Eight new pure helpers: `_pfBoardFamilyKey`, `_pfBoardFamilyDisplayLabel`, `_pfBoardFamilyLesson`, `_pfLearnPrettyConcept`, `_pfSessionConceptSummary`, `_pfSessionBoardFamilySummary`, `_pfSessionLearningLabel`, `_pfSessionNextMove`, `_pfRenderLearningSummary`. Defensive against missing `conceptTags` / missing localStorage history / empty answers / missing `App.postflop.scenarios`. Audit 262/0/0 (data unchanged). 20/20 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
+🟡 **v4.0.12 staged — Postflop Drill Weak Spots Button.** Closes the end-to-end teaching loop: when a Module 1 session has any bad/critical answer, the completion screen shows a "🎯 Drill Weak Spots" amber button. Tapping it builds a 12-scenario focused review queue from the just-completed session's mistakes (priorities: +100 exact missed scenario, +60 same weak family, +40 shared weak concept tag, −30 recent-session repeat penalty). Review session shows a "🎯 Review Mode · Weak Spots" badge above the question. Summary header changes to "Review session complete" / "REVIEW SESSION SUMMARY". Four new pure helpers: `_pfCurrentSessionWeakProfile`, `_pfWeakScenarioScore`, `_pfBuildWeakSpotQueue`, `startPostflopWeakSpotReview`. Soft fallback: if hardMisses<2, also includes acceptable answers as weak signals. Defensive: returns null/empty when no weakness; falls back to normal session if pool empty. Audit 262/0/0. 23/23 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
 
 | Metric | Value |
 |---|---|
@@ -72,7 +72,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.11 Postflop Session Learning Summary STAGED. Quality label + strongest/weakest concepts + family pattern notes + recommended next move. Awaiting commit.
+- 2026-05-04: v4.0.12 Postflop Drill Weak Spots Button STAGED. End-to-end teaching loop closed (recommend → click → drill weak family/concepts). Awaiting commit.
+- 2026-05-04: v4.0.11 Postflop Session Learning Summary COMMITTED (`a2e4fae`) + pushed. Quality label + strongest/weakest concepts + family pattern notes + recommended next move.
 - 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix COMMITTED (`53eae80`) + pushed. CP874 mojibake reverser + clean prompt rebuilder.
 - 2026-05-04: v4.0.9 Postflop Teaching Polish COMMITTED (`c38aafc`) + pushed. M1/M3/M4/L1/M2 fixes addressing v4.0.8 QA gaps.
 - 2026-05-04: v4.0.8 Postflop Teaching Layer COMMITTED (`479b775`) + pushed.
