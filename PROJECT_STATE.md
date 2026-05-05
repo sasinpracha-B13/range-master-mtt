@@ -9,10 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.7` — Module 1 expanded 20→251 scenarios (`1f5fe99`).
-- **Pending push (STAGED)**: `v4.0.8` — Postflop Teaching Layer. Module 1 question/feedback UI adds 5 teaching components: (1) pattern label header derived from board fields, (2) collapsible Board Reading Checklist (7-item framework), (3) "💭 Need a hint?" button with non-spoiler thinking-prompts per board family, (4) 5-block feedback layout (Result / Board Pattern / Core Reason / 💡 Takeaway / ⚠️ Common Mistake), (5) one-sentence Takeaway generator. Plus "LEARN MODE · explanations enabled" copy tag. All teaching content derived from existing scenario fields via 8 new pure helper functions in `index.html`. No data changes, no answer-key changes, no scoring/economy changes. Audit clean (262/0/0 — data unchanged). Mobile 375px QA passed. Live preview verified all flows.
-- **Service worker `VERSION`**: `'v4.0.8'` (staged).
-- **App backup `appVersion`**: `'4.0.8'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.0.8` — Postflop Teaching Layer (`479b775`).
+- **Pending push (STAGED)**: `v4.0.9` — Postflop Teaching Polish. Five targeted fixes from v4.0.8 QA report: (M1) Q/J/T-high disconnected hint branches; (M3) Q/J/T-high disconnected takeaway branches; (M4) `low_dry_two_tone` takeaway corrected (was suggesting "small high-frequency c-bet" while sizing answer is `mixed_small_check`); (L1) pattern label clearer for J/T-high disconnected dyn≥3 ("J-high semi-wet board") and Q/J/T two-tone dyn≥3 ("X two-tone medium board"); (M2 optional) smart Core Reason composition — `_pfPickPrimaryLogic` picks question-type-relevant strand, other strands collapsed in "More logic strands" details. Heavy multi-strand feedback dropped from ~200 words to ~80 words. No data changes, no answer-key changes, no scoring changes. Audit 262/0/0 (data unchanged). Programmatic render checks pass on all 9 verified test cases.
+- **Service worker `VERSION`**: `'v4.0.9'` (staged).
+- **App backup `appVersion`**: `'4.0.9'` (staged in `index.html`).
 
 ---
 
@@ -77,7 +77,44 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.8 Postflop Teaching Layer — STAGED
+### v4.0.9 Postflop Teaching Polish — STAGED
+
+Targeted polish of the v4.0.8 teaching layer based on the v4.0.8 Extended QA report (`docs/specs/postflop-v4.0.8-teaching-layer-qa-report.md`).
+
+**Five fixes implemented**:
+
+1. **Fix M1** (`_pfHintForBoard`): Q/J/T-high non-paired non-monotone disconnected scenarios were falling to a generic fallback hint. Added Q-high specific branch ("Ask: does BTN have more Q-x, K-x, and overpairs than BB has...") and J/T-high merged branch ("Ask: does BB have suited connectors and middle pocket pairs..."). Affects ~30 scenarios.
+
+2. **Fix M3** (`_pfTakeawayForBoard`): Same Q/J/T-high boards had a generic takeaway. Added Q-high branch ("Q-high boards still favor BTN but the edge is smaller than A/K-high") and J/T-high branch ("J/T-high disconnected boards are closer to neutral; mixed small/check often beats range-betting"). Affects ~30-40 scenarios.
+
+3. **Fix M4** (`_pfTakeawayForBoard`): `low_dry_two_tone` boards (e.g., 9h6h2c, 7h3h2s) were getting the rainbow takeaway "Low disconnected boards still favor BTN... small high-frequency c-bet works" — but the actual `sizing_family` answer for these boards is `mixed_small_check`. Added new branch BEFORE the rainbow rule: "Low disconnected two-tone boards can still retain BTN overpair advantage, but the flush draw makes pure range-small less automatic; mixed small/check is usually safer." Affects ~6 scenarios.
+
+4. **Fix L1** (`_pfPatternLabel`): (a) Two-tone scenarios with `dynamicLevel >= 3` now return "X two-tone medium board" instead of misleading "X two-tone semi-dry". (b) Final fallback for rainbow non-paired non-monotone disconnected with `dyn >= 3` now returns "X semi-wet board" or "X semi-connected board" instead of the empty "X board".
+
+5. **Fix M2 (optional, implemented)**: `_pfTeachingFeedbackBlocksHtml` rewritten to use new `_pfPickPrimaryLogic(qtype, explanation)` helper. Core Reason now shows ONLY the question-type-relevant logic strand (rangeLogic for range_advantage, nutLogic for nut_advantage, sizingLogic for frequency_strategy / sizing_family / dynamic_level). Other strands collapse into a "More logic strands" `<details>` block. Heavy multi-strand scenario went from ~200 words inline to ~80 words primary + collapsed remainder. Cuts mobile reading load roughly in half on heavy scenarios.
+
+**Live verification results** (9 test cases):
+- Q-high rainbow disconnected: now gets specific hint + specific takeaway ✓
+- J-high rainbow dyn=3: pattern is "J-high semi-wet board" (was "J-high board") ✓
+- T-high two-tone dyn=3: pattern is "T-high two-tone medium board" ✓
+- Low two-tone disconnected: takeaway acknowledges flush draws + mixed sizing ✓
+- frequency_strategy with all 3 strands: Core Reason starts "Sizing logic:" with "More logic strands" collapsed below ✓
+- range_advantage scenarios: Core Reason starts "Range logic:" only ✓
+- nut_advantage scenarios: Core Reason starts "Nut logic:" only ✓
+- A-high dry, low connected two-tone, paired_mid: all unchanged regression ✓
+
+**Files modified**:
+- `index.html` (CSS untouched; JS edits in `_pfPatternLabel`, `_pfHintForBoard`, `_pfTakeawayForBoard`, `_pfTeachingFeedbackBlocksHtml`; new helper `_pfPickPrimaryLogic`; appVersion 4.0.8 → 4.0.9)
+- `service-worker.js` (VERSION v4.0.8 → v4.0.9)
+- `PROJECT_STATE.md`, `TASK_BOARD.md` (this section + status row)
+- `docs/specs/brief-v4.0.9-postflop-teaching-polish.md` (planning + implementation log)
+- `docs/specs/postflop-v4.0.8-teaching-layer-qa-report.md` (QA report from prior session, still untracked → staged with this commit)
+
+**Untouched** (verified): `ranges.json`, `manifest.json`, all postflop data files, audit infrastructure, generator scripts, preflop systems, scoring, cosmetics.
+
+**Audit**: 262 / 0 errors / 0 warnings.
+
+### v4.0.8 Postflop Teaching Layer — COMMITTED + PUSHED (`479b775`)
 
 Module 1 (Board Texture Trainer) UI patch. After v4.0.7 expanded the scenario pool to 251, human tester reported: *"I can play it now, but I do not understand the principles behind the answers."* The app was asking questions but not teaching the underlying board-reading framework.
 

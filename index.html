@@ -32026,7 +32026,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.8',
+    appVersion: '4.0.9',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33039,15 +33039,22 @@ function _pfPatternLabel(board) {
     if (st === 'two_tone') return 'Low connected two-tone';
     return 'Very wet connected board';
   }
-  // Two-tone semi-dry
+  // Two-tone (v4.0.9: differentiate semi-dry from medium based on dynamicLevel)
   if (st === 'two_tone') {
+    if (dyn >= 3) return hcLabel + ' two-tone medium board';
     return hcLabel + ' two-tone semi-dry';
   }
   // Rainbow disconnected (default)
   if (has('dry') || dyn <= 2) {
     return hcLabel + ' dry board';
   }
-  return hcLabel + ' board';
+  // v4.0.9 (Fix L1): rainbow non-paired non-monotone disconnected with dyn>=3
+  // was previously labeled "X board" without a qualifier. Use semi-wet/semi-connected
+  // labels so the player gets a real description of the board class.
+  if (has('semi_connected') || has('connected')) {
+    return hcLabel + ' semi-connected board';
+  }
+  return hcLabel + ' semi-wet board';
 }
 
 // _pfBoardMetaLine — small tag line under the pattern label
@@ -33098,6 +33105,16 @@ function _pfHintForBoard(board) {
   if (hcc === 'A_high' || hcc === 'K_high') {
     return 'Ask: does BTN have more A-x or K-x combos than BB has in the calling range? High-card dry boards usually favor the raiser.';
   }
+  // v4.0.9: Q/J/T-high rainbow disconnected — was previously falling to generic.
+  // Branches reach this point only after monotone / paired / highly_connected /
+  // two-tone / A/K-high have all returned, so st is rainbow and the board is
+  // disconnected non-paired non-monotone non-broadway-connected.
+  if (hcc === 'Q_high' && !paired) {
+    return 'Ask: does BTN have more Q-x, K-x, and overpairs than BB has in the calling range? Q-high boards favor BTN but the edge is smaller than A/K-high.';
+  }
+  if ((hcc === 'J_high' || hcc === 'T_high') && !paired) {
+    return 'Ask: does BB have suited connectors and middle pocket pairs that connect with this board (T9s, JTs, 88-TT)? J/T-high disconnected boards are closer to neutral than A/K-high.';
+  }
   if (hcc === 'low' && !has('highly_connected')) {
     return 'Ask: do BTN overpairs (TT-AA) dominate the BB calling range here? Disconnected low boards still favor BTN despite the low cards.';
   }
@@ -33135,8 +33152,22 @@ function _pfTakeawayForBoard(board) {
   if ((hcc === 'A_high' || hcc === 'K_high') && (has('dry') || dyn <= 2)) {
     return 'High-card dry boards usually favor BTN because the raiser has more top-pair and overpair density.';
   }
+  // v4.0.9 (Fix M4): low_dry_two_tone takeaway — was previously matching the
+  // rainbow low-disconnected branch and recommending "small high-frequency c-bet"
+  // which contradicts the actual mixed_small_check sizing on these boards.
+  if (hcc === 'low' && st === 'two_tone' && !has('highly_connected')) {
+    return 'Low disconnected two-tone boards can still retain BTN overpair advantage, but the flush draw makes pure range-small less automatic; mixed small/check is usually safer.';
+  }
   if (hcc === 'low' && !has('highly_connected')) {
     return 'Low disconnected boards still favor BTN because overpairs (TT-AA) dominate; small high-frequency c-bet works.';
+  }
+  // v4.0.9 (Fix M3): Q/J/T-high non-paired non-monotone — was previously falling
+  // to the generic fallback, weakening the lesson on ~30-40 scenarios.
+  if (hcc === 'Q_high' && !paired && st !== 'monotone') {
+    return 'Q-high boards still favor BTN but the edge is smaller than A/K-high; BB has more middle pairs and connectors, so range betting is less automatic.';
+  }
+  if ((hcc === 'J_high' || hcc === 'T_high') && !paired && st !== 'monotone') {
+    return 'J/T-high disconnected boards are closer to neutral; BB suited connectors and middle pairs connect well, so mixed small/check often beats range-betting.';
   }
   return 'Focus on how high-card density, connectivity, and suit texture shift range and nut advantage on this board.';
 }
@@ -33192,30 +33223,63 @@ function _pfTeachingToggleHint() {
   if (shown) { btn.innerHTML = '💭 Hide hint'; } else { btn.innerHTML = '💭 Need a hint?'; }
 }
 
+// v4.0.9 (Fix M2): smart primary-strand picker. Returns the question-type-relevant
+// logic strand for the Core Reason, plus the remaining strands for an expandable
+// "More logic" details block. Cuts mobile reading load roughly in half on heavy
+// scenarios (v4.0.8 max ~206 words → v4.0.9 typical ~80-100 words).
+function _pfPickPrimaryLogic(qtype, explanation) {
+  var strands = [];
+  if (explanation.rangeLogic)  strands.push({ key: 'range',  label: 'Range logic',  text: explanation.rangeLogic });
+  if (explanation.nutLogic)    strands.push({ key: 'nut',    label: 'Nut logic',    text: explanation.nutLogic });
+  if (explanation.sizingLogic) strands.push({ key: 'sizing', label: 'Sizing logic', text: explanation.sizingLogic });
+  // Map qtype -> preferred strand key
+  var preferred = 'sizing';
+  if (qtype === 'range_advantage') preferred = 'range';
+  else if (qtype === 'nut_advantage') preferred = 'nut';
+  else if (qtype === 'frequency_strategy' || qtype === 'sizing_family' || qtype === 'dynamic_level') preferred = 'sizing';
+  // Find primary; fall back to first available strand if preferred not present
+  var primary = null;
+  for (var i = 0; i < strands.length; i++) { if (strands[i].key === preferred) { primary = strands[i]; break; } }
+  if (!primary && strands.length > 0) primary = strands[0];
+  var secondary = [];
+  for (var j = 0; j < strands.length; j++) { if (strands[j] !== primary) secondary.push(strands[j]); }
+  return { primary: primary, secondary: secondary };
+}
+
 // _pfTeachingFeedbackBlocksHtml — restructured 5-block feedback layout
-// Returns A/B/C/D/E block stack. Result block is rendered separately
-// (existing tier banner) — this function returns only B/C/D/E blocks.
+// Returns B/C/D/E blocks (Result block is rendered separately).
+// v4.0.9: Core Reason now shows ONLY the question-type-relevant logic strand
+// by default. Other strands collapse into a "More logic" details block.
 function _pfTeachingFeedbackBlocksHtml(scenario) {
   var board = scenario && scenario.board ? scenario.board : {};
   var explanation = scenario && scenario.explanation ? scenario.explanation : {};
+  var qtype = (scenario && scenario.question && scenario.question.type) || 'range_advantage';
   var label = _pfPatternLabel(board);
   var meta = _pfBoardMetaLine(board);
   var takeaway = _pfTakeawayForBoard(board);
 
+  var pick = _pfPickPrimaryLogic(qtype, explanation);
   var coreReason = '';
-  if (explanation.rangeLogic) coreReason += '<strong>Range logic:</strong> ' + _pfEscape(explanation.rangeLogic);
-  if (explanation.nutLogic) {
-    if (coreReason) coreReason += '<br><br>';
-    coreReason += '<strong>Nut logic:</strong> ' + _pfEscape(explanation.nutLogic);
-  }
-  if (explanation.sizingLogic) {
-    if (coreReason) coreReason += '<br><br>';
-    coreReason += '<strong>Sizing logic:</strong> ' + _pfEscape(explanation.sizingLogic);
-  }
-  if (!coreReason && explanation.short) {
+  if (pick.primary) {
+    coreReason = '<strong>' + _pfEscape(pick.primary.label) + ':</strong> ' + _pfEscape(pick.primary.text);
+  } else if (explanation.short) {
     coreReason = _pfEscape(explanation.short);
+  } else {
+    coreReason = '(See concept tags below for context.)';
   }
-  if (!coreReason) coreReason = '(See concept tags below for context.)';
+
+  var moreLogicHtml = '';
+  if (pick.secondary && pick.secondary.length > 0) {
+    var secondaryHtml = '';
+    for (var i = 0; i < pick.secondary.length; i++) {
+      var s = pick.secondary[i];
+      secondaryHtml += '<div style="margin-bottom:8px;line-height:1.5;"><strong>' + _pfEscape(s.label) + ':</strong> ' + _pfEscape(s.text) + '</div>';
+    }
+    moreLogicHtml = '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;">' +
+                      '<summary>More logic strands</summary>' +
+                      '<div class="pf-section-body">' + secondaryHtml + '</div>' +
+                    '</details>';
+  }
 
   var html = '';
   // B. Board Pattern
@@ -33225,11 +33289,13 @@ function _pfTeachingFeedbackBlocksHtml(scenario) {
               (meta ? ' <span style="font-weight:400;color:var(--text-secondary);font-size:11px;">(' + _pfEscape(meta) + ')</span>' : '') +
             '</div>' +
           '</div>';
-  // C. Core Reason
+  // C. Core Reason (primary strand only)
   html += '<div class="pf-teach-fb-block pf-fb-reason">' +
             '<span class="pf-fb-block-title">Core Reason</span>' +
             '<div class="pf-fb-block-body">' + coreReason + '</div>' +
           '</div>';
+  // C2. More logic (collapsed; shown only if secondary strands exist)
+  html += moreLogicHtml;
   // D. Takeaway
   html += '<div class="pf-teach-fb-block pf-fb-takeaway">' +
             '<span class="pf-fb-block-title">💡 Takeaway</span>' +
