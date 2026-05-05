@@ -1,6 +1,6 @@
 # Postflop v4.1.2 — Module 2 Audit Plan
 
-**Status:** Planning draft. Audit script extension NOT implemented in v4.1.2 — this doc specifies the rules that the future `audit-postflop-ps.ps1` extension and `postflop_audit_rules.js` extension must enforce.
+**Status:** Rules implemented in **v4.1.3** as a standalone seed auditor at `tools/audit-postflop-module2-seed.ps1`. The production auditor (`tools/audit-postflop-ps.ps1`) and in-browser auditor (`postflop/postflop_audit_rules.js`) remain untouched until the 11 baseline Module 2 scenarios are migrated to the v4.1.2 schema. See `postflop-v4.1.3-module2-audit-tooling-report.md` for implementation details.
 
 **Companion to:** `postflop-v4.1.2-module2-architecture.md`, `postflop-v4.1.2-module2-schema-taxonomy.md`, `postflop-v4.1.2-module2-seed-scenarios.json`
 

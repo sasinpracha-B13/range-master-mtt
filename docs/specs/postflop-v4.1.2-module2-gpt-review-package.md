@@ -1,6 +1,8 @@
 # Postflop v4.1.2 — Module 2 GPT Review Package
 
-**Status:** Review package prepared. Seed v0.1.1 (post-fix-pass). No GPT review run has been executed yet.
+**Status:** Review package prepared. Seed v0.1.1 (post-fix-pass) → v0.1.1 with 3 vocabulary refinements applied in v4.1.3 audit tooling sprint. No GPT review run has been executed yet.
+
+**v4.1.3 audit tooling result:** 0 hard errors, 11 warnings (all defensible), 15 PASS / 9 WARN / 0 FAIL. See `postflop-v4.1.3-module2-audit-tooling-report.md` for full audit findings and warning dispositions.
 **Companion to:** `postflop-v4.1.2-module2-architecture.md`, `postflop-v4.1.2-module2-schema-taxonomy.md`, `postflop-v4.1.2-module2-seed-scenarios.json` (v0.1.1), `postflop-v4.1.2-module2-audit-plan.md`
 
 ---
