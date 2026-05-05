@@ -15,6 +15,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
+🟡 **v4.1.2 staged — Module 2 Architecture + Data Plan (PLANNING-ONLY, post-fix-pass v0.1.1).** Five docs in `docs/specs/`: architecture, schema/taxonomy (vocabulary extended with straight/flush/nut_flush + suit-count discipline rule), 24 seed scenarios (now 21 PASS / 3 WARN / 0 FAIL after fix-pass), audit plan, GPT review package (post-fix updated). Fix-pass corrected 5 mechanical errors (#11/#13/#21/#22/#24 — flush-vs-flush-draw mis-counts on monotone/two-tone boards) and applied 5 labelling improvements (#2/#5/#6/#17/#18). Self-correction discipline: rejected the user-suggested fix on #21 (`set → made_flush`) because it was also wrong; correct fix is `nut_flush_draw`. Production untouched, audit still 262/0/0, no commit. **Awaiting human review** before any further Module 2 work.
+
 🟢 **v4.1.1 committed + pushed** (`cf088d1`). Postflop Concept Library Drill Actions — each of the 10 Concept Library cards is now a one-tap entry into a focused 12-question Module 1 drill. Concept-mode badge on question screen + dedicated summary header. Optional Review-signal pill from latest session. 45/45 QA. Audit 262/0/0.
 
 🟢 **v4.1.0 committed + pushed** (`843fa76`). Postflop Academy Foundation — curriculum map + mastery checklist + concept library + recommendation engine.
@@ -72,6 +74,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
+- 2026-05-05: v4.1.2 fix-pass STAGED. Corrected 5 mechanical errors in seed scenarios (flush-vs-flush-draw mis-counts on monotone/two-tone boards: #11 made straight wrongly labelled combo_draw; #13 backdoor only wrongly labelled NFD with action over-aggression; #21 set wrongly assigned to NFD; #22 K-FD explanation claimed made flush; #24 low FD explanation claimed made 6-flush). Applied 5 labelling improvements. Schema vocabulary extended with `straight`, `flush`, `nut_flush` and a "suit-count discipline" rule. Post-fix verdict: 21 PASS / 3 WARN / 0 FAIL.
+- 2026-05-05: v4.1.2 Module 2 Architecture + Data Plan STAGED (planning-only). 5 docs in `docs/specs/postflop-v4.1.2-module2-*` (architecture / schema-taxonomy / 24 seed scenarios / audit plan / GPT review package). Integration model = Integrated Academy Path with applied-decision distinction (Module 1 = "Read the board", Module 2 = "Choose the action with a hand"). Audit still 262/0/0. No production change. No commit.
 - 2026-05-05: v4.1.1 Postflop Concept Library Drill Actions COMMITTED (`cf088d1`) + pushed. Each of 10 concept cards becomes an actionable 12-question focused drill entry point. New mode='concept' state + blue Concept Drill badge + dedicated summary. Optional Review-signal pill from latest session weak concepts.
 - 2026-05-04: v4.1.0 Postflop Academy Foundation COMMITTED (`843fa76`) + pushed. Curriculum map + mastery + recommendation engine + concept library.
 - 2026-05-04: v4.0.12 Postflop Drill Weak Spots Button COMMITTED (`79cfc2a`) + pushed. End-to-end teaching loop closed.
