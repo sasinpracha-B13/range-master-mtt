@@ -2,17 +2,17 @@
 
 > **READ THIS FIRST** before doing any work in this repo.
 > Subagents: this file is your single source of truth for project context, current scope, and what is/is not allowed.
-> Last updated: 2026-05-04
+> Last updated: 2026-05-05
 
 ---
 
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.12` — Postflop Drill Weak Spots Button (`79cfc2a`).
-- **Pending push (STAGED)**: `v4.1.0` — Postflop Academy Foundation. Evolves Postflop from a single quiz into a structured learning academy. The Beta Lab area now hosts a curriculum-style **Postflop Academy** with: header (title + subtitle), progress snapshot (sessions completed, latest score %, latest quality pill, weak families), recommendation engine (6 rule-driven messages picked from history), curriculum map (6 modules — M1 Active with start + optional Review Weak Spots; M2 Preview with inline syllabus details; M3 Locked; M4-M6 Future, all dimmed but visible), Module 1 mastery checklist (5 display-only criteria with met/not-met state), 10-concept Concept Library drawer, "Progress is saved locally on this device." note. Ten new pure helpers + 2 declarative arrays (`_PF_CURRICULUM`, `_PF_CONCEPT_LIBRARY`). Module 1 actions still wired to existing `startPostflopDrill` + `startPostflopWeakSpotReview`. Audit 262/0/0 (data unchanged). 25/25 QA checks pass. Mobile 375px verified.
-- **Service worker `VERSION`**: `'v4.1.0'` (staged).
-- **App backup `appVersion`**: `'4.1.0'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.1.0` — Postflop Academy Foundation (`843fa76`).
+- **Pending push (STAGED)**: `v4.1.1` — Postflop Concept Library Drill Actions. Each of the 10 v4.1.0 Concept Library cards becomes an actionable drill entry point: tap "🎯 Drill this concept" to start a 12-question Module 1 session focused on scenarios that train that concept (scoring rubric: +100 exact tag / +70 question type / +60 suit-or-texture / +40 related tag / −30 recent repeat / +0..10 randomness; threshold > 30). New `App.state.postflopDrill.mode = 'concept'` with `conceptKey` + `conceptDisplayName` + `conceptPoolSize` + `conceptFillUsed`; question screen shows blue Concept Drill badge; summary shows dedicated context label / `CONCEPT DRILL SUMMARY` eyebrow / "Concept drill complete" headline. Optional `🚨 Review signal` pill on cards whose primary or related tags appear in the latest session's weak concepts. Six new pure helpers + entry point (`_pfConceptDrillConfig`, `_pfConceptDisplayName`, `_pfConceptScenarioScore`, `_pfBuildConceptQueue`, `_pfConceptReviewSignal`, `startPostflopConceptDrill`). All 10 concept-drill keys verified to produce 12-question focused queues; spot-checks confirm 12/12 of the queue items match the concept (monotone, paired, range_advantage, two_tone, cbet_freq). Audit 262/0/0 (data unchanged). 45/45 QA checks pass. Mobile 375px verified. Console clean.
+- **Service worker `VERSION`**: `'v4.1.1'` (staged).
+- **App backup `appVersion`**: `'4.1.1'` (staged in `index.html`).
 
 ---
 

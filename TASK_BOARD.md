@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-05-04.
+> Last updated: 2026-05-05.
 
 ---
 
@@ -15,9 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.12 committed + pushed** (`79cfc2a`). Postflop Drill Weak Spots Button.
+🟢 **v4.1.0 committed + pushed** (`843fa76`). Postflop Academy Foundation — curriculum map + mastery checklist + concept library + recommendation engine.
 
-🟡 **v4.1.0 staged — Postflop Academy Foundation.** Evolves Postflop from a single quiz into a structured learning academy. New "Postflop Academy" panel replaces the simple Beta Lab entry: curriculum map (6 modules with status pills — M1 Active, M2 Preview, M3 Locked, M4-M6 Future), Module 1 mastery checklist (5 display-only criteria), academy progress snapshot (sessions / latest score / quality / weak families), recommendation engine with 6 rule-driven messages, 10-concept Concept Library drawer, "Progress is saved locally on this device." note. Ten new pure helpers + 2 declarative arrays (`_PF_CURRICULUM`, `_PF_CONCEPT_LIBRARY`). Module 1 actions wired to existing `startPostflopDrill` + `startPostflopWeakSpotReview`; Module 2 preview opens inline syllabus details; locked/future modules show disabled state. Audit 262/0/0 (data unchanged). 25/25 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
+🟡 **v4.1.1 staged — Postflop Concept Library Drill Actions.** Each of the 10 v4.1.0 Concept Library cards becomes a one-tap entry point into a focused 12-question Module 1 session. New `_pfConceptDrillConfig` / `_pfConceptDisplayName` / `_pfConceptScenarioScore` / `_pfBuildConceptQueue` / `_pfConceptReviewSignal` / `startPostflopConceptDrill`. Scoring rubric: +100 exact tag / +70 question type / +60 suit-or-texture / +40 related tag / −30 recent repeat / +0..10 randomness; pool threshold > 30. New `App.state.postflopDrill.mode = 'concept'` with `conceptKey` + `conceptDisplayName` + `conceptPoolSize` + `conceptFillUsed`; question screen shows blue Concept Drill badge; summary shows `🎯 Concept Drill · X · Complete` context label + `CONCEPT DRILL SUMMARY` eyebrow + "Concept drill complete" headline. Optional `🚨 Review signal` pill on cards matching weak concepts in latest session. All 10 concept-drill keys verified to produce 12-question focused queues; spot checks 12/12 (monotone, paired, range_advantage, two_tone, cbet_freq). Audit 262/0/0 (data unchanged). 45/45 QA checks pass. Mobile 375px verified. Console clean. Awaiting commit/push.
 
 | Metric | Value |
 |---|---|
@@ -72,7 +72,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.1.0 Postflop Academy Foundation STAGED. Curriculum map + mastery + recommendation engine + concept library. Awaiting commit.
+- 2026-05-05: v4.1.1 Postflop Concept Library Drill Actions STAGED. Each of 10 concept cards becomes an actionable 12-question focused drill entry point. New mode='concept' state + blue Concept Drill badge + dedicated summary. Optional Review-signal pill from latest session weak concepts. Awaiting commit.
+- 2026-05-04: v4.1.0 Postflop Academy Foundation COMMITTED (`843fa76`) + pushed. Curriculum map + mastery + recommendation engine + concept library.
 - 2026-05-04: v4.0.12 Postflop Drill Weak Spots Button COMMITTED (`79cfc2a`) + pushed. End-to-end teaching loop closed.
 - 2026-05-04: v4.0.11 Postflop Session Learning Summary COMMITTED (`a2e4fae`) + pushed. Quality label + strongest/weakest concepts + family pattern notes + recommended next move.
 - 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix COMMITTED (`53eae80`) + pushed. CP874 mojibake reverser + clean prompt rebuilder.

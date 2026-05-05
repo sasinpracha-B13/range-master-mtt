@@ -11032,6 +11032,103 @@
     /* ========================================================================
        END v4.1.0 — POSTFLOP ACADEMY FOUNDATION
        ======================================================================== */
+
+    /* ========================================================================
+       v4.1.1 — POSTFLOP CONCEPT DRILL ACTIONS
+       Adds: Drill button on each Concept Library card, optional Review-signal
+       pill, Concept Drill mode badge on the question screen, dedicated
+       Concept Drill summary header. All `.pf-concept-*` namespaced.
+       ======================================================================== */
+    .pf-concept-card .pf-concept-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .pf-concept-card .pf-concept-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .pf-concept-card-review {
+      border-left-color: rgba(245, 166, 35, 0.70);
+      background: rgba(245, 166, 35, 0.06);
+    }
+    .pf-concept-review-pill {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #f5a623;
+      background: rgba(245, 166, 35, 0.12);
+      border: 1px solid rgba(245, 166, 35, 0.40);
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .pf-concept-drill-btn {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #6ea8fe;
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.18), rgba(110, 168, 254, 0.06));
+      border: 1px solid rgba(110, 168, 254, 0.45);
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+    }
+    .pf-concept-drill-btn:hover {
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.28), rgba(110, 168, 254, 0.10));
+      border-color: rgba(110, 168, 254, 0.65);
+    }
+    .pf-concept-drill-btn:active {
+      transform: translateY(1px);
+    }
+    .pf-concept-mode-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 0 0 10px 0;
+      padding: 8px 12px;
+      background: rgba(110, 168, 254, 0.10);
+      border: 1px solid rgba(110, 168, 254, 0.40);
+      border-left: 3px solid #6ea8fe;
+      border-radius: 6px;
+    }
+    .pf-concept-mode-badge .pf-concept-mode-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #6ea8fe;
+    }
+    .pf-concept-mode-badge .pf-concept-mode-subcopy {
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+    .pf-concept-summary-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      color: #6ea8fe;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .postflop-summary-card.pf-concept-summary {
+      border-top: 2px solid rgba(110, 168, 254, 0.45);
+    }
+    @media (max-width: 480px) {
+      .pf-concept-card .pf-concept-card-foot { gap: 6px; }
+      .pf-concept-drill-btn { padding: 6px 10px; flex: 1 1 auto; text-align: center; }
+    }
+    /* ========================================================================
+       END v4.1.1 — POSTFLOP CONCEPT DRILL ACTIONS
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32456,7 +32553,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.1.0',
+    appVersion: '4.1.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33999,27 +34096,91 @@ var _PF_CURRICULUM = [
 ];
 
 // Concept library — top 10 concepts trained in Module 1.
+// v4.1.1: each entry now also carries an immutable `key` and concept-drill
+// mapping fields (tags, relatedTags, questionTypes, suitTextures, textureTags)
+// consumed by _pfConceptDrillConfig + _pfBuildConceptQueue. Display copy
+// (name, def) is unchanged from v4.1.0 — purely additive shape change.
 var _PF_CONCEPT_LIBRARY = [
-  { name: 'Range Advantage',
-    def: 'Which player\'s whole range performs better on this board. It drives how often the preflop raiser can bet and at what frequency.' },
-  { name: 'Nut Advantage',
-    def: 'Which player has more very strong hands (sets, top-two, straights, flushes). Different from range advantage; can shift sizing.' },
-  { name: 'Board Texture',
-    def: 'High-card class, suit pattern, connectivity. The four signals that tell you who the board belongs to before any hand reads.' },
-  { name: 'Static vs Dynamic',
-    def: 'Static boards rarely shift equity on later streets; dynamic boards swing. Drives how often you keep medium hands vs charge them.' },
-  { name: 'C-bet Frequency',
-    def: 'How often the preflop raiser bets the flop. Range-bet small on dry boards, check more on wet/connected boards.' },
-  { name: 'Sizing Family',
-    def: 'Range_small vs mixed_small_check vs polar_big vs check_heavy. The family follows from board texture and range/nut advantage.' },
-  { name: 'Monotone Boards',
-    def: 'All three flop cards same suit. Made flushes already exist for some opponents; bluffs lose fold equity.' },
-  { name: 'Paired Boards',
-    def: 'Flop pairs one rank. Whoever has more of the unpaired card has the trips edge. Separate that from overpair density.' },
-  { name: 'Low Connected Boards',
-    def: 'Boards like 8-7-5, 6-5-4. Caller has more suited connectors and small pairs; raiser should check more.' },
-  { name: 'Two-tone Boards',
-    def: 'Two of one suit. Flush draws live. Sizing pushes slightly larger on raiser-favored boards, more checking on caller-favored ones.' }
+  { key: 'range_advantage',
+    name: 'Range Advantage',
+    def: 'Which player\'s whole range performs better on this board. It drives how often the preflop raiser can bet and at what frequency.',
+    tags: ['range_advantage'],
+    relatedTags: ['nut_advantage', 'dry_high_card_strategy', 'small_cbet_freq'],
+    questionTypes: ['range_advantage'],
+    suitTextures: [],
+    textureTags: ['high_card_dominant', 'broadway_heavy', 'ace_high_dry'] },
+  { key: 'nut_advantage',
+    name: 'Nut Advantage',
+    def: 'Which player has more very strong hands (sets, top-two, straights, flushes). Different from range advantage; can shift sizing.',
+    tags: ['nut_advantage'],
+    relatedTags: ['range_advantage', 'paired_board_strategy', 'monotone_board_strategy'],
+    questionTypes: ['nut_advantage'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'board_texture',
+    name: 'Board Texture',
+    def: 'High-card class, suit pattern, connectivity. The four signals that tell you who the board belongs to before any hand reads.',
+    tags: ['board_texture_recognition'],
+    relatedTags: ['dry_board', 'wet_board', 'static_board', 'dynamic_board'],
+    questionTypes: ['range_advantage', 'nut_advantage', 'dynamic_level'],
+    suitTextures: [],
+    textureTags: ['high_card_dominant', 'low_heavy', 'middle_heavy', 'broadway_heavy'] },
+  { key: 'static_dynamic',
+    name: 'Static vs Dynamic',
+    def: 'Static boards rarely shift equity on later streets; dynamic boards swing. Drives how often you keep medium hands vs charge them.',
+    tags: ['static_board', 'dynamic_board'],
+    relatedTags: ['dry_board', 'wet_board', 'low_connected_caution'],
+    questionTypes: ['dynamic_level'],
+    suitTextures: [],
+    textureTags: ['very_wet', 'wet', 'dry', 'semi_dry', 'straightening'] },
+  { key: 'cbet_freq',
+    name: 'C-bet Frequency',
+    def: 'How often the preflop raiser bets the flop. Range-bet small on dry boards, check more on wet/connected boards.',
+    tags: ['small_cbet_freq'],
+    relatedTags: ['mixed_small_check', 'check_strategy', 'dry_high_card_strategy'],
+    questionTypes: ['frequency_strategy'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'sizing_family',
+    name: 'Sizing Family',
+    def: 'Range_small vs mixed_small_check vs polar_big vs check_heavy. The family follows from board texture and range/nut advantage.',
+    tags: ['cbet_size_selection', 'polar_big_strategy', 'mixed_small_check'],
+    relatedTags: ['dry_high_card_strategy', 'wet_board', 'small_cbet_freq'],
+    questionTypes: ['sizing_family'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'monotone',
+    name: 'Monotone Boards',
+    def: 'All three flop cards same suit. Made flushes already exist for some opponents; bluffs lose fold equity.',
+    tags: ['monotone_board_strategy'],
+    relatedTags: ['nut_advantage', 'wet_board', 'two_tone_board_strategy'],
+    questionTypes: [],
+    suitTextures: ['monotone'],
+    textureTags: ['monotone'] },
+  { key: 'paired',
+    name: 'Paired Boards',
+    def: 'Flop pairs one rank. Whoever has more of the unpaired card has the trips edge. Separate that from overpair density.',
+    tags: ['paired_board_strategy'],
+    relatedTags: ['nut_advantage', 'static_board', 'dry_board'],
+    questionTypes: [],
+    suitTextures: [],
+    textureTags: ['paired'] },
+  { key: 'low_connected',
+    name: 'Low Connected Boards',
+    def: 'Boards like 8-7-5, 6-5-4. Caller has more suited connectors and small pairs; raiser should check more.',
+    tags: ['low_connected_caution'],
+    relatedTags: ['wet_board', 'dynamic_board', 'check_strategy', 'mixed_small_check'],
+    questionTypes: [],
+    suitTextures: [],
+    textureTags: ['low_connected', 'low_heavy', 'highly_connected', 'connected'] },
+  { key: 'two_tone',
+    name: 'Two-tone Boards',
+    def: 'Two of one suit. Flush draws live. Sizing pushes slightly larger on raiser-favored boards, more checking on caller-favored ones.',
+    tags: ['two_tone_board_strategy'],
+    relatedTags: ['wet_board', 'nut_advantage'],
+    questionTypes: [],
+    suitTextures: ['two_tone'],
+    textureTags: ['flushing', 'two_tone'] }
 ];
 
 // _pfAcademyStats — pulls everything the Academy needs from localStorage history
@@ -34294,16 +34455,267 @@ function _pfCurriculumMapHtml(stats) {
 }
 
 // _pfConceptLibraryHtml — collapsible concept library, all 10 concepts.
+// ============================================================================
+// v4.1.1 — POSTFLOP CONCEPT DRILL HELPERS
+// Pure helpers consumed by startPostflopConceptDrill + _pfConceptLibraryHtml.
+// Each helper is defensive against missing concept keys, missing scenarios,
+// missing localStorage, and missing _PF_CONCEPT_LIBRARY entries.
+// ============================================================================
+
+// _pfConceptDrillConfig — returns a normalized config for a given conceptKey,
+// or null if the key is unknown / library is missing. Always returns arrays
+// (never undefined) for all match fields so callers don't have to null-guard.
+function _pfConceptDrillConfig(conceptKey) {
+  if (!conceptKey || typeof _PF_CONCEPT_LIBRARY === 'undefined' || !Array.isArray(_PF_CONCEPT_LIBRARY)) return null;
+  var entry = null;
+  for (var i = 0; i < _PF_CONCEPT_LIBRARY.length; i++) {
+    if (_PF_CONCEPT_LIBRARY[i] && _PF_CONCEPT_LIBRARY[i].key === conceptKey) { entry = _PF_CONCEPT_LIBRARY[i]; break; }
+  }
+  if (!entry) return null;
+  return {
+    key: entry.key,
+    displayName: entry.name || entry.key,
+    tags: Array.isArray(entry.tags) ? entry.tags : [],
+    relatedTags: Array.isArray(entry.relatedTags) ? entry.relatedTags : [],
+    questionTypes: Array.isArray(entry.questionTypes) ? entry.questionTypes : [],
+    suitTextures: Array.isArray(entry.suitTextures) ? entry.suitTextures : [],
+    textureTags: Array.isArray(entry.textureTags) ? entry.textureTags : []
+  };
+}
+
+// _pfConceptDisplayName — friendly display name for a conceptKey. Falls back
+// to the key itself if the library is missing or the key is unknown.
+function _pfConceptDisplayName(conceptKey) {
+  var cfg = _pfConceptDrillConfig(conceptKey);
+  return cfg ? cfg.displayName : (conceptKey || '');
+}
+
+// _pfConceptScenarioScore — scoring rubric (per v4.1.1 brief):
+//   +100  scenario.conceptTags includes any of config.tags
+//   + 70  scenario.question.type matches any of config.questionTypes
+//   + 60  scenario.board.suitTexture matches any of config.suitTextures
+//          OR scenario.board.textureTags shares any of config.textureTags
+//   + 40  scenario.conceptTags includes any of config.relatedTags
+//   - 30  scenario.id appears in lastSessionIds (avoid recent repeats)
+//   +0..10 randomness for tie variety
+// Pure: no localStorage / DOM access.
+function _pfConceptScenarioScore(scenario, config, lastSessionIds) {
+  if (!scenario || !config) return 0;
+  var score = 0;
+  var sTags = Array.isArray(scenario.conceptTags) ? scenario.conceptTags : [];
+  var board = scenario.board || {};
+  var sTextureTags = Array.isArray(board.textureTags) ? board.textureTags : [];
+
+  // exact concept tag (+100) — only count once even if multiple match
+  for (var i = 0; i < config.tags.length; i++) {
+    if (sTags.indexOf(config.tags[i]) >= 0) { score += 100; break; }
+  }
+  // question type (+70)
+  var qtype = scenario.question && scenario.question.type;
+  if (qtype && config.questionTypes.indexOf(qtype) >= 0) score += 70;
+  // suitTexture (+60)
+  if (board.suitTexture && config.suitTextures.indexOf(board.suitTexture) >= 0) score += 60;
+  // textureTags (+60) — count once
+  if (score % 60 !== 0 || true) { /* allow stacking of suitTexture + textureTags? brief says "OR" — we keep additive once */ }
+  for (var j = 0; j < config.textureTags.length; j++) {
+    if (sTextureTags.indexOf(config.textureTags[j]) >= 0) {
+      // only add once if suitTexture didn't already grant +60 for the same family
+      if (!(board.suitTexture && config.suitTextures.indexOf(board.suitTexture) >= 0)) {
+        score += 60;
+      }
+      break;
+    }
+  }
+  // related concept tag (+40) — only if exact tag didn't already match
+  var hasExact = false;
+  for (var k = 0; k < config.tags.length; k++) {
+    if (sTags.indexOf(config.tags[k]) >= 0) { hasExact = true; break; }
+  }
+  if (!hasExact) {
+    for (var m = 0; m < config.relatedTags.length; m++) {
+      if (sTags.indexOf(config.relatedTags[m]) >= 0) { score += 40; break; }
+    }
+  }
+  // recent repeat penalty (-30)
+  if (lastSessionIds && lastSessionIds[scenario.id]) score -= 30;
+  // tie randomness (+0..10)
+  score += Math.random() * 10;
+  return score;
+}
+
+// _pfBuildConceptQueue — returns { queue, poolSize, fillUsed } for a given
+// concept. queue length capped at targetLen (default 12). poolSize counts
+// scenarios above the strict threshold (>30, exclusive of pure-random).
+// fillUsed=true when we had to reach below the threshold to hit targetLen.
+function _pfBuildConceptQueue(conceptKey, allScenarios, targetLen) {
+  targetLen = targetLen || 12;
+  var empty = { queue: [], poolSize: 0, fillUsed: false, displayName: _pfConceptDisplayName(conceptKey) };
+  if (!allScenarios || allScenarios.length === 0) return empty;
+  var config = _pfConceptDrillConfig(conceptKey);
+  if (!config) return empty;
+
+  // recent-session repeats (best-effort)
+  var lastSessionIds = {};
+  try {
+    var hist = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+    var last = (hist && hist.sessions && hist.sessions.length > 0)
+      ? hist.sessions[hist.sessions.length - 1] : null;
+    if (last && Array.isArray(last.scenarioIds)) {
+      for (var k = 0; k < last.scenarioIds.length; k++) lastSessionIds[last.scenarioIds[k]] = true;
+    }
+  } catch (e) { /* swallow */ }
+
+  // score every scenario; threshold 30 cleanly excludes pure-random matches (max 10)
+  var scored = allScenarios.map(function (s) {
+    return { scenario: s, score: _pfConceptScenarioScore(s, config, lastSessionIds) };
+  });
+  var hits = scored.filter(function (x) { return x.score > 30; });
+  hits.sort(function (a, b) { return b.score - a.score; });
+
+  var poolSize = hits.length;
+  var seen = {};
+  var queue = [];
+  for (var i = 0; i < hits.length && queue.length < targetLen; i++) {
+    var s = hits[i].scenario;
+    if (!seen[s.id]) { seen[s.id] = true; queue.push(s); }
+  }
+
+  // Fill from below-threshold scenarios if pool too small (related-board variety)
+  var fillUsed = false;
+  if (queue.length < targetLen) {
+    fillUsed = true;
+    var fill = scored
+      .filter(function (x) { return !seen[x.scenario.id]; })
+      .map(function (x) {
+        return {
+          scenario: x.scenario,
+          score: (lastSessionIds[x.scenario.id] ? -50 : 30) + Math.random() * 20
+        };
+      });
+    fill.sort(function (a, b) { return b.score - a.score; });
+    for (var j = 0; j < fill.length && queue.length < targetLen; j++) {
+      var s2 = fill[j].scenario;
+      if (!seen[s2.id]) { seen[s2.id] = true; queue.push(s2); }
+    }
+  }
+
+  return {
+    queue: queue,
+    poolSize: poolSize,
+    fillUsed: fillUsed,
+    displayName: config.displayName,
+    conceptKey: config.key
+  };
+}
+
+// _pfConceptReviewSignal — returns true when a concept's primary tag is present
+// in the latest session's weak-concept fingerprint. Uses _pfAcademyStats() if
+// available; defensive against missing stats / library entries.
+function _pfConceptReviewSignal(conceptKey, academyStats) {
+  if (!conceptKey) return false;
+  var stats = academyStats || (typeof _pfAcademyStats === 'function' ? _pfAcademyStats() : null);
+  if (!stats || !stats.latestSession) return false;
+  var weakConcepts = (stats.latestSession && Array.isArray(stats.latestSession.weakConceptTags))
+    ? stats.latestSession.weakConceptTags : [];
+  // Also derive on the fly from latestSession.answers if weakConceptTags isn't stored
+  if (weakConcepts.length === 0 && Array.isArray(stats.latestSession.answers)) {
+    var counts = {};
+    stats.latestSession.answers.forEach(function (a) {
+      if (a && (a.tier === 'bad' || a.tier === 'critical')) {
+        var tags = (a.conceptTags) || [];
+        tags.forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
+      }
+    });
+    weakConcepts = Object.keys(counts);
+  }
+  if (weakConcepts.length === 0) return false;
+  var cfg = _pfConceptDrillConfig(conceptKey);
+  if (!cfg) return false;
+  // Match on primary tags or related tags
+  for (var i = 0; i < cfg.tags.length; i++) { if (weakConcepts.indexOf(cfg.tags[i]) >= 0) return true; }
+  for (var j = 0; j < cfg.relatedTags.length; j++) { if (weakConcepts.indexOf(cfg.relatedTags[j]) >= 0) return true; }
+  return false;
+}
+
+// startPostflopConceptDrill — entry point wired to the "Drill this concept"
+// button on each Concept Library card. Builds a focused 12-question queue
+// from the Module 1 pool, sets up App.state.postflopDrill with mode='concept'
+// + conceptKey, and renders the question screen. Falls back to a normal
+// session if the concept is unknown / pool empty.
+function startPostflopConceptDrill(conceptKey) {
+  if (!getPostflopReady()) {
+    if (typeof showToast === 'function') showToast('Post-flop data not loaded. Try again.');
+    return;
+  }
+  if (!App.state.settings.postflopBeta) {
+    if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
+    return;
+  }
+  var pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+  if (pool.length === 0) {
+    if (typeof showToast === 'function') showToast('No scenarios available for this module.');
+    return;
+  }
+  var built = _pfBuildConceptQueue(conceptKey, pool, 12);
+  if (!built || !built.queue || built.queue.length === 0) {
+    // Unknown concept or empty pool — fall back to normal drill
+    return startPostflopDrill('pf_board_texture');
+  }
+  App.state.postflopDrill = {
+    active: true,
+    module: 'pf_board_texture',
+    mode: 'concept',
+    conceptKey: built.conceptKey || conceptKey,
+    conceptDisplayName: built.displayName || _pfConceptDisplayName(conceptKey),
+    conceptPoolSize: built.poolSize || 0,
+    conceptFillUsed: !!built.fillUsed,
+    queue: built.queue,
+    currentIndex: 0,
+    answers: [],
+    startTime: Date.now(),
+    phase: 'question',
+    lastChoiceId: null,
+    lastClassification: null
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+
+// ============================================================================
+// END v4.1.1 — POSTFLOP CONCEPT DRILL HELPERS
+// ============================================================================
+
 function _pfConceptLibraryHtml() {
+  // v4.1.1: each card is now an actionable drill entry point. Optional
+  // "Review signal" pill surfaces concepts the player struggled with last
+  // session (derived from rmtt_postflop_history).
+  var stats = (typeof _pfAcademyStats === 'function') ? (function () {
+    try { return _pfAcademyStats(); } catch (e) { return null; }
+  })() : null;
   var cards = _PF_CONCEPT_LIBRARY.map(function (c) {
-    return '<div class="pf-concept-card">' +
-             '<span class="pf-concept-name">' + _pfEscape(c.name) + '</span>' +
+    var key = c.key || '';
+    var reviewSignal = false;
+    try { reviewSignal = key ? _pfConceptReviewSignal(key, stats) : false; } catch (e) { reviewSignal = false; }
+    var reviewPill = reviewSignal
+      ? '<span class="pf-concept-review-pill" title="This concept showed up in your last session\'s weak spots.">🚨 Review signal</span>'
+      : '';
+    var buttonHtml = key
+      ? '<button type="button" class="pf-concept-drill-btn" onclick="startPostflopConceptDrill(\'' + _pfEscape(key) + '\')">🎯 Drill this concept</button>'
+      : '';
+    return '<div class="pf-concept-card' + (reviewSignal ? ' pf-concept-card-review' : '') + '">' +
+             '<div class="pf-concept-card-head">' +
+               '<span class="pf-concept-name">' + _pfEscape(c.name) + '</span>' +
+               reviewPill +
+             '</div>' +
              '<div class="pf-concept-def">' + _pfEscape(c.def) + '</div>' +
-             '<span class="pf-concept-tag">trained in Module 1</span>' +
+             '<div class="pf-concept-card-foot">' +
+               '<span class="pf-concept-tag">trained in Module 1</span>' +
+               buttonHtml +
+             '</div>' +
            '</div>';
   }).join('');
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts)</summary>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts) · tap to drill</summary>' +
            '<div class="pf-concept-grid">' + cards + '</div>' +
          '</details>';
 }
@@ -34488,12 +34900,24 @@ function renderPostflopQuestion() {
   var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
   var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
   // v4.0.12: Review Mode badge when this is a weak-spot focused session
+  // v4.1.1: also handle Concept Drill mode (mutually exclusive with weak_spots)
   var reviewModeBadge = '';
   if (App.state.postflopDrill && App.state.postflopDrill.mode === 'weak_spots') {
     reviewModeBadge =
       '<div class="pf-review-mode-badge">' +
         '<span class="pf-review-mode-title">🎯 Review Mode · Weak Spots</span>' +
         '<span class="pf-review-mode-subcopy">Focused on concepts and board families missed last session.</span>' +
+      '</div>';
+  } else if (App.state.postflopDrill && App.state.postflopDrill.mode === 'concept') {
+    var cName = App.state.postflopDrill.conceptDisplayName || _pfConceptDisplayName(App.state.postflopDrill.conceptKey);
+    var cFill = !!App.state.postflopDrill.conceptFillUsed;
+    var cSubcopy = cFill
+      ? 'Focused on this concept, with related boards added for variety.'
+      : 'Focused on scenarios that train this concept.';
+    reviewModeBadge =
+      '<div class="pf-concept-mode-badge">' +
+        '<span class="pf-concept-mode-title">🎯 Concept Drill · ' + _pfEscape(cName) + '</span>' +
+        '<span class="pf-concept-mode-subcopy">' + _pfEscape(cSubcopy) + '</span>' +
       '</div>';
   }
 
@@ -35144,16 +35568,34 @@ function renderPostflopComplete() {
     : '';
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
+  // v4.1.1: also differentiate when this was a concept-focused drill
   var isWeakReview = !!(d && d.mode === 'weak_spots');
-  var contextLabel = isWeakReview ? '🧪 Board Texture Trainer · Review session complete' : '🧪 Board Texture Trainer · Complete';
-  var summaryHeadline = isWeakReview ? 'Review Session Summary' : 'Session Learning Summary';
+  var isConceptDrill = !!(d && d.mode === 'concept');
+  var conceptName = isConceptDrill
+    ? (d.conceptDisplayName || _pfConceptDisplayName(d.conceptKey) || 'Concept')
+    : '';
+  var contextLabel;
+  var summaryHeadline;
+  var summaryEyebrow = '';
+  if (isConceptDrill) {
+    contextLabel = '🎯 Concept Drill · ' + conceptName + ' · Complete';
+    summaryHeadline = 'Concept drill complete';
+    summaryEyebrow = 'CONCEPT DRILL SUMMARY';
+  } else if (isWeakReview) {
+    contextLabel = '🧪 Board Texture Trainer · Review session complete';
+    summaryHeadline = 'Review Session Summary';
+  } else {
+    contextLabel = '🧪 Board Texture Trainer · Complete';
+    summaryHeadline = 'Session Learning Summary';
+  }
 
   var html =
     '<div class="postflop-context-bar">' +
       '<span class="postflop-context-label">' + contextLabel + '</span>' +
     '</div>' +
-    '<div class="postflop-summary-card">' +
-      '<div class="pf-learn-headline">' + summaryHeadline + '</div>' +
+    '<div class="postflop-summary-card' + (isConceptDrill ? ' pf-concept-summary' : '') + '">' +
+      (summaryEyebrow ? '<div class="pf-concept-summary-eyebrow">' + _pfEscape(summaryEyebrow) + '</div>' : '') +
+      '<div class="pf-learn-headline">' + _pfEscape(summaryHeadline) + '</div>' +
       '<div class="pf-learn-quality ' + learnLabel.klass + '">' + _pfEscape(learnLabel.label) + '</div>' +
       '<div class="pf-score ' + scoreCls + '" style="margin-top:10px">' + totalScore.toFixed(1) + ' / ' + maxScore.toFixed(1) + '</div>' +
       '<div class="pf-score-label">(' + pct + '%)</div>' +
