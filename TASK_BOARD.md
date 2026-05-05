@@ -15,9 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟢 **v4.0.8 committed + pushed** (`479b775`). Postflop Teaching Layer.
+🟢 **v4.0.9 committed + pushed** (`c38aafc`). Postflop Teaching Polish.
 
-🟡 **v4.0.9 staged — Postflop Teaching Polish.** Five targeted fixes from the v4.0.8 QA report: (M1) Q/J/T-high disconnected hint branches; (M3) Q/J/T-high disconnected takeaway branches; (M4) `low_dry_two_tone` takeaway no longer recommends "small high-frequency c-bet" — now correctly says "mixed small/check is usually safer"; (L1) pattern label clearer for J/T-high disconnected dyn≥3 ("J-high semi-wet board") and Q/J/T two-tone dyn≥3 ("X two-tone medium board"); (M2 optional) smart Core Reason composition — picks question-type-relevant logic strand (rangeLogic for ra, nutLogic for na, sizingLogic for fs/sf/dl), collapses other strands into "More logic strands" `<details>` block. Heavy multi-strand feedback dropped from ~200 words to ~80 words. Audit 262/0/0 (data unchanged). All 9+ verification cases pass. Awaiting commit/push approval.
+🟡 **v4.0.10 staged — Postflop Card Text Encoding Hotfix.** Tester reported broken suit characters in Postflop question text. Root cause: v4.0.0 baseline scenarios in `postflop_scenarios.json` have **CP874 (Thai Windows) → UTF-8 mojibake** — bytes `E2 99 A5` (♥) became `U+0E42 U+0099 U+0E05` (`โฅ`), and em-dash `—` (E2 80 94) became `U+0E42 U+20AC U+201D` (`โ€"`). Card graphics already render fine because they read clean ASCII `board.cards`. Per user instruction, fix at render time without editing data: (a) new `_pfBuildQuestionPrompt(scenario)` reconstructs the question sentence from clean `board.cards` + `question.type`; (b) new `_pfFixMojibake(text)` reverses the CP874 round-trip via TextDecoder so explanation text (rangeLogic / nutLogic / sizingLogic / commonMistake / short) renders clean too. Audit 262/0/0 (data unchanged). All 5 question-text test cases pass. Em-dash recovery verified. Console clean. Awaiting commit/push.
 
 | Metric | Value |
 |---|---|
@@ -72,7 +72,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-04: v4.0.9 Postflop Teaching Polish STAGED. M1/M3/M4/L1/M2 fixes addressing v4.0.8 QA gaps. Awaiting commit.
+- 2026-05-04: v4.0.10 Postflop Card Text Encoding Hotfix STAGED. CP874 mojibake reverser + clean prompt rebuilder. Awaiting commit.
+- 2026-05-04: v4.0.9 Postflop Teaching Polish COMMITTED (`c38aafc`) + pushed. M1/M3/M4/L1/M2 fixes addressing v4.0.8 QA gaps.
 - 2026-05-04: v4.0.8 Postflop Teaching Layer COMMITTED (`479b775`) + pushed.
 - 2026-05-04: v4.0.8 Extended QA pass — 26/26 regression checks passed; identified 4 medium + 2 low severity issues feeding v4.0.9.
 - 2026-05-04: v4.0.7 Module 1 expansion 20→251 scenarios COMMITTED (`1f5fe99`) + pushed. Audit 0/0. Template-correction + micro-fix incorporated.

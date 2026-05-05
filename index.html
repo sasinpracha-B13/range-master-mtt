@@ -32026,7 +32026,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.0.9',
+    appVersion: '4.0.10',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33259,11 +33259,13 @@ function _pfTeachingFeedbackBlocksHtml(scenario) {
   var takeaway = _pfTakeawayForBoard(board);
 
   var pick = _pfPickPrimaryLogic(qtype, explanation);
+  // v4.0.10: run all explanation text through _pfFixMojibake before escape so
+  // baseline-scenario CP874 mojibake is repaired at render time.
   var coreReason = '';
   if (pick.primary) {
-    coreReason = '<strong>' + _pfEscape(pick.primary.label) + ':</strong> ' + _pfEscape(pick.primary.text);
+    coreReason = '<strong>' + _pfEscape(pick.primary.label) + ':</strong> ' + _pfEscape(_pfFixMojibake(pick.primary.text));
   } else if (explanation.short) {
-    coreReason = _pfEscape(explanation.short);
+    coreReason = _pfEscape(_pfFixMojibake(explanation.short));
   } else {
     coreReason = '(See concept tags below for context.)';
   }
@@ -33273,7 +33275,7 @@ function _pfTeachingFeedbackBlocksHtml(scenario) {
     var secondaryHtml = '';
     for (var i = 0; i < pick.secondary.length; i++) {
       var s = pick.secondary[i];
-      secondaryHtml += '<div style="margin-bottom:8px;line-height:1.5;"><strong>' + _pfEscape(s.label) + ':</strong> ' + _pfEscape(s.text) + '</div>';
+      secondaryHtml += '<div style="margin-bottom:8px;line-height:1.5;"><strong>' + _pfEscape(s.label) + ':</strong> ' + _pfEscape(_pfFixMojibake(s.text)) + '</div>';
     }
     moreLogicHtml = '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;">' +
                       '<summary>More logic strands</summary>' +
@@ -33305,7 +33307,7 @@ function _pfTeachingFeedbackBlocksHtml(scenario) {
   if (explanation.commonMistake) {
     html += '<div class="pf-teach-fb-block pf-fb-mistake">' +
               '<span class="pf-fb-block-title">⚠️ Common Mistake</span>' +
-              '<div class="pf-fb-block-body">' + _pfEscape(explanation.commonMistake) + '</div>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(_pfFixMojibake(explanation.commonMistake)) + '</div>' +
             '</div>';
   }
   return html;
@@ -33384,6 +33386,124 @@ function _pfSuitClass(suit) {
 function _pfSuitChar(suit) {
   return ({ s:'♠', h:'♥', d:'♦', c:'♣' })[suit] || suit;
 }
+
+// ============================================================================
+// v4.0.10 — POSTFLOP CARD TEXT ENCODING HOTFIX
+// The v4.0.0 baseline scenarios in postflop_scenarios.json have corrupted
+// non-ASCII chars throughout question.prompt + explanation.* fields. The
+// original UTF-8 bytes were at some point read via the CP874 (Thai Windows)
+// code page then re-encoded as UTF-8, splitting each multi-byte char into
+// 2-3 separate Latin/Thai codepoints. Examples:
+//   ♥ (U+2665, UTF-8 E2 99 A5) → U+0E42 U+0099 U+0E05  (โฅ)
+//   — (U+2014, UTF-8 E2 80 94) → U+0E42 U+20AC U+201D  (โ€")
+// The card-graphic path uses _pfSuitChar() against board.cards (clean ASCII
+// like "Ah"), so visual cards render fine. Only the prompt sentence and
+// explanation text are broken on baseline (v4.0.0) scenarios. v4.0.7
+// generated scenarios are clean.
+// Rather than edit the data file, this patch:
+//   (a) Reconstructs the prompt at render time from clean board.cards +
+//       question.type (_pfBuildQuestionPrompt).
+//   (b) Reverses the CP874-mojibake on any text passed through _pfFixMojibake
+//       (used for explanation.short / rangeLogic / nutLogic / sizingLogic /
+//       commonMistake when rendering feedback).
+function _pfCardText(card) {
+  if (!card || card.length < 2) return '';
+  return card.charAt(0) + _pfSuitChar(card.charAt(1));
+}
+function _pfBoardText(cards) {
+  if (!cards || !cards.length) return '';
+  var parts = [];
+  for (var i = 0; i < cards.length; i++) parts.push(_pfCardText(cards[i]));
+  return parts.join(' ');
+}
+function _pfBuildQuestionPrompt(scenario) {
+  var board = scenario && scenario.board ? scenario.board : {};
+  var question = scenario && scenario.question ? scenario.question : {};
+  var qtype = question.type || '';
+  var boardText = _pfBoardText(board.cards || []);
+  switch (qtype) {
+    case 'range_advantage':
+      return 'On ' + boardText + ' (BTN open vs BB call, 100BB SRP), who has range advantage?';
+    case 'nut_advantage':
+      return 'On ' + boardText + ', who has nut advantage?';
+    case 'frequency_strategy':
+      return 'On ' + boardText + ', what is the optimal c-bet frequency family for BTN?';
+    case 'sizing_family':
+      return 'On ' + boardText + ', what sizing family does BTN use most?';
+    case 'dynamic_level':
+      return 'On ' + boardText + ', what is the dynamic level?';
+    case 'action_choice':
+      return 'On ' + boardText + ', what action should BTN take?';
+    default:
+      // Unknown qtype: try to repair the data prompt via the mojibake reverser.
+      return _pfFixMojibake(question.prompt) || ('On ' + boardText + ', make your read.');
+  }
+}
+
+// CP874 (Thai Windows) → byte reverse map for chars in the 0x80-0x9F + Thai range
+// Used by _pfFixMojibake to recover original UTF-8 bytes that were corrupted
+// when the data file went through a CP874 → UTF-8 round trip during authoring.
+var _pfCp874ToByte = {
+  0x20AC: 0x80, 0x2026: 0x85,
+  0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94,
+  0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97, 0x02DC: 0x98,
+  0x00A0: 0xA0
+};
+function _pfThaiCpToByte(cp) {
+  // Thai range U+0E01-U+0E3A maps to CP874 bytes 0xA1-0xDA
+  if (cp >= 0x0E01 && cp <= 0x0E3A) return cp - 0x0E01 + 0xA1;
+  // Thai range U+0E3F-U+0E5B maps to bytes 0xDF-0xFB
+  if (cp >= 0x0E3F && cp <= 0x0E5B) return cp - 0x0E3F + 0xDF;
+  return null;
+}
+function _pfMaybeMojibakeByte(cp) {
+  if (cp <= 0x7F) return null;             // ASCII — not mojibake
+  if (cp >= 0x80 && cp <= 0x9F) return cp; // CP874 unassigned passes through (e.g. U+0099)
+  if (_pfCp874ToByte[cp] != null) return _pfCp874ToByte[cp];
+  var thaiByte = _pfThaiCpToByte(cp);
+  if (thaiByte != null) return thaiByte;
+  return null;                             // Not recognized — leave alone (real Thai etc.)
+}
+function _pfFixMojibake(text) {
+  if (!text) return text;
+  // Walk char by char. Codepoints that are CP874-mojibake-ish accumulate as bytes;
+  // when we hit an ASCII char (or end) we decode the buffered bytes as UTF-8.
+  // Falls back to original chars if a chunk fails to decode (so non-mojibake
+  // non-ASCII text — actual Thai, accents, etc. — passes through unchanged).
+  var result = '';
+  var bytes = [];
+  var dec = (typeof TextDecoder !== 'undefined') ? new TextDecoder('utf-8', { fatal: true }) : null;
+  function flush() {
+    if (bytes.length === 0) return;
+    if (dec) {
+      try {
+        result += dec.decode(new Uint8Array(bytes));
+        bytes = [];
+        return;
+      } catch (e) {
+        // Fall through to fallback
+      }
+    }
+    // Fallback if TextDecoder unavailable or chunk failed: keep originals
+    for (var k = 0; k < bytes.length; k++) result += String.fromCharCode(bytes[k]);
+    bytes = [];
+  }
+  for (var i = 0; i < text.length; i++) {
+    var cp = text.charCodeAt(i);
+    var byte = _pfMaybeMojibakeByte(cp);
+    if (byte != null) {
+      bytes.push(byte);
+    } else {
+      flush();
+      result += text[i];
+    }
+  }
+  flush();
+  return result;
+}
+// ============================================================================
+// END v4.0.10 — POSTFLOP CARD TEXT ENCODING HOTFIX
+// ============================================================================
 
 // ----- Renderers -----
 // v4.0.3: card moves to TOP of Home (afterbegin) inside a "Beta Lab" section
@@ -33566,7 +33686,7 @@ function renderPostflopQuestion() {
     '</div>' +
     '<div class="postflop-question-card">' +
       '<div class="postflop-section-title">❓ Question</div>' +
-      '<div class="postflop-question-prompt">' + _pfEscape(question.prompt || '') + '</div>' +
+      '<div class="postflop-question-prompt">' + _pfEscape(_pfBuildQuestionPrompt(scenario)) + '</div>' +
     '</div>' +
     guideHtml +
     hintHtml +
@@ -33640,7 +33760,7 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
         '<span class="pf-result-label">' + _tierLabel(cls.tier) + ' · ' + cls.score.toFixed(2) + ' pts</span>' +
         '<span class="pf-result-meta">Your pick: ' + _pfEscape(pickedLabel) + '<br>GTO best: ' + _pfEscape(bestLabel) + '</span>' +
       '</div>' +
-      (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(explanation.short) + '</div>' : '') +
+      (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(_pfFixMojibake(explanation.short)) + '</div>' : '') +
       // Blocks B/C/D/E: pattern / reason / takeaway / mistake
       teachingBlocksHtml +
       // Concept tags

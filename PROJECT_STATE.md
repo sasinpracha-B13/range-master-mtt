@@ -9,10 +9,10 @@
 ## 1. Current Version
 
 - **Latest deployed to Netlify**: `v4.0.5-data` (live at `https://range-master-mtt.netlify.app/` — postflop GTO data honesty patch).
-- **Last committed + pushed**: `v4.0.8` — Postflop Teaching Layer (`479b775`).
-- **Pending push (STAGED)**: `v4.0.9` — Postflop Teaching Polish. Five targeted fixes from v4.0.8 QA report: (M1) Q/J/T-high disconnected hint branches; (M3) Q/J/T-high disconnected takeaway branches; (M4) `low_dry_two_tone` takeaway corrected (was suggesting "small high-frequency c-bet" while sizing answer is `mixed_small_check`); (L1) pattern label clearer for J/T-high disconnected dyn≥3 ("J-high semi-wet board") and Q/J/T two-tone dyn≥3 ("X two-tone medium board"); (M2 optional) smart Core Reason composition — `_pfPickPrimaryLogic` picks question-type-relevant strand, other strands collapsed in "More logic strands" details. Heavy multi-strand feedback dropped from ~200 words to ~80 words. No data changes, no answer-key changes, no scoring changes. Audit 262/0/0 (data unchanged). Programmatic render checks pass on all 9 verified test cases.
-- **Service worker `VERSION`**: `'v4.0.9'` (staged).
-- **App backup `appVersion`**: `'4.0.9'` (staged in `index.html`).
+- **Last committed + pushed**: `v4.0.9` — Postflop Teaching Polish (`c38aafc`).
+- **Pending push (STAGED)**: `v4.0.10` — Postflop Card Text Encoding Hotfix. Tester found broken suit characters in Postflop question text. Root cause: v4.0.0 baseline scenarios have **CP874 (Thai Windows) → UTF-8 mojibake** — bytes for `♥`, `♦`, `♠`, `♣` (and `—`) were corrupted to multi-codepoint Thai/Latin sequences during authoring round-trip. Per user instruction, fix at render time without editing data. New helpers in `index.html`: `_pfCardText(card)`, `_pfBoardText(cards)`, `_pfBuildQuestionPrompt(scenario)` (reconstructs sentence from clean `board.cards` + qtype), and `_pfFixMojibake(text)` (CP874 reverse decoder using TextDecoder). Render-path rewires in `renderPostflopQuestion` (1 site) and `_pfTeachingFeedbackBlocksHtml` + `renderPostflopAnswer` (5 sites for explanation text). Card graphics unchanged. Audit 262/0/0 (data unchanged). All 5 required test cases verified live (`6c 5c 4s` → `6♣ 5♣ 4♠`, etc.). Em-dash recovery verified (`โ€"` → `—`). Zero mojibake codepoints in rendered output.
+- **Service worker `VERSION`**: `'v4.0.10'` (staged).
+- **App backup `appVersion`**: `'4.0.10'` (staged in `index.html`).
 
 ---
 
@@ -77,7 +77,40 @@ The gate stays closed until human review approves the planning package.
 
 ## 5. Latest Completed Work
 
-### v4.0.9 Postflop Teaching Polish — STAGED
+### v4.0.10 Postflop Card Text Encoding Hotfix — STAGED
+
+Tester reported that Postflop question text shows broken suit symbols (`Aโฅ Kโฆ 5โฃ`) while card graphics render correctly (`A♥ K♦ 5♣`). Root-cause investigation found **CP874 (Thai Windows) → UTF-8 mojibake** in the v4.0.0 baseline scenarios: original UTF-8 bytes were at some point read as CP874 then re-encoded as UTF-8, splitting each multi-byte char into 2-3 separate Thai/Latin codepoints. Affects `question.prompt` and `explanation.*` (rangeLogic / nutLogic / sizingLogic / commonMistake / short) on ~31 baseline scenarios. The 220 v4.0.7-generated scenarios are clean. `board.cards` is clean ASCII on all scenarios — that's why card graphics work.
+
+**Fix at render time** (per instruction "do NOT change postflop data"):
+1. `_pfCardText(card)` and `_pfBoardText(cards)` build clean board text from clean ASCII `board.cards` using existing `_pfSuitChar`.
+2. `_pfBuildQuestionPrompt(scenario)` reconstructs the question sentence per `question.type` using `_pfBoardText`, ignoring the corrupted `question.prompt` field.
+3. `_pfFixMojibake(text)` walks input char by char, mapping CP874-mojibake codepoints back to their original bytes (via reverse maps `_pfCp874ToByte` and `_pfThaiCpToByte`), then decoding accumulated bytes as UTF-8 via `TextDecoder('utf-8', {fatal:true})`. Falls back to original chars if a chunk fails to decode (so real Thai/accented text passes through unchanged).
+4. `renderPostflopQuestion` now uses `_pfBuildQuestionPrompt(scenario)` instead of `scenario.question.prompt`.
+5. `_pfTeachingFeedbackBlocksHtml` and `renderPostflopAnswer` wrap explanation text with `_pfFixMojibake` before `_pfEscape` (5 sites total).
+
+**Live verification** (corrupted baseline `AhKd5c_rangeadv_001`):
+- Raw data prompt: `On Aโฅ Kโฆ 5โฃ ...` (codepoints U+0E42 U+0099 U+0E05 etc.)
+- Rendered prompt: `On A♥ K♦ 5♣ ...` (codepoints U+2665 U+2666 U+2663 — clean)
+- Raw rangeLogic snippet: `KJo+ โ€" many cards`
+- Rendered rangeLogic: `KJo+ — many cards` (em-dash U+2014)
+- Card graphics still render correctly (verified `boardCardSuits = [♥, ♦, ♣]`)
+- All 5 feedback blocks render
+- Zero mojibake codepoints in any rendered text
+- Console: 0 errors
+
+**Audit**: 262/0/0 (data file unchanged).
+
+**Files modified**:
+- `index.html` (~80 lines new helpers + 6 render-site rewires + appVersion 4.0.9 → 4.0.10)
+- `service-worker.js` (VERSION v4.0.9 → v4.0.10)
+- `PROJECT_STATE.md`, `TASK_BOARD.md` (status update)
+- `docs/specs/brief-v4.0.10-postflop-card-text-encoding-hotfix.md` (NEW)
+
+**Untouched**: all postflop data files, audit infrastructure, generator scripts, ranges, manifest, preflop systems, scoring, cosmetics.
+
+A future v4.1 cleanup pass could optionally rewrite the data file with clean UTF-8, making the render-time fix a no-op. For now the helper protects against the corruption permanently — even if the file is ever round-tripped through CP874 again.
+
+### v4.0.9 Postflop Teaching Polish — COMMITTED + PUSHED (`c38aafc`)
 
 Targeted polish of the v4.0.8 teaching layer based on the v4.0.8 Extended QA report (`docs/specs/postflop-v4.0.8-teaching-layer-qa-report.md`).
 
