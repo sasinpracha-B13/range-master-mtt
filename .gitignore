@@ -21,3 +21,6 @@ audit/checksum.txt
 # Design lock prototypes (local-only; never deployed)
 design-previews/
 .commit-msg.tmp
+
+# GPT review artifacts (v4.2.2D+)
+GPT AUDIT/

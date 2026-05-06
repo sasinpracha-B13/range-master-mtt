@@ -423,20 +423,32 @@ foreach($s in $data.scenarios){
     }
   }
 
-  # R29 (v4.2.2D) — Card/suit notation guard. Warning-only.
-  # Detects suspicious em-dash patterns inside text fields that suggest the
-  # CP874 mojibake cleanup (v4.2.2C) over-normalized suit symbols into em-dashes.
-  # Patterns flagged:
-  #   "[Rank] - -[xX]"   (was "[Rank][suit]-x" with suit destroyed)
-  #   "[Rank] - [Rank] -" (was "[Rank][suit][Rank][suit]")
+  # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
+  # Detects suspicious em-dash and collapsed-board patterns inside text fields
+  # that suggest a CP874 mojibake cleanup over-normalized suit symbols.
+  #
+  # Patterns flagged (v4.2.2D originals):
+  #   "[Rank] - -[xX]"             (was "[Rank][suit]-x" with suit destroyed)
+  #   "[Rank] - [Rank] -"          (was "[Rank][suit][Rank][suit]")
   #   "BTN with [Rank] - [Rank] -" (was "BTN with [hero hand]")
-  # Em-dashes used as legitimate sentence punctuation are NOT flagged.
+  #
+  # New v4.2.2E patterns:
+  #   "on [R][R]s [R]"             (board collapsed: "Kh Td 2s" -> "KTs 2")
+  #   "[Rank] em-dash X"           (flush combo "A - X" residue, was "A-X")
+  #   "[Rank] em-dash /"           (rank-x list "5 - /7 -" residue, was "5x / 7x")
+  #
+  # Em-dashes used as legitimate sentence punctuation (between lowercase
+  # letters/words/numbers) are NOT flagged.
   $emDashChar = [char]0x2014
   $rankClass = '[AKQJT2-9]'
   $suspiciousPatterns = @(
-    @{ name = 'rank_dash_dash_x';    pattern = "$rankClass\s+$emDashChar\s+-[xX]" },
-    @{ name = 'rank_dash_rank_dash'; pattern = "$rankClass\s+$emDashChar\s+$rankClass\s+$emDashChar" },
-    @{ name = 'btn_with_dash_pair';  pattern = "BTN with $rankClass\s+$emDashChar\s+$rankClass" }
+    @{ name = 'rank_dash_dash_x';     pattern = "$rankClass\s+$emDashChar\s+-[xX]" },
+    @{ name = 'rank_dash_rank_dash';  pattern = "$rankClass\s+$emDashChar\s+$rankClass\s+$emDashChar" },
+    @{ name = 'btn_with_dash_pair';   pattern = "BTN with $rankClass\s+$emDashChar\s+$rankClass" },
+    # v4.2.2E additions:
+    @{ name = 'board_collapse';       pattern = "\bon [AKQJT][AKQJT2-9]s [2-9AKQJT]\b" },
+    @{ name = 'rank_dash_X';          pattern = "[AKQJT]\s+$emDashChar\s+X(?!s)\b" },
+    @{ name = 'rank_dash_slash';      pattern = "[2-9AKQJT]\s+$emDashChar\s+/" }
   )
   $textFieldsToCheck = @()
   if ($s.question -and $s.question.prompt) { $textFieldsToCheck += @{ field='question.prompt'; text=$s.question.prompt } }

@@ -195,7 +195,7 @@
                           "explanation":  {
                                               "short":  "BTN. KK and AK dominate the top of range; BB 3-bets these often so they\u0027re sparse in BB\u0027s flatting range.",
                                               "rangeLogic":  "BTN open contains KK, KJo, KJs, KTs, KTo (some), KQ, AK at high frequency. BB calls vs BTN typically with 22-JJ and suited Broadways, but BB 3-bets KK, AK, KQs, KQo at high frequency.",
-                                              "nutLogic":  "Top of range hands on KTs 2-are sets (KK, TT, 22), top two (KT), top pair top kicker (AK, KQ). BTN dominates KK and AK. TT is in both ranges but BB\u0027s KT combos are rare (KTo / KTs typically 3-bet or fold). 22 is in BB more often. Net nut advantage clearly BTN.",
+                                              "nutLogic":  "Top of range hands on Kh Td 2s are sets (KK, TT, 22), top two (KT), top pair top kicker (AK, KQ). BTN dominates KK and AK. TT is in both ranges but BB\u0027s KT combos are rare (KTo / KTs typically 3-bet or fold). 22 is in BB more often. Net nut advantage clearly BTN.",
                                               "handLogic":  null,
                                               "sizingLogic":  null,
                                               "commonMistake":  "Some assume \u0027TT and 22 are easier for BB to have\u0027 and answer \u0027caller\u0027 — but the dominant top-of-range hands (KK, AK) are heavily in BTN\u0027s range and outweigh the small-pair edge."
@@ -923,7 +923,7 @@
                           "explanation":  {
                                               "short":  "Small (33%) high frequency. Two-tone adds some draw equity but BTN still dominates with range adv + nut adv.",
                                               "rangeLogic":  "Same dynamics as A-K-5 rainbow, with the addition that some BB combos pick up flush draws (e.g., QdJd, QdTd). This slightly equalizes equity but doesn\u0027t flip range advantage. BTN still bets ~75% of range.",
-                                              "nutLogic":  "BTN has nut flush draw combos (AdXd in opening range — though many AdKd-type combos are now blockers to BB\u0027s flushes). Nut advantage stays with BTN.",
+                                              "nutLogic":  "BTN has nut flush draw combos (AdXd in opening range — though many AdKd type combos are now blockers to BB\u0027s flushes). Nut advantage stays with BTN.",
                                               "handLogic":  null,
                                               "sizingLogic":  "Small (33%) is best because (1) BTN has range advantage so betting most of range is +EV, (2) the small size keeps the pot manageable on a board where flush draws can complicate big-pot decisions, (3) it extracts thin value from BB\u0027s many marginal calls.",
                                               "commonMistake":  "Going polar big on this board to \u0027charge the flush draw\u0027 loses EV — small high-freq value bets accomplish denial AND value extraction simultaneously, while big bets fold out the marginal calls that small bets get."
@@ -1131,7 +1131,7 @@
                           "explanation":  {
                                               "short":  "BTN — slight nut edge from holding more A-x and K-x suited Broadways.",
                                               "rangeLogic":  "Range advantage on monotone boards is roughly neutral here — BB\u0027s range has many low/mid hearts (87s, 76s, 97s ) but BTN\u0027s wider range still picks up many flush combos.",
-                                              "nutLogic":  "The nut flush is A-X — BTN\u0027s range (A2s-AKs all suited) contains all suited Aces, and many of those are with hearts. BB\u0027s flatting range has fewer A-X combos because BB 3-bets ATs+, AJs+ at high frequency. BTN holds the nut flush (A — X — ) more often. Second-nut flush (K — X — ) similarly favors BTN. Net nut advantage = BTN, but moderate not crushing.",
+                                              "nutLogic":  "The nut flush is A-X — BTN\u0027s range (A2s-AKs all suited) contains all suited Aces, and many of those are with hearts. BB\u0027s flatting range has fewer A-X combos because BB 3-bets ATs+, AJs+ at high frequency. BTN holds the nut flush (A-X) more often. Second-nut flush (K-X) similarly favors BTN. Net nut advantage = BTN, but moderate not crushing.",
                                               "handLogic":  null,
                                               "sizingLogic":  null,
                                               "commonMistake":  "\u0027Monotone always means caller advantage\u0027 is wrong. On low monotone (5h4h2h), caller has more — but on T-high or higher monotone, the player with more high-suited hands (usually the raiser) holds nut advantage."
@@ -1233,9 +1233,9 @@
                                           "critical":  0
                                       },
                           "explanation":  {
-                                              "short":  "Caller (BB) crushes this board. BB has more low pairs, more 5 — /7 — /8-holdings, and more flush combos.",
+                                              "short":  "Caller (BB) crushes this board. BB has more low pairs, more 5x / 7x / 8x holdings, and more flush combos.",
                                               "rangeLogic":  "BB\u0027s calling range contains many small suited connectors and one-gappers (87s, 76s, 65s, 54s, 86s, 75s) — many of which include the spade for a flush. BB also has 22-77 for sets. BTN\u0027s range is wider but heavily favors broadway and high cards that don\u0027t connect with this board.",
-                                              "nutLogic":  "Made flushes — BB\u0027s range contains low-spade flush combos (e.g., 96s , J4s if in flatting range). Straight combos (96, 64, 69s etc.) more frequent in BB. Nut flush A — X is roughly even since BB\u0027s A — X — frequency is meaningful (A2s-A9s in BB, A-x). On low monotone, the calling range really does eclipse the raiser.",
+                                              "nutLogic":  "Made flushes — BB\u0027s range contains low-spade flush combos (e.g., 96s , J4s if in flatting range). Straight combos (96, 64, 69s etc.) more frequent in BB. Nut flush A-X is roughly even since BB\u0027s A-X frequency is meaningful (A2s-A9s in BB, A-x). On low monotone, the calling range really does eclipse the raiser.",
                                               "handLogic":  null,
                                               "sizingLogic":  null,
                                               "commonMistake":  "BTN players who \u0027always c-bet small\u0027 on monotone get punished here. Solver: BTN c-bets ~15 — 25% of range max, often as a small block bet with overpairs."
@@ -2129,7 +2129,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with AsKc on AKs 5. Action?",
+                                           "prompt":  "BTN with AsKc on Ah Kd 5c. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2245,7 +2245,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with QsQd on AKs 5. Action?",
+                                           "prompt":  "BTN with QsQd on Ah Kd 5c. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2361,7 +2361,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with 7h6h on AKs 5. Action?",
+                                           "prompt":  "BTN with 7h6h on Ah Kd 5c. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2476,7 +2476,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with Td9d on AKs 5. Action?",
+                                           "prompt":  "BTN with Td9d on Ah Kd 5c. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2591,7 +2591,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with QcJc on KTs 2. Action?",
+                                           "prompt":  "BTN with QcJc on Kh Td 2s. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2708,7 +2708,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with AhAs on 87s 6. Action?",
+                                           "prompt":  "BTN with AhAs on 8h 7c 6s. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2825,7 +2825,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with QcQs on JTs 9 — (also a gutshot to K). Action?",
+                                           "prompt":  "BTN with QcQs on Jh Ts 9c — (also a gutshot to K). Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -2943,7 +2943,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with KhQh on AJs 3 — (FD + gutshot + overcard). Action?",
+                                           "prompt":  "BTN with KhQh on Ah Jh 3s — (FD + gutshot + overcard). Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -3062,7 +3062,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with KhKs on 65s 4. Action?",
+                                           "prompt":  "BTN with KhKs on 6c 5c 4s. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -3178,7 +3178,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with TcTh (set of T) on KTs 2. Action?",
+                                           "prompt":  "BTN with TcTh (set of T) on Kh Td 2s. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
@@ -3293,7 +3293,7 @@
                                             ],
                           "question":  {
                                            "type":  "action_choice",
-                                           "prompt":  "BTN with 5h5s (bottom set) on AKs 5. Action?",
+                                           "prompt":  "BTN with 5h5s (bottom set) on Ah Kd 5c. Action?",
                                            "choices":  [
                                                            {
                                                                "id":  "bet_small",
