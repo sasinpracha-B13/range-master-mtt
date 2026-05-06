@@ -1,0 +1,2080 @@
+{
+    "schemaVersion":  "1.1.0",
+    "moduleId":  "pf_flop_cbet_oop_def",
+    "moduleName":  "Facing C-bet OOP",
+    "version":  "v4.2.3B",
+    "status":  "planning_only",
+    "generatedAt":  "2026-05-06",
+    "notes":  "Polish expansion seeds for v4.2.3B. 23 new M3 scenarios across 5 new board families (Kh Qh 4s, Kh Jh 4h, Qd 7d 2c, Ac Ad 7s, Ts 9s 5d) + 1 added to existing 8c 8d 3s. Authored to fill thin coverage buckets from v4.2.3A baseline (blocker_raise 1-\u003e4, domination_fold 2-\u003e5, nut_flush_draw 1-\u003e3, slowplay_call 3-\u003e5, protection_raise 3-\u003e5+). Each scenario carries a uniquenessNote explaining the new strategic dimension it adds.",
+    "expansionStats":  {
+                           "newScenarios":  23,
+                           "newBoards":  5,
+                           "extendedBoards":  1,
+                           "productionBefore":  62,
+                           "productionAfter":  85
+                       },
+    "scenarios":  [
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhQh4s_m3_action_KcJc_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Qh",
+                                                      "4s"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Kc",
+                                           "Jc"
+                                       ],
+                          "handClass":  "top_pair_good_kicker",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "high",
+                          "blockerNote":  "J blocks BTN QJ straight-draw combos.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "protection_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Kc Jc on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPGK on dynamic K-Q-4 two-tone -- raise for protection from FDs and straight draws.",
+                                              "rangeContext":  "BTN c-bets K-Q-4 two-tone wide with overpairs, weaker K-x, JT/T9 straight draws, and FD bluffs.",
+                                              "defenseLogic":  "Top pair good kicker is ahead now but vulnerable on hearts, J/T straight cards, and overcards; raising charges everything.",
+                                              "handLogic":  "KcJc has top pair K + J kicker + backdoor club + gutshot to A (T-J-Q-K-A).",
+                                              "sizingLogic":  "Small raise charges FDs/straight-draws and gets called by KT/KQ kicker hands and FDs; big raise also defensible.",
+                                              "commonMistake":  "Auto-calling TPGK on a wet two-tone broadway lets straight + flush draws complete cheaply.",
+                                              "takeaway":  "TPGK on wet two-tone broadway = raise for protection (call only on disconnected K-high two-tone)."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_value",
+                                              "protection_raise",
+                                              "value_raise"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "PROTECTION_RAISE on dynamic two-tone BROADWAY (vs Ks 8s 3d KcJh on disconnected two-tone). Broadway connectivity adds straight-draw protection layer absent on disconnected K-high."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhQh4s_m3_action_Ah9h_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Qh",
+                                                      "4s"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "9h"
+                                       ],
+                          "handClass":  "nut_flush_draw",
+                          "heroHandRole":  "semi_bluff_combo",
+                          "drawCategory":  "nut_flush_draw",
+                          "showdownValue":  "low",
+                          "blockerNote":  "Ah is the nut-flush card; blocks all of BTN nut-flush combos.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "semi_bluff_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ah 9h on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Nut FD + Ace overcard + Ah blocker on K-high two-tone -- premium semi-bluff raise.",
+                                              "rangeContext":  "BTN c-bets K-Q-4 two-tone wide with K-x value, FD bluffs, and air; semi-bluff applies fold equity + equity.",
+                                              "defenseLogic":  "9 nut-FD outs + 3 overcard outs + Ah blocker reducing villain value combos = ~40% effective equity.",
+                                              "handLogic":  "Ah9h has nut FD (4 hearts visible) + A overcard + Ah blocks BTN AhX nut-flush combos.",
+                                              "sizingLogic":  "Small raise applies pressure now; the nut blocker reduces villain calls with 2nd-nut FD combos.",
+                                              "commonMistake":  "Just calling nut FD + overcard + blocker OOP wastes premium fold equity vs a wide c-bet range.",
+                                              "takeaway":  "Nut FD + overcard + blocker on two-tone = semi-bluff raise (the equity is real, not just blocker)."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_bluff",
+                                              "semi_bluff_raise",
+                                              "equity_realization_oop"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "NUT_FLUSH_DRAW #2 (after Ks 8s 3d AsQs). Distinct: K-high two-tone broadway adds straight-draw considerations (gutshot to T) that the disconnected K-high lacks. Different equity composition."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhQh4s_m3_reason_Ah7c_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Qh",
+                                                      "4s"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "7c"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Ah is the nut-flush card; blocks every AhX nut-flush combo in BTNs c-bet range. No real FD (only backdoor heart needing both turn + river hearts).",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "blocker_raise",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Hero check-raises small with Ah 7c on Kh Qh 4s vs ~33% c-bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "value_raise",
+                                                           "protection_raise",
+                                                           "semi_bluff_raise",
+                                                           "blocker_raise",
+                                                           "bluff_catch",
+                                                           "equity_realization_call",
+                                                           "slowplay_call",
+                                                           "range_disadvantage_fold",
+                                                           "domination_fold"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "blocker_raise",
+                                         "acceptable":  [
+                                                            "equity_realization_call"
+                                                        ],
+                                         "bad":  [
+                                                     "value_raise",
+                                                     "protection_raise",
+                                                     "semi_bluff_raise",
+                                                     "bluff_catch",
+                                                     "range_disadvantage_fold",
+                                                     "domination_fold"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "A-high check-raise on K-high two-tone -- primary reason is the Ah nut-flush blocker.",
+                                              "rangeContext":  "BTN c-bet range is heavy on K-x value, hearts FD bluffs, and air; the Ah blocks nut-flush combos and reduces villain pressure.",
+                                              "defenseLogic":  "The check-raise EV comes from BLOCKING value, not from outs. Ah7c has no pair, no real FD (backdoor only), and only 6 overcard outs.",
+                                              "handLogic":  "Hero has Ah (nut-flush blocker) + 7c offsuit kicker. With 3 hearts visible, 2 more hearts needed for flush = backdoor only, not a real FD.",
+                                              "sizingLogic":  "Small raise leverages the blocker; do not size big since fold equity drops vs polar value.",
+                                              "commonMistake":  "Identifying this as semi_bluff_raise mis-attributes the EV -- the equity is from the blocker, not the draw.",
+                                              "takeaway":  "OOP raise with the nut-flush blocker but no real FD = blocker_raise (not semi_bluff)."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_bluff",
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  5,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "BLOCKER_RAISE #2 (after AsKh on 7s 5s 3s monotone). Distinct: this is on a TWO-TONE board where backdoor flush is much weaker than monotone, so the blocker effect must carry the entire EV without flush-equity backup. Tests purer blocker-vs-semi-bluff distinction."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhQh4s_m3_action_QdTd_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Qh",
+                                                      "4s"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Qd",
+                                           "Td"
+                                       ],
+                          "handClass":  "mid_pair",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Qd pairs the Q on board for middle pair; Td gives gutshot to A (T-J-Q-K-A) plus backdoor diamond.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Qd Td on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "check_raise_small",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Middle pair (Q) + gutshot to A + backdoor diamond on K-Q-4 two-tone -- call to realize equity.",
+                                              "rangeContext":  "BTN c-bets K-Q-4 two-tone wide; Q-pair + gutshot + backdoor diamond is well above defense threshold.",
+                                              "defenseLogic":  "Pair of Q + 4-out gutshot + backdoor diamond + 6 outs to two-pair = strong combo equity to defend.",
+                                              "handLogic":  "QdTd has middle pair (Q matched on board) + gutshot to A for K-Q-J-T-A + backdoor diamond runner-runner.",
+                                              "sizingLogic":  "Calling realizes equity at minimum cost; raising bloats vs K-x value and folds out air bluffs.",
+                                              "commonMistake":  "Folding Q-pair with gutshot + backdoor on a wide c-bet board over-folds vs villain bluff range.",
+                                              "takeaway":  "Middle pair Q-kicker + gutshot + backdoor on dynamic two-tone broadway = call."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "equity_realization_oop",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "Middle pair Q-kicker call on K-high TWO-TONE BROADWAY (vs existing Q-pair scenarios on disconnected boards). Adds the gutshot-to-A dimension which exists only on broadway boards."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhQh4s_m3_action_Qc9c_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Qh",
+                                                      "4s"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Qc",
+                                           "9c"
+                                       ],
+                          "handClass":  "top_pair_weak_kicker",
+                          "heroHandRole":  "dominated_marginal",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Q-pair is dominated by KQ, AQ, QJ, QT in BTNs range; 9 kicker is weakest possible.",
+                          "recommendedAction":  "fold",
+                          "actionReason":  "domination_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Qc 9c on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top pair Q with 9 kicker on K-Q-4 two-tone -- fold; dominated by villains entire Q-pair value range.",
+                                              "rangeContext":  "BTN c-bet range is K-x heavy plus QQ/AQ/KQ/QJ/QT; hero Q-9 loses to all of these and to overpairs.",
+                                              "defenseLogic":  "Pair of Q with 9 kicker is dominated; reverse implied odds on a multi-street pot make this an early fold.",
+                                              "handLogic":  "Qc9c has top pair Q (paired with board Q) + 9 kicker + backdoor club. Pair outs (5 outs) are dominated.",
+                                              "sizingLogic":  "Folding closes action cleanly; calling forces tough turn decisions vs dominated kicker.",
+                                              "commonMistake":  "Calling Q-pair-bad-kicker on K-Q boards -because top pair- bleeds chips vs dominated range.",
+                                              "takeaway":  "Top pair weak kicker on broadway boards facing range pressure = fold (acceptable to call vs over-bluffy villains)."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "DOMINATION_FOLD #3 - top pair WITH bad kicker (vs existing AhQs/QdJh which were no-pair domination). Tests recognition that a pair can still be dominated and folded; harder lesson than fold-with-no-pair."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhJh4h_m3_reason_AhTd_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Jh",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "Td"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Ah is the nut-flush card on monotone hearts. Hero has 1-card backdoor heart only (no real FD).",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "blocker_raise",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Hero check-raises small with Ah Td on Kh Jh 4h vs ~33% c-bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "value_raise",
+                                                           "protection_raise",
+                                                           "semi_bluff_raise",
+                                                           "blocker_raise",
+                                                           "bluff_catch",
+                                                           "equity_realization_call",
+                                                           "slowplay_call",
+                                                           "range_disadvantage_fold",
+                                                           "domination_fold"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "blocker_raise",
+                                         "acceptable":  [
+                                                            "equity_realization_call"
+                                                        ],
+                                         "bad":  [
+                                                     "value_raise",
+                                                     "protection_raise",
+                                                     "semi_bluff_raise",
+                                                     "bluff_catch",
+                                                     "range_disadvantage_fold",
+                                                     "domination_fold"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "A-high check-raise on K-high monotone -- primary reason is Ah nut-flush blocker.",
+                                              "rangeContext":  "BTN c-bet range on monotone is polarized (made flushes + air); Ah blocks every flush combo BTN could have.",
+                                              "defenseLogic":  "The raise EV comes from removing villain flush value, not from outs. Hero has 0 made hand and only backdoor heart.",
+                                              "handLogic":  "AhTd has no pair, no draw on Kh Jh 4h (Td is offsuit and gives no straight). Ah is the nut-flush blocker.",
+                                              "sizingLogic":  "Small raise leverages the blocker; sizing big over-faces villains nut-flush range that does not fold.",
+                                              "commonMistake":  "Identifying as semi_bluff_raise misses that there is no real FD here -- pure blocker pressure.",
+                                              "takeaway":  "A-high with the nut-flush card on monotone but no flush draw of own = blocker_raise."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_bluff",
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  5,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "BLOCKER_RAISE #3 - clean blocker case on K-high monotone (vs B.3 on K-high two-tone, vs existing AsKh on 7s5s3s low monotone). Distinct: K-high monotone has even more value-heavy BTN range than low monotone (because BTN raises high-suited Broadway combos preflop), making blocker pressure even more important."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhJh4h_m3_action_QhJc_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Jh",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Qh",
+                                           "Jc"
+                                       ],
+                          "handClass":  "mid_pair",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "flush_draw",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Jc pairs Jh on board for middle pair (J); Qh gives Q-high flush draw and blocks BTN second-nut flushes.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "protection_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Qh Jc on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call",
+                                                            "check_raise_big"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Middle pair J + Q-high FD + Qh blocker on K-high monotone -- raise for protection + value.",
+                                              "rangeContext":  "BTN c-bets K-J-4 monotone with made flushes, K-x with hearts, J-x with hearts, plus air; Q-FD plus pair has strong value.",
+                                              "defenseLogic":  "Pair of J + 9 outs to Q-flush + Qh blocker on second-nut flush = strong combo equity above villain calling threshold.",
+                                              "handLogic":  "QhJc has middle pair J + 4-card Q-flush draw + Qh blocking BTN AhQh/KhQh/QhTh second-nut combos.",
+                                              "sizingLogic":  "Small raise charges weaker FDs and gets called by K-x and Q-x combos; big raise also defensible.",
+                                              "commonMistake":  "Just calling middle pair + Q-FD + blocker on monotone misses value vs weaker draws and pairs.",
+                                              "takeaway":  "Pair + Q-flush draw + blocker on K-high monotone = raise for value AND protection."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_value",
+                                              "protection_raise",
+                                              "value_raise"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "PROTECTION_RAISE #4 with combined pair + FD + blocker on monotone. Distinct: existing protection_raise scenarios are on rainbow (5c5d on 875, 9c9s on 986) or two-tone (KcJh on Ks8s3d); this is the first PROTECTION_RAISE on a MONOTONE board, where protection is for villain calling FDs vs raising worse pairs."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhJh4h_m3_action_Th9d_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Jh",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Th",
+                                           "9d"
+                                       ],
+                          "handClass":  "flush_draw",
+                          "heroHandRole":  "pure_draw",
+                          "drawCategory":  "flush_draw",
+                          "showdownValue":  "low",
+                          "blockerNote":  "Th is one-card FD on monotone (4 hearts visible). No relevant blocker on flush combos above T-high.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Th 9d on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "check_raise_small",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Naked T-high flush draw on K-high monotone -- call to realize cheap FD equity.",
+                                              "rangeContext":  "BTN c-bets monotone polarized (made flushes + air); Th gives 9 outs to a flush but ranks behind A/K/Q-high flushes.",
+                                              "defenseLogic":  "Pure FD with no pair and no blocker; calling realizes 9 FD outs at minimum cost.",
+                                              "handLogic":  "Th9d has 1-card flush draw to T-high flush + 9 doesnt pair the board.",
+                                              "sizingLogic":  "Calling captures FD equity cheaply; raising as semi-bluff bloats vs nut-flush combos that wont fold.",
+                                              "commonMistake":  "Folding mid-FD on monotone over-folds vs the air portion of villains range that pays off.",
+                                              "takeaway":  "Mid-strength flush draw on monotone without overcards or blocker = call (raise rare)."
+                                          },
+                          "conceptTags":  [
+                                              "equity_realization_oop",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "Mid-strength flush draw on monotone (vs existing 9h8c on Jh8h4h which had pair too). Tests pure-draw defense without a pair component or blocker -- different equity calculation."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhJh4h_m3_action_5h4c_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Jh",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "5h",
+                                           "4c"
+                                       ],
+                          "handClass":  "bottom_pair",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "flush_draw",
+                          "showdownValue":  "decent",
+                          "blockerNote":  null,
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with 5h 4c on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "check_raise_small",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Bottom pair (4) + low one-card flush draw on K-high monotone -- call to defend.",
+                                              "rangeContext":  "BTN c-bet range on monotone has flushes + air; bottom pair plus low FD beats the entire air bucket.",
+                                              "defenseLogic":  "5 pair outs + 9 FD outs = strong combined equity even though both made-hand and FD are low-ranked.",
+                                              "handLogic":  "5h4c has bottom pair (4 paired) + 5h adds 1-card flush draw (4 hearts visible).",
+                                              "sizingLogic":  "Calling realizes both pair and FD equity cheaply; raising offers no fold equity vs flushes.",
+                                              "commonMistake":  "Folding any pair + FD on monotone over-folds vs the wide stab range.",
+                                              "takeaway":  "Bottom pair + low FD on monotone = call (the equity comes from combined sources)."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "equity_realization_oop",
+                                              "pot_odds_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "Bottom pair + low FD COMBINATION on monotone -- distinct from C.3 (pure FD) and C.2 (mid pair + Q-FD). Tests pair + FD defense at the WEAKEST end of the made-hand spectrum."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_KhJh4h_m3_action_Ad8c_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Kh",
+                                                      "Jh",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTexture":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected",
+                                                            "broadway_heavy",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high"
+                                    },
+                          "heroHand":  [
+                                           "Ad",
+                                           "8c"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Ad does NOT block heart flushes; offsuit Ace has no relevant blocker effect on monotone.",
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ad 8c on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Ace-high no-heart no-blocker on K-high monotone -- fold; no equity, no relevant blocker.",
+                                              "rangeContext":  "BTN c-bets monotone polarized; without a heart hero has zero flush equity AND Ad does not block hearts.",
+                                              "defenseLogic":  "Zero flush outs + 6 overcard outs (often dominated by K-pair) = below threshold.",
+                                              "handLogic":  "Ad8c has no heart on Kh Jh 4h, so no FD; Ad is a diamond and does NOT block heart flushes.",
+                                              "sizingLogic":  "Folding closes action; calling burns chips against polarized range without relevant equity.",
+                                              "commonMistake":  "Confusing Ace-high blocker rules: only Ace OF THE FLUSH SUIT blocks (Ah on hearts board).",
+                                              "takeaway":  "Naked A-high without the heart on monotone hearts = fold (Ad is not a blocker)."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "NO-HEART A-high FOLD on monotone hearts -- tests the critical distinction that only the SUITED ace (Ah) blocks the nut flush. This is THE crucial monotone defense lesson and is missing from existing M3 (where 6c5d on Jh8h4h was just naked low cards)."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Qd7d2c_m3_reason_AdTc_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Qd",
+                                                      "7d",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high"
+                                    },
+                          "heroHand":  [
+                                           "Ad",
+                                           "Tc"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Ad is the nut-FD card on diamonds; blocks BTN AdX nut-flush-draw combos. Hero has no real FD (only backdoor diamond needing 2 more diamonds).",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "blocker_raise",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Hero check-raises small with Ad Tc on Qd 7d 2c vs ~33% c-bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "value_raise",
+                                                           "protection_raise",
+                                                           "semi_bluff_raise",
+                                                           "blocker_raise",
+                                                           "bluff_catch",
+                                                           "equity_realization_call",
+                                                           "slowplay_call",
+                                                           "range_disadvantage_fold",
+                                                           "domination_fold"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "blocker_raise",
+                                         "acceptable":  [
+                                                            "equity_realization_call",
+                                                            "range_disadvantage_fold"
+                                                        ],
+                                         "bad":  [
+                                                     "value_raise",
+                                                     "protection_raise",
+                                                     "semi_bluff_raise",
+                                                     "bluff_catch",
+                                                     "domination_fold"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "A-high check-raise on Q-high two-tone -- primary reason is the Ad nut-FD blocker.",
+                                              "rangeContext":  "BTN c-bets Q-high two-tone wide with Q-x value, FD bluffs, and air; Ad blocks the entire nut-FD bucket.",
+                                              "defenseLogic":  "No pair, no real FD. The raise EV comes from removing villain nut-FD value, not from outs.",
+                                              "handLogic":  "AdTc has no pair, only backdoor diamond (3 visible diamonds, need 2 more = backdoor only). Ad is the nut-FD blocker.",
+                                              "sizingLogic":  "Small raise leverages the blocker; sizing big folds out only air without gaining vs Qx value.",
+                                              "commonMistake":  "Calling without the made-hand component is also fine; raising is the alternate solver-mix line.",
+                                              "takeaway":  "A-high nut-FD blocker on dry two-tone = blocker_raise (mixed line; call also defensible)."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_bluff",
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "BLOCKER_RAISE #4 on a DRY two-tone (vs B.3 on dynamic two-tone broadway, vs C.1 on monotone). Tests blocker pressure on the texture where BTN range is widest and most-c-bets-with-air -- different fold-equity calculation than wet textures."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Qd7d2c_m3_action_AhQh_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Qd",
+                                                      "7d",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "Qh"
+                                       ],
+                          "handClass":  "top_pair_top_kicker",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "high",
+                          "blockerNote":  "A blocks AA overpair; Q is top pair with top kicker.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ah Qh on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "AQ on Q-high two-tone -- top pair top kicker, raise for value.",
+                                              "rangeContext":  "BTN c-bets Q-high two-tone with QQ/AQ/KQ/QJ value, FD bluffs, and air; AQ value-raises QJ/QT/KQ-with-FD calls.",
+                                              "defenseLogic":  "TPTK is far ahead of villains marginal Qx and air; raising builds the pot before bad turns.",
+                                              "handLogic":  "AhQh has top pair Q + Ace kicker + backdoor heart. Only AA, KK, QQ sets, and 22/77 sets beat hero.",
+                                              "sizingLogic":  "Small raise gets called by KQ/QJ/Qx with FD; big raise folds out worse Q-x.",
+                                              "commonMistake":  "Slowplaying TPTK on dry two-tone Q-high misses thin value from QJ/QT/Qx-FD that pay off small raise.",
+                                              "takeaway":  "TPTK on dry Q-high two-tone = small raise for value (do not slowplay)."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_value",
+                                              "value_raise",
+                                              "protection_raise"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "TPTK value raise on Q-high two-tone (vs existing top-set/two-pair scenarios). Tests TPTK-specific reasoning: how it differs from sets (smaller raise to keep worse Qx in) and from QJ/QT (which are hero-side value calls)."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Qd7d2c_m3_action_Qh9h_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Qd",
+                                                      "7d",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high"
+                                    },
+                          "heroHand":  [
+                                           "Qh",
+                                           "9h"
+                                       ],
+                          "handClass":  "top_pair_weak_kicker",
+                          "heroHandRole":  "dominated_marginal",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Q-pair dominated by AQ, KQ, QJ in BTN value range; 9 kicker is among the weakest possible.",
+                          "recommendedAction":  "fold",
+                          "actionReason":  "domination_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Qh 9h on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top pair Q with 9 kicker on Q-7-2 -- fold; dominated by villains Q-x value range.",
+                                              "rangeContext":  "BTN c-bet range here is Q-x value (AQ/KQ/QJ/QT) + overpairs + air; Q9 loses to all of those.",
+                                              "defenseLogic":  "Pair of Q with 9 kicker dominated; reverse implied odds make folding now correct.",
+                                              "handLogic":  "Qh9h has top pair Q + 9 kicker + backdoor heart. 5 outs to two-pair are dominated outs.",
+                                              "sizingLogic":  "Folding closes action cleanly; calling chases dominated kicker into a multi-street pot.",
+                                              "commonMistake":  "Calling top pair weak kicker -because it pairs the board- ignores domination by villain Qx-better-kicker.",
+                                              "takeaway":  "Top pair weak kicker on Q-high facing range pressure = fold (the kicker matters)."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "DOMINATION_FOLD #4 with WEAK Qx (vs B.5 Qc9c on K-high two-tone where Q is middle pair, vs existing AhQs no-pair). Distinct: weak Qx ON the Q-high board where Q-x is BTNs primary value -- different domination vector."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Qd7d2c_m3_action_QhJc_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Qd",
+                                                      "7d",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high"
+                                    },
+                          "heroHand":  [
+                                           "Qh",
+                                           "Jc"
+                                       ],
+                          "handClass":  "top_pair_good_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "high",
+                          "blockerNote":  "J kicker is mid-strength; QJ blocks KJ/AJ/JJ in BTN range.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Qh Jc on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "fold"
+                                                        ],
+                                         "bad":  [
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "QJ top pair J kicker on Q-7-2 -- call to bluff-catch (close fold).",
+                                              "rangeContext":  "BTN c-bet range has Q-x value (AQ/KQ/QQ) + air; QJ beats all the air and ties some Q-low kickers.",
+                                              "defenseLogic":  "Pair of Q with J kicker is at threshold: dominated by AQ/KQ but ahead of QT/Qx-air.",
+                                              "handLogic":  "QhJc has top pair Q + J kicker + backdoor heart. 3 outs to two-pair (J) + occasional kicker showdown wins.",
+                                              "sizingLogic":  "Calling captures villain air bluffs; folding is also defensible vs strong villains who c-bet only Qx-better.",
+                                              "commonMistake":  "Auto-folding QJ on Qx -because dominated- under-defends vs villain wide stab; auto-raising bloats vs better Qx.",
+                                              "takeaway":  "TPGK on dry Q-high facing wide stab = call (close to fold; depends on opponent)."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "oop_defense_threshold",
+                                              "pot_odds_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "CLOSE FOLD/CALL with QJ on Q-high (vs D.3 weak Q9 fold and D.2 strong AQ raise). Tests middle of the spectrum: kicker matters but QJ is on the bubble. Distinct difficulty and decision vs the cleaner fold/raise lessons."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Qd7d2c_m3_action_KcTc_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Qd",
+                                                      "7d",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high"
+                                    },
+                          "heroHand":  [
+                                           "Kc",
+                                           "Tc"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Kc Tc on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "KT no pair on Q-7-2 -- fold; pure overcards realize too little OOP.",
+                                              "rangeContext":  "BTN c-bet range is Q-x heavy plus overpairs; KT has no draw, no FD, no relevant blocker.",
+                                              "defenseLogic":  "6 pair outs that are often dominated; backdoor club is too thin to anchor a defense.",
+                                              "handLogic":  "KcTc has no pair, no straight draw, no flush draw on Q-7-2 -- only backdoor club + 6 overcards.",
+                                              "sizingLogic":  "Folding closes action; calling chases dominated outs into a polarized range.",
+                                              "commonMistake":  "-KT is too good to fold- thinking on Q-high boards bleeds chips vs Qx-heavy range.",
+                                              "takeaway":  "Naked overcards no equity on Q-high disconnected = fold."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  2,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "KT-no-equity FOLD on Q-high two-tone (vs existing JTo on As8d3h, vs Q1.5 KcQc on As9s4d). KT specifically tests overcard fold when overcards are NOT both above the board; the K is overcard but T is not -- partial-overcard folding lesson."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_AcAd7s_m3_action_Ah7h_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ac",
+                                                      "Ad",
+                                                      "7s"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTexture":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "A_high"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "7h"
+                                       ],
+                          "handClass":  "full_house",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  "Hero holds the case Ace (only one in deck after Ac, Ad on board, hero Ah, leaving As); blocks all villain Ax combos.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "slowplay_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ah 7h on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Aces full of sevens (Ah for trip A + 7 paired with board 7) -- slowplay because BTN c-bets paired-A wide with overpairs/air.",
+                                              "rangeContext":  "BTN c-bets paired-A heavily with overpairs (KK-22) and air; raising folds out the air and isolates overpairs/Ax.",
+                                              "defenseLogic":  "Hero is far ahead of villains entire range; calling preserves the bluff bucket for later streets.",
+                                              "handLogic":  "Ah7h makes Aces full of Sevens (top of board): hero pairs the 7 on board + has trips Ace; only AAA77/A77 (impossible) beat us.",
+                                              "sizingLogic":  "Calling lets BTN barrel air and overpairs on later streets; raising small folds out everything except KK-AA which played through.",
+                                              "commonMistake":  "Auto-raising the absolute nuts on paired-A folds out the wide air range and forfeits multi-street value.",
+                                              "takeaway":  "Full house on paired-A = slowplay call; raising is correct only if villain massively overbluffs."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "equity_realization_oop"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  4,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "SLOWPLAY_CALL #4 on paired ACE board (vs existing 8h7h on 8c8d3s paired LOW + Td9d on TcTh6s paired T). Different range dynamics: paired-A BTN range is overpair-heavy because BTN raises Ax preflop infrequently; slowplay must keep overpairs IN to extract value over multiple streets."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_AcAd7s_m3_action_8h8s_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ac",
+                                                      "Ad",
+                                                      "7s"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTexture":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "A_high"
+                                    },
+                          "heroHand":  [
+                                           "8h",
+                                           "8s"
+                                       ],
+                          "handClass":  "underpair",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
+                          "showdownValue":  "decent",
+                          "blockerNote":  null,
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with 8h 8s on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Pocket 8s underpair on paired-A board -- call to bluff-catch villains air c-bets.",
+                                              "rangeContext":  "BTN c-bets paired-A wide with overcards/air and overpairs; pocket 8s beats the air range and ties weaker pocket pairs.",
+                                              "defenseLogic":  "Underpair to A but overpair to 7; only Ax, 7x, and overpairs (99-AA) beat hero.",
+                                              "handLogic":  "88 has no draw, just an underpair on Ac Ad 7s. Beats KK-air, J-high air, etc.",
+                                              "sizingLogic":  "Calling preserves villains bluffs; raising isolates overpairs and Ax that crush hero.",
+                                              "commonMistake":  "Folding small overpairs on paired-A over-folds vs the wide air-stab range.",
+                                              "takeaway":  "Mid pocket pair on paired-A = call (bluff-catch)."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "equity_realization_oop"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "UNDERPAIR BLUFF-CATCH on paired ACE (vs existing 5h5d on 8c8d3s, 8d8s on KcKd7s, 8h8d on TcTh6s). Distinct: paired-ACE makes the bluff-catch tighter because BTN range has more overpairs than on paired-low boards."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_AcAd7s_m3_action_KsTs_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ac",
+                                                      "Ad",
+                                                      "7s"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTexture":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "A_high"
+                                    },
+                          "heroHand":  [
+                                           "Ks",
+                                           "Ts"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "dominated_marginal",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  "KT does NOT block Ax value; pair outs (K, T) often pair villains kicker.",
+                          "recommendedAction":  "fold",
+                          "actionReason":  "domination_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ks Ts on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "KT no pair on paired-A -- fold; dominated by villains Ax pair-outs.",
+                                              "rangeContext":  "BTN c-bet range here has Ax (AK, AT included), overpairs, and air; KT pair outs are often dominated.",
+                                              "defenseLogic":  "6 pair outs but K-pair loses to AK and T-pair loses to AT; reverse implied odds confirm fold.",
+                                              "handLogic":  "KsTs has no pair, no draw on Ac Ad 7s. Backdoor spade only. K and T overcards face dominated kickers.",
+                                              "sizingLogic":  "Folding closes action; calling chases dominated outs into the multi-street pot.",
+                                              "commonMistake":  "Calling KT on paired-A -because two overcards- ignores domination by Ax that paired BTNs preflop range.",
+                                              "takeaway":  "Two overcards dominated by villains Ax range = fold even on paired-A."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "DOMINATION_FOLD #5 with KT on paired-A (vs B.5 Q9 weak Qx, vs D.3 Q9 weak Qx, vs Ks 8s 3d QdJh). Distinct: domination by Ax kicker on paired-A board -- different domination vector than Q-x on Q-high boards."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Ts9s5d_m3_action_TcTd_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ts",
+                                                      "9s",
+                                                      "5d"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high"
+                                    },
+                          "heroHand":  [
+                                           "Tc",
+                                           "Td"
+                                       ],
+                          "handClass":  "set",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  null,
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "protection_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Tc Td on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "check_raise_big",
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top set T on dynamic mid-connected two-tone -- raise for protection AND value.",
+                                              "rangeContext":  "BTN c-bets T-9-5 two-tone with overpairs, top pair, FDs, OE/gutshots; many turns are bad for top set.",
+                                              "defenseLogic":  "Top set is huge but vulnerable to spades, J/8/6/7/Q/K turns; raising charges all the draws.",
+                                              "handLogic":  "TcTd makes top set (3 Ts including board Ts); only 99/55 sets and JxQx straights (very rare) beat us.",
+                                              "sizingLogic":  "Small raise charges FDs and OE/gutshots while getting called by overpairs and weaker top-pair; big raise also defensible.",
+                                              "commonMistake":  "Slowplaying top set on a wet two-tone broadway lets straights and flushes complete cheaply.",
+                                              "takeaway":  "Top set on dynamic mid-connected two-tone = raise (small or big) for value AND protection."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_value",
+                                              "protection_raise",
+                                              "value_raise"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "PROTECTION_RAISE #5 with TOP SET on mid-connected TWO-TONE (vs existing top set 9c9s on 9d8c6h rainbow). Distinct: two-tone adds FD-protection layer absent on rainbow connected boards."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Ts9s5d_m3_action_8c7c_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ts",
+                                                      "9s",
+                                                      "5d"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high"
+                                    },
+                          "heroHand":  [
+                                           "8c",
+                                           "7c"
+                                       ],
+                          "handClass":  "oesd",
+                          "heroHandRole":  "pure_draw",
+                          "drawCategory":  "oesd",
+                          "showdownValue":  "low",
+                          "blockerNote":  null,
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with 8c 7c on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Open-ended (need 6 or J) + backdoor club on T-9-5 two-tone -- call to realize equity.",
+                                              "rangeContext":  "BTN c-bets T-9-5 two-tone wide with top pair / overpair / FDs / air; OE + BDFD has strong equity vs the range.",
+                                              "defenseLogic":  "8 OE outs + 3 backdoor clubs + 1 backdoor straight extension = strong combo equity to defend.",
+                                              "handLogic":  "8c7c has open-ender to 6 (5-6-7-8-9 straight) or J (7-8-9-T-J) + backdoor club FD on Ts9s5d.",
+                                              "sizingLogic":  "Calling realizes the OE equity cheaply; raising semi-bluff also defensible against over-folders.",
+                                              "commonMistake":  "Folding strong OE on dynamic two-tone over-folds vs the FD-heavy bluff bucket.",
+                                              "takeaway":  "OE + BDFD on dynamic two-tone = call (raise occasionally as semi-bluff vs over-folders)."
+                                          },
+                          "conceptTags":  [
+                                              "equity_realization_oop",
+                                              "oop_defense_threshold",
+                                              "pot_odds_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "OE + BDFD pure-draw call on mid-connected two-tone (vs existing OE scenarios on rainbow). Different from JsTh on 9d8c6h because hero has BDFD + the boards spade FD threat changes the equity-realization math."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Ts9s5d_m3_action_As6s_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ts",
+                                                      "9s",
+                                                      "5d"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high"
+                                    },
+                          "heroHand":  [
+                                           "As",
+                                           "6s"
+                                       ],
+                          "handClass":  "nut_flush_draw",
+                          "heroHandRole":  "semi_bluff_combo",
+                          "drawCategory":  "nut_flush_draw",
+                          "showdownValue":  "low",
+                          "blockerNote":  "As is the nut-flush card on spades; blocks BTN AsX nut-flush combos.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "semi_bluff_raise",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with As 6s on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Nut FD + Ace overcard + wheel-gutshot backdoor on T-9-5 two-tone -- semi-bluff raise.",
+                                              "rangeContext":  "BTN c-bets T-9-5 two-tone wide; nut-FD + overcard + blocker = strong semi-bluff vs the c-bet range.",
+                                              "defenseLogic":  "9 nut-FD outs + 3 overcard outs + As blocks villain nut FD = ~36% raw equity + significant fold equity.",
+                                              "handLogic":  "As6s has nut FD (4 spades visible) + Ace overcard + backdoor wheel straight (3-4-5-6-7 needs 3+4 = backdoor).",
+                                              "sizingLogic":  "Small raise applies pressure now and sets up turn barrels on overcards or spade turns.",
+                                              "commonMistake":  "Just calling nut-FD + overcard + blocker OOP wastes premium fold equity vs a wide stab range.",
+                                              "takeaway":  "Nut FD + overcard + blocker on dynamic two-tone = semi-bluff raise."
+                                          },
+                          "conceptTags":  [
+                                              "check_raise_bluff",
+                                              "semi_bluff_raise",
+                                              "equity_realization_oop"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "NUT_FLUSH_DRAW #3 (after AsQs on Ks 8s 3d, Ah9h on Kh Qh 4s). Distinct: T-high two-tone is BB-favored texture (vs K-high two-tone which is BTN-favored), so the semi-bluff raise EV calculation is different (more fold equity vs BTNs weaker overpairs)."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_Ts9s5d_m3_action_KdQd_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "Ts",
+                                                      "9s",
+                                                      "5d"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTexture":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high"
+                                    },
+                          "heroHand":  [
+                                           "Kd",
+                                           "Qd"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Kd Qd on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "KQ no spade on T-9-5 two-tone -- fold; gutshot to J + 6 overcards is below threshold.",
+                                              "rangeContext":  "BTN c-bets T-9-5 two-tone wide; KQ has gutshot but no spade and 6 overcards that often pair villains kicker.",
+                                              "defenseLogic":  "4 gutshot outs (J makes K-Q-J-T-9) + 6 overcards (often dominated) + backdoor diamond = below threshold.",
+                                              "handLogic":  "KdQd has gutshot to J + backdoor diamond + no spade; pair outs face dominated kickers.",
+                                              "sizingLogic":  "Folding closes action cleanly; calling chases dominated outs.",
+                                              "commonMistake":  "-KQ has the broadway gutshot- thinking is correct on connected boards; here range disadvantage outweighs the gutshot.",
+                                              "takeaway":  "KQ with gutshot on BB-favored connected board = fold (gutshot is not enough alone)."
+                                          },
+                          "conceptTags":  [
+                                              "range_disadvantage",
+                                              "oop_defense_threshold"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "KQ-with-gutshot FOLD on mid-connected two-tone (vs existing AdQs on 9d8c6h rainbow). Distinct: KQ has actual gutshot here unlike AdQs which had nothing; tests that gutshot alone is insufficient on BB-favored textures."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_flop_8c8d3s_m3_action_JcJh_v423b",
+                          "module":  "pf_flop_cbet_oop_def",
+                          "moduleName":  "Facing C-bet OOP",
+                          "schemaVersion":  "1.1.0",
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "street":  "flop",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "preflop_caller_oop",
+                                       "villainRole":  "preflop_raiser_ip",
+                                       "villainAction":  "cbet",
+                                       "villainSizing":  "small"
+                                   },
+                          "board":  {
+                                        "cards":  [
+                                                      "8c",
+                                                      "8d",
+                                                      "3s"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTexture":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "low"
+                                    },
+                          "heroHand":  [
+                                           "Jc",
+                                           "Jh"
+                                       ],
+                          "handClass":  "overpair",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  null,
+                          "recommendedAction":  "call",
+                          "actionReason":  "slowplay_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Jc Jh on ",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Pocket Jacks overpair on 8c 8d 3s paired -- slowplay because BTN c-bet range is air-heavy.",
+                                              "rangeContext":  "BTN c-bets paired-low wide with overcards/air and overpairs; raising folds out the air range.",
+                                              "defenseLogic":  "JJ is way ahead of villains air bluffs and ties / beats most of the overpair range below QQ.",
+                                              "handLogic":  "JcJh is overpair to all of 8-8-3 (J \u003e 8 \u003e 3); only QQ-AA, 88 (case 8s), and 33 sets beat us.",
+                                              "sizingLogic":  "Calling preserves villain air bluffs for turn/river barrels; raising isolates QQ-AA and folds everything else.",
+                                              "commonMistake":  "Auto-raising overpairs on paired-low folds out air and isolates better hands; the air would have paid off slowplay.",
+                                              "takeaway":  "Mid-range overpair on paired-low (where BTN range is air-heavy) = slowplay call."
+                                          },
+                          "conceptTags":  [
+                                              "bluff_catchers",
+                                              "equity_realization_oop"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "difficultyHint":  3,
+                          "auditStatus":  "planning_only",
+                          "reviewStatus":  "v4.2.3B_polish",
+                          "uniquenessNote":  "SLOWPLAY_CALL #5 with OVERPAIR (vs existing 8h7h on same board which is TRIPS slowplay, vs Td9d/Ah7h trips slowplay on other paired boards). Distinct hand class: overpair vs trips on the SAME paired-low board -- tests that slowplay reasoning extends from trips to overpair on air-heavy textures."
+                      }
+                  ]
+}
