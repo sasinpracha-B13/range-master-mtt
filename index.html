@@ -11391,51 +11391,83 @@
       font-size: 11px; color: var(--text-secondary); letter-spacing: 0.01em;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    /* Selected state — strong, accent-colored */
+    /* v4.2.2G: stronger selected state - accent ring + corner indicator dot.
+       The ::after dot is rendered absolutely in the top-right of the selected
+       card. Color matches the mode accent. Unselected cards have no dot. */
     .tcc-mode-btn.is-selected {
-      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.18);
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 6px 18px rgba(0,0,0,0.22);
+    }
+    .tcc-mode-btn.is-selected::after {
+      content: '';
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.06), 0 0 8px currentColor;
+      opacity: 0.9;
     }
     .tcc-mode-btn.is-selected .tcc-mode-icon { transform: scale(1.05); }
     .tcc-mode-btn.is-preflop.is-selected {
-      border-color: rgba(110, 168, 254, 0.85);
-      background: linear-gradient(135deg, rgba(110, 168, 254, 0.18), rgba(110, 168, 254, 0.04));
+      color: #6ea8fe;
+      border-color: rgba(110, 168, 254, 0.95);
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.20), rgba(110, 168, 254, 0.05));
+      box-shadow: 0 0 0 1px rgba(110, 168, 254, 0.25) inset, 0 6px 18px rgba(110, 168, 254, 0.10);
     }
-    .tcc-mode-btn.is-preflop.is-selected .tcc-mode-icon { color: #6ea8fe; background: rgba(110, 168, 254, 0.18); }
+    .tcc-mode-btn.is-preflop.is-selected .tcc-mode-icon { color: #6ea8fe; background: rgba(110, 168, 254, 0.20); }
+    .tcc-mode-btn.is-preflop.is-selected .tcc-mode-label { color: var(--text); }
     .tcc-mode-btn.is-postflop.is-selected {
-      border-color: rgba(245, 166, 35, 0.85);
-      background: linear-gradient(135deg, rgba(245, 166, 35, 0.18), rgba(245, 166, 35, 0.04));
+      color: #f5a623;
+      border-color: rgba(245, 166, 35, 0.95);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.20), rgba(245, 166, 35, 0.05));
+      box-shadow: 0 0 0 1px rgba(245, 166, 35, 0.25) inset, 0 6px 18px rgba(245, 166, 35, 0.10);
     }
-    .tcc-mode-btn.is-postflop.is-selected .tcc-mode-icon { color: #f5a623; background: rgba(245, 166, 35, 0.18); }
+    .tcc-mode-btn.is-postflop.is-selected .tcc-mode-icon { color: #f5a623; background: rgba(245, 166, 35, 0.20); }
+    .tcc-mode-btn.is-postflop.is-selected .tcc-mode-label { color: var(--text); }
     /* Subtle cue for the unselected card */
-    .tcc-mode-btn:not(.is-selected) { opacity: 0.78; }
-    .tcc-mode-btn:not(.is-selected):hover { opacity: 1; border-color: rgba(255,255,255,0.20); }
+    .tcc-mode-btn:not(.is-selected) { opacity: 0.72; }
+    .tcc-mode-btn:not(.is-selected):hover { opacity: 1; border-color: rgba(255,255,255,0.22); }
 
-    /* Panel that swaps based on selected mode */
+    /* v4.2.2G: panel polish - tighter padding, stronger top-edge accent */
     .tcc-panel {
-      padding: 12px;
+      padding: 14px 14px 14px 14px;
       border-radius: 12px;
-      background: rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+      overflow: hidden;
     }
+    /* Subtle accent line along the top edge of the panel matching the selected mode */
+    .tcc-panel::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, currentColor, transparent);
+      opacity: 0.45;
+    }
+    .tcc-panel.is-preflop { color: #6ea8fe; }
+    .tcc-panel.is-postflop { color: #f5a623; }
     .tcc-panel-hero {
       display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 12px; margin-bottom: 10px;
+      gap: 12px; margin-bottom: 8px;
     }
     .tcc-panel-hero-text { flex: 1; min-width: 0; }
     .tcc-panel-mode-label {
       display: inline-block;
       font-size: 10px; font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase;
-      padding: 2px 8px; border-radius: 999px;
+      padding: 3px 9px; border-radius: 999px;
       background: rgba(255,255,255,0.05);
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .tcc-panel.is-preflop .tcc-panel-mode-label { color: #6ea8fe; background: rgba(110, 168, 254, 0.12); }
-    .tcc-panel.is-postflop .tcc-panel-mode-label { color: #f5a623; background: rgba(245, 166, 35, 0.12); }
-    .tcc-panel-mode-title { font-size: 16px; font-weight: 800; letter-spacing: 0.01em; }
+    .tcc-panel.is-preflop .tcc-panel-mode-label { color: #6ea8fe; background: rgba(110, 168, 254, 0.14); }
+    .tcc-panel.is-postflop .tcc-panel-mode-label { color: #f5a623; background: rgba(245, 166, 35, 0.14); }
+    .tcc-panel-mode-title {
+      font-size: 17px; font-weight: 800; letter-spacing: 0.01em;
+      color: var(--text);
+    }
     .tcc-panel-mode-desc {
-      margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--text-secondary);
+      margin-top: 5px; font-size: 12.5px; line-height: 1.55; color: var(--text-secondary);
     }
     .tcc-panel-status {
       margin-top: 10px;
@@ -11473,14 +11505,25 @@
     }
     .tcc-action:hover { transform: translateY(-1px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.14); }
     .tcc-action:active { transform: translateY(0); }
+    /* v4.2.2G: stronger primary CTA — slightly more saturated gradient + thicker border */
     .tcc-action.is-primary {
       grid-column: 1 / -1;
-      background: linear-gradient(135deg, rgba(110, 168, 254, 0.16), rgba(110, 168, 254, 0.04));
-      border-color: rgba(110, 168, 254, 0.55);
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.22), rgba(110, 168, 254, 0.06));
+      border-color: rgba(110, 168, 254, 0.70);
+      box-shadow: 0 4px 12px rgba(110, 168, 254, 0.10);
+    }
+    .tcc-action.is-primary:hover {
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.28), rgba(110, 168, 254, 0.08));
+      border-color: rgba(110, 168, 254, 0.85);
     }
     .tcc-panel.is-postflop .tcc-action.is-primary {
-      background: linear-gradient(135deg, rgba(245, 166, 35, 0.16), rgba(245, 166, 35, 0.04));
-      border-color: rgba(245, 166, 35, 0.55);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.22), rgba(245, 166, 35, 0.06));
+      border-color: rgba(245, 166, 35, 0.70);
+      box-shadow: 0 4px 12px rgba(245, 166, 35, 0.10);
+    }
+    .tcc-panel.is-postflop .tcc-action.is-primary:hover {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.28), rgba(245, 166, 35, 0.08));
+      border-color: rgba(245, 166, 35, 0.85);
     }
     .tcc-action-row {
       display: flex; align-items: center; gap: 8px; width: 100%;
@@ -32991,7 +33034,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.2.2F',
+    appVersion: '4.2.2G',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -35595,13 +35638,22 @@ var TRAINING_MODES = {
     accent: '#6ea8fe',
     subtitle: 'Ranges · Drills · Exams',
     description: 'Build your MTT preflop range foundation. Drill positions, defend ranges, and graduate through ranks.',
+    // v4.2.2G: always-shown context pills (mirror Postflop's status row).
+    // Honest, doesn't claim numbers we can't back up.
+    metaPills: [
+      'Drills · Exams · Boss',
+      'Ranks · Browse'
+    ],
     actions: [
       { id: 'quick',     label: 'Quick Drill',          hint: '15 hands · standard mix', icon: '⚡', kind: 'primary',   route: 'preflop:quick' },
       { id: 'deep',      label: 'Deep Drill',           hint: '30 hands · longer set',   icon: '🎯', kind: 'secondary', route: 'preflop:deep' },
       { id: 'weakness',  label: 'Weakness Review',      hint: 'Recent leaks',             icon: '🔧', kind: 'secondary', route: 'preflop:weakness' },
       { id: 'marginal',  label: 'Marginal Spots',       hint: 'Tough decisions',          icon: '🧠', kind: 'secondary', route: 'preflop:marginal' },
       { id: 'browse',    label: 'Browse Ranges',        hint: 'View charts',              icon: '📚', kind: 'secondary', route: 'preflop:browse' },
-      { id: 'mastery',   label: 'Boss Tests · Missions',hint: 'Open Drill setup',         icon: '⚔',  kind: 'secondary', route: 'preflop:drillsetup' }
+      // v4.2.2G: renamed from "Boss Tests · Missions" to "Training Setup".
+      // Route lands on Drill setup screen where user picks drill / boss / exam mode -
+      // the old label promised a specific Boss/Missions surface and was misleading.
+      { id: 'mastery',   label: 'Training Setup',       hint: 'Choose drill, boss, or exam mode', icon: '⚙', kind: 'secondary', route: 'preflop:drillsetup' }
     ]
   },
   postflop: {
@@ -35612,12 +35664,18 @@ var TRAINING_MODES = {
     accent: '#f5a623',
     subtitle: 'Board Reading · Hand Decisions · Concepts',
     description: 'Train postflop decisions: read boards (Module 1), choose actions (Module 2 BETA), and study concepts.',
+    // metaPills for postflop are dynamic (built in _tccBuildPanelStatusHtml from
+    // M1/M2 scenario counts when Postflop Beta is loaded). Empty here so the
+    // dynamic builder owns this section without competition.
+    metaPills: [],
     actions: [
       { id: 'm1',        label: 'Module 1 · Board Texture', hint: '15 hands · 251 scenarios', icon: '🧪', kind: 'primary',   route: 'postflop:m1' },
       { id: 'm2',        label: 'Module 2 · Flop C-bet IP', hint: '12 hands · 49 scenarios',  icon: '🃏', kind: 'secondary', route: 'postflop:m2', badge: 'BETA' },
-      { id: 'concepts',  label: 'Concept Library',          hint: '15 concept drills',         icon: '📖', kind: 'secondary', route: 'postflop:concepts' },
+      // v4.2.2G: hint sharpened. Route SCROLLS to library where user picks one of
+      // 15 concept drills - not auto-start. "Browse" makes the navigation honest.
+      { id: 'concepts',  label: 'Concept Library',          hint: 'Browse 15 concept drills', icon: '📖', kind: 'secondary', route: 'postflop:concepts' },
       { id: 'weakspot',  label: 'Weak Spot Review',         hint: 'From recent sessions',      icon: '🔧', kind: 'secondary', route: 'postflop:weakspot' },
-      { id: 'progress',  label: 'Postflop Progress',        hint: 'Mastery + history',         icon: '🏆', kind: 'secondary', route: 'postflop:progress' },
+      { id: 'progress',  label: 'Postflop Progress',        hint: 'View mastery + history',    icon: '🏆', kind: 'secondary', route: 'postflop:progress' },
       { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: 'Coming in v4.2.4 beta',     icon: '🔒', kind: 'preview',   route: null }
     ]
   }
@@ -35771,15 +35829,24 @@ function _tccBuildActionTileHtml(mode, action) {
 }
 
 function _tccBuildPanelStatusHtml(mode) {
-  // Honest, lightweight status pills that are always safe to render.
+  // v4.2.2G: pills now have two layers:
+  //   1. metaPills from TRAINING_MODES registry (always-shown context labels)
+  //   2. dynamic stats from runtime state (rank, scenario counts, etc.)
+  // This fixes the v4.2.2F asymmetry where Postflop had pills but Preflop did not.
   var pills = [];
   try {
+    var meta = getTrainingModeMeta(mode);
+    if (meta && meta.metaPills && meta.metaPills.length) {
+      for (var i = 0; i < meta.metaPills.length; i++) {
+        pills.push(_pfEscape(meta.metaPills[i]));
+      }
+    }
     if (mode === 'preflop') {
       var prog = (App.state && App.state.progress) ? App.state.progress : null;
       var rank = prog && prog.currentRank ? String(prog.currentRank) : null;
       var totalAns = prog && prog.totalAnswered ? prog.totalAnswered : 0;
       if (rank) pills.push('🏅 Rank: ' + _pfEscape(rank));
-      if (totalAns) pills.push('🧮 ' + totalAns + ' answers');
+      if (totalAns) pills.push('🧮 ' + totalAns + ' answered');
     } else if (mode === 'postflop') {
       var ready = (typeof getPostflopReady === 'function') ? getPostflopReady() : false;
       if (ready) {
@@ -35826,12 +35893,13 @@ function renderHomeCommandCenterMount() {
   var postflopBtn = _tccBuildModeButtonHtml('postflop', current === 'postflop');
   var panelHtml   = _tccBuildPanelHtml(current);
 
+  // v4.2.2G: sharper, product-grade copy.
   var html =
     '<div class="tcc-shell" role="region" aria-label="Training Command Center">' +
       '<div class="tcc-header">' +
         '<span class="tcc-eyebrow">Training Command Center</span>' +
-        '<div class="tcc-title">Choose your training world</div>' +
-        '<div class="tcc-helper">Preflop builds your range foundation. Postflop teaches board reading and hand-action decisions. Pick a world to focus your session.</div>' +
+        '<div class="tcc-title">Choose Your Training Path</div>' +
+        '<div class="tcc-helper">Build ranges preflop. Sharpen decisions postflop. Pick one focus for this session.</div>' +
       '</div>' +
       '<div class="tcc-selector" role="tablist">' +
         preflopBtn +
