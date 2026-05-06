@@ -11356,6 +11356,134 @@
       font-weight: 600;
       letter-spacing: 0.02em;
     }
+    /* v4.2.6: Module 3 Beta QA dashboard (project-owner / internal diagnostic). */
+    details.pf-m3-qa-dashboard {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(110, 168, 254, 0.06);
+      border: 1px solid rgba(110, 168, 254, 0.30);
+      border-radius: 8px;
+    }
+    details.pf-m3-qa-dashboard > summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      color: #6ea8fe;
+      letter-spacing: 0.02em;
+    }
+    details.pf-m3-qa-dashboard > summary:hover { opacity: 0.85; }
+    .pf-m3-qa-empty,
+    .pf-m3-qa-empty-mini {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .pf-m3-qa-empty-mini { font-size: 11px; margin-top: 4px; }
+    .pf-m3-qa-sample-warn {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(245, 166, 35, 0.10);
+      border-left: 3px solid rgba(245, 166, 35, 0.55);
+      border-radius: 4px;
+      font-size: 11px;
+      color: #f5a623;
+    }
+    .pf-m3-qa-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .pf-m3-qa-metric {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 4px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .pf-m3-qa-metric .pf-m3-qa-num {
+      font-size: 16px;
+      font-weight: 800;
+      color: #6ea8fe;
+      line-height: 1.1;
+    }
+    .pf-m3-qa-metric .pf-m3-qa-lbl {
+      font-size: 9px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .pf-m3-qa-block {
+      margin-top: 12px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 6px;
+    }
+    .pf-m3-qa-block-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f5a623;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+    .pf-m3-qa-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 4px 0 0 0;
+    }
+    .pf-m3-qa-list li {
+      padding: 2px 0;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+    .pf-m3-qa-detail {
+      opacity: 0.7;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .pf-m3-qa-privacy {
+      margin-top: 14px;
+      padding: 8px 10px;
+      background: rgba(110, 168, 254, 0.05);
+      border-radius: 6px;
+      border: 1px dashed rgba(110, 168, 254, 0.25);
+    }
+    .pf-m3-qa-copy-btn {
+      display: inline-block;
+      padding: 7px 12px;
+      background: rgba(110, 168, 254, 0.16);
+      color: #6ea8fe;
+      border: 1px solid rgba(110, 168, 254, 0.45);
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .pf-m3-qa-copy-btn:hover { background: rgba(110, 168, 254, 0.24); }
+    .pf-m3-qa-copy-btn:disabled { opacity: 0.7; cursor: default; }
+    .pf-m3-qa-privacy-note {
+      margin-top: 6px;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      font-style: italic;
+      opacity: 0.85;
+    }
+    @media (max-width: 480px) {
+      .pf-m3-qa-grid { grid-template-columns: repeat(3, 1fr); }
+      .pf-m3-qa-metric .pf-m3-qa-num { font-size: 14px; }
+    }
+    @media (max-width: 360px) {
+      .pf-m3-qa-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      details.pf-m3-qa-dashboard { padding: 8px 10px; }
+      details.pf-m3-qa-dashboard > summary { font-size: 12px; }
+    }
     /* ========================================================================
        END v4.1.7 — MODULE 2 PLAYABLE BETA
        ======================================================================== */
@@ -33095,7 +33223,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.2.5',
+    appVersion: '4.2.6',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -35713,6 +35841,488 @@ function _pfM3MasteryProgressHtml(m3Stats) {
 // END v4.2.4 — MODULE 3 LIMITED BETA MASTERY CHECKLIST
 // ============================================================================
 
+// ============================================================================
+// v4.2.6 — POSTFLOP BETA QA DASHBOARD (Module 3 first; reusable for M4+)
+// ----------------------------------------------------------------------------
+// Internal-facing diagnostic panel that surfaces M3 Limited Beta learning
+// signals from localStorage history. Designed to:
+//   - help the project owner decide whether M3 is teaching well
+//   - expose actionReason / heroHandRole / handClass / recommendedAction
+//     leaks at-a-glance
+//   - verify the v4.2.5 actionReason-keyed weak-spot review is targeting
+//     the right reasons
+//   - surface critical-mistake patterns
+//   - export a clean local snapshot for offline review
+//
+// All data is local-only (browser localStorage history). No network calls.
+// No tracking. The "Copy QA Snapshot" button writes to clipboard only.
+//
+// Mount: appended inside _pfAcademyHomeHtml after the M3 mastery section.
+// Collapsed by default to keep the Academy panel learner-friendly.
+//
+// REUSABILITY NOTE: this same helper structure is intended to be the
+// template for Module 4+. _pfBetaQAStatsForModule(moduleId) can be reused
+// by passing 'pf_flop_cbet_oop_def' (M3) or future module ids. The HTML
+// builder is M3-specific in this sprint — Module 4 will reuse the helpers
+// and swap labels.
+// ============================================================================
+
+function _pfBetaQAStatsForModule(moduleId) {
+  // Generic helper that aggregates stats for ANY postflop module from
+  // localStorage history. Used by M3 dashboard; reusable for M4+.
+  var out = {
+    moduleId: moduleId,
+    sessionCount: 0,
+    questionCount: 0,
+    latestSession: null,
+    latestPctScore: null,
+    averagePctScore: null,
+    criticalCount: 0,
+    criticalRate: 0,
+    weakReviewUsed: false,
+    lastWeakProfile: null,
+    rowsByActionReason: [],
+    rowsByRecommendedAction: [],
+    rowsByHeroHandRole: [],
+    rowsByHandClass: [],
+    weakConcepts: [],
+    weakActionReasons: [],
+    weakHeroHandRoles: [],
+    weakRecommendedActions: [],
+    last3Sessions: [],
+    criticalScenarioIds: []
+  };
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return out;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var modSessions = sessions.filter(function (s) { return s && s.module === moduleId; });
+    out.sessionCount = modSessions.length;
+    if (out.sessionCount === 0) return out;
+    out.latestSession = modSessions[modSessions.length - 1];
+
+    // Aggregate answers + question count + critical count + accuracy
+    var allAnswers = [];
+    var totalScore = 0, maxScore = 0;
+    var critIds = [];
+    var weakReviewSeen = false;
+    for (var i = 0; i < modSessions.length; i++) {
+      var sObj = modSessions[i];
+      var aArr = (sObj && Array.isArray(sObj.answers)) ? sObj.answers : [];
+      for (var j = 0; j < aArr.length; j++) {
+        allAnswers.push(aArr[j]);
+        if (aArr[j] && aArr[j].tier === 'critical') {
+          critIds.push(aArr[j].scenarioId);
+        }
+      }
+      out.questionCount += (sObj.answered || aArr.length || 0);
+      totalScore += (sObj.score || 0);
+      maxScore += (sObj.answered || aArr.length || 0) * 1.0;
+      if (sObj.mode === 'weak_spots') weakReviewSeen = true;
+    }
+    out.weakReviewUsed = weakReviewSeen;
+    out.criticalCount = critIds.length;
+    out.criticalRate = out.questionCount > 0 ? Math.round((out.criticalCount / out.questionCount) * 1000) / 10 : 0;
+    out.averagePctScore = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : null;
+    out.criticalScenarioIds = critIds.slice(-5);
+
+    // Latest session pct
+    var latest = out.latestSession;
+    if (latest) {
+      var latestAns = latest.answered || (latest.answers ? latest.answers.length : 0);
+      var latestMax = latestAns * 1.0;
+      out.latestPctScore = latestMax > 0 ? Math.round(((latest.score || 0) / latestMax) * 100) : null;
+    }
+
+    // Per-axis breakdowns (full history)
+    var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+    out.rowsByActionReason     = _pfM2GroupAnswersBy(allAnswers, pool, 'actionReason');
+    out.rowsByRecommendedAction = _pfM2GroupAnswersBy(allAnswers, pool, 'recommendedAction');
+    out.rowsByHeroHandRole     = _pfM2GroupAnswersBy(allAnswers, pool, 'heroHandRole');
+    out.rowsByHandClass        = _pfM2GroupAnswersBy(allAnswers, pool, 'handClass');
+
+    // Weak buckets (lifetime) — same threshold as session aggregations
+    function weakFilter(rows) {
+      return rows.filter(function (r) {
+        return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50);
+      });
+    }
+    out.weakActionReasons      = weakFilter(out.rowsByActionReason);
+    out.weakRecommendedActions = weakFilter(out.rowsByRecommendedAction);
+    out.weakHeroHandRoles      = weakFilter(out.rowsByHeroHandRole);
+
+    // Weak concepts from latest session's bad/critical answers (single source of
+    // truth — the v4.2.5 weak profile engine looks at the latest session, not
+    // lifetime, so we mirror that behavior for the dashboard's "what does weak
+    // review target" signal).
+    if (latest && Array.isArray(latest.answers)) {
+      var conceptMisses = {};
+      for (var ai = 0; ai < latest.answers.length; ai++) {
+        var aRec = latest.answers[ai];
+        if (aRec && (aRec.tier === 'bad' || aRec.tier === 'critical')) {
+          var tags = aRec.conceptTags || [];
+          for (var ti = 0; ti < tags.length; ti++) {
+            conceptMisses[tags[ti]] = (conceptMisses[tags[ti]] || 0) + 1;
+          }
+        }
+      }
+      out.weakConcepts = Object.keys(conceptMisses).map(function (k) {
+        return { tag: k, missCount: conceptMisses[k] };
+      }).sort(function (a, b) { return b.missCount - a.missCount; });
+    }
+
+    // Compute latest weak profile (the same one weak-spot review would use)
+    if (latest && Array.isArray(latest.answers)) {
+      try {
+        out.lastWeakProfile = _pfCurrentSessionWeakProfile(latest.answers, pool);
+      } catch (e) { out.lastWeakProfile = null; }
+    }
+
+    // Last 3 session compact summaries
+    out.last3Sessions = modSessions.slice(-3).map(function (s) {
+      var ans = s.answered || (s.answers ? s.answers.length : 0);
+      var max = ans * 1.0;
+      var pct = max > 0 ? Math.round(((s.score || 0) / max) * 100) : null;
+      return {
+        ts: s.ts || s.endedAt || null,
+        mode: s.mode || 'normal',
+        answered: ans,
+        best: s.best || 0,
+        acceptable: s.acceptable || 0,
+        bad: s.bad || 0,
+        critical: s.critical || 0,
+        pct: pct
+      };
+    });
+  } catch (e) { /* swallow — never block rendering */ }
+  return out;
+}
+
+function _pfM3BetaQAStats() { return _pfBetaQAStatsForModule('pf_flop_cbet_oop_def'); }
+
+// _pfM3BetaQAWeakSpotPreview — given the latest weak profile, count candidate
+// scenarios that match each weak actionReason. Helps the project owner verify
+// the weak-spot engine is finding enough material for each reason.
+function _pfM3BetaQAWeakSpotPreview(stats) {
+  if (!stats || !stats.lastWeakProfile) return [];
+  var profile = stats.lastWeakProfile;
+  var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+  var m3 = pool.filter(function (s) { return s && s.module === 'pf_flop_cbet_oop_def' && s.auditStatus === 'approved'; });
+  var reasonCandidateCounts = {};
+  for (var ri = 0; ri < (profile.targetActionReasons || []).length; ri++) {
+    var rsn = profile.targetActionReasons[ri];
+    reasonCandidateCounts[rsn] = m3.filter(function (s) { return s.actionReason === rsn; }).length;
+  }
+  // Latest session miss counts per reason
+  var rowsAR = stats.rowsByActionReason || [];
+  var rsnMissMap = {};
+  for (var li = 0; li < rowsAR.length; li++) {
+    rsnMissMap[rowsAR[li].key] = (rowsAR[li].badCount || 0) + (rowsAR[li].critCount || 0);
+  }
+  var out = (profile.targetActionReasons || []).map(function (rsn) {
+    return {
+      reason: rsn,
+      lifetimeMisses: rsnMissMap[rsn] || 0,
+      candidates: reasonCandidateCounts[rsn] || 0
+    };
+  }).sort(function (a, b) {
+    if (b.lifetimeMisses !== a.lifetimeMisses) return b.lifetimeMisses - a.lifetimeMisses;
+    return b.candidates - a.candidates;
+  });
+  return out.slice(0, 3); // top 3 weak reasons
+}
+
+// _pfM3BetaQACriticalMonitor — analyzes critical-mistake patterns by selected
+// action and by scenario.actionReason. Pure computation; no UI.
+function _pfM3BetaQACriticalMonitor(stats) {
+  var out = {
+    totalCritical: stats.criticalCount,
+    bySelectedAction: {},  // action user picked when classified critical
+    byScenarioReason: {},  // scenario.actionReason of critical scenarios
+    crbHabitCount: 0,      // how many criticals are crb mistakes (the v4.2.5 caution)
+    latestCritIds: stats.criticalScenarioIds || []
+  };
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return out;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var modSessions = sessions.filter(function (s) { return s && s.module === 'pf_flop_cbet_oop_def'; });
+    var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+    var byId = {};
+    for (var pi = 0; pi < pool.length; pi++) { if (pool[pi] && pool[pi].id) byId[pool[pi].id] = pool[pi]; }
+    for (var i = 0; i < modSessions.length; i++) {
+      var aArr = (modSessions[i] && modSessions[i].answers) || [];
+      for (var j = 0; j < aArr.length; j++) {
+        var a = aArr[j];
+        if (!a || a.tier !== 'critical') continue;
+        var picked = a.choiceId || 'unknown';
+        out.bySelectedAction[picked] = (out.bySelectedAction[picked] || 0) + 1;
+        if (picked === 'check_raise_big') out.crbHabitCount++;
+        var sc = byId[a.scenarioId];
+        if (sc && sc.actionReason) {
+          out.byScenarioReason[sc.actionReason] = (out.byScenarioReason[sc.actionReason] || 0) + 1;
+        }
+      }
+    }
+  } catch (e) { /* swallow */ }
+  return out;
+}
+
+// _pfM3BetaQADashboardHtml — renders the QA panel. Empty-state when no M3
+// history. Collapsible. Honest about sample size.
+function _pfM3BetaQADashboardHtml() {
+  var stats = _pfM3BetaQAStats();
+  if (stats.sessionCount === 0) {
+    return '<details class="pf-m3-qa-dashboard">' +
+             '<summary>🛡️ Module 3 Beta QA dashboard (project-owner view)</summary>' +
+             '<div class="pf-m3-qa-empty">Play Module 3 sessions to generate beta feedback.</div>' +
+           '</details>';
+  }
+  var weakSpotPreview = _pfM3BetaQAWeakSpotPreview(stats);
+  var critMon = _pfM3BetaQACriticalMonitor(stats);
+
+  // Sample-size honesty banner — under 3 sessions = early signal, under 30
+  // questions = needs more data.
+  var sampleBanner = '';
+  if (stats.sessionCount < 3 || stats.questionCount < 30) {
+    sampleBanner = '<div class="pf-m3-qa-sample-warn">⚠ Early signal — ' +
+                     stats.sessionCount + ' session' + (stats.sessionCount === 1 ? '' : 's') + ', ' +
+                     stats.questionCount + ' answer' + (stats.questionCount === 1 ? '' : 's') +
+                     '. Needs more sessions for confident readings.' +
+                   '</div>';
+  }
+
+  // Top-line metrics row
+  var topMetrics =
+    '<div class="pf-m3-qa-grid">' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.sessionCount + '</span><span class="pf-m3-qa-lbl">sessions</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.questionCount + '</span><span class="pf-m3-qa-lbl">answers</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.latestPctScore != null ? stats.latestPctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">latest</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.averagePctScore != null ? stats.averagePctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">avg</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalCount + '</span><span class="pf-m3-qa-lbl">critical</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalRate + '%</span><span class="pf-m3-qa-lbl">crit rate</span></div>' +
+    '</div>';
+
+  // Per-axis breakdowns
+  function rowsHtml(rows, title, icon) {
+    if (!rows || rows.length === 0) return '';
+    var topRows = rows.slice(0, 6);
+    return '<div class="pf-m3-qa-block">' +
+             '<div class="pf-m3-qa-block-title">' + icon + ' ' + title + '</div>' +
+             '<ul class="pf-m3-qa-list">' +
+               topRows.map(function (r) {
+                 var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                 var miss = r.critCount > 0 ? '⚡' + r.critCount : '';
+                 return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                        ' <span class="pf-m3-qa-detail">(' + r.pct + '% over ' + r.seen + (miss ? ' · ' + miss + ' crit' : '') + ')</span></li>';
+               }).join('') +
+             '</ul>' +
+           '</div>';
+  }
+  var byAxisHtml =
+    rowsHtml(stats.rowsByActionReason, 'By actionReason', '🎯') +
+    rowsHtml(stats.rowsByRecommendedAction, 'By recommendedAction', '🛡️') +
+    rowsHtml(stats.rowsByHeroHandRole, 'By heroHandRole', '🃏') +
+    rowsHtml(stats.rowsByHandClass, 'By handClass', '🪜');
+
+  // Weak-spot preview
+  var weakSpotHtml = '';
+  if (weakSpotPreview.length > 0) {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target (top 3 reasons)</div>' +
+                     '<ul class="pf-m3-qa-list">' +
+                       weakSpotPreview.map(function (w) {
+                         return '<li>' + _pfEscape(_pfM2PrettyLabel(w.reason)) +
+                                ' <span class="pf-m3-qa-detail">(' + w.lifetimeMisses + ' miss' + (w.lifetimeMisses === 1 ? '' : 'es') +
+                                ', ' + w.candidates + ' candidate scenario' + (w.candidates === 1 ? '' : 's') + ')</span></li>';
+                       }).join('') +
+                     '</ul>' +
+                   '</div>';
+  } else {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target</div>' +
+                     '<div class="pf-m3-qa-empty-mini">No weak signals detected this session — clean read.</div>' +
+                   '</div>';
+  }
+
+  // Critical-mistake monitor
+  var critMonHtml = '<div class="pf-m3-qa-block">' +
+                      '<div class="pf-m3-qa-block-title">⚡ Critical-mistake monitor</div>' +
+                      '<div class="pf-m3-qa-detail" style="margin-bottom:6px">' +
+                        'Total critical: ' + critMon.totalCritical +
+                        ' · check-raise-big habit: ' + critMon.crbHabitCount +
+                      '</div>';
+  var bySelected = Object.keys(critMon.bySelectedAction);
+  if (bySelected.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail">By selected action:</div><ul class="pf-m3-qa-list">' +
+      bySelected.sort(function (a, b) { return critMon.bySelectedAction[b] - critMon.bySelectedAction[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.bySelectedAction[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  var byReason = Object.keys(critMon.byScenarioReason);
+  if (byReason.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail" style="margin-top:6px">By scenario actionReason:</div><ul class="pf-m3-qa-list">' +
+      byReason.sort(function (a, b) { return critMon.byScenarioReason[b] - critMon.byScenarioReason[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.byScenarioReason[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  critMonHtml += '</div>';
+
+  // Last 3 sessions micro-summary
+  var sessHtml = '';
+  if (stats.last3Sessions.length > 0) {
+    sessHtml = '<div class="pf-m3-qa-block">' +
+                 '<div class="pf-m3-qa-block-title">🕘 Last 3 sessions</div>' +
+                 '<ul class="pf-m3-qa-list">' +
+                   stats.last3Sessions.map(function (s, i) {
+                     return '<li>#' + (stats.sessionCount - stats.last3Sessions.length + i + 1) + ' · ' +
+                            (s.pct != null ? s.pct + '%' : '—') + ' (' + s.answered + 'q · best ' + s.best + ' / acc ' + s.acceptable + ' / bad ' + s.bad + ' / crit ' + s.critical + ') · mode ' + s.mode + '</li>';
+                   }).join('') +
+                 '</ul>' +
+               '</div>';
+  }
+
+  // Privacy footer + copy button
+  var privacy = '<div class="pf-m3-qa-privacy">' +
+                  '<button type="button" class="pf-m3-qa-copy-btn" onclick="_pfM3BetaQACopySnapshotClick(this)">📋 Copy M3 Beta QA Snapshot</button>' +
+                  '<div class="pf-m3-qa-privacy-note">Local only · browser history · no server upload · no tracking. Snapshot is JSON copied to clipboard for offline review.</div>' +
+                '</div>';
+
+  return '<details class="pf-m3-qa-dashboard">' +
+           '<summary>🛡️ Module 3 Beta QA dashboard (project-owner view)</summary>' +
+           sampleBanner +
+           topMetrics +
+           weakSpotHtml +
+           critMonHtml +
+           byAxisHtml +
+           sessHtml +
+           privacy +
+         '</details>';
+}
+
+// _pfM3BetaQACopySnapshotClick — clipboard copy handler. Builds a JSON
+// snapshot (with markdown-friendly summary line) and writes to clipboard.
+// Local-only operation; no network calls.
+function _pfM3BetaQACopySnapshotClick(btn) {
+  try {
+    var stats = _pfM3BetaQAStats();
+    var weakSpotPreview = _pfM3BetaQAWeakSpotPreview(stats);
+    var critMon = _pfM3BetaQACriticalMonitor(stats);
+    var snapshot = {
+      kind: 'rmtt-m3-beta-qa-snapshot',
+      schema: '1.0.0',
+      appVersion: (function () { try { return buildBackupPayload().appVersion; } catch (e) { return 'unknown'; } })(),
+      moduleId: 'pf_flop_cbet_oop_def',
+      timestampISO: new Date().toISOString(),
+      sessionCount: stats.sessionCount,
+      questionCount: stats.questionCount,
+      latestPctScore: stats.latestPctScore,
+      averagePctScore: stats.averagePctScore,
+      criticalCount: stats.criticalCount,
+      criticalRatePct: stats.criticalRate,
+      weakReviewUsed: stats.weakReviewUsed,
+      weakActionReasons: (stats.weakActionReasons || []).slice(0, 5).map(function (r) {
+        return { reason: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakHeroHandRoles: (stats.weakHeroHandRoles || []).slice(0, 5).map(function (r) {
+        return { role: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakRecommendedActions: (stats.weakRecommendedActions || []).slice(0, 5).map(function (r) {
+        return { action: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakConcepts: (stats.weakConcepts || []).slice(0, 5),
+      weakSpotReviewWouldTarget: weakSpotPreview,
+      criticalMonitor: {
+        totalCritical: critMon.totalCritical,
+        crbHabitCount: critMon.crbHabitCount,
+        bySelectedAction: critMon.bySelectedAction,
+        byScenarioReason: critMon.byScenarioReason,
+        latestCritIds: critMon.latestCritIds
+      },
+      betaMastery: (function () {
+        try {
+          var m = (typeof _pfM3MasteryStats === 'function') ? _pfM3MasteryStats() : null;
+          return m ? m.masteryCriteriaMet : null;
+        } catch (e) { return null; }
+      })(),
+      last3Sessions: stats.last3Sessions,
+      _privacy: 'Local-only snapshot. Generated from browser localStorage M3 session history. No network upload.'
+    };
+    var json = JSON.stringify(snapshot, null, 2);
+    function showOk() {
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied to clipboard';
+        btn.disabled = true;
+        setTimeout(function () { if (btn) { btn.textContent = orig; btn.disabled = false; } }, 1800);
+      }
+      if (typeof showToast === 'function') showToast('M3 Beta QA snapshot copied to clipboard.');
+    }
+    function showFail(msg) {
+      if (typeof showToast === 'function') showToast('Copy failed — ' + msg);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(showOk, function (err) { showFail(String(err || '')); });
+    } else {
+      // Legacy fallback: textarea + execCommand
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = json;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) showOk(); else showFail('clipboard unavailable');
+      } catch (e2) { showFail(String(e2)); }
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Snapshot generation failed.');
+  }
+}
+
+// _pfM3BetaSessionLeakHtml — for the M3 session summary, surfaces a small
+// "biggest leak this session" + "best next review reason" hint when sample
+// size justifies it. Honest about early-signal vs confident reading.
+function _pfM3BetaSessionLeakHtml(d, scenarios) {
+  if (!d || d.module !== 'pf_flop_cbet_oop_def') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  // Re-derive weak buckets for THIS session only
+  var pool = scenarios || [];
+  var rowsAR = _pfM2GroupAnswersBy(d.answers, pool, 'actionReason');
+  var weakAR = rowsAR.filter(function (r) {
+    return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50);
+  });
+  if (weakAR.length === 0) return '';
+  // Sort: critical first, then bad count, then lowest pct
+  weakAR.sort(function (a, b) {
+    if (b.critCount !== a.critCount) return b.critCount - a.critCount;
+    if (b.badCount !== a.badCount) return b.badCount - a.badCount;
+    return a.pct - b.pct;
+  });
+  var top = weakAR[0];
+  var detail = top.critCount > 0 ? top.critCount + ' critical' : (top.badCount > 0 ? top.badCount + ' bad' : top.pct + '%');
+  var sampleHonest = (d.answers.length < 5)
+    ? ' <span class="pf-m3-qa-detail" style="opacity:0.75">(early signal — small sample)</span>'
+    : '';
+  return '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+           '<span class="pf-learn-title">🔥 Biggest leak this session</span>' +
+           '<ul class="pf-learn-list">' +
+             '<li><strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong>' +
+             ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + top.seen + ')</span>' +
+             sampleHonest + '</li>' +
+           '</ul>' +
+           '<div class="pf-m3-qa-detail" style="margin-top:6px;font-size:11px;opacity:0.85;">' +
+             'Best next review: <strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong> — ' +
+             'open Module 3 Weak-Spot Review to drill it.' +
+           '</div>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.2.6 — POSTFLOP BETA QA DASHBOARD
+// ============================================================================
+
 // _pfAcademyRecommendation — picks one recommendation given current stats.
 // Returns { title, body }.
 function _pfAcademyRecommendation(stats) {
@@ -36285,6 +36895,15 @@ function _pfAcademyHomeHtml() {
       m3MasteryHtml = _pfM3MasteryProgressHtml();
     }
   } catch (e) { /* swallow — never block academy render */ }
+  // v4.2.6: M3 Beta QA dashboard — internal-facing diagnostic panel that
+  // surfaces M3 Limited Beta learning signals from localStorage. Collapsed by
+  // default. Shows empty state when no M3 history exists.
+  var m3BetaQAHtml = '';
+  try {
+    if (typeof _pfM3BetaQADashboardHtml === 'function') {
+      m3BetaQAHtml = _pfM3BetaQADashboardHtml();
+    }
+  } catch (e) { /* swallow — never block Academy render */ }
   return '<div class="pf-academy-section">' +
            '<div class="pf-academy-header">' +
              '<span class="pf-academy-title">🎓 Postflop Academy</span>' +
@@ -36296,6 +36915,7 @@ function _pfAcademyHomeHtml() {
            _pfMasteryProgressHtml(stats) +
            m2MasteryHtml +
            m3MasteryHtml +
+           m3BetaQAHtml +
            _pfConceptLibraryHtml() +
            '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
          '</div>';
@@ -37896,6 +38516,14 @@ function renderPostflopComplete() {
       m3AggrHtml = _pfM3RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
     }
   } catch (e) { /* swallow */ }
+  // v4.2.6: Biggest leak this session + best-next-review hint (M3 only).
+  // Honest copy: shows "early signal" when sample size < 5.
+  var m3LeakHtml = '';
+  try {
+    if (typeof _pfM3BetaSessionLeakHtml === 'function') {
+      m3LeakHtml = _pfM3BetaSessionLeakHtml(d, App.postflop && App.postflop.scenarios);
+    }
+  } catch (e) { /* swallow */ }
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
   // v4.1.1: also differentiate when this was a concept-focused drill
@@ -37951,6 +38579,7 @@ function renderPostflopComplete() {
     learnSummaryHtml +
     m2AggrHtml +
     m3AggrHtml +
+    m3LeakHtml +
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
