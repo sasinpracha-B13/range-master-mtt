@@ -372,6 +372,136 @@
         "BTN with A♣Q♠ on K♣K♦7♠ → small range stab; paired K board favors raiser."
       ],
       "relatedConcepts": ["range_advantage", "small_cbet_freq", "dry_high_card_strategy"]
+    },
+    {
+      "key": "oop_defense_threshold",
+      "displayName": "OOP defense threshold",
+      "category": "module3",
+      "shortDef": "The minimum equity / hand strength needed to continue OOP vs a c-bet; below this, fold; above, call or raise.",
+      "longDef": "Out of position vs a c-bet, the BB needs roughly 25–33% equity to continue profitably against a small bet (~33% pot), and roughly 40%+ vs a big bet. The threshold rises as villain's sizing rises and as the board favors the raiser. Hands at the threshold default to call (preserving villain's bluffs); hands well above the threshold can raise for value or protection; hands below it should fold cleanly. The concept is the master variable behind every M3 fold/call/raise decision.",
+      "examples": [
+        "BB with Th8h on A♥8♦3♥ vs 33% — pair + backdoor flush comfortably above threshold → call.",
+        "BB with JTo on A♥8♦3♥ vs 33% — naked overcards below threshold → fold.",
+        "BB with bottom set on 8♠7♦5♥ vs 33% — far above threshold + protection needed → check-raise."
+      ],
+      "relatedConcepts": ["pot_odds_defense", "equity_realization_oop", "range_disadvantage", "bluff_catchers"]
+    },
+    {
+      "key": "check_raise_value",
+      "displayName": "Check-raise for value",
+      "category": "module3",
+      "shortDef": "Raising OOP after villain c-bets, with a strong made hand that wants to build the pot now.",
+      "longDef": "OOP value raises target uncapped IP c-bet ranges that contain many calling hands worse than ours. Sets, top two pair, and overpairs on certain textures all qualify. The raise sizing depends on board texture: small (~3x) on dry boards (preserves villain's bluffs and weaker made hands); big (~4x+) on wet boards where charging draws is critical. The decision to raise vs call OOP hinges on (1) hand strength relative to villain's range, (2) how much protection is needed, (3) whether OOP three-street pot is playable.",
+      "examples": [
+        "BB with 8♣8♥ on A♠8♦3♥ → check-raise small for value; A-x and overpairs pay off.",
+        "BB with Q♣Q♦ on Q♥J♥6♣ → check-raise small/big; top set on wet two-tone needs protection.",
+        "BB with A♥K♥ on J♥8♥4♥ → check-raise big; nut flush on monotone, charge worse flushes."
+      ],
+      "relatedConcepts": ["check_raise_bluff", "value_betting", "protection_betting"]
+    },
+    {
+      "key": "check_raise_bluff",
+      "displayName": "Check-raise as bluff / semi-bluff",
+      "category": "module3",
+      "shortDef": "Raising OOP with a draw or blocker hand to apply fold equity and balance the value-raise range.",
+      "longDef": "OOP semi-bluff raises are the bluffing complement to check-raise value. They leverage (1) fold equity vs villain's air and weak made hands, (2) showdown equity when called, and (3) blocker effects that reduce villain's value combos. Strong combo draws (OESD + flush draw, 12+ outs) are the best candidates. Pure blocker bluffs (e.g., Ah on monotone hearts) work occasionally on the right board class. Frequency must be balanced — over-raising OOP is a major leak; under-raising lets villain c-bet for free.",
+      "examples": [
+        "BB with T♦9♦ on 8♠7♦5♥ → check-raise small as semi-bluff; OESD + overcards.",
+        "BB with 9♥8♥ on Q♥J♥6♣ → check-raise small; combo draw with 12+ outs.",
+        "BB with A♥X♥ on J♥8♥4♥ → check-raise as a polar bluff; nut-flush blocker."
+      ],
+      "relatedConcepts": ["check_raise_value", "semi_bluff_with_equity", "blocker_pressure"]
+    },
+    {
+      "key": "bluff_catchers",
+      "displayName": "Bluff catchers",
+      "category": "module3",
+      "shortDef": "Medium-strength hands that beat villain's bluff range but lose to villain's value range; their EV comes from calling, not raising.",
+      "longDef": "A bluff-catcher is a hand strong enough to beat the bluffs in villain's betting range but too weak to raise for value (since worse hands fold and better hands continue). Middle pair on paired boards, weak top pair on draw-heavy textures, and second-pair on dry boards are textbook bluff-catchers OOP. The defining property: calling preserves villain's bluffs in their range; raising folds them out and isolates dominating value. Bluff-catchers are foundational to BB defense versus c-bets.",
+      "examples": [
+        "BB with 7♦6♦ on K♣K♦7♠ → middle pair bluff-catches villain's air on paired K.",
+        "BB with 9♥8♣ on 8♠7♦5♥ → top pair weak kicker bluff-catches stab range.",
+        "BB with K♥Q♣ on J♥8♥4♥ → second-nut FD + blocker, calls to bluff-catch."
+      ],
+      "relatedConcepts": ["pot_control", "equity_realization_oop", "oop_defense_threshold"]
+    },
+    {
+      "key": "equity_realization_oop",
+      "displayName": "Equity realization OOP",
+      "category": "module3",
+      "shortDef": "How much of hero's raw equity actually converts to chips when defending OOP vs IP aggression.",
+      "longDef": "Out of position, raw equity does not always realize. Hero must check first on every street, faces threat of being raised, and cannot always see all five cards cheaply. Equity-realization (R) measures actual EV / raw equity. OOP R typically falls 0.7–0.9 depending on hand type and board: bluff-catchers and pure draws often realize 70–80%; nutted hands realize closer to 100% (sometimes >100% via implied odds). The concept tells hero when calling is enough vs when only raising captures the hand's true value.",
+      "examples": [
+        "Pair + backdoor on dry A-high → calls, realizes ~80% of equity by getting to showdown cheaply.",
+        "Nut flush draw OOP → calls or raises, realizes most of its equity through fold equity + 9 outs.",
+        "OESD without blockers OOP → calls, realizes <70% as villain barrels turns where draw misses."
+      ],
+      "relatedConcepts": ["equity_realization", "bluff_catchers", "ip_advantage"]
+    },
+    {
+      "key": "range_disadvantage",
+      "displayName": "Range disadvantage",
+      "category": "module3",
+      "shortDef": "Hero's preflop range performs worse than villain's on this board — defense threshold rises, fold frequency rises.",
+      "longDef": "BB's calling range is capped (no JJ+, AK 3-bets pre); BTN's open range is uncapped. On boards that hit BTN harder (A-high, K-high disconnected, broadway dry), BB has range disadvantage and must over-fold relative to nominal pot odds. Recognizing range disadvantage is the difference between defending profitably and bleeding chips by 'bluff-catching' with dominated hands. The concept also frames why some hands fold despite seeming strong (e.g., AQ on K-high — overcards but dominated by villain's K-x).",
+      "examples": [
+        "BB with JTo on A♠8♦3♥ → range disadvantage, fold despite overcards.",
+        "BB with AQo on K♥9♣4♠ → AQ dominated by KQ/KJ; range disadvantage → fold.",
+        "BB with 6c5d on J♥8♥4♥ → no heart on monotone = severe range disadvantage."
+      ],
+      "relatedConcepts": ["range_advantage", "oop_defense_threshold", "common_leaks"]
+    },
+    {
+      "key": "value_raise",
+      "displayName": "Value raise (OOP)",
+      "category": "module3",
+      "shortDef": "Raising a strong made hand OOP after villain c-bets, to build the pot vs an uncapped IP range.",
+      "longDef": "OOP value raises (M3 framing of the M2 value-betting concept) target uncapped IP c-bet ranges that contain many calling hands worse than ours. Sets and top two pair on most textures qualify; top pair on dry boards usually does not (calling realizes more EV by keeping villain's bluffs in). The decision to raise vs call hinges on (1) hand strength relative to villain's range, (2) how much protection is needed, (3) whether OOP three-street pot is playable.",
+      "examples": [
+        "BB with 8c8h on As 8d 3h — set, raise small for value vs A-x and overpairs.",
+        "BB with QcQd on Qh Jh 6c — top set, raise small/big for value + protection.",
+        "BB with AhKh on Jh 8h 4h — nut flush, raise big for value on monotone."
+      ],
+      "relatedConcepts": ["value_betting", "check_raise_value", "thin_value_betting"]
+    },
+    {
+      "key": "protection_raise",
+      "displayName": "Protection raise (OOP)",
+      "category": "module3",
+      "shortDef": "Raising a vulnerable made hand OOP to deny equity to live draws on a wet board.",
+      "longDef": "When OOP holds a made hand that is currently best but exposed to many turn cards that erode equity, raising charges draws and protects the hand's value. Most common with sets, top two, and overpairs on wet, draw-heavy boards. Different from value raise (which targets calls from worse) — protection targets folds from live drawing hands that would otherwise see a cheap turn.",
+      "examples": [
+        "BB with 5c5d on 8s 7d 5h — bottom set, raise to protect vs straights.",
+        "BB with QcQd on Qh Jh 6c — top set, raise to charge flush + straight draws.",
+        "BB with overpair on a wet two-tone — raise small to deny FD equity."
+      ],
+      "relatedConcepts": ["protection_betting", "check_raise_value", "dynamic_board"]
+    },
+    {
+      "key": "semi_bluff_raise",
+      "displayName": "Semi-bluff raise (OOP)",
+      "category": "module3",
+      "shortDef": "Raising a draw OOP that has both fold equity and showdown equity if called.",
+      "longDef": "OOP semi-bluff raises (M3 framing of the M2 semi-bluff concept) leverage (1) fold equity vs villain's air, (2) showdown equity when called, and (3) blocker effects that reduce villain's value combos. Combo draws (OESD + flush draw, 12+ outs) are best candidates. Frequency must be balanced — over-raising OOP is a major leak; under-raising lets villain c-bet for free.",
+      "examples": [
+        "BB with Td9d on 8s 7d 5h — OESD + overcards, semi-bluff raise.",
+        "BB with 9h8h on Qh Jh 6c — combo draw 12+ outs, semi-bluff raise.",
+        "BB with strong combo on draw-heavy texture — raise to apply pressure now."
+      ],
+      "relatedConcepts": ["semi_bluff_with_equity", "check_raise_bluff", "wet_board"]
+    },
+    {
+      "key": "pot_odds_defense",
+      "displayName": "Pot odds defense",
+      "category": "module3",
+      "shortDef": "Computing the minimum equity needed to continue based on bet size and pot.",
+      "longDef": "When facing a bet of size B into a pot of size P, hero must win B / (P + 2B) of the time to break even on a call. Vs 33% pot: ~20% equity required. Vs 50% pot: 25%. Vs 75%: 30%. Vs 100% (pot): 33%. The raw pot-odds threshold is the floor — actual defense threshold is higher OOP because of imperfect equity realization. Pot odds defense is the mechanical calculation that anchors every fold/call decision; equity realization adjusts upward; range advantage swings it further.",
+      "examples": [
+        "Vs 33% c-bet → need ~20% raw equity → most pairs and gutshots qualify mechanically.",
+        "Vs 75% c-bet → need ~30% raw equity → only stronger pairs + real draws.",
+        "Vs overbet (150%) → need ~37% → near-coin-flip equity required."
+      ],
+      "relatedConcepts": ["oop_defense_threshold", "equity_realization_oop"]
     }
   ]
 }

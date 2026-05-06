@@ -180,36 +180,37 @@ Output format mirrors M2: hard error count, warning count, per-rule breakdown, s
 
 ---
 
-## 6. Production audit (R29-R40 planned for v4.2.3)
+## 6. Production audit (R30-R41 implemented in v4.2.3)
 
-When v4.2.3 migrates seeds to production data, the production auditor (`tools/audit-postflop-ps.ps1`) needs new rules R29-R40 to enforce the M3 schema on `module === 'pf_flop_cbet_oop_def'` scenarios:
+When v4.2.3 migrates seeds to production data, the production auditor (`tools/audit-postflop-ps.ps1`) gets new rules R30-R41 to enforce the M3 schema on `module === 'pf_flop_cbet_oop_def'` scenarios. **Note:** R29 was claimed by the v4.2.2D/E card-notation guard, so M3 production rules begin at R30 (not R29 as originally planned in the v4.2.0 audit-plan draft).
 
-| Production rule (planned for v4.2.3) | Mirrors |
-|---|---|
-| R29 | M3-R11..R15 (spot assumption) |
-| R30 | M3-R16..R18 (action choices) |
-| R31 | M3-R19..R21 (reason choices) |
-| R32 | M3-R22..R25 (vocabulary) |
-| R33 | M3-R28..R31 (answer consistency) |
-| R34 | M3-R32..R36 (explanation, with `defenseLogic` becoming required) |
-| R35 | M3-R38..R40 (concept tags) |
-| R36 | M3-R42..R43 (sourceConfidence honesty) |
-| R37 | New: villainAction must be `cbet` for M3 (until donk-bet decisions are added in M4+) |
-| R38 | New: villainSizing must match the c-bet sizing trained (currently `small` only) |
-| R39 | M3 hero hands must not collide with board (already in R02 of base auditor; explicit re-check for M3 module) |
-| R40 | New: M3 scenarios must have `module === 'pf_flop_cbet_oop_def'` |
+| Production rule (implemented v4.2.3) | Mirrors | Notes |
+|---|---|---|
+| R30 | M3-R11..R15 (spot assumption) | NLH_MTT, 100BB, SRP, BB vs BTN, villainAction=cbet, villainSizing=small |
+| R31 | M3-R16..R18 (action choices) | choices = ["fold","call","check_raise_small","check_raise_big","mixed"] |
+| R32 | M3-R19..R21 (reason choices) | 9 reasons including post-v4.2.2 `slowplay_call` |
+| R33 | M3-R22..R25 (vocabulary) | M2 handClass set + M3 heroHandRole including `bluff_catcher`/`dominated_marginal` |
+| R34 | M3-R28..R31 (answer consistency) | answer.best is single string; acceptable/bad/critical disjoint |
+| R35 | M3-R32..R36 (explanation) | short / rangeContext / handLogic / takeaway required + defenseLogic required |
+| R36 | M3-R38..R40 (concept tags) | 1–4 tags from M3 + reusable M2 vocabulary |
+| R37 | M3-R42..R43 (sourceConfidence honesty) | expert_judgment + solver claims need solverRunRef |
+| R38 | New: villainAction must be `cbet` for M3 (until donk-bet decisions are added in M4+) | hard error |
+| R39 | New: villainSizing must match the c-bet sizing trained (currently `small` only) | hard error |
+| R40 | M3 hero hands must not collide with board (explicit re-check for M3 module on top of R02) | hard error |
+| R41 | New: M3 scenarios must have `module === 'pf_flop_cbet_oop_def'` | hard error (mostly trivial — guards against typos) |
 
-These production rules are planned for v4.2.3 and **NOT implemented** in v4.2.0 / v4.2.1.
+These production rules are implemented in v4.2.3 and apply only when `module === 'pf_flop_cbet_oop_def'`.
 
 ---
 
 ## 7. Audit gates summary
 
-| Gate | v4.2.0 expected | v4.2.1 expected | v4.2.3 expected |
+| Gate | v4.2.0 expected | v4.2.1 expected | v4.2.3 expected (post-migration) |
 |---|---|---|---|
-| Production audit | 300 / 0 / 0 (unchanged) | 300 / 0 / 0 (unchanged) | 324 / 0 / 0 (after migration of 24 M3 seeds) |
+| Production audit | 300 / 0 / 0 (unchanged) | 300 / 0 / 0 (unchanged) | **324 / 0 / 0** (after migration of 24 M3 seeds) |
 | M2 seed audit | 24 / 0 / 8 (unchanged) | 24 / 0 / 8 (unchanged) | 24 / 0 / 8 (unchanged) |
 | **M3 seed audit (new in v4.2.1)** | not implemented | **24 PASS / 0 hard errors / N warnings** | 24 / 0 / N (unchanged after migration) |
+| R29 card-notation guard | not applicable | not applicable | **0 warnings** (M3 text passes the v4.2.2D/E text-integrity guard) |
 
 Where N is the warning count from M3-R45..R49 coverage rules plus any `defenseLogic` warnings.
 

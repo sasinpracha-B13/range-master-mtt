@@ -41,7 +41,8 @@
     "high_card_dominant",
     "set_heavy_for_caller",
     "two_pair_heavy_for_caller",
-    "overpair_heavy_for_raiser"
+    "overpair_heavy_for_raiser",
+    "static"
   ],
 
   "suitTexture": [
@@ -180,8 +181,64 @@
     "draft",
     "needs_review",
     "approved",
-    "deprecated"
+    "deprecated",
+    "review_pending",
+    "planning_only"
   ],
+
+  "heroHandRole": {
+    "_comment": "Union of M2 v4.1.2 vocabulary and M3 v4.2.0 vocabulary. Used by audit-postflop-ps.ps1 R30+ for Module 3 (pf_flop_cbet_oop_def). M2 (pf_flop_cbet_ip) uses its own subset enforced inline by R24.",
+    "module2": [
+      "strong_value",
+      "thin_value",
+      "medium_showdown",
+      "weak_showdown",
+      "nut_draw",
+      "strong_draw",
+      "weak_draw",
+      "air",
+      "blocker_bluff",
+      "trap_check"
+    ],
+    "module3": [
+      "nutted_value",
+      "strong_value",
+      "marginal_made_hand",
+      "bluff_catcher",
+      "semi_bluff_combo",
+      "pure_draw",
+      "blocker_bluff",
+      "give_up",
+      "dominated_marginal"
+    ]
+  },
+
+  "actionReason": {
+    "_comment": "M2 reasons + M3 reasons. M3 audit (R31) accepts the M3 set including post-v4.2.2 slowplay_call.",
+    "module2": [
+      "value",
+      "thin_value",
+      "protection",
+      "bluff",
+      "equity_realization",
+      "pot_control",
+      "blocker_pressure",
+      "range_advantage_stab",
+      "give_up",
+      "semi_bluff"
+    ],
+    "module3": [
+      "value_raise",
+      "protection_raise",
+      "semi_bluff_raise",
+      "blocker_raise",
+      "bluff_catch",
+      "equity_realization_call",
+      "slowplay_call",
+      "range_disadvantage_fold",
+      "domination_fold"
+    ]
+  },
 
   "difficultyRange": {
     "min": 1,
@@ -222,6 +279,19 @@
       "spot":        "BTN_open_2.5x_BB_call",
       "v": "v4.1.0_planned",
       "supportedQuestionTypes": ["action_choice"]
+    },
+    "pf_flop_cbet_oop_def": {
+      "displayName": "Facing C-bet OOP",
+      "shortDesc":   "(v4.2.3) BB facing BTN c-bet on the flop. 24 production seeds; not runtime-wired in v4.2.3.",
+      "spot":        "BTN_open_2.5x_BB_call",
+      "v": "v4.2.3",
+      "supportedQuestionTypes": ["action_choice", "reason_choice"],
+      "validActions": ["fold", "call", "check_raise_small", "check_raise_big", "mixed"],
+      "validReasons": [
+        "value_raise", "protection_raise", "semi_bluff_raise", "blocker_raise",
+        "bluff_catch", "equity_realization_call", "slowplay_call",
+        "range_disadvantage_fold", "domination_fold"
+      ]
     }
   }
 }

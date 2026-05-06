@@ -90,16 +90,24 @@ foreach($s in $data.scenarios){
   }
 
   # R04 choices include answers
+  # v4.2.3: Module 3 (pf_flop_cbet_oop_def) uses string-form choices and string-form
+  # answer.best (vs M1/M2 which use {id, label} objects + array best). R04 handles
+  # both forms. Module 3 also has a separate authoritative R31/R32/R34 check.
   if(-not $s.question -or -not $s.question.choices){
     Add-Issue $local 'R04' 'error' $sid 'question.choices missing' | Out-Null
   } elseif(-not $s.answer){
     Add-Issue $local 'R04' 'error' $sid 'answer missing' | Out-Null
   } else {
     $choiceIds = @{}
-    foreach($c in $s.question.choices){ if($c -and $c.id){ $choiceIds[$c.id] = $true } }
+    foreach($c in $s.question.choices){
+      if($c -is [string]){ $choiceIds[$c] = $true }
+      elseif($c -and $c.id){ $choiceIds[$c.id] = $true }
+    }
     foreach($tier in @('best','acceptable','bad','critical')){
       $list = $s.answer.$tier
       if($null -eq $list){ Add-Issue $local 'R04' 'error' $sid "answer.$tier must be an array" | Out-Null; continue }
+      # Normalize string-form best (M3) to a 1-element list for iteration
+      if($tier -eq 'best' -and $list -is [string]){ $list = @($list) }
       foreach($id in $list){
         if(-not $choiceIds.ContainsKey($id)){
           Add-Issue $local 'R04' 'error' $sid "answer.$tier references unknown choice id `"$id`"" | Out-Null
@@ -109,7 +117,14 @@ foreach($s in $data.scenarios){
   }
 
   # R05 best exists
-  if(-not $s.answer -or -not $s.answer.best -or $s.answer.best.Count -eq 0){
+  # M3 best is a string; M1/M2 best is an array. Both pass when non-empty.
+  if(-not $s.answer -or $null -eq $s.answer.best){
+    Add-Issue $local 'R05' 'error' $sid 'answer.best must be a non-empty value' | Out-Null
+  } elseif($s.answer.best -is [string]){
+    if($s.answer.best.Trim().Length -eq 0){
+      Add-Issue $local 'R05' 'error' $sid 'answer.best must be a non-empty value' | Out-Null
+    }
+  } elseif($s.answer.best.Count -eq 0){
     Add-Issue $local 'R05' 'error' $sid 'answer.best must be a non-empty array' | Out-Null
   }
 
@@ -423,6 +438,211 @@ foreach($s in $data.scenarios){
     }
   }
 
+  # ========================================================================
+  # R30-R41 — Module 3 (pf_flop_cbet_oop_def) v4.2.0 schema rules
+  # Apply only to Module 3 scenarios. Mirror the hard-error subset of the
+  # M3 seed audit plan (docs/specs/postflop-v4.2.0-module3-audit-plan.md
+  # rules M3-R11..R43). Coverage warnings (M3-R45..R49) are excluded —
+  # those are seed-only checks. R29 is reserved for the v4.2.2D/E
+  # card-notation guard, so M3 production rules begin at R30.
+  #
+  # Schema differs from M2: question.choices is an array of strings (not
+  # objects with id), and answer.best is a single string (not an array).
+  # ========================================================================
+  if ($s.module -eq 'pf_flop_cbet_oop_def') {
+    $m3ValidActions   = @('fold','call','check_raise_small','check_raise_big','mixed')
+    $m3ValidReasons   = @('value_raise','protection_raise','semi_bluff_raise','blocker_raise',
+                          'bluff_catch','equity_realization_call','slowplay_call',
+                          'range_disadvantage_fold','domination_fold')
+    $m3ValidQTypes    = @('action_choice','reason_choice')
+    $m3ValidHandRoles = @('nutted_value','strong_value','marginal_made_hand','bluff_catcher',
+                          'semi_bluff_combo','pure_draw','blocker_bluff','give_up','dominated_marginal')
+    $m3ValidHandClass = @('set','top_two_pair','two_pair','overpair','underpair',
+                          'top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker',
+                          'second_pair','third_pair_or_lower','mid_pair','bottom_pair',
+                          'combo_draw','oesd','gutshot','flush_draw','nut_flush_draw',
+                          'backdoor_only','no_pair_no_draw','straight','flush','nut_flush','trips','full_house')
+    $m3ValidDrawCats  = @('none','backdoor_only','gutshot','oesd','flush_draw','combo_draw','nut_flush_draw')
+    $m3ValidShowdown  = @('none','low','decent','high','nutted')
+    $m3ValidConcepts  = @('oop_defense_threshold','check_raise_value','check_raise_bluff',
+                          'bluff_catchers','equity_realization_oop','range_disadvantage','pot_odds_defense',
+                          'pot_control','value_raise','protection_raise','semi_bluff_raise',
+                          'value_betting','blocker_pressure','give_up_strategy','range_advantage_stab',
+                          'thin_value_betting','semi_bluff_with_equity','protection_betting',
+                          'common_leaks','equity_realization')
+
+    # R30 — spot assumption (NLH_MTT, 100BB, SRP, BB vs BTN, cbet small)
+    if ($s.street -ne 'flop') {
+      Add-Issue $local 'R30' 'error' $sid ("Module 3 expects street=flop, got " + $s.street) | Out-Null
+    }
+    if ($s.spot) {
+      if ($s.spot.format          -and $s.spot.format          -ne 'NLH_MTT') { Add-Issue $local 'R30' 'error' $sid ("Module 3 expects spot.format=NLH_MTT, got " + $s.spot.format) | Out-Null }
+      if ($s.spot.stackDepth      -and $s.spot.stackDepth      -ne '100BB')   { Add-Issue $local 'R30' 'error' $sid ("Module 3 expects spot.stackDepth=100BB, got " + $s.spot.stackDepth) | Out-Null }
+      if ($s.spot.potType         -and $s.spot.potType         -ne 'SRP')     { Add-Issue $local 'R30' 'error' $sid ("Module 3 expects spot.potType=SRP, got " + $s.spot.potType) | Out-Null }
+      if ($s.spot.heroPosition    -and $s.spot.heroPosition    -ne 'BB')      { Add-Issue $local 'R30' 'error' $sid ("Module 3 expects spot.heroPosition=BB, got " + $s.spot.heroPosition) | Out-Null }
+      if ($s.spot.villainPosition -and $s.spot.villainPosition -ne 'BTN')     { Add-Issue $local 'R30' 'error' $sid ("Module 3 expects spot.villainPosition=BTN, got " + $s.spot.villainPosition) | Out-Null }
+    }
+
+    # R31 — action_choice schema: choices array exactly equals m3ValidActions
+    $m3qtype = $null
+    if ($s.question -and $s.question.qtype) { $m3qtype = $s.question.qtype }
+    if (-not $m3qtype -and $s.question -and $s.question.type) { $m3qtype = $s.question.type }
+    if ($m3qtype -and ($m3ValidQTypes -notcontains $m3qtype)) {
+      Add-Issue $local 'R31' 'error' $sid ("Module 3 question.qtype '" + $m3qtype + "' not in valid set") | Out-Null
+    }
+    if ($m3qtype -eq 'action_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R31' 'error' $sid 'Module 3 action_choice requires question.choices' | Out-Null
+      } else {
+        $m3choices = @($s.question.choices)
+        $missing = @($m3ValidActions | Where-Object { $m3choices -notcontains $_ })
+        $extra   = @($m3choices | Where-Object { $m3ValidActions -notcontains $_ })
+        if ($missing.Count -gt 0) { Add-Issue $local 'R31' 'error' $sid ("M3 action_choice missing required: " + ($missing -join ',')) | Out-Null }
+        if ($extra.Count   -gt 0) { Add-Issue $local 'R31' 'error' $sid ("M3 action_choice has unexpected: " + ($extra -join ',')) | Out-Null }
+      }
+      if ($s.recommendedAction -and ($m3ValidActions -notcontains $s.recommendedAction)) {
+        Add-Issue $local 'R31' 'error' $sid ("M3 recommendedAction '" + $s.recommendedAction + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.recommendedAction -and ($s.answer.best -ne $s.recommendedAction)) {
+        Add-Issue $local 'R31' 'error' $sid ("M3 answer.best '" + $s.answer.best + "' != recommendedAction '" + $s.recommendedAction + "'") | Out-Null
+      }
+    }
+
+    # R32 — reason_choice schema: choices subset of m3ValidReasons
+    if ($m3qtype -eq 'reason_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R32' 'error' $sid 'Module 3 reason_choice requires question.choices' | Out-Null
+      } else {
+        $m3rc = @($s.question.choices)
+        $invalid = @($m3rc | Where-Object { $m3ValidReasons -notcontains $_ })
+        if ($invalid.Count -gt 0) { Add-Issue $local 'R32' 'error' $sid ("M3 reason_choice has invalid: " + ($invalid -join ',')) | Out-Null }
+      }
+      if ($s.actionReason -and ($m3ValidReasons -notcontains $s.actionReason)) {
+        Add-Issue $local 'R32' 'error' $sid ("M3 actionReason '" + $s.actionReason + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.actionReason -and ($s.answer.best -ne $s.actionReason)) {
+        Add-Issue $local 'R32' 'error' $sid ("M3 answer.best '" + $s.answer.best + "' != actionReason '" + $s.actionReason + "' for reason_choice") | Out-Null
+      }
+    }
+
+    # R33 — heroHand structure + handClass / heroHandRole / drawCategory / showdownValue vocab
+    if (-not $s.heroHand) {
+      Add-Issue $local 'R33' 'error' $sid 'Module 3 requires heroHand' | Out-Null
+    } elseif ($s.heroHand.Count -ne 2) {
+      Add-Issue $local 'R33' 'error' $sid ("M3 heroHand has " + $s.heroHand.Count + " cards, expected 2") | Out-Null
+    } else {
+      $m3HeroSeen = @{}
+      foreach ($c in $s.heroHand) {
+        if (-not $c -or $c.Length -ne 2) { Add-Issue $local 'R33' 'error' $sid ("M3 invalid hero card '" + $c + "'") | Out-Null; continue }
+        $r = $c.Substring(0,1); $u = $c.Substring(1,1)
+        if ($validRanks -notcontains $r) { Add-Issue $local 'R33' 'error' $sid ("M3 invalid rank in hero card '" + $c + "'") | Out-Null }
+        if ($validSuits -notcontains $u) { Add-Issue $local 'R33' 'error' $sid ("M3 invalid suit in hero card '" + $c + "'") | Out-Null }
+        if ($m3HeroSeen.ContainsKey("$c")) { Add-Issue $local 'R33' 'error' $sid ("M3 duplicate hero card '" + $c + "'") | Out-Null }
+        $m3HeroSeen["$c"] = $true
+      }
+    }
+    if ($s.handClass     -and ($m3ValidHandClass -notcontains $s.handClass))     { Add-Issue $local 'R33' 'error' $sid ("M3 handClass '" + $s.handClass + "' not in v4.2.0 vocab") | Out-Null }
+    if ($s.heroHandRole  -and ($m3ValidHandRoles -notcontains $s.heroHandRole))  { Add-Issue $local 'R33' 'error' $sid ("M3 heroHandRole '" + $s.heroHandRole + "' not in v4.2.0 vocab") | Out-Null }
+    if ($s.drawCategory  -and ($m3ValidDrawCats  -notcontains $s.drawCategory))  { Add-Issue $local 'R33' 'error' $sid ("M3 drawCategory '" + $s.drawCategory + "' not in v4.2.0 vocab") | Out-Null }
+    if ($s.showdownValue -and ($m3ValidShowdown  -notcontains $s.showdownValue)) { Add-Issue $local 'R33' 'error' $sid ("M3 showdownValue '" + $s.showdownValue + "' not in v4.2.0 vocab") | Out-Null }
+
+    # R34 — answer consistency: best is single string; acceptable/bad/critical disjoint from best
+    if ($s.answer) {
+      if ($null -eq $s.answer.best) {
+        Add-Issue $local 'R34' 'error' $sid 'M3 answer.best is required' | Out-Null
+      } elseif ($s.answer.best -isnot [string]) {
+        Add-Issue $local 'R34' 'error' $sid ("M3 answer.best must be a string, got " + $s.answer.best.GetType().Name) | Out-Null
+      }
+      $m3best = $s.answer.best
+      $m3acc  = @(); if ($s.answer.acceptable) { $m3acc  = @($s.answer.acceptable) }
+      $m3bad  = @(); if ($s.answer.bad)        { $m3bad  = @($s.answer.bad) }
+      $m3crit = @(); if ($s.answer.critical)   { $m3crit = @($s.answer.critical) }
+      if ($m3best -and ($m3acc -contains $m3best)) {
+        Add-Issue $local 'R34' 'error' $sid ("M3 answer.best '" + $m3best + "' also appears in acceptable") | Out-Null
+      }
+      if ($m3best -and ($m3bad -contains $m3best)) {
+        Add-Issue $local 'R34' 'error' $sid ("M3 answer.best '" + $m3best + "' also appears in bad") | Out-Null
+      }
+      foreach ($a in $m3acc) {
+        if ($m3bad -contains $a) {
+          Add-Issue $local 'R34' 'error' $sid ("M3 acceptable choice '" + $a + "' also appears in bad") | Out-Null
+        }
+      }
+      foreach ($c in $m3crit) {
+        if (-not ($m3bad -contains $c)) {
+          Add-Issue $local 'R34' 'error' $sid ("M3 critical choice '" + $c + "' must also appear in bad") | Out-Null
+        }
+      }
+      # All choices in best/acceptable/bad/critical must be valid for the qtype
+      $m3choiceUniverse = if ($m3qtype -eq 'action_choice') { $m3ValidActions } elseif ($m3qtype -eq 'reason_choice') { $m3ValidReasons } else { @() }
+      if ($m3choiceUniverse.Count -gt 0) {
+        $allM3 = @($m3best) + $m3acc + $m3bad + $m3crit | Where-Object { $_ }
+        foreach ($id in $allM3) {
+          if ($m3choiceUniverse -notcontains $id) {
+            Add-Issue $local 'R34' 'error' $sid ("M3 answer references invalid id '" + $id + "' for qtype " + $m3qtype) | Out-Null
+          }
+        }
+      }
+    }
+
+    # R35 — explanation completeness: short / rangeContext / handLogic / takeaway / defenseLogic required
+    if ($s.explanation) {
+      foreach ($fld in @('short','rangeContext','handLogic','takeaway','defenseLogic')) {
+        $v = $s.explanation.$fld
+        if (-not $v -or ($v -is [string] -and $v.Trim().Length -eq 0)) {
+          Add-Issue $local 'R35' 'error' $sid ("M3 explanation." + $fld + " is required") | Out-Null
+        }
+      }
+    } else {
+      Add-Issue $local 'R35' 'error' $sid 'M3 explanation block missing' | Out-Null
+    }
+
+    # R36 — concept tags: 1-4 entries, all from M3 + reusable M2 vocabulary
+    if (-not $s.conceptTags -or $s.conceptTags.Count -eq 0) {
+      Add-Issue $local 'R36' 'error' $sid 'M3 conceptTags must be non-empty' | Out-Null
+    } else {
+      if ($s.conceptTags.Count -gt 4) {
+        Add-Issue $local 'R36' 'error' $sid ("M3 conceptTags has " + $s.conceptTags.Count + " entries (max 4)") | Out-Null
+      }
+      foreach ($tg in $s.conceptTags) {
+        if ($m3ValidConcepts -notcontains $tg) {
+          Add-Issue $local 'R36' 'error' $sid ("M3 conceptTag '" + $tg + "' not in M3 + reusable M2 vocabulary") | Out-Null
+        }
+      }
+    }
+
+    # R37 — sourceConfidence honesty: solver_verified requires solverRunRef
+    if ($s.sourceConfidence -eq 'solver_verified' -and -not $s.solverRunRef) {
+      Add-Issue $local 'R37' 'error' $sid 'M3 sourceConfidence=solver_verified requires solverRunRef field' | Out-Null
+    }
+
+    # R38 — villainAction must be 'cbet'
+    if ($s.spot -and $s.spot.villainAction -and $s.spot.villainAction -ne 'cbet') {
+      Add-Issue $local 'R38' 'error' $sid ("M3 spot.villainAction must be 'cbet', got '" + $s.spot.villainAction + "'") | Out-Null
+    }
+
+    # R39 — villainSizing must match the c-bet sizing trained (currently 'small' only in v4.2.0)
+    if ($s.spot -and $s.spot.villainSizing -and $s.spot.villainSizing -ne 'small') {
+      Add-Issue $local 'R39' 'error' $sid ("M3 spot.villainSizing must be 'small' in v4.2.3, got '" + $s.spot.villainSizing + "'") | Out-Null
+    }
+
+    # R40 — heroHand vs board collision (explicit M3 re-check)
+    if ($s.heroHand -and $s.board -and $s.board.cards) {
+      $m3BoardSet = @{}
+      foreach ($c in $s.board.cards) { $m3BoardSet["$c"] = $true }
+      foreach ($c in $s.heroHand) {
+        if ($m3BoardSet.ContainsKey("$c")) {
+          Add-Issue $local 'R40' 'error' $sid ("M3 hero card '" + $c + "' also on board") | Out-Null
+        }
+      }
+    }
+
+    # R41 — moduleId consistency (trivial guard against typos)
+    if ($s.module -ne 'pf_flop_cbet_oop_def') {
+      Add-Issue $local 'R41' 'error' $sid ("M3 expects module='pf_flop_cbet_oop_def', got '" + $s.module + "'") | Out-Null
+    }
+  }
+
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
   # Detects suspicious em-dash and collapsed-board patterns inside text fields
   # that suggest a CP874 mojibake cleanup over-normalized suit symbols.
@@ -556,5 +776,17 @@ if($dupBQ.Count -gt 0){
 # needs_review count
 $nr = @($m1 | Where-Object { $_.auditStatus -eq 'needs_review' }).Count
 Write-Output ('  needs_review: ' + $nr)
+
+# v4.2.3 — Module 3 stats block
+$m3 = @($data.scenarios | Where-Object { $_.module -eq 'pf_flop_cbet_oop_def' })
+if ($m3.Count -gt 0) {
+  Write-Output ''
+  Write-Output ('  Module 3 total: ' + $m3.Count)
+  $m3 | Group-Object { $_.question.qtype } | Sort-Object Name | ForEach-Object { Write-Output ('    qtype ' + $_.Name + ': ' + $_.Count) }
+  $m3 | Group-Object { $_.board.suitTexture } | Sort-Object Name | ForEach-Object { Write-Output ('    suit ' + $_.Name + ': ' + $_.Count) }
+  $m3 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
+  $m3 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
+  $m3 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
+}
 
 if($totalErrors -gt 0){ exit 1 } else { exit 0 }
