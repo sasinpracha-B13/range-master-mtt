@@ -1,4 +1,4 @@
-const VERSION = 'v4.1.6';
+const VERSION = 'v4.1.7';
 const CACHE_NAME = `range-master-${VERSION}`;
 
 const STATIC_ASSETS = [

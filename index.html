@@ -11191,6 +11191,110 @@
     /* ========================================================================
        END v4.1.6 — CONCEPT LIBRARY MODULE 2 BRIDGE
        ======================================================================== */
+
+    /* ========================================================================
+       v4.1.7 — MODULE 2 PLAYABLE BETA (runtime UI)
+       Adds: hero hand card row on M2 question screens, hand-class /
+       hero-hand-role chips, M2 recommended-action + reason feedback chip,
+       Module 2 module card "Beta" status pill, secondary syllabus button.
+       ======================================================================== */
+    .postflop-hero-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 8px 0 6px 0;
+    }
+    .postflop-hero-card {
+      width: 44px;
+      height: 60px;
+      border-radius: 6px;
+      background: var(--card-bg, #1a1a1f);
+      border: 1.5px solid rgba(245, 166, 35, 0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(245, 166, 35, 0.15);
+    }
+    .postflop-hero-card .pf-rank {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .postflop-hero-card .pf-suit {
+      font-size: 18px;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .postflop-hero-card.suit-h, .postflop-hero-card.suit-d { color: #f04747; }
+    .postflop-hero-card.suit-c, .postflop-hero-card.suit-s { color: #ddd; }
+    .pf-m2-hand-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .pf-m2-hand-chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(245, 166, 35, 0.10);
+      color: #f5a623;
+      border: 1px solid rgba(245, 166, 35, 0.30);
+      text-transform: uppercase;
+    }
+    .pf-m2-handrole-chip {
+      background: rgba(110, 168, 254, 0.10);
+      color: #6ea8fe;
+      border-color: rgba(110, 168, 254, 0.30);
+    }
+    .pf-fb-m2-action {
+      background: rgba(245, 166, 35, 0.06);
+      border-left-color: rgba(245, 166, 35, 0.55) !important;
+    }
+    .pf-fb-m2-action .pf-m2-rec-action {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f5a623;
+      margin-right: 8px;
+    }
+    .pf-fb-m2-action .pf-m2-action-reason {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .pf-status-pill.is-beta {
+      color: #f5a623;
+      background: rgba(245, 166, 35, 0.12);
+      border: 1px solid rgba(245, 166, 35, 0.40);
+    }
+    .pf-module-card.is-beta {
+      border-left: 3px solid rgba(245, 166, 35, 0.65);
+    }
+    .pf-module-action-btn.is-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .pf-module-action-btn.is-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    @media (max-width: 480px) {
+      .postflop-hero-card { width: 40px; height: 56px; }
+      .pf-m2-hand-chip { font-size: 9px; padding: 2px 6px; }
+    }
+    /* ========================================================================
+       END v4.1.7 — MODULE 2 PLAYABLE BETA
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -32615,7 +32719,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.1.6',
+    appVersion: '4.1.7',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33286,6 +33390,11 @@ function getModule1Scenarios() {
   if (!getPostflopReady()) return [];
   return App.postflop.scenarios.filter(function (s) { return s.module === 'pf_board_texture'; });
 }
+// v4.1.7: Module 2 (Flop C-bet IP) scenario pool. Mirrors getModule1Scenarios.
+function getModule2Scenarios() {
+  if (!getPostflopReady()) return [];
+  return App.postflop.scenarios.filter(function (s) { return s.module === 'pf_flop_cbet_ip'; });
+}
 function getConceptByKey(key) {
   if (!getPostflopReady()) return null;
   var concepts = (App.postflop.concepts && App.postflop.concepts.concepts) || [];
@@ -33354,12 +33463,22 @@ function startPostflopDrill(moduleId, sessionLength) {
     if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
     return;
   }
-  var pool = (moduleId === 'pf_board_texture') ? getModule1Scenarios() : [];
+  // v4.1.7: route pool by moduleId. Module 1 = board_texture; Module 2 = flop_cbet_ip.
+  var pool;
+  if (moduleId === 'pf_board_texture') {
+    pool = getModule1Scenarios();
+  } else if (moduleId === 'pf_flop_cbet_ip') {
+    pool = getModule2Scenarios();
+  } else {
+    pool = [];
+  }
   if (pool.length === 0) {
     if (typeof showToast === 'function') showToast('No scenarios available for this module.');
     return;
   }
-  var queue = buildPostflopQueue(pool, sessionLength || 15);
+  // v4.1.7: Module 2 sessions default to 12 questions (mirrors v4.1.2 design intent + concept-drill length).
+  var defaultLen = (moduleId === 'pf_flop_cbet_ip') ? 12 : 15;
+  var queue = buildPostflopQueue(pool, sessionLength || defaultLen);
   App.state.postflopDrill = {
     active: true,
     module: moduleId,
@@ -33902,6 +34021,92 @@ function _pfTeachingFeedbackBlocksHtml(scenario) {
   return html;
 }
 
+// v4.1.7: Module 2 (pf_flop_cbet_ip) teaching feedback layout. Hand-action
+// focused — leads with recommended action + action reason chips, then hand
+// logic, sizing logic (if betting), takeaway, common mistake. Mirrors the
+// Module 1 5-block structure but the strands are hand-aware rather than
+// board-only. Falls back gracefully if any field is missing.
+function _pfM2TeachingFeedbackBlocksHtml(scenario) {
+  var explanation = (scenario && scenario.explanation) || {};
+  var fix = (typeof _pfFixMojibake === 'function') ? _pfFixMojibake : function (x) { return x; };
+  var html = '';
+
+  // B. Recommended action + action reason chip row
+  var recAction = scenario.recommendedAction || '';
+  var actionReason = scenario.actionReason || '';
+  var recLabel = ({
+    'bet_small': 'Bet small (~33% pot)',
+    'bet_big': 'Bet big (~75-100% pot)',
+    'check': 'Check back',
+    'mixed': 'Mix between two actions'
+  })[recAction] || recAction;
+  var reasonLabel = (actionReason || '').replace(/_/g, ' ');
+  if (recAction || reasonLabel) {
+    html += '<div class="pf-teach-fb-block pf-fb-m2-action">' +
+              '<span class="pf-fb-block-title">🎯 Recommended Action</span>' +
+              '<div class="pf-fb-block-body">' +
+                (recLabel ? '<span class="pf-m2-rec-action">' + _pfEscape(recLabel) + '</span>' : '') +
+                (reasonLabel ? '<span class="pf-m2-action-reason">Reason: ' + _pfEscape(reasonLabel) + '</span>' : '') +
+              '</div>' +
+            '</div>';
+  }
+
+  // C. Hand Logic (the strategic frame for THIS hand on THIS board)
+  if (explanation.handLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Hand Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.handLogic)) + '</div>' +
+            '</div>';
+  } else if (explanation.short) {
+    // Fallback to short if handLogic missing
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Hand Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.short)) + '</div>' +
+            '</div>';
+  }
+
+  // C2. Range Context (collapsed details if present)
+  if (explanation.rangeContext) {
+    html += '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;">' +
+              '<summary>Range / Board Context</summary>' +
+              '<div class="pf-section-body">' + _pfEscape(fix(explanation.rangeContext)) + '</div>' +
+            '</details>';
+  }
+
+  // D. Sizing Logic (only when betting)
+  if (explanation.sizingLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Sizing Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.sizingLogic)) + '</div>' +
+            '</div>';
+  }
+  // D-alt. Action Logic (alternative slot for reason_choice scenarios)
+  if (explanation.actionLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Action Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.actionLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // E. Takeaway
+  if (explanation.takeaway) {
+    html += '<div class="pf-teach-fb-block pf-fb-takeaway">' +
+              '<span class="pf-fb-block-title">💡 Takeaway</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.takeaway)) + '</div>' +
+            '</div>';
+  }
+
+  // F. Common Mistake (only if present)
+  if (explanation.commonMistake) {
+    html += '<div class="pf-teach-fb-block pf-fb-mistake">' +
+              '<span class="pf-fb-block-title">⚠️ Common Mistake</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.commonMistake)) + '</div>' +
+            '</div>';
+  }
+
+  return html;
+}
+
 // ============================================================================
 // END v4.0.8 — POSTFLOP TEACHING LAYER (helpers)
 // ============================================================================
@@ -33947,8 +34152,23 @@ function _pfChoiceGuide(qType) {
                '<br><strong>Check-heavy</strong> — checking dominates this spot.'
     },
     action_choice: {
-      summary: 'What action should hero take with this specific hand?',
-      details: 'Choose check, a small bet, or a big bet. The right answer depends on hand class, board texture, and the range vs range dynamic.'
+      summary: 'What action should BTN take with this specific hand on this flop?',
+      details: '<strong>Bet small (~33%)</strong> — range bet on dry / range-advantaged boards; thin value with strong hands; range-stab with air. ' +
+               '<br><strong>Bet big (~75-100%)</strong> — polar / protection sizing on dynamic boards or with combo draws. ' +
+               '<br><strong>Check</strong> — pot control, give up, or trap with strong made hands. ' +
+               '<br><strong>Mixed</strong> — GTO mixes meaningfully between two actions; both lines are correct.'
+    },
+    reason_choice: {
+      summary: 'Why does the recommended action work for this hand on this flop?',
+      details: '<strong>Value</strong> — bet because worse hands call. ' +
+               '<br><strong>Thin value</strong> — bet small for marginal value; big sizing folds out worse. ' +
+               '<br><strong>Protection</strong> — bet to deny equity to live overcards / draws. ' +
+               '<br><strong>Bluff / Semi-bluff</strong> — bet without made hand; semi-bluff carries equity if called. ' +
+               '<br><strong>Equity realization</strong> — bet (or check) to ensure we get to see future cards / showdown. ' +
+               '<br><strong>Pot control</strong> — check primarily to keep pot small with marginal showdown value. ' +
+               '<br><strong>Blocker pressure</strong> — leverage card removal to make opponent\'s calling range thin. ' +
+               '<br><strong>Range-advantage stab</strong> — bet small as part of a range strategy because we have range advantage. ' +
+               '<br><strong>Give up</strong> — check intending to fold to most pressure; no plan to continue.'
     }
   };
   var g = guides[qType];
@@ -34010,6 +34230,9 @@ function _pfBuildQuestionPrompt(scenario) {
   var question = scenario && scenario.question ? scenario.question : {};
   var qtype = question.type || '';
   var boardText = _pfBoardText(board.cards || []);
+  // v4.1.7: hero hand text for Module 2 (action_choice / reason_choice carry hero hand context)
+  var heroText = (scenario && scenario.heroHand && scenario.heroHand.length === 2)
+    ? _pfBoardText(scenario.heroHand) : '';
   switch (qtype) {
     case 'range_advantage':
       return 'On ' + boardText + ' (BTN open vs BB call, 100BB SRP), who has range advantage?';
@@ -34022,7 +34245,28 @@ function _pfBuildQuestionPrompt(scenario) {
     case 'dynamic_level':
       return 'On ' + boardText + ', what is the dynamic level?';
     case 'action_choice':
+      // v4.1.7: include hero hand for Module 2 context
+      if (heroText) {
+        return 'With ' + heroText + ' on ' + boardText + ' (BTN open vs BB call, 100BB SRP), what should BTN do most often?';
+      }
       return 'On ' + boardText + ', what action should BTN take?';
+    case 'reason_choice':
+      // v4.1.7: reason_choice — hero hand + recommended action context
+      var recAction = scenario && scenario.recommendedAction ? scenario.recommendedAction : 'this action';
+      var actionText = ({
+        'bet_small': 'bet small',
+        'bet_big': 'bet big',
+        'check': 'check',
+        'mixed': 'mix between two actions'
+      })[recAction] || recAction;
+      // Prefer the data prompt if it exists (likely more nuanced); otherwise build a default.
+      if (question.prompt && question.prompt.trim().length > 30) {
+        return _pfFixMojibake(question.prompt);
+      }
+      if (heroText) {
+        return 'With ' + heroText + ' on ' + boardText + ', BTN\'s recommended action is to ' + actionText + '. What is the main reason?';
+      }
+      return 'On ' + boardText + ', what is the main reason for the recommended action?';
     default:
       // Unknown qtype: try to repair the data prompt via the mojibake reverser.
       return _pfFixMojibake(question.prompt) || ('On ' + boardText + ', make your read.');
@@ -34121,14 +34365,16 @@ var _PF_CURRICULUM = [
   {
     key: 'm2', name: 'Module 2 — Flop C-bet IP',
     focus: ['when BTN should bet', 'when BTN should check', 'hand-class decisions', 'value / bluff / protection logic'],
-    scenarioCount: 11,
-    masteryNote: 'Unlocks after Module 1 mastery.',
+    scenarioCount: 35,
+    masteryNote: 'Beta · 35 scenarios · all 5 M2 concepts drillable.',
     syllabus: [
       'Hero hand context (vs board-only reads)',
-      'Action menu: check / bet 33% / bet 75%',
+      'Action menu: bet small / bet big / check / mixed',
       'Range betting on dry boards',
       'Polar sizing on wet boards',
-      'Protection / equity-denial bets'
+      'Protection / equity-denial bets',
+      'Pot control with medium showdown',
+      'Give-up vs range-stab on BB-favored textures'
     ]
   },
   {
@@ -34257,7 +34503,7 @@ var _PF_CONCEPT_LIBRARY = [
     name: 'Value Betting',
     def: 'Betting a strong made hand because worse hands will call. The fundamental engine of profitable play with strong hands on flops where BTN has range advantage.',
     module: 'm2',
-    previewOnly: true,
+    previewOnly: false,
     tags: ['value_betting'],
     relatedTags: ['thin_value_betting', 'small_cbet_freq', 'range_advantage'],
     questionTypes: ['action_choice'],
@@ -34267,7 +34513,7 @@ var _PF_CONCEPT_LIBRARY = [
     name: 'Pot Control',
     def: 'Checking with medium showdown value to keep the pot small. Used with mid pairs, weak top pair, and overpairs on dynamic / BB-favored boards where the hand wants showdown but does not want to face raises.',
     module: 'm2',
-    previewOnly: true,
+    previewOnly: false,
     tags: ['pot_control'],
     relatedTags: ['check_strategy', 'low_connected_caution', 'ip_advantage'],
     questionTypes: ['action_choice', 'reason_choice'],
@@ -34277,7 +34523,7 @@ var _PF_CONCEPT_LIBRARY = [
     name: 'Blocker Pressure',
     def: 'Bluffing or thin-betting with hands that block opponent\'s strong calling range. Most common with the Ace of the flush suit on monotone boards or A-blocker on paired Ax boards.',
     module: 'm2',
-    previewOnly: true,
+    previewOnly: false,
     tags: ['blocker_pressure'],
     relatedTags: ['semi_bluff_with_equity', 'polar_big_strategy', 'common_leaks'],
     questionTypes: ['action_choice', 'reason_choice'],
@@ -34287,7 +34533,7 @@ var _PF_CONCEPT_LIBRARY = [
     name: 'Give-up Strategy',
     def: 'Checking with the intent to fold to most pressure. Conserves chips with hands that have neither equity nor showdown value on BB-favored boards or with dominated draws.',
     module: 'm2',
-    previewOnly: true,
+    previewOnly: false,
     tags: ['give_up_strategy'],
     relatedTags: ['check_strategy', 'low_connected_caution', 'pot_control'],
     questionTypes: ['action_choice', 'reason_choice'],
@@ -34297,7 +34543,7 @@ var _PF_CONCEPT_LIBRARY = [
     name: 'Range-Advantage Stab',
     def: 'Betting small as part of a high-frequency range strategy on boards where the preflop raiser has clear range advantage. The bet\'s EV comes from range, not hand-by-hand merit.',
     module: 'm2',
-    previewOnly: true,
+    previewOnly: false,
     tags: ['range_advantage_stab'],
     relatedTags: ['range_advantage', 'small_cbet_freq', 'dry_high_card_strategy'],
     questionTypes: ['action_choice', 'reason_choice'],
@@ -34412,9 +34658,10 @@ function _pfAcademyStats() {
 function _pfModuleStatus(moduleKey, stats) {
   if (moduleKey === 'm1') return 'active';
   if (moduleKey === 'm2') {
-    var m = stats && stats.masteryCriteriaMet;
-    if (m && Object.keys(m).every(function (k) { return m[k]; })) return 'preview';
-    return 'preview'; // Always preview — gives early visibility; preview action shows syllabus only
+    // v4.1.7: Module 2 is now playable beta. All 35 scenarios in production
+    // pool, runtime renders hand-aware questions, all 5 M2 concept drills
+    // enabled. No mastery gating yet — early-access policy.
+    return 'beta';
   }
   if (moduleKey === 'm3') return 'locked';
   return 'future';
@@ -34517,7 +34764,7 @@ function _pfAcademyRecommendationHtml(stats) {
 // _pfModuleCardHtml — render a single module card given module + stats.
 function _pfModuleCardHtml(mod, stats) {
   var status = _pfModuleStatus(mod.key, stats);
-  var statusLabel = ({ active: 'Active', preview: 'Preview', locked: 'Locked', future: 'Future' })[status] || status;
+  var statusLabel = ({ active: 'Active', beta: 'Beta', preview: 'Preview', locked: 'Locked', future: 'Future' })[status] || status;
   var focusText = mod.focus.join(' · ');
   var scenariosLine = mod.scenarioCount > 0 ? mod.scenarioCount + ' scenarios' : 'no scenarios yet';
   var actionsHtml = '';
@@ -34538,18 +34785,20 @@ function _pfModuleCardHtml(mod, stats) {
       '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Continue Board Texture</button>' +
       weakBtn;
   } else if (mod.key === 'm2') {
-    // Preview: button toggles syllabus details
+    // v4.1.7: Beta — playable. Start button calls startPostflopDrill with the
+    // M2 module id; default queue length 12. Syllabus details remain available.
     actionsHtml =
-      '<button class="pf-module-action-btn is-disabled" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Preview syllabus</button>';
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_flop_cbet_ip\', 12)">▶ Start Module 2 Beta</button>' +
+      '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
   } else {
     actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
   }
   var syllabusHtml = '';
   if (mod.key === 'm2' && mod.syllabus) {
-    syllabusHtml = '<details class="pf-module-syllabus"><summary>Syllabus preview</summary>' +
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 2 syllabus</summary>' +
                    '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
                    '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
-                   'Production-ready Module 2 will arrive in a future patch. Current data is seed only.' +
+                   'Beta · Hand-aware question rendering, M2 concept drills, M2 weak-spot review all enabled in v4.1.7.' +
                    '</div></details>';
   }
   return '<div class="pf-module-card is-' + status + '">' +
@@ -34669,6 +34918,12 @@ function _pfConceptScenarioScore(scenario, config, lastSessionIds) {
 // concept. queue length capped at targetLen (default 12). poolSize counts
 // scenarios above the strict threshold (>30, exclusive of pure-random).
 // fillUsed=true when we had to reach below the threshold to hit targetLen.
+//
+// v4.1.7: when called with concepts library entry having `module: 'm2'`,
+// the caller (startPostflopConceptDrill) passes the M2 scenario pool so
+// scoring matches against M2 scenarios only. Module 1 concept drills draw
+// only from M1 scenarios. The function itself is module-agnostic — it
+// scores whatever pool it's given.
 function _pfBuildConceptQueue(conceptKey, allScenarios, targetLen) {
   targetLen = targetLen || 12;
   var empty = { queue: [], poolSize: 0, fillUsed: false, displayName: _pfConceptDisplayName(conceptKey) };
@@ -34773,33 +35028,49 @@ function startPostflopConceptDrill(conceptKey) {
     if (typeof showToast === 'function') showToast('Post-flop beta is disabled in Settings.');
     return;
   }
-  // v4.1.6 — defense in depth: refuse to start a drill for any preview-only
-  // (Module 2) concept. The Concept Library renders these with a lock badge
-  // instead of a drill button, but a stale onclick or programmatic call
-  // should also be rejected. Module 2 concept drills will be enabled in
-  // v4.1.7 once hand-aware question / answer rendering ships.
+  // v4.1.7: route the scenario pool by concept's module. Module 1 concepts
+  // draw only from pf_board_texture; Module 2 concepts draw only from
+  // pf_flop_cbet_ip. The previewOnly guard from v4.1.6 is removed because
+  // v4.1.7 ships hand-aware rendering — Module 2 concepts are now drillable.
+  // Defense remaining: if a concept entry still has previewOnly=true (shouldn't
+  // post-v4.1.7), refuse with a toast.
+  var moduleForConcept = 'm1';
+  var conceptEntry = null;
   if (typeof _PF_CONCEPT_LIBRARY !== 'undefined' && Array.isArray(_PF_CONCEPT_LIBRARY)) {
     for (var pi = 0; pi < _PF_CONCEPT_LIBRARY.length; pi++) {
       var entry = _PF_CONCEPT_LIBRARY[pi];
-      if (entry && entry.key === conceptKey && entry.previewOnly) {
-        if (typeof showToast === 'function') showToast('Module 2 concept drill is in preview. Coming in v4.1.7.');
-        return;
+      if (entry && entry.key === conceptKey) {
+        conceptEntry = entry;
+        moduleForConcept = entry.module || 'm1';
+        break;
       }
     }
   }
-  var pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+  if (conceptEntry && conceptEntry.previewOnly) {
+    if (typeof showToast === 'function') showToast('Concept drill in preview. Coming in a future patch.');
+    return;
+  }
+  var pool;
+  var moduleId;
+  if (moduleForConcept === 'm2') {
+    pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
+    moduleId = 'pf_flop_cbet_ip';
+  } else {
+    pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+    moduleId = 'pf_board_texture';
+  }
   if (pool.length === 0) {
     if (typeof showToast === 'function') showToast('No scenarios available for this module.');
     return;
   }
   var built = _pfBuildConceptQueue(conceptKey, pool, 12);
   if (!built || !built.queue || built.queue.length === 0) {
-    // Unknown concept or empty pool — fall back to normal drill
-    return startPostflopDrill('pf_board_texture');
+    // Unknown concept or empty pool — fall back to normal drill in the same module
+    return startPostflopDrill(moduleId);
   }
   App.state.postflopDrill = {
     active: true,
-    module: 'pf_board_texture',
+    module: moduleId,
     mode: 'concept',
     conceptKey: built.conceptKey || conceptKey,
     conceptDisplayName: built.displayName || _pfConceptDisplayName(conceptKey),
@@ -34874,11 +35145,11 @@ function _pfConceptLibraryHtml() {
 
   var m1Section = '<div class="pf-concept-group-header">Module 1 — Board Reading <span class="pf-concept-group-count">(' + m1List.length + ')</span></div>' + m1Cards;
   var m2Section = m2List.length > 0
-    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 2 — Flop C-bet IP · Hand Action <span class="pf-concept-group-count">(' + m2List.length + ' · preview)</span></div>' + m2Cards)
+    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 2 — Flop C-bet IP · Hand Action <span class="pf-concept-group-count">(' + m2List.length + ' · beta)</span></div>' + m2Cards)
     : '';
 
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 preview) · tap to drill</summary>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2) · tap to drill</summary>' +
            '<div class="pf-concept-grid">' + m1Section + m2Section + '</div>' +
          '</details>';
 }
@@ -35041,9 +35312,26 @@ function renderPostflopQuestion() {
       '</div>';
   }).join('');
 
-  var heroLine = (scenario.heroHand && scenario.heroHand.length)
-    ? 'Hero: ' + scenario.heroHand.join(' ')
-    : 'Hero: — (board read)';
+  // v4.1.7: Module 2 (pf_flop_cbet_ip) is hand-aware — render hero hand as cards
+  // alongside board cards. Module 1 stays board-only.
+  var isM2 = (scenario.module === 'pf_flop_cbet_ip');
+  var heroHandHtml = '';
+  var heroLine;
+  if (isM2 && scenario.heroHand && scenario.heroHand.length === 2) {
+    heroHandHtml = (scenario.heroHand || []).map(function (card) {
+      var rank = card.charAt(0);
+      var suit = card.charAt(1);
+      return '<div class="postflop-hero-card ' + _pfSuitClass(suit) + '">' +
+        '<span class="pf-rank">' + _pfEscape(rank) + '</span>' +
+        '<span class="pf-suit">' + _pfSuitChar(suit) + '</span>' +
+        '</div>';
+    }).join('');
+    heroLine = ''; // hero hand is now a card row, not text
+  } else {
+    heroLine = (scenario.heroHand && scenario.heroHand.length)
+      ? 'Hero: ' + scenario.heroHand.join(' ')
+      : 'Hero: — (board read)';
+  }
 
   // v4.0.4: NO inline onclick (broken in v4.0.2/v4.0.3 due to JSON.stringify
   // quote conflict with onclick="..." attribute). Use data-choice-id only;
@@ -35058,9 +35346,21 @@ function renderPostflopQuestion() {
   var guideHtml = _pfChoiceGuide(question.type);
 
   // v4.0.8: teaching layer — pattern label + board reading checklist + hint
+  // v4.1.7: for Module 2, suppress the board-only checklist (board reading is
+  // assumed; the focus is hand action). Keep the board pattern label + hint.
   var patternHtml = (typeof _pfPatternLabelHtml === 'function') ? _pfPatternLabelHtml(board) : '';
-  var checklistHtml = (typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '';
+  var checklistHtml = isM2 ? '' : ((typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '');
   var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
+  // v4.1.7: Module 2 hand-class chip
+  var handChipHtml = '';
+  if (isM2 && (scenario.handClass || scenario.heroHandRole)) {
+    var hcLabel = scenario.handClass ? _pfEscape(scenario.handClass.replace(/_/g, ' ')) : '';
+    var hrLabel = scenario.heroHandRole ? _pfEscape(scenario.heroHandRole.replace(/_/g, ' ')) : '';
+    handChipHtml = '<div class="pf-m2-hand-chips">' +
+      (hcLabel ? '<span class="pf-m2-hand-chip pf-m2-handclass-chip" title="Mechanical hand class">🃏 ' + hcLabel + '</span>' : '') +
+      (hrLabel ? '<span class="pf-m2-hand-chip pf-m2-handrole-chip" title="Strategic role on this board">🎯 ' + hrLabel + '</span>' : '') +
+      '</div>';
+  }
   var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
   // v4.0.12: Review Mode badge when this is a weak-spot focused session
   // v4.1.1: also handle Concept Drill mode (mutually exclusive with weak_spots)
@@ -35084,9 +35384,25 @@ function renderPostflopQuestion() {
       '</div>';
   }
 
+  // v4.1.7: Module 2 gets its own context label + spot section
+  var contextLabelText = isM2
+    ? '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total
+    : '🧪 Board Texture Trainer · Q ' + qNum + '/' + total;
+
+  // v4.1.7: hero hand row for Module 2
+  var heroHandSection = '';
+  if (isM2 && heroHandHtml) {
+    heroHandSection =
+      '<div class="postflop-question-card">' +
+        '<div class="postflop-section-title">🃏 Hero Hand</div>' +
+        '<div class="postflop-hero-row">' + heroHandHtml + '</div>' +
+        handChipHtml +
+      '</div>';
+  }
+
   var html =
     '<div class="postflop-context-bar">' +
-      '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
+      '<span class="postflop-context-label">' + contextLabelText + '</span>' +
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
@@ -35100,8 +35416,9 @@ function renderPostflopQuestion() {
         '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
         '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>' +
       '</div>' +
-      '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' +
+      (heroLine ? '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' : '') +
     '</div>' +
+    heroHandSection +
     '<div class="postflop-question-card">' +
       '<div class="postflop-section-title">🎴 Board</div>' +
       '<div class="postflop-board-row">' + boardHtml + '</div>' +
@@ -35138,6 +35455,8 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var pickedLabel = _findChoiceLabel(scenario, choiceId);
   var explanation = scenario.explanation || {};
   var isLast = (d.currentIndex + 1) >= total;
+  // v4.1.7: Module 2 awareness for richer feedback
+  var isM2 = (scenario.module === 'pf_flop_cbet_ip');
 
   // Build expandable sections (only for non-null fields)
   var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
@@ -35165,12 +35484,16 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   }).join('');
 
   // v4.0.8: 5-block teaching feedback layout (Result / Board Pattern / Core Reason / Takeaway / Common Mistake).
-  // Replaces the previous per-strand <details> sections — the same content is now surfaced
-  // in the Core Reason and Common Mistake teaching blocks (no longer hidden behind extra clicks).
-  // The `sections` variable is intentionally unused on this path.
-  var teachingBlocksHtml = (typeof _pfTeachingFeedbackBlocksHtml === 'function')
-    ? _pfTeachingFeedbackBlocksHtml(scenario)
-    : '';
+  // v4.1.7: Module 2 routes through _pfM2TeachingFeedbackBlocksHtml — hand-action focused
+  //         (Recommended Action / Hand Logic / Sizing Logic / Takeaway / Common Mistake).
+  var teachingBlocksHtml;
+  if (isM2 && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') {
+    teachingBlocksHtml = _pfM2TeachingFeedbackBlocksHtml(scenario);
+  } else if (typeof _pfTeachingFeedbackBlocksHtml === 'function') {
+    teachingBlocksHtml = _pfTeachingFeedbackBlocksHtml(scenario);
+  } else {
+    teachingBlocksHtml = '';
+  }
 
   var html =
     '<div class="postflop-context-bar">' +
@@ -35638,18 +35961,28 @@ function startPostflopWeakSpotReview() {
       weakProfile = _pfCurrentSessionWeakProfile(prevDrill.answers, allScenarios);
     } catch (e) { weakProfile = null; }
   }
+  // v4.1.7: route the weak-spot pool by the module of the just-finished session.
+  // Module 1 weak-spot review draws from M1 pool; Module 2 weak-spot review
+  // draws from M2 pool. Prevents M1 scenarios from contaminating an M2 review.
+  var prevModule = (prevDrill && prevDrill.module) || 'pf_board_texture';
+  var moduleId = (prevModule === 'pf_flop_cbet_ip') ? 'pf_flop_cbet_ip' : 'pf_board_texture';
   if (!weakProfile) {
-    // Nothing weak to focus on — fall back to a normal session
-    return startPostflopDrill('pf_board_texture');
+    // Nothing weak to focus on — fall back to a normal session in same module
+    return startPostflopDrill(moduleId);
   }
-  var pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+  var pool;
+  if (moduleId === 'pf_flop_cbet_ip') {
+    pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
+  } else {
+    pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
+  }
   var queue = _pfBuildWeakSpotQueue(weakProfile, pool, 12);
   if (!queue || queue.length === 0) {
-    return startPostflopDrill('pf_board_texture');
+    return startPostflopDrill(moduleId);
   }
   App.state.postflopDrill = {
     active: true,
-    module: 'pf_board_texture',
+    module: moduleId,
     mode: 'weak_spots',
     weakProfile: weakProfile,
     queue: queue,
@@ -35732,11 +36065,15 @@ function renderPostflopComplete() {
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
   // v4.1.1: also differentiate when this was a concept-focused drill
+  // v4.1.7: also differentiate when this was a Module 2 session
   var isWeakReview = !!(d && d.mode === 'weak_spots');
   var isConceptDrill = !!(d && d.mode === 'concept');
+  var isM2Module = !!(d && d.module === 'pf_flop_cbet_ip');
   var conceptName = isConceptDrill
     ? (d.conceptDisplayName || _pfConceptDisplayName(d.conceptKey) || 'Concept')
     : '';
+  var moduleLabel = isM2Module ? 'Module 2 · Flop C-bet IP' : 'Board Texture Trainer';
+  var moduleEmoji = isM2Module ? '🎯' : '🧪';
   var contextLabel;
   var summaryHeadline;
   var summaryEyebrow = '';
@@ -35745,11 +36082,11 @@ function renderPostflopComplete() {
     summaryHeadline = 'Concept drill complete';
     summaryEyebrow = 'CONCEPT DRILL SUMMARY';
   } else if (isWeakReview) {
-    contextLabel = '🧪 Board Texture Trainer · Review session complete';
+    contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Review session complete';
     summaryHeadline = 'Review Session Summary';
   } else {
-    contextLabel = '🧪 Board Texture Trainer · Complete';
-    summaryHeadline = 'Session Learning Summary';
+    contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Complete';
+    summaryHeadline = isM2Module ? 'Module 2 Session Summary' : 'Session Learning Summary';
   }
 
   var html =
@@ -35790,7 +36127,8 @@ function renderPostflopComplete() {
         }
         return '';
       })() +
-      '<button class="postflop-next-btn" onclick="startPostflopDrill(\'pf_board_texture\', 15)">▶ Drill again</button>' +
+      // v4.1.7: Drill again routes to the same module the player just played
+      '<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture') + '\', ' + (isM2Module ? 12 : 15) + ')">▶ Drill again</button>' +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
       // Inline note when no weak signals (positive feedback, no nag)
       (function () {
