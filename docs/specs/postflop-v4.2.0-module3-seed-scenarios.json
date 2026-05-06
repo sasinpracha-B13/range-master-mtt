@@ -935,7 +935,6 @@
                           "answer":  {
                                          "best":  "semi_bluff_raise",
                                          "acceptable":  [
-                                                            "protection_raise",
                                                             "equity_realization_call"
                                                         ],
                                          "bad":  [
@@ -943,7 +942,8 @@
                                                      "blocker_raise",
                                                      "bluff_catch",
                                                      "range_disadvantage_fold",
-                                                     "domination_fold"
+                                                     "domination_fold",
+                                                     "protection_raise"
                                                  ],
                                          "critical":  [
 
@@ -1908,7 +1908,8 @@
                                               "takeaway":  "Trip K + nut kicker on paired-K = slowplay (raise acceptable)."
                                           },
                           "conceptTags":  [
-                                              "check_raise_value",
+                                              "bluff_catchers",
+                                              "pot_control",
                                               "value_raise"
                                           ],
                           "sourceConfidence":  "expert_judgment",
@@ -2095,39 +2096,40 @@
     "summary":  {
                     "totalScenarios":  24,
                     "byBoardFamily":  {
-                                          "dry_A_high_As8d3h":  4,
-                                          "dry_K_high_Kh9c4s":  4,
-                                          "low_connected_8s7d5h":  4,
-                                          "two_tone_broadway_QhJh6c":  4,
-                                          "monotone_Jh8h4h":  4,
-                                          "paired_KcKd7s":  4
+                                          "family_8s7d5h":  4,
+                                          "family_as8d3h":  4,
+                                          "family_qhjh6c":  4,
+                                          "family_kh9c4s":  4,
+                                          "family_kckd7s":  4,
+                                          "family_jh8h4h":  4
                                       },
                     "byQuestionType":  {
-                                           "action_choice":  18,
-                                           "reason_choice":  6
+                                           "reason_choice":  6,
+                                           "action_choice":  18
                                        },
                     "byBestAction":  {
-                                         "fold":  6,
-                                         "call":  10,
-                                         "check_raise_small":  7,
+                                         "mixed":  0,
+                                         "call":  11,
                                          "check_raise_big":  1,
-                                         "mixed":  0
+                                         "fold":  6,
+                                         "check_raise_small":  6
                                      },
                     "byActionReason":  {
-                                           "value_raise":  4,
                                            "protection_raise":  1,
-                                           "semi_bluff_raise":  2,
-                                           "bluff_catch":  1,
-                                           "equity_realization_call":  9,
-                                           "range_disadvantage_fold":  5,
                                            "domination_fold":  1,
-                                           "blocker_raise_acceptable_only":  1
+                                           "equity_realization_call":  8,
+                                           "range_disadvantage_fold":  5,
+                                           "slowplay_call":  1,
+                                           "value_raise":  4,
+                                           "bluff_catch":  2,
+                                           "semi_bluff_raise":  2
                                        },
                     "byAuditStatus":  {
                                           "planning_only":  24
                                       },
                     "byReviewStatus":  {
-                                           "v4.2.0_seed_candidate":  24
-                                       }
+                                           "v4.2.0_final":  24
+                                       },
+                    "metadataRecomputedAt":  "2026-05-06_v4.2.2B"
                 }
 }
