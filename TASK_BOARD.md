@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-05-06.
+> Last updated: 2026-05-06 (v4.2.0 planning).
 
 ---
 
@@ -15,7 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.1.9 staged — Module 2 Data Expansion + Tester Pass (DATA EXPANSION).** Module 2 grows from 35 to **49 production scenarios**. Production audit gate raised from 286/0/0 to **300/0/0** (251 M1 + 49 M2). Authored 14 new M2 scenarios on 14 new boards targeting v4.1.8 primary-tag depth gaps: blocker_pressure +4 (B1-B4), value_betting +3 (V1-V3), range_advantage_stab +3 (R1-R3), pot_control +2 (P1-P2), give_up_strategy +2 (G1-G2). All 14 use action_choice qtype. Production audit caught 1 textureTag typo (`semi_wet → wet` on B3 + P2) which was fixed; final GPT/strategic review returned 14/14 PASS; flipped auditStatus → approved + reviewStatus → v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit on every concept (8/8/8/8/11). Browser QA 30/30 PASS via Claude Preview MCP (M2 from curriculum + 5 M2 concept drills + M1 normal + M1 concept + preflop + mobile 375px + console 0 errors). appVersion + SW bumped to v4.1.9. No schema changes, no taxonomy changes, no audit-script changes, no preflop touched. Two new docs: `postflop-v4.1.9-data-expansion-tester.md` + `postflop-v4.1.9-final-gpt-review-of-14-new.md`. Awaiting commit.
+🟡 **v4.2.0 staged — Module 3 (BB Defense vs BTN C-bet OOP) Architecture + Seed Plan (PLANNING-ONLY).** Mirrors v4.1.2 → v4.1.4 arc that worked for M2. Five new docs in `docs/specs/postflop-v4.2.0-module3-*`: architecture (module purpose, spot, decision set, reason set, runtime implications, 8 risks), schema-taxonomy (full JSON schema mirroring M2 v4.1.2 with 3 additions: villainAction, villainSizing, optional defenseLogic), seed-scenarios.json (exactly 24 scenarios across 6 board families × 4 hands; 18 action_choice + 6 reason_choice; auditStatus=planning_only; reviewStatus=v4.2.0_seed_candidate; JSON parses cleanly, no card collisions, counts validated), audit-plan (38 hard rules + 7 soft warnings across 12 categories, planned for v4.2.1 implementation), gpt-review-package (per-scenario review entries with risk flags). Project owner decisions documented: villain c-bet sizing = bet_small only (~33% pot), reason set trimmed from 11 candidates to 8 actually used. **No production files touched.** No scenarios in `postflop/postflop_scenarios.json`. No runtime helpers added. No service-worker bump. No appVersion bump. Production audit still **300/0/0**. M2 seed audit still **24/0/8**. Awaiting commit.
+
+🟢 **v4.1.9 committed + pushed** (`454c470`). Module 2 Data Expansion + Tester Pass. Module 2 grows from 35 to 49 production scenarios. Per-concept primary-tag depth target hit (8/8/8/8/11). Production audit raised 286/0/0 → 300/0/0. Browser QA 30/30 PASS. appVersion + SW v4.1.9.
 
 🟢 **v4.1.8 committed + pushed** (`5eb12ac`). Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit. Home tabs (Preflop/Postflop entry tiles), M2 mastery checklist (5 criteria parallel to M1), M2 session summary aggregation by handClass+actionReason, depth audit doc identifying v4.1.9 expansion targets. Browser QA 32/32 PASS. appVersion + SW bumped to v4.1.8. Production audit 286/0/0 unchanged.
 
@@ -88,7 +90,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-06: v4.1.9 Module 2 Data Expansion + Tester Pass STAGED. M2 grows 35 → 49 production scenarios via 14 new scenarios on 14 new boards (blocker_pressure +4, value_betting +3, range_advantage_stab +3, pot_control +2, give_up_strategy +2). All 14 PASS final GPT/strategic review; flipped to auditStatus=approved + reviewStatus=v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit (8/8/8/8/11). Production audit raised 286/0/0 → 300/0/0. Browser QA 30/30 PASS. appVersion + SW v4.1.9. No schema/taxonomy/audit-script changes.
+- 2026-05-06: v4.2.0 Module 3 Architecture + Seed Plan STAGED (planning-only). 5 new docs in `docs/specs/postflop-v4.2.0-module3-*`: architecture, schema-taxonomy, 24-seed JSON (6 board families × 4 hands; 18 action + 6 reason), audit plan (38 hard rules + 7 warnings), GPT review package (per-scenario risk flags). Villain sizing scoped to bet_small for v4.2.0; reason set trimmed 11 → 8. No production touched. No version bumps. Production audit unchanged 300/0/0. M2 seed audit unchanged 24/0/8.
+- 2026-05-06: v4.1.9 Module 2 Data Expansion + Tester Pass COMMITTED (`454c470`) + pushed. M2 grows 35 → 49 production scenarios via 14 new scenarios on 14 new boards (blocker_pressure +4, value_betting +3, range_advantage_stab +3, pot_control +2, give_up_strategy +2). All 14 PASS final GPT/strategic review; flipped to auditStatus=approved + reviewStatus=v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit (8/8/8/8/11). Production audit raised 286/0/0 → 300/0/0. Browser QA 30/30 PASS. appVersion + SW v4.1.9. No schema/taxonomy/audit-script changes.
 - 2026-05-05: v4.1.8 Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit COMMITTED (`5eb12ac`) + pushed. Home tabs (Preflop/Postflop), M2 mastery checklist parallel to M1, M2 summary aggregation by handClass+actionReason, depth audit doc. 32/32 QA. appVersion + SW v4.1.8.
 - 2026-05-05: v4.1.7 Module 2 Curriculum Playable Beta COMMITTED (`d48ffa9`) + pushed.
 - 2026-05-05: v4.1.7 Module 2 Curriculum Playable Beta STAGED. Module 2 is playable. 24 seeds flipped to approved (runtime loads 286). All M2 surfaces wired: curriculum start button, hand-aware question/answer rendering, all 5 M2 concept drills enabled, M2 weak-spot review (M2-only pool), M2 session summary. Browser QA 35/35 PASS. appVersion + SW bumped to v4.1.7.
