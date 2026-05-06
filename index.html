@@ -33034,7 +33034,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.2.3B',
+    appVersion: '4.2.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33710,6 +33710,92 @@ function getModule2Scenarios() {
   if (!getPostflopReady()) return [];
   return App.postflop.scenarios.filter(function (s) { return s.module === 'pf_flop_cbet_ip'; });
 }
+// v4.2.4: Module 3 (Facing C-bet OOP) scenario pool. Mirrors M1/M2 helpers.
+// Filters approved-only because M3 is shipped as Limited Beta and we never want
+// review_pending or planning_only scenarios to leak into a live session.
+function getModule3Scenarios() {
+  if (!getPostflopReady()) return [];
+  return App.postflop.scenarios.filter(function (s) {
+    return s.module === 'pf_flop_cbet_oop_def' && s.auditStatus === 'approved';
+  });
+}
+
+// ============================================================================
+// v4.2.4 — Schema normalization helpers (M3 string-form vs M1/M2 object/array)
+// ----------------------------------------------------------------------------
+// M1/M2 schema: question.choices = [{id, label}, ...] ; answer.best = [string]
+// M3 schema:    question.choices = ["fold", "call", ...] ; answer.best = "string"
+//
+// To keep the rest of the runtime (renderers, classifier, _findChoiceLabel,
+// session history) module-agnostic, every consumer goes through these
+// normalizers. They never mutate the source scenario.
+// ----------------------------------------------------------------------------
+
+// Pretty labels for M3 string-form choice ids. Used when M3's question.choices
+// is a flat string array.
+var _PF_M3_ACTION_LABELS = {
+  'fold':              'Fold',
+  'call':              'Call',
+  'check_raise_small': 'Check-raise small',
+  'check_raise_big':   'Check-raise big',
+  'mixed':             'Mixed / close'
+};
+var _PF_M3_REASON_LABELS = {
+  'value_raise':              'Value raise',
+  'protection_raise':         'Protection raise',
+  'semi_bluff_raise':         'Semi-bluff raise',
+  'blocker_raise':            'Blocker raise',
+  'bluff_catch':              'Bluff-catch',
+  'equity_realization_call':  'Equity realization call',
+  'slowplay_call':            'Slowplay call',
+  'range_disadvantage_fold':  'Range disadvantage fold',
+  'domination_fold':          'Domination fold'
+};
+
+// _pfNormalizePostflopChoices(scenario) → [{id, label}, ...]
+// Returns an array of {id,label} objects regardless of source schema. Returns
+// a fresh array — never the source reference.
+function _pfNormalizePostflopChoices(scenario) {
+  if (!scenario || !scenario.question || !scenario.question.choices) return [];
+  var raw = scenario.question.choices;
+  var out = [];
+  for (var i = 0; i < raw.length; i++) {
+    var c = raw[i];
+    if (typeof c === 'string') {
+      // M3 flat string form. Pick label from action or reason map; fall back
+      // to a humanized version of the id.
+      var id = c;
+      var label = _PF_M3_ACTION_LABELS[id]
+                  || _PF_M3_REASON_LABELS[id]
+                  || id.replace(/_/g, ' ');
+      out.push({ id: id, label: label });
+    } else if (c && typeof c === 'object' && c.id) {
+      out.push({ id: c.id, label: c.label || c.id });
+    }
+  }
+  return out;
+}
+
+// _pfNormalizePostflopAnswer(answer) → {best:[], acceptable:[], bad:[], critical:[]}
+// Always returns the same shape with array fields. Strings are wrapped in [..].
+function _pfNormalizePostflopAnswer(answer) {
+  function arr(v) {
+    if (v == null) return [];
+    if (typeof v === 'string') return [v];
+    if (Array.isArray(v)) return v.slice();
+    return [];
+  }
+  if (!answer) return { best: [], acceptable: [], bad: [], critical: [] };
+  return {
+    best:       arr(answer.best),
+    acceptable: arr(answer.acceptable),
+    bad:        arr(answer.bad),
+    critical:   arr(answer.critical)
+  };
+}
+// ============================================================================
+// END v4.2.4 — Schema normalization helpers
+// ============================================================================
 function getConceptByKey(key) {
   if (!getPostflopReady()) return null;
   var concepts = (App.postflop.concepts && App.postflop.concepts.concepts) || [];
@@ -33779,11 +33865,14 @@ function startPostflopDrill(moduleId, sessionLength) {
     return;
   }
   // v4.1.7: route pool by moduleId. Module 1 = board_texture; Module 2 = flop_cbet_ip.
+  // v4.2.4: Module 3 = flop_cbet_oop_def (Limited Beta · 85 approved scenarios).
   var pool;
   if (moduleId === 'pf_board_texture') {
     pool = getModule1Scenarios();
   } else if (moduleId === 'pf_flop_cbet_ip') {
     pool = getModule2Scenarios();
+  } else if (moduleId === 'pf_flop_cbet_oop_def') {
+    pool = getModule3Scenarios();
   } else {
     pool = [];
   }
@@ -33791,8 +33880,13 @@ function startPostflopDrill(moduleId, sessionLength) {
     if (typeof showToast === 'function') showToast('No scenarios available for this module.');
     return;
   }
-  // v4.1.7: Module 2 sessions default to 12 questions (mirrors v4.1.2 design intent + concept-drill length).
-  var defaultLen = (moduleId === 'pf_flop_cbet_ip') ? 12 : 15;
+  // v4.1.7: Module 2 sessions default to 12 questions.
+  // v4.2.4: Module 3 Limited Beta sessions default to 10 questions (shorter to keep
+  // mobile sessions tight while content matures).
+  var defaultLen;
+  if (moduleId === 'pf_flop_cbet_ip')      defaultLen = 12;
+  else if (moduleId === 'pf_flop_cbet_oop_def') defaultLen = 10;
+  else                                     defaultLen = 15;
   var queue = buildPostflopQueue(pool, sessionLength || defaultLen);
   App.state.postflopDrill = {
     active: true,
@@ -33810,18 +33904,21 @@ function startPostflopDrill(moduleId, sessionLength) {
 }
 
 // ----- Multi-tier classifier (independent of preflop classifyAnswer) -----
+// v4.2.4: route through _pfNormalizePostflopAnswer so M3 string-form best
+// (e.g. answer.best = "call") is graded the same as M1/M2 array-form best
+// (e.g. answer.best = ["bet_small"]).
 function classifyPostflopAnswer(scenario, choiceId) {
-  var ans = scenario.answer || {};
-  if ((ans.best || []).indexOf(choiceId) !== -1) {
+  var ans = _pfNormalizePostflopAnswer(scenario && scenario.answer);
+  if (ans.best.indexOf(choiceId) !== -1) {
     return { tier: 'best', score: scenario.scoring.best, isCritical: false };
   }
-  if ((ans.acceptable || []).indexOf(choiceId) !== -1) {
+  if (ans.acceptable.indexOf(choiceId) !== -1) {
     return { tier: 'acceptable', score: scenario.scoring.acceptable, isCritical: false };
   }
-  if ((ans.critical || []).indexOf(choiceId) !== -1) {
+  if (ans.critical.indexOf(choiceId) !== -1) {
     return { tier: 'critical', score: scenario.scoring.critical, isCritical: true };
   }
-  if ((ans.bad || []).indexOf(choiceId) !== -1) {
+  if (ans.bad.indexOf(choiceId) !== -1) {
     return { tier: 'bad', score: scenario.scoring.bad, isCritical: false };
   }
   // Defensive fallback (shouldn't happen if R04/R15 audit passes)
@@ -33829,9 +33926,12 @@ function classifyPostflopAnswer(scenario, choiceId) {
 }
 
 function recordPostflopAnswer(scenario, choiceId, cls) {
+  // v4.2.4: M3 schema uses `qtype` instead of `type`. Read both for forward
+  // and backward compatibility.
+  var qt = (scenario.question && (scenario.question.type || scenario.question.qtype)) || '';
   App.state.postflopDrill.answers.push({
     scenarioId: scenario.id,
-    questionType: scenario.question.type,
+    questionType: qt,
     choiceId: choiceId,
     tier: cls.tier,
     score: cls.score,
@@ -34423,6 +34523,100 @@ function _pfM2TeachingFeedbackBlocksHtml(scenario) {
 }
 
 // ============================================================================
+// v4.2.4 — MODULE 3 TEACHING FEEDBACK BLOCKS (Facing C-bet OOP)
+// Parallels _pfM2TeachingFeedbackBlocksHtml. Differences:
+//  - Recommended Action labels use M3 vocabulary (fold/call/check_raise_*)
+//  - Action Reason labels use M3 reason vocabulary (blocker_raise, slowplay_call,
+//    domination_fold, etc.)
+//  - defenseLogic is shown PROMINENTLY (it is the M3-defining field)
+//  - rangeContext is shown collapsed by default (broader context)
+//  - blockerNote is rendered when present (M3 frequently leverages blockers)
+// Hides any block whose source field is empty.
+// ============================================================================
+function _pfM3TeachingFeedbackBlocksHtml(scenario) {
+  var explanation = (scenario && scenario.explanation) || {};
+  var fix = (typeof _pfFixMojibake === 'function') ? _pfFixMojibake : function (x) { return x; };
+  var html = '';
+
+  // B. Recommended action + action reason chip row
+  var recAction = scenario.recommendedAction || '';
+  var actionReason = scenario.actionReason || '';
+  var recLabel = (_PF_M3_ACTION_LABELS && _PF_M3_ACTION_LABELS[recAction]) || recAction.replace(/_/g, ' ');
+  var reasonLabel = (_PF_M3_REASON_LABELS && _PF_M3_REASON_LABELS[actionReason])
+                    || (actionReason ? actionReason.replace(/_/g, ' ') : '');
+  if (recAction || reasonLabel) {
+    html += '<div class="pf-teach-fb-block pf-fb-m2-action">' +
+              '<span class="pf-fb-block-title">🛡️ Recommended Action (BB OOP)</span>' +
+              '<div class="pf-fb-block-body">' +
+                (recLabel ? '<span class="pf-m2-rec-action">' + _pfEscape(recLabel) + '</span>' : '') +
+                (reasonLabel ? '<span class="pf-m2-action-reason">Reason: ' + _pfEscape(reasonLabel) + '</span>' : '') +
+              '</div>' +
+            '</div>';
+  }
+
+  // C. Defense Logic (M3-specific — the main lesson)
+  if (explanation.defenseLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">🎯 Defense Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.defenseLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // D. Hand Logic (the strategic frame for THIS hand on THIS board)
+  if (explanation.handLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Hand Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.handLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // E. Sizing Logic (only when raising/sizing matters)
+  if (explanation.sizingLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Sizing Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.sizingLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // F. Blocker note (M3 emphasizes blockers heavily — show when present)
+  if (scenario.blockerNote) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">🃏 Blocker note</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(scenario.blockerNote)) + '</div>' +
+            '</div>';
+  }
+
+  // G. Range Context (collapsed details — broader board/range frame)
+  if (explanation.rangeContext) {
+    html += '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;">' +
+              '<summary>Range / Board Context</summary>' +
+              '<div class="pf-section-body">' + _pfEscape(fix(explanation.rangeContext)) + '</div>' +
+            '</details>';
+  }
+
+  // H. Takeaway
+  if (explanation.takeaway) {
+    html += '<div class="pf-teach-fb-block pf-fb-takeaway">' +
+              '<span class="pf-fb-block-title">💡 Takeaway</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.takeaway)) + '</div>' +
+            '</div>';
+  }
+
+  // I. Common Mistake (only if present)
+  if (explanation.commonMistake) {
+    html += '<div class="pf-teach-fb-block pf-fb-mistake">' +
+              '<span class="pf-fb-block-title">⚠️ Common Mistake</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.commonMistake)) + '</div>' +
+            '</div>';
+  }
+
+  return html;
+}
+// ============================================================================
+// END v4.2.4 — MODULE 3 TEACHING FEEDBACK BLOCKS
+// ============================================================================
+
+// ============================================================================
 // END v4.0.8 — POSTFLOP TEACHING LAYER (helpers)
 // ============================================================================
 
@@ -34484,8 +34678,33 @@ function _pfChoiceGuide(qType) {
                '<br><strong>Blocker pressure</strong> — leverage card removal to make opponent\'s calling range thin. ' +
                '<br><strong>Range-advantage stab</strong> — bet small as part of a range strategy because we have range advantage. ' +
                '<br><strong>Give up</strong> — check intending to fold to most pressure; no plan to continue.'
+    },
+    // v4.2.4 Module 3 — BB defense vs c-bet (OOP). Different vocabulary from
+    // M2 (the IP c-bet module). Explicitly framed from BB's defending point
+    // of view so learners don't mix it up with the M2 IP-c-bet vocabulary.
+    action_choice_m3: {
+      summary: 'BB facing BTN c-bet — what is hero\'s best response OOP?',
+      details: '<strong>Fold</strong> — give up; equity + realization too low to defend profitably. ' +
+               '<br><strong>Call</strong> — defend to realize equity, bluff-catch, or float. ' +
+               '<br><strong>Check-raise small</strong> — raise for value / protection / semi-bluff at a sizing that keeps the pot navigable OOP. ' +
+               '<br><strong>Check-raise big</strong> — polar raise for value or bluff with strong combo equity / nut blockers. ' +
+               '<br><strong>Mixed / close</strong> — solver mixes between two lines at meaningful frequency — both are correct.'
+    },
+    reason_choice_m3: {
+      summary: 'Why does the recommended OOP action work for this hand?',
+      details: '<strong>Value raise</strong> — raise a strong made hand because worse hands call. ' +
+               '<br><strong>Protection raise</strong> — raise a vulnerable made hand to deny equity to draws. ' +
+               '<br><strong>Semi-bluff raise</strong> — raise a draw with both fold equity and showdown equity. ' +
+               '<br><strong>Blocker raise</strong> — raise leveraging card removal (e.g., nut-flush blocker) — equity comes from blocking value, not outs. ' +
+               '<br><strong>Bluff-catch</strong> — call with a medium-strength hand that beats villain\'s bluffs but loses to value. ' +
+               '<br><strong>Equity realization call</strong> — call to realize draw / overcard / backdoor equity cheaply. ' +
+               '<br><strong>Slowplay call</strong> — call a strong hand to keep villain\'s bluffs in the range. ' +
+               '<br><strong>Range disadvantage fold</strong> — fold despite seeming pot odds because villain\'s range crushes hero. ' +
+               '<br><strong>Domination fold</strong> — fold a marginal hand whose pair outs are dominated by villain\'s value combos.'
     }
   };
+  // v4.2.4: M3 uses its own dedicated guides keyed by `<qtype>_m3`. The caller
+  // (renderPostflopQuestion) passes `qType + '_m3'` for M3 scenarios.
   var g = guides[qType];
   if (!g) return '';
   // v4.0.4 layout: prominent always-visible summary box + collapsible details
@@ -34543,11 +34762,39 @@ function _pfBoardText(cards) {
 function _pfBuildQuestionPrompt(scenario) {
   var board = scenario && scenario.board ? scenario.board : {};
   var question = scenario && scenario.question ? scenario.question : {};
-  var qtype = question.type || '';
+  // v4.2.4: M3 schema uses `qtype` instead of `type`. Read both.
+  var qtype = question.type || question.qtype || '';
   var boardText = _pfBoardText(board.cards || []);
-  // v4.1.7: hero hand text for Module 2 (action_choice / reason_choice carry hero hand context)
+  // v4.1.7: hero hand text for Module 2 / 3 (action_choice / reason_choice carry hero hand context)
   var heroText = (scenario && scenario.heroHand && scenario.heroHand.length === 2)
     ? _pfBoardText(scenario.heroHand) : '';
+  // v4.2.4: M3 (BB defense OOP) uses BB-defending framing. Detect M3 by module.
+  var isM3 = (scenario && scenario.module === 'pf_flop_cbet_oop_def');
+  if (isM3) {
+    if (qtype === 'action_choice') {
+      if (heroText) {
+        return 'BB has ' + heroText + ' on ' + boardText + ' (BTN open 2.5x, BB call, 100BB SRP). BTN c-bets ~33% pot. What is BB\'s best action?';
+      }
+      return 'On ' + boardText + ', BTN c-bets ~33% pot. What is BB\'s best action?';
+    }
+    if (qtype === 'reason_choice') {
+      // Prefer the data prompt if it's substantial — it usually carries the
+      // committed-action context (e.g. "Hero check-raises small with...").
+      if (question.prompt && question.prompt.trim().length > 30) {
+        return _pfFixMojibake(question.prompt);
+      }
+      var recAction = scenario && scenario.recommendedAction ? scenario.recommendedAction : 'this action';
+      var actText = (_PF_M3_ACTION_LABELS && _PF_M3_ACTION_LABELS[recAction])
+                    ? _PF_M3_ACTION_LABELS[recAction].toLowerCase()
+                    : recAction.replace(/_/g, ' ');
+      if (heroText) {
+        return 'BB has ' + heroText + ' on ' + boardText + ' and chooses to ' + actText + '. What is the primary reason?';
+      }
+      return 'On ' + boardText + ', BB chooses to ' + actText + '. What is the primary reason?';
+    }
+    // Unknown M3 qtype — fall through to general fix-and-return.
+    return _pfFixMojibake(question.prompt) || ('On ' + boardText + ', BB defends OOP.');
+  }
   switch (qtype) {
     case 'range_advantage':
       return 'On ' + boardText + ' (BTN open vs BB call, 100BB SRP), who has range advantage?';
@@ -34701,9 +34948,19 @@ var _PF_CURRICULUM = [
   },
   {
     key: 'm3', name: 'Module 3 — Facing C-bet OOP',
-    focus: ['defend vs c-bet', 'check-raise candidates', 'floats', 'folds'],
-    scenarioCount: 0,
-    masteryNote: 'Future module.'
+    focus: ['defend vs c-bet', 'check-raise candidates', 'bluff-catchers', 'blocker raises', 'pot odds defense'],
+    scenarioCount: 85,
+    masteryNote: 'Limited Beta · 85 scenarios · 9 actionReasons · 19 boards.',
+    syllabus: [
+      'BB defending OOP vs BTN small c-bet',
+      '5-action menu: fold / call / check-raise small / check-raise big / mixed',
+      '9 actionReasons: value, protection, semi-bluff, blocker raise; bluff-catch, equity-realization, slowplay; range-disadvantage, domination folds',
+      'Pot-odds defense + equity realization OOP',
+      'Bluff-catchers vs dominated marginals',
+      'Nut-flush blocker pressure on monotone / two-tone',
+      'Slowplay on paired boards (air-heavy BTN range)',
+      'Domination folds (weak Qx / Kx / Ax)'
+    ]
   },
   {
     key: 'm4', name: 'Module 4 — Turn Strategy',
@@ -34870,7 +35127,116 @@ var _PF_CONCEPT_LIBRARY = [
     relatedTags: ['range_advantage', 'small_cbet_freq', 'dry_high_card_strategy'],
     questionTypes: ['action_choice', 'reason_choice'],
     suitTextures: [],
-    textureTags: ['ace_high_dry', 'high_card_dominant', 'paired'] }
+    textureTags: ['ace_high_dry', 'high_card_dominant', 'paired'] },
+  // ============================================================================
+  // v4.2.4 — Module 3 concepts (Facing C-bet OOP — BB Defense)
+  // 7 native concepts + 3 alias concepts (M3-flavored aliases of M2 raise/value
+  // ideas). All are drillable in v4.2.4 since M3 ships as Limited Beta with
+  // hand-aware question rendering and string-form choice/answer normalization.
+  // Each entry maps cleanly to existing scenario.conceptTags so the concept
+  // drill engine can build a focused queue.
+  // ============================================================================
+  { key: 'oop_defense_threshold',
+    name: 'OOP Defense Threshold',
+    def: 'The minimum equity / hand strength needed to continue OOP vs a c-bet. Hands at the threshold default to call; hands well above can raise; hands below should fold.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['oop_defense_threshold'],
+    relatedTags: ['pot_odds_defense', 'equity_realization_oop', 'range_disadvantage', 'bluff_catchers'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'check_raise_value',
+    name: 'Check-Raise for Value (OOP)',
+    def: 'Raising OOP after villain c-bets, with a strong made hand that wants to build the pot now against an uncapped IP range.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['check_raise_value'],
+    relatedTags: ['value_raise', 'protection_raise', 'value_betting'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['paired'] },
+  { key: 'check_raise_bluff',
+    name: 'Check-Raise as Bluff / Semi-Bluff (OOP)',
+    def: 'Raising OOP with a draw or blocker hand to apply fold equity. Best with combo draws (FD + OE) and balanced with the value-raise range.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['check_raise_bluff'],
+    relatedTags: ['semi_bluff_raise', 'blocker_pressure', 'semi_bluff_with_equity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['monotone', 'two_tone'],
+    textureTags: [] },
+  { key: 'bluff_catchers',
+    name: 'Bluff Catchers (OOP)',
+    def: 'Medium-strength hands that beat villain\'s bluff range but lose to villain\'s value range. Their EV comes from calling (preserving bluffs), not raising (folds bluffs out).',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['bluff_catchers'],
+    relatedTags: ['pot_control', 'equity_realization_oop'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['paired'] },
+  { key: 'equity_realization_oop',
+    name: 'Equity Realization OOP',
+    def: 'How much of hero\'s raw equity actually converts to chips when defending OOP. Lower than IP — drives tighter defense thresholds and the call-vs-raise decision.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['equity_realization_oop'],
+    relatedTags: ['equity_realization', 'bluff_catchers', 'oop_defense_threshold'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'range_disadvantage',
+    name: 'Range Disadvantage (OOP)',
+    def: 'Hero\'s preflop range performs worse than villain\'s on this board. Drives over-folding even with seemingly playable hands like overcards or weak Kx.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['range_disadvantage'],
+    relatedTags: ['range_advantage', 'oop_defense_threshold', 'common_leaks'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: ['ace_high_dry', 'high_card_dominant'] },
+  { key: 'pot_odds_defense',
+    name: 'Pot Odds Defense',
+    def: 'Mechanical equity threshold for calling based on bet size. Vs 33% c-bet, need ~20% raw equity. OOP threshold rises further due to imperfect equity realization.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['pot_odds_defense'],
+    relatedTags: ['oop_defense_threshold', 'equity_realization_oop'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  // M3 alias concepts — OOP-raise framing of M2 raise/protection/semi-bluff ideas.
+  { key: 'value_raise',
+    name: 'Value Raise (OOP)',
+    def: 'Raising a strong made hand OOP after villain\'s c-bet because worse hands call. The OOP framing of M2\'s value-betting concept.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['value_raise'],
+    relatedTags: ['check_raise_value', 'value_betting', 'thin_value_betting'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'protection_raise',
+    name: 'Protection Raise (OOP)',
+    def: 'Raising a vulnerable made hand OOP to deny equity to live draws on a wet board. Most common with sets / two pair / overpairs on dynamic textures.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['protection_raise'],
+    relatedTags: ['check_raise_value', 'protection_betting', 'dynamic_board'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  { key: 'semi_bluff_raise',
+    name: 'Semi-Bluff Raise (OOP)',
+    def: 'Raising a draw OOP with both fold equity and showdown equity. Best with combo draws (FD + OE) and 12+ outs.',
+    module: 'm3',
+    previewOnly: false,
+    tags: ['semi_bluff_raise'],
+    relatedTags: ['check_raise_bluff', 'semi_bluff_with_equity', 'wet_board'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] }
 ];
 
 // _pfAcademyStats — pulls everything the Academy needs from localStorage history
@@ -34985,7 +35351,12 @@ function _pfModuleStatus(moduleKey, stats) {
     // enabled. No mastery gating yet — early-access policy.
     return 'beta';
   }
-  if (moduleKey === 'm3') return 'locked';
+  if (moduleKey === 'm3') {
+    // v4.2.4: Module 3 ships as Limited Beta — 85 approved scenarios across
+    // 19 boards, all 9 actionReasons covered, hand-aware OOP rendering, M3
+    // concept drills, M3 weak-spot review, M3 mastery checklist all wired.
+    return 'beta';
+  }
   return 'future';
 }
 
@@ -35102,6 +35473,133 @@ function _pfM2MasteryProgressHtml(m2Stats) {
 // END v4.1.8 — MODULE 2 MASTERY CHECKLIST
 // ============================================================================
 
+// ============================================================================
+// v4.2.4 — MODULE 3 LIMITED BETA MASTERY CHECKLIST
+// Scaled thresholds for the Limited Beta scope (85 scenarios). Lower bar than
+// M1 (251 scenarios) and M2 (49 scenarios) to honestly reflect that M3 is
+// still beta content. The checklist is display-only.
+//
+// Limited Beta thresholds:
+//   1. 3 completed Module 3 sessions (vs 5 for M1/M2)
+//   2. 75%+ accuracy in 2 sessions (vs 80% in 3)
+//   3. All 9 M3 actionReasons seen at least once (BB defense reason coverage)
+//   4. Engaged with M3 weak-spot review at least once
+//   5. No critical leaks in latest M3 session (optional — same as M1/M2)
+// ============================================================================
+function _pfM3MasteryStats() {
+  var history = null;
+  try { if (typeof _pfHistoryLoad === 'function') history = _pfHistoryLoad(); } catch (e) { history = null; }
+  var allSessions = (history && Array.isArray(history.sessions)) ? history.sessions : [];
+  var sessions = allSessions.filter(function (s) { return s && s.module === 'pf_flop_cbet_oop_def'; });
+  var sessionCount = sessions.length;
+  var latestSession = sessionCount > 0 ? sessions[sessionCount - 1] : null;
+
+  // Quality session count (M3 sessions with >= 75% — Limited Beta threshold).
+  var qualitySessionCount = 0;
+  for (var i = 0; i < sessions.length; i++) {
+    var sess = sessions[i];
+    var ans = sess.answered || 0;
+    var max = ans * 1.0;
+    var pct = max > 0 ? ((sess.score || 0) / max) * 100 : 0;
+    if (pct >= 75) qualitySessionCount += 1;
+  }
+
+  // Latest M3 session has zero critical leaks
+  var latestNoCritical = !!(latestSession && (latestSession.critical || 0) === 0);
+
+  // ActionReason coverage — 9 M3 reasons. Tracked via answers in each session.
+  // We scan all M3 answers across all M3 sessions for unique actionReason keys.
+  // Since the history stores `conceptTags` per answer (not actionReason), we
+  // re-derive from the live scenarios pool when possible. Best-effort.
+  var REQUIRED_M3_REASONS = [
+    'value_raise', 'protection_raise', 'semi_bluff_raise', 'blocker_raise',
+    'bluff_catch', 'equity_realization_call', 'slowplay_call',
+    'range_disadvantage_fold', 'domination_fold'
+  ];
+  var seenReasons = {};
+  // Strategy: scan each session's `answers` array for scenarioIds, then look
+  // up each scenario's actionReason from the live pool.
+  var scenIdMap = {};
+  if (App && App.postflop && App.postflop.scenarios) {
+    for (var ai = 0; ai < App.postflop.scenarios.length; ai++) {
+      var sc = App.postflop.scenarios[ai];
+      if (sc && sc.id) scenIdMap[sc.id] = sc;
+    }
+  }
+  for (var si = 0; si < sessions.length; si++) {
+    var sObj = sessions[si];
+    var ansArr = (sObj && Array.isArray(sObj.answers)) ? sObj.answers : [];
+    for (var aj = 0; aj < ansArr.length; aj++) {
+      var aRec = ansArr[aj];
+      var sid = aRec && aRec.scenarioId;
+      if (sid && scenIdMap[sid] && scenIdMap[sid].actionReason) {
+        seenReasons[scenIdMap[sid].actionReason] = true;
+      }
+    }
+  }
+  var reasonCoverage = {};
+  for (var ri = 0; ri < REQUIRED_M3_REASONS.length; ri++) {
+    reasonCoverage[REQUIRED_M3_REASONS[ri]] = !!seenReasons[REQUIRED_M3_REASONS[ri]];
+  }
+  var reasonsSeenCount = 0;
+  for (var rk in reasonCoverage) { if (reasonCoverage[rk]) reasonsSeenCount++; }
+
+  // Weak-spot review proxy: any M3 session with bad+critical > 0 AND >=2 sessions
+  var hasWeakSignal = false;
+  for (var j = 0; j < sessions.length; j++) {
+    var sj = sessions[j];
+    if ((sj.bad || 0) + (sj.critical || 0) > 0) { hasWeakSignal = true; break; }
+  }
+  var hasUsedWeakReview = hasWeakSignal && sessionCount >= 2;
+
+  return {
+    sessionCount: sessionCount,
+    latestSession: latestSession,
+    qualitySessionCount: qualitySessionCount,
+    latestNoCritical: latestNoCritical,
+    reasonCoverage: reasonCoverage,
+    reasonsSeenCount: reasonsSeenCount,
+    hasUsedWeakReview: hasUsedWeakReview,
+    masteryCriteriaMet: {
+      threeSessions:        sessionCount >= 3,
+      twoQualitySessions:   qualitySessionCount >= 2,
+      latestNoCritical:     latestNoCritical,
+      weakReviewUsed:       hasUsedWeakReview,
+      reasonCoverage:       Object.keys(reasonCoverage).every(function (k) { return reasonCoverage[k]; })
+    }
+  };
+}
+
+function _pfM3MasteryProgress(m3Stats) {
+  if (!m3Stats) m3Stats = _pfM3MasteryStats();
+  var m = m3Stats.masteryCriteriaMet || {};
+  return [
+    { key: 'threeSessions',       label: 'Complete 3 Module 3 sessions',                    met: !!m.threeSessions,       detail: m3Stats.sessionCount + ' / 3' },
+    { key: 'twoQualitySessions',  label: 'Hit 75%+ quality in 2 M3 sessions',               met: !!m.twoQualitySessions,  detail: m3Stats.qualitySessionCount + ' / 2' },
+    { key: 'reasonCoverage',      label: 'See all 9 M3 actionReasons at least once',        met: !!m.reasonCoverage,      detail: m3Stats.reasonsSeenCount + ' / 9 reasons seen' },
+    { key: 'weakReviewUsed',      label: 'Engage with M3 weak-spot review',                 met: !!m.weakReviewUsed,      detail: m.weakReviewUsed ? 'engaged' : 'not yet' },
+    { key: 'latestNoCritical',    label: 'No critical leaks in latest M3 session',          met: !!m.latestNoCritical,    detail: m3Stats.latestSession ? (m.latestNoCritical ? 'clean' : 'critical fired') : '—' }
+  ];
+}
+
+function _pfM3MasteryProgressHtml(m3Stats) {
+  if (!m3Stats) m3Stats = _pfM3MasteryStats();
+  var items = _pfM3MasteryProgress(m3Stats);
+  var rows = items.map(function (it) {
+    var icon = it.met ? '✅' : '○';
+    var cls = it.met ? 'is-met' : 'is-not-met';
+    return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
+           ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
+  }).join('');
+  return '<div class="pf-mastery-section pf-mastery-section-m2">' +
+           '<span class="pf-mastery-title">🛡️ Module 3 Limited Beta progress (display only)</span>' +
+           '<ul class="pf-mastery-list">' + rows + '</ul>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.2.4 — MODULE 3 LIMITED BETA MASTERY CHECKLIST
+// ============================================================================
+
 // _pfAcademyRecommendation — picks one recommendation given current stats.
 // Returns { title, body }.
 function _pfAcademyRecommendation(stats) {
@@ -35212,6 +35710,11 @@ function _pfModuleCardHtml(mod, stats) {
     actionsHtml =
       '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_flop_cbet_ip\', 12)">▶ Start Module 2 Beta</button>' +
       '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
+  } else if (mod.key === 'm3') {
+    // v4.2.4: Limited Beta — playable. 85 approved scenarios; default queue 10.
+    actionsHtml =
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_flop_cbet_oop_def\', 10)">▶ Start Module 3 Limited Beta</button>' +
+      '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
   } else {
     actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
   }
@@ -35221,6 +35724,14 @@ function _pfModuleCardHtml(mod, stats) {
                    '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
                    '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
                    'Beta · Hand-aware question rendering, M2 concept drills, M2 weak-spot review all enabled in v4.1.7.' +
+                   '</div></details>';
+  }
+  // v4.2.4: M3 syllabus
+  if (mod.key === 'm3' && mod.syllabus) {
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 3 syllabus</summary>' +
+                   '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
+                   '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
+                   'Limited Beta · Hand-aware OOP rendering, 10 M3 concept drills, M3 weak-spot review, scaled mastery thresholds all enabled in v4.2.4. 85 approved scenarios.' +
                    '</div></details>';
   }
   return '<div class="pf-module-card is-' + status + '">' +
@@ -35474,18 +35985,25 @@ function startPostflopConceptDrill(conceptKey) {
   }
   var pool;
   var moduleId;
+  // v4.2.4: route by concept's module — M1, M2, or M3. M3 concept drills
+  // draw only from approved M3 scenarios so Limited Beta sessions stay clean.
   if (moduleForConcept === 'm2') {
     pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
     moduleId = 'pf_flop_cbet_ip';
+  } else if (moduleForConcept === 'm3') {
+    pool = (typeof getModule3Scenarios === 'function') ? getModule3Scenarios() : [];
+    moduleId = 'pf_flop_cbet_oop_def';
   } else {
     pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
     moduleId = 'pf_board_texture';
   }
   if (pool.length === 0) {
-    if (typeof showToast === 'function') showToast('No scenarios available for this module.');
+    if (typeof showToast === 'function') showToast('No scenarios available for this concept yet.');
     return;
   }
-  var built = _pfBuildConceptQueue(conceptKey, pool, 12);
+  // v4.2.4: M3 concept drills cap at 10 questions to match Limited Beta session length.
+  var conceptLen = (moduleForConcept === 'm3') ? 10 : 12;
+  var built = _pfBuildConceptQueue(conceptKey, pool, conceptLen);
   if (!built || !built.queue || built.queue.length === 0) {
     // Unknown concept or empty pool — fall back to normal drill in the same module
     return startPostflopDrill(moduleId);
@@ -35541,9 +36059,11 @@ function _pfConceptLibraryHtml() {
     } else {
       actionHtml = '';
     }
-    var trainedTag = (module === 'm2')
-      ? '<span class="pf-concept-tag pf-concept-tag-m2">trained in Module 2</span>'
-      : '<span class="pf-concept-tag">trained in Module 1</span>';
+    // v4.2.4: per-module trained-in badge.
+    var trainedTag;
+    if (module === 'm3')      trainedTag = '<span class="pf-concept-tag pf-concept-tag-m2" title="Trained in Module 3 — Limited Beta">trained in Module 3 (Beta)</span>';
+    else if (module === 'm2') trainedTag = '<span class="pf-concept-tag pf-concept-tag-m2">trained in Module 2</span>';
+    else                      trainedTag = '<span class="pf-concept-tag">trained in Module 1</span>';
     var cardClass = 'pf-concept-card';
     if (reviewSignal) cardClass += ' pf-concept-card-review';
     if (isPreview) cardClass += ' pf-concept-card-locked';
@@ -35560,19 +36080,25 @@ function _pfConceptLibraryHtml() {
            '</div>';
   }
 
+  // v4.2.4: include Module 3 group.
   var m1List = _PF_CONCEPT_LIBRARY.filter(function (c) { return (c.module || 'm1') === 'm1'; });
   var m2List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm2'; });
+  var m3List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm3'; });
   var m1Cards = m1List.map(renderCard).join('');
   var m2Cards = m2List.map(renderCard).join('');
+  var m3Cards = m3List.map(renderCard).join('');
 
   var m1Section = '<div class="pf-concept-group-header">Module 1 — Board Reading <span class="pf-concept-group-count">(' + m1List.length + ')</span></div>' + m1Cards;
   var m2Section = m2List.length > 0
     ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 2 — Flop C-bet IP · Hand Action <span class="pf-concept-group-count">(' + m2List.length + ' · beta)</span></div>' + m2Cards)
     : '';
+  var m3Section = m3List.length > 0
+    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 3 — BB Defense OOP <span class="pf-concept-group-count">(' + m3List.length + ' · Limited Beta)</span></div>' + m3Cards)
+    : '';
 
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2) · tap to drill</summary>' +
-           '<div class="pf-concept-grid">' + m1Section + m2Section + '</div>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 + ' + m3List.length + ' M3) · tap to drill</summary>' +
+           '<div class="pf-concept-grid">' + m1Section + m2Section + m3Section + '</div>' +
          '</details>';
 }
 
@@ -35588,6 +36114,13 @@ function _pfAcademyHomeHtml() {
       m2MasteryHtml = _pfM2MasteryProgressHtml();
     }
   } catch (e) { /* swallow — never block academy render */ }
+  // v4.2.4: M3 mastery checklist appears below M2 mastery, parallel layout.
+  var m3MasteryHtml = '';
+  try {
+    if (typeof _pfM3MasteryProgressHtml === 'function') {
+      m3MasteryHtml = _pfM3MasteryProgressHtml();
+    }
+  } catch (e) { /* swallow — never block academy render */ }
   return '<div class="pf-academy-section">' +
            '<div class="pf-academy-header">' +
              '<span class="pf-academy-title">🎓 Postflop Academy</span>' +
@@ -35598,6 +36131,7 @@ function _pfAcademyHomeHtml() {
            _pfCurriculumMapHtml(stats) +
            _pfMasteryProgressHtml(stats) +
            m2MasteryHtml +
+           m3MasteryHtml +
            _pfConceptLibraryHtml() +
            '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
          '</div>';
@@ -35673,10 +36207,12 @@ var TRAINING_MODES = {
       { id: 'm2',        label: 'Module 2 · Flop C-bet IP', hint: '12 hands · 49 scenarios',  icon: '🃏', kind: 'secondary', route: 'postflop:m2', badge: 'BETA' },
       // v4.2.2G: hint sharpened. Route SCROLLS to library where user picks one of
       // 15 concept drills - not auto-start. "Browse" makes the navigation honest.
-      { id: 'concepts',  label: 'Concept Library',          hint: 'Browse 15 concept drills', icon: '📖', kind: 'secondary', route: 'postflop:concepts' },
+      { id: 'concepts',  label: 'Concept Library',          hint: 'Browse 25 concept drills', icon: '📖', kind: 'secondary', route: 'postflop:concepts' },
       { id: 'weakspot',  label: 'Weak Spot Review',         hint: 'From recent sessions',      icon: '🔧', kind: 'secondary', route: 'postflop:weakspot' },
       { id: 'progress',  label: 'Postflop Progress',        hint: 'View mastery + history',    icon: '🏆', kind: 'secondary', route: 'postflop:progress' },
-      { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: 'Coming in v4.2.4 beta',     icon: '🔒', kind: 'preview',   route: null }
+      // v4.2.4: Module 3 flipped from preview to available. Limited Beta · 85
+      // approved scenarios. Honest copy: do not promise full module quality.
+      { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: '85 OOP defense scenarios · Limited Beta', icon: '🛡️', kind: 'secondary', route: 'postflop:m3', badge: 'BETA' }
     ]
   }
 };
@@ -35758,6 +36294,17 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_flop_cbet_ip', 12);
+      break;
+    case 'postflop:m3':
+      // v4.2.4: Module 3 Limited Beta — 85 approved scenarios. Default queue
+      // length 10 (shorter than M1/M2 to keep mobile sessions tight while
+      // content matures). Same Postflop Beta gating as M1/M2.
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_flop_cbet_oop_def', 10);
       break;
     case 'postflop:concepts':
       if (!betaOn) {
@@ -36055,10 +36602,13 @@ function renderPostflopQuestion() {
 
   // v4.1.7: Module 2 (pf_flop_cbet_ip) is hand-aware — render hero hand as cards
   // alongside board cards. Module 1 stays board-only.
+  // v4.2.4: Module 3 (pf_flop_cbet_oop_def) is also hand-aware (BB defense OOP).
   var isM2 = (scenario.module === 'pf_flop_cbet_ip');
+  var isM3 = (scenario.module === 'pf_flop_cbet_oop_def');
+  var isHandAware = isM2 || isM3;
   var heroHandHtml = '';
   var heroLine;
-  if (isM2 && scenario.heroHand && scenario.heroHand.length === 2) {
+  if (isHandAware && scenario.heroHand && scenario.heroHand.length === 2) {
     heroHandHtml = (scenario.heroHand || []).map(function (card) {
       var rank = card.charAt(0);
       var suit = card.charAt(1);
@@ -36078,28 +36628,43 @@ function renderPostflopQuestion() {
   // quote conflict with onclick="..." attribute). Use data-choice-id only;
   // delegated listener on #postflopScreen handles the click reliably on
   // both desktop and mobile.
-  var choicesHtml = (question.choices || []).map(function (ch) {
+  // v4.2.4: route choices through _pfNormalizePostflopChoices so M3 string-form
+  // choices are rendered with the right pretty labels.
+  var normalizedChoices = _pfNormalizePostflopChoices(scenario);
+  var choicesHtml = normalizedChoices.map(function (ch) {
     return '<button type="button" class="postflop-choice-btn" data-choice-id="' + _pfEscape(ch.id) + '">' +
       _pfEscape(ch.label) + '</button>';
   }).join('');
   // v4.0.4: choice guide always shows a 1-line summary above buttons (no longer
   // hidden behind a collapsed <details> on mobile). Expandable details remain.
-  var guideHtml = _pfChoiceGuide(question.type);
+  // v4.2.4: M3 has its own dedicated guide keyed `<qtype>_m3` (different
+  // vocabulary from M2's IP-c-bet vocabulary).
+  // v4.2.4: M3 schema uses qtype, M1/M2 schema uses type. Read both.
+  var qtypeForGuide = question.type || question.qtype || '';
+  if (isM3) qtypeForGuide = qtypeForGuide + '_m3';
+  var guideHtml = _pfChoiceGuide(qtypeForGuide);
 
   // v4.0.8: teaching layer — pattern label + board reading checklist + hint
   // v4.1.7: for Module 2, suppress the board-only checklist (board reading is
   // assumed; the focus is hand action). Keep the board pattern label + hint.
+  // v4.2.4: Module 3 also suppresses the board-only checklist (focus is BB
+  // defense, not pure board reading).
   var patternHtml = (typeof _pfPatternLabelHtml === 'function') ? _pfPatternLabelHtml(board) : '';
-  var checklistHtml = isM2 ? '' : ((typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '');
+  var checklistHtml = isHandAware ? '' : ((typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '');
   var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
-  // v4.1.7: Module 2 hand-class chip
+  // v4.1.7/v4.2.4: hand-aware modules show handClass + heroHandRole chips
   var handChipHtml = '';
-  if (isM2 && (scenario.handClass || scenario.heroHandRole)) {
+  if (isHandAware && (scenario.handClass || scenario.heroHandRole || scenario.drawCategory || scenario.showdownValue)) {
     var hcLabel = scenario.handClass ? _pfEscape(scenario.handClass.replace(/_/g, ' ')) : '';
     var hrLabel = scenario.heroHandRole ? _pfEscape(scenario.heroHandRole.replace(/_/g, ' ')) : '';
+    var dcLabel = (isM3 && scenario.drawCategory && scenario.drawCategory !== 'none')
+                  ? _pfEscape(scenario.drawCategory.replace(/_/g, ' ')) : '';
+    var svLabel = (isM3 && scenario.showdownValue) ? _pfEscape(scenario.showdownValue) : '';
     handChipHtml = '<div class="pf-m2-hand-chips">' +
       (hcLabel ? '<span class="pf-m2-hand-chip pf-m2-handclass-chip" title="Mechanical hand class">🃏 ' + hcLabel + '</span>' : '') +
       (hrLabel ? '<span class="pf-m2-hand-chip pf-m2-handrole-chip" title="Strategic role on this board">🎯 ' + hrLabel + '</span>' : '') +
+      (dcLabel ? '<span class="pf-m2-hand-chip pf-m2-handclass-chip" title="Draw category">🪜 ' + dcLabel + '</span>' : '') +
+      (svLabel ? '<span class="pf-m2-hand-chip pf-m2-handrole-chip" title="Showdown value">🛡️ ' + svLabel + '</span>' : '') +
       '</div>';
   }
   var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
@@ -36125,17 +36690,24 @@ function renderPostflopQuestion() {
       '</div>';
   }
 
-  // v4.1.7: Module 2 gets its own context label + spot section
-  var contextLabelText = isM2
-    ? '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total
-    : '🧪 Board Texture Trainer · Q ' + qNum + '/' + total;
+  // v4.1.7/v4.2.4: per-module context label.
+  var contextLabelText;
+  if (isM3) {
+    contextLabelText = '🛡️ Module 3 · BB Defense OOP · Limited Beta · Q ' + qNum + '/' + total;
+  } else if (isM2) {
+    contextLabelText = '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total;
+  } else {
+    contextLabelText = '🧪 Board Texture Trainer · Q ' + qNum + '/' + total;
+  }
 
-  // v4.1.7: hero hand row for Module 2
+  // v4.1.7/v4.2.4: hand-aware modules (M2, M3) render the hero hand row.
+  // M3 labels the section "Your Hand (BB)" to keep BB framing explicit.
   var heroHandSection = '';
-  if (isM2 && heroHandHtml) {
+  if (isHandAware && heroHandHtml) {
+    var heroSectionTitle = isM3 ? '🃏 Your Hand (BB)' : '🃏 Hero Hand';
     heroHandSection =
       '<div class="postflop-question-card">' +
-        '<div class="postflop-section-title">🃏 Hero Hand</div>' +
+        '<div class="postflop-section-title">' + heroSectionTitle + '</div>' +
         '<div class="postflop-hero-row">' + heroHandHtml + '</div>' +
         handChipHtml +
       '</div>';
@@ -36152,10 +36724,21 @@ function renderPostflopQuestion() {
     '<div class="postflop-spot-card">' +
       '<div class="postflop-section-title">📋 Spot</div>' +
       '<div class="postflop-spot-tags">' +
-        '<span class="postflop-spot-tag tag-stack">' + _pfEscape(spot.effectiveStackBB || '?') + 'BB</span>' +
-        '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || '?') + ' open</span>' +
-        '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
-        '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>' +
+        // v4.2.4: M3 uses spot.stackDepth ("100BB"); M1/M2 use spot.effectiveStackBB (100).
+        '<span class="postflop-spot-tag tag-stack">' + _pfEscape(
+          isM3 ? (spot.stackDepth || '100BB')
+               : ((spot.effectiveStackBB ? spot.effectiveStackBB : '?') + 'BB')
+        ) + '</span>' +
+        // v4.2.4: M3 framing — BB defends OOP; M1/M2 framing — BTN opens.
+        (isM3
+          ? '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || 'BB') + ' (hero, OOP)</span>' +
+            '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || 'BTN') + ' (villain, IP)</span>' +
+            '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || 'SRP') + '</span>' +
+            '<span class="postflop-spot-tag tag-action">' + _pfEscape((spot.villainAction || 'cbet') + ' ' + (spot.villainSizing || 'small')) + '</span>'
+          : '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || '?') + ' open</span>' +
+            '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
+            '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>'
+        ) +
       '</div>' +
       (heroLine ? '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' : '') +
     '</div>' +
@@ -36182,7 +36765,9 @@ function _tierLabel(tier) {
   return ({ best: '✅ BEST', acceptable: '≈ ACCEPTABLE', bad: '❌ BAD', critical: '🚨 CRITICAL LEAK' })[tier] || tier;
 }
 function _findChoiceLabel(scenario, choiceId) {
-  var choices = (scenario.question && scenario.question.choices) || [];
+  // v4.2.4: route through _pfNormalizePostflopChoices so M3 string-form
+  // choices (e.g. ["fold","call",...]) get the right pretty label.
+  var choices = _pfNormalizePostflopChoices(scenario);
   for (var i = 0; i < choices.length; i++) { if (choices[i].id === choiceId) return choices[i].label; }
   return choiceId;
 }
@@ -36192,12 +36777,16 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var qNum = d.currentIndex + 1;
   var total = d.queue.length;
   var pct = Math.round(((d.currentIndex + 1) / total) * 100);
-  var bestLabel = ((scenario.answer.best || []).map(function (id) { return _findChoiceLabel(scenario, id); })).join(', ');
+  // v4.2.4: route through normalizer so M3 string-form best (e.g. "call") and
+  // M1/M2 array-form best (e.g. ["bet_small"]) both produce a clean label list.
+  var normAns = _pfNormalizePostflopAnswer(scenario && scenario.answer);
+  var bestLabel = (normAns.best.map(function (id) { return _findChoiceLabel(scenario, id); })).join(', ');
   var pickedLabel = _findChoiceLabel(scenario, choiceId);
   var explanation = scenario.explanation || {};
   var isLast = (d.currentIndex + 1) >= total;
-  // v4.1.7: Module 2 awareness for richer feedback
+  // v4.1.7/v4.2.4: module awareness for routing the right teaching block.
   var isM2 = (scenario.module === 'pf_flop_cbet_ip');
+  var isM3 = (scenario.module === 'pf_flop_cbet_oop_def');
 
   // Build expandable sections (only for non-null fields)
   var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
@@ -36229,10 +36818,13 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   }).join('');
 
   // v4.0.8: 5-block teaching feedback layout (Result / Board Pattern / Core Reason / Takeaway / Common Mistake).
-  // v4.1.7: Module 2 routes through _pfM2TeachingFeedbackBlocksHtml — hand-action focused
-  //         (Recommended Action / Hand Logic / Sizing Logic / Takeaway / Common Mistake).
+  // v4.1.7: Module 2 routes through _pfM2TeachingFeedbackBlocksHtml — hand-action focused.
+  // v4.2.4: Module 3 routes through _pfM3TeachingFeedbackBlocksHtml — BB-defense focused
+  //         (Recommended Action / Defense Logic / Hand Logic / Blocker / Range / Takeaway / Common Mistake).
   var teachingBlocksHtml;
-  if (isM2 && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') {
+  if (isM3 && typeof _pfM3TeachingFeedbackBlocksHtml === 'function') {
+    teachingBlocksHtml = _pfM3TeachingFeedbackBlocksHtml(scenario);
+  } else if (isM2 && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') {
     teachingBlocksHtml = _pfM2TeachingFeedbackBlocksHtml(scenario);
   } else if (typeof _pfTeachingFeedbackBlocksHtml === 'function') {
     teachingBlocksHtml = _pfTeachingFeedbackBlocksHtml(scenario);
@@ -36240,9 +36832,19 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
     teachingBlocksHtml = '';
   }
 
+  // v4.2.4: per-module context label on the answer screen (parallel to question screen).
+  var fbContextLabel;
+  if (isM3) {
+    fbContextLabel = '🛡️ Module 3 · BB Defense OOP · Limited Beta · Q ' + qNum + '/' + total;
+  } else if (isM2) {
+    fbContextLabel = '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total;
+  } else {
+    fbContextLabel = '🧪 Board Texture Trainer · Q ' + qNum + '/' + total;
+  }
+
   var html =
     '<div class="postflop-context-bar">' +
-      '<span class="postflop-context-label">🧪 Board Texture Trainer · Q ' + qNum + '/' + total + '</span>' +
+      '<span class="postflop-context-label">' + fbContextLabel + '</span>' +
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
@@ -36638,6 +37240,112 @@ function _pfM2RenderSessionAggregations(d, scenarios, counts, total) {
 // ============================================================================
 
 // ============================================================================
+// v4.2.4 — MODULE 3 SESSION SUMMARY AGGREGATION
+// Aggregates Module 3 answers by handClass, heroHandRole, drawCategory, and
+// actionReason to surface weak buckets per session. Reuses _pfM2GroupAnswersBy
+// (module-agnostic grouper) and _pfM2PrettyLabel (module-agnostic label
+// helper). Only renders when scenario.module === 'pf_flop_cbet_oop_def'.
+// ============================================================================
+function _pfM3RenderSessionAggregations(d, scenarios, counts, total) {
+  if (!d || d.module !== 'pf_flop_cbet_oop_def') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var html = '';
+
+  // 1. Hand-class aggregation (mechanical hand class)
+  var hcRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'handClass');
+  var hcWeak = hcRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  var hcStrong = hcRows.filter(function (r) { return r.seen >= 2 && r.pct >= 80; });
+
+  if (hcStrong.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-strong pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">💪 Strongest hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcStrong.slice(0, 4).map(function (r) {
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hcWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  // 2. Hero-hand-role aggregation (strategic role on this board)
+  var hrRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'heroHandRole');
+  var hrWeak = hrRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+
+  if (hrRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Hand role coverage</span>' +
+              '<ul class="pf-learn-list">' +
+                hrRows.slice(0, 6).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hrWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand roles</span>' +
+              '<ul class="pf-learn-list">' +
+                hrWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  // 3. Action-reason aggregation (the M3-defining axis — critical for weak-spot
+  //    signals because all 9 reasons are now represented at >=4 in production).
+  var arRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'actionReason');
+  var arWeak = arRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+
+  if (arRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🛡️ Action reason coverage</span>' +
+              '<ul class="pf-learn-list">' +
+                arRows.slice(0, 9).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (arWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak action reasons</span>' +
+              '<ul class="pf-learn-list">' +
+                arWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  if (html) {
+    html = '<div class="pf-m2-aggr-section">' +
+             '<div class="pf-m2-aggr-section-title">Module 3 · BB defense breakdown (Limited Beta)</div>' +
+             html +
+           '</div>';
+  }
+  return html;
+}
+// ============================================================================
+// END v4.2.4 — MODULE 3 SESSION SUMMARY AGGREGATION
+// ============================================================================
+
+// ============================================================================
 // v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
 // Helpers + entry point for a focused review session derived from the just-
 // completed session's mistakes. Local-only, in-memory profile (no persistent
@@ -36826,11 +37534,14 @@ function startPostflopWeakSpotReview() {
       weakProfile = _pfCurrentSessionWeakProfile(prevDrill.answers, allScenarios);
     } catch (e) { weakProfile = null; }
   }
-  // v4.1.7: route the weak-spot pool by the module of the just-finished session.
-  // Module 1 weak-spot review draws from M1 pool; Module 2 weak-spot review
-  // draws from M2 pool. Prevents M1 scenarios from contaminating an M2 review.
+  // v4.1.7/v4.2.4: route the weak-spot pool by the module of the just-finished
+  // session. M1 → M1 pool, M2 → M2 pool, M3 → M3 pool. Prevents cross-module
+  // contamination of weak-spot review.
   var prevModule = (prevDrill && prevDrill.module) || 'pf_board_texture';
-  var moduleId = (prevModule === 'pf_flop_cbet_ip') ? 'pf_flop_cbet_ip' : 'pf_board_texture';
+  var moduleId;
+  if (prevModule === 'pf_flop_cbet_ip')          moduleId = 'pf_flop_cbet_ip';
+  else if (prevModule === 'pf_flop_cbet_oop_def') moduleId = 'pf_flop_cbet_oop_def';
+  else                                            moduleId = 'pf_board_texture';
   if (!weakProfile) {
     // Nothing weak to focus on — fall back to a normal session in same module
     return startPostflopDrill(moduleId);
@@ -36838,10 +37549,14 @@ function startPostflopWeakSpotReview() {
   var pool;
   if (moduleId === 'pf_flop_cbet_ip') {
     pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
+  } else if (moduleId === 'pf_flop_cbet_oop_def') {
+    pool = (typeof getModule3Scenarios === 'function') ? getModule3Scenarios() : [];
   } else {
     pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
   }
-  var queue = _pfBuildWeakSpotQueue(weakProfile, pool, 12);
+  // v4.2.4: M3 weak-spot reviews cap at 10 questions to match Limited Beta session length.
+  var weakLen = (moduleId === 'pf_flop_cbet_oop_def') ? 10 : 12;
+  var queue = _pfBuildWeakSpotQueue(weakProfile, pool, weakLen);
   if (!queue || queue.length === 0) {
     return startPostflopDrill(moduleId);
   }
@@ -36912,7 +37627,12 @@ function renderPostflopComplete() {
       criticalLeaks.map(function (a, i) {
         var sc = (App.postflop.scenarios || []).find(function (s) { return s.id === a.scenarioId; });
         var pickedLabel = sc ? _findChoiceLabel(sc, a.choiceId) : a.choiceId;
-        var bestLabel = sc ? ((sc.answer.best || []).map(function (id) { return _findChoiceLabel(sc, id); }).join(', ')) : '?';
+        // v4.2.4: route best through normalizer so M3 string-form best is rendered correctly.
+        var bestLabel = '?';
+        if (sc) {
+          var nA = _pfNormalizePostflopAnswer(sc.answer);
+          bestLabel = nA.best.map(function (id) { return _findChoiceLabel(sc, id); }).join(', ');
+        }
         var board = sc ? (sc.board.cards || []).join(' ') : '?';
         var shortExp = sc ? (sc.explanation && sc.explanation.short || '') : '';
         return '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong>Q' + (d.answers.indexOf(a) + 1) + '</strong> on ' + _pfEscape(board) + ': you picked "' + _pfEscape(pickedLabel) + '"; GTO: "' + _pfEscape(bestLabel) + '"<br><span style="opacity:0.85;font-size:12px">' + _pfEscape(shortExp) + '</span></div>';
@@ -36934,18 +37654,30 @@ function renderPostflopComplete() {
       m2AggrHtml = _pfM2RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
     }
   } catch (e) { /* swallow */ }
+  // v4.2.4: Module 3 BB-defense breakdown (handClass + heroHandRole + actionReason aggregations)
+  var m3AggrHtml = '';
+  try {
+    if (typeof _pfM3RenderSessionAggregations === 'function') {
+      m3AggrHtml = _pfM3RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
+    }
+  } catch (e) { /* swallow */ }
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
   // v4.1.1: also differentiate when this was a concept-focused drill
   // v4.1.7: also differentiate when this was a Module 2 session
+  // v4.2.4: also differentiate when this was a Module 3 session (Limited Beta)
   var isWeakReview = !!(d && d.mode === 'weak_spots');
   var isConceptDrill = !!(d && d.mode === 'concept');
   var isM2Module = !!(d && d.module === 'pf_flop_cbet_ip');
+  var isM3Module = !!(d && d.module === 'pf_flop_cbet_oop_def');
   var conceptName = isConceptDrill
     ? (d.conceptDisplayName || _pfConceptDisplayName(d.conceptKey) || 'Concept')
     : '';
-  var moduleLabel = isM2Module ? 'Module 2 · Flop C-bet IP' : 'Board Texture Trainer';
-  var moduleEmoji = isM2Module ? '🎯' : '🧪';
+  var moduleLabel;
+  var moduleEmoji;
+  if (isM3Module)      { moduleLabel = 'Module 3 · BB Defense OOP · Limited Beta'; moduleEmoji = '🛡️'; }
+  else if (isM2Module) { moduleLabel = 'Module 2 · Flop C-bet IP';                 moduleEmoji = '🎯'; }
+  else                 { moduleLabel = 'Board Texture Trainer';                    moduleEmoji = '🧪'; }
   var contextLabel;
   var summaryHeadline;
   var summaryEyebrow = '';
@@ -36958,7 +37690,9 @@ function renderPostflopComplete() {
     summaryHeadline = 'Review Session Summary';
   } else {
     contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Complete';
-    summaryHeadline = isM2Module ? 'Module 2 Session Summary' : 'Session Learning Summary';
+    if (isM3Module) summaryHeadline = 'Module 3 Session Summary (Limited Beta)';
+    else if (isM2Module) summaryHeadline = 'Module 2 Session Summary';
+    else summaryHeadline = 'Session Learning Summary';
   }
 
   var html =
@@ -36981,6 +37715,7 @@ function renderPostflopComplete() {
     '</div>' +
     learnSummaryHtml +
     m2AggrHtml +
+    m3AggrHtml +
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
@@ -37000,8 +37735,11 @@ function renderPostflopComplete() {
         }
         return '';
       })() +
-      // v4.1.7: Drill again routes to the same module the player just played
-      '<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture') + '\', ' + (isM2Module ? 12 : 15) + ')">▶ Drill again</button>' +
+      // v4.1.7/v4.2.4: Drill again routes to the same module the player just played.
+      // M3 sessions default to 10, M2 to 12, M1 to 15.
+      '<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (
+        isM3Module ? 'pf_flop_cbet_oop_def' : (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture')
+      ) + '\', ' + (isM3Module ? 10 : (isM2Module ? 12 : 15)) + ')">▶ Drill again</button>' +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
       // Inline note when no weak signals (positive feedback, no nag)
       (function () {
