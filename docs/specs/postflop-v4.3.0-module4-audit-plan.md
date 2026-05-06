@@ -241,6 +241,41 @@ HARD ERROR if any category has fewer than 2 `action_choice` questions OR fewer t
 
 ---
 
+## 11.5. v4.3.0-preA hardening rules (poker-sanity guards)
+
+These rules were added in the v4.3.0-preA corrective sprint after raw seed review caught content bugs that the original mechanical auditor (R01..R49) did not detect.
+
+### M4.R50 -- action_choice prompt must not end with "with "
+HARD ERROR if `question.qtype == 'action_choice'` AND `question.prompt` matches `with\s*$` (i.e., ends with the literal token "with " and nothing else).
+
+**Origin:** The v4.3.0 builder script's `Q-Action` helper used `"...best action with $hero?"` which PowerShell parsed as `$hero?` -- a single variable name `hero?` (the `?` is a valid variable-name character) which expanded to empty. All 18 v4.3.0 action_choice prompts shipped without hero hands until v4.3.0-preA fixed the helper to use `${hero}?`.
+
+### M4.R51 -- action_choice prompt must contain both hero cards
+HARD ERROR if `question.qtype == 'action_choice'` AND the prompt does NOT contain BOTH cards of `heroHand` as exact 2-character substrings (e.g., `Th` and `8h`).
+
+**Origin:** Defense-in-depth alongside R50. R50 catches the specific "ends with `with `" bug; R51 catches any other prompt-rendering regression that omits the hero hand.
+
+### M4.R52 -- nut_flush_draw drawCategory requires hero to hold A of a 4-suited suit
+HARD ERROR if `drawCategory == 'nut_flush_draw'` AND there is NO suit S such that:
+- hero holds `A<S>` (e.g., `As` for spade)
+- the count of suit S across hero+board is exactly 4 (one card needed on river to complete the nut flush)
+
+**Origin:** The v4.3.0 seed for `Ks 8s 3d 2s` had `AhJs` heroHand classified as `nut_flush_draw`, but `Ah` is the heart Ace, not the spade Ace. The actual nut-spade is `As`. Repaired to `AsJd`.
+
+### M4.R53 -- "nut-<suit>" blocker claim requires hero to hold A of that suit
+HARD ERROR if `heroHandRole == 'blocker_bluff'` AND `blockerNote` matches the regex `nut[- ](spade|heart|club|diamond)\b` AND hero does NOT hold the A of the matching suit (e.g., `nut-spade` requires `As` in heroHand).
+
+**Origin:** Same v4.3.0 seed as R52. The blockerNote literally said "Ah is not the nut-spade blocker" while still classifying the hand as a nut-spade-blocker bluff. Repaired by switching to `AsJd`.
+
+### M4.R54 -- handClass="straight" requires 5 consecutive ranks in hero+board
+HARD ERROR if `handClass == 'straight'` AND the union of ranks across `heroHand + board.cards` does NOT contain 5 consecutive ranks (handles A-low straight A-2-3-4-5 specially).
+
+**Origin:** The v4.3.0 seed for `9d 8c 6h Kc` had `Tc7c` classified as `oesd / combo_draw / semi_bluff_check_raise_turn`, but `Tc7c` on `9-8-6` already makes the nut straight `6-7-8-9-T` on the flop. Repaired to `straight / nutted_value / value_check_raise_turn`. R54 mechanically prevents this class of bug.
+
+**Note:** R54 only validates the made-straight claim; it does not validate `oesd`/`gutshot` drawCategory presence (combinatorial; reserved for human/GPT review).
+
+---
+
 ## 12. Strategic quality rules (NOT auto-checked)
 
 The following rules are **strategic-quality flags** that are reviewed by humans/GPT, not by the mechanical auditor. They are listed here for traceability and for the GPT review package.

@@ -72,7 +72,7 @@
                           "actionReason":  "range_disadvantage_turn_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Th 8h?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -173,7 +173,7 @@
                           "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ad Qd?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -391,7 +391,7 @@
                           "actionReason":  "board_change_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop As 8d 3h; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Js Th?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -494,7 +494,7 @@
                           "actionReason":  "protection_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 9c 9s?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -586,13 +586,13 @@
                                            "Tc",
                                            "7c"
                                        ],
-                          "handClass":  "oesd",
-                          "heroHandRole":  "combo_draw",
-                          "drawCategory":  "oesd",
-                          "showdownValue":  "low",
-                          "blockerNote":  null,
+                          "handClass":  "straight",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Hero made nut straight 6-7-8-9-T on the flop. Tc adds bonus club FD redraw on river clubs.",
                           "recommendedAction":  "check_raise_small",
-                          "actionReason":  "semi_bluff_check_raise_turn",
+                          "actionReason":  "value_check_raise_turn",
                           "question":  {
                                            "qtype":  "reason_choice",
                                            "prompt":  "Flop 9d 8c 6h; turn Kc. BB check-raises small with Tc 7c vs BTN\u0027s turn barrel. What is the primary reason?",
@@ -612,19 +612,19 @@
                                                        ]
                                        },
                           "answer":  {
-                                         "best":  "semi_bluff_check_raise_turn",
+                                         "best":  "value_check_raise_turn",
                                          "acceptable":  [
-                                                            "equity_realization_turn_call"
+                                                            "equity_realization_turn_call",
+                                                            "slowplay_turn_call"
                                                         ],
                                          "bad":  [
-                                                     "value_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
                                                      "protection_check_raise_turn",
                                                      "blocker_check_raise_turn",
                                                      "bluff_catch_turn",
                                                      "board_change_fold",
                                                      "domination_turn_fold",
                                                      "range_disadvantage_turn_fold",
-                                                     "slowplay_turn_call",
                                                      "mixed_indifference_turn",
                                                      "pot_odds_turn_call"
                                                  ],
@@ -633,24 +633,24 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "OESD + 2 backdoors on K-overcard turn -- semi-bluff check-raise.",
-                                              "turnLogic":  "Kc overcard adds equity for villain but T7 retains 8 OE outs + backdoor club FD on the second street.",
-                                              "rangeContext":  "BB flop call with combo draw is fine; turn K does not kill the OESD. Semi-bluff applies fold equity vs villain weak K-x and air.",
-                                              "handLogic":  "Tc7c has OESD (need J or 6 for straight) + backdoor club FD + minimal pair outs.",
-                                              "sizingLogic":  "Small check-raise size keeps villain weak K-x calling but folds underpairs and missed barrels.",
-                                              "commonMistake":  "Identifying as protection or value misses that this is a draw with fold equity.",
-                                              "takeaway":  "Strong combo draws on overcard turn = semi-bluff check-raise."
+                                              "short":  "Made nut straight on K-overcard turn -- value check-raise.",
+                                              "turnLogic":  "Kc turn does not change Tc7c equity -- hero already made the nut straight 6-7-8-9-T on the flop. Villain barrel range heavy in Kx pair-types is dominated; raising extracts value.",
+                                              "rangeContext":  "BB flop call with T7s landed the nut straight on flop; Kc adds Kx hands to villain barrel range, all of which are dominated by hero straight.",
+                                              "handLogic":  "Tc7c has the nut straight (6-7-8-9-T) plus a club FD redraw (4 clubs vs 1 needed on river).",
+                                              "sizingLogic":  "Small check-raise extracts value from Kx and protects against runout pairing the board to give villain a higher straight or boat draw.",
+                                              "commonMistake":  "Identifying as semi-bluff misses that hero ALREADY has the made nut straight; raise mechanism is value, not fold equity.",
+                                              "takeaway":  "Made nut straight on overcard turn = value check-raise vs Kx-heavy barrel range."
                                           },
                           "conceptTags":  [
-                                              "turn_check_raise_bluff",
+                                              "turn_check_raise_value",
                                               "turn_equity_shift",
                                               "second_barrel_defense"
                                           ],
                           "sourceConfidence":  "expert_judgment",
-                          "difficultyHint":  4,
+                          "difficultyHint":  3,
                           "auditStatus":  "planning_only",
                           "reviewStatus":  "v4.3.0_seed_candidate",
-                          "uniquenessNote":  "Reason_choice testing semi-bluff vs other raise reasons on overcard turn. Tests that strong combo equity makes raise reason = semi-bluff, not value/protection/blocker."
+                          "uniquenessNote":  "Reason_choice testing value_check_raise_turn on a made nut straight vs other raise reasons. Tests that nut made hand drives value raise, not bluff/protection/blocker (note: T7 makes 6-7-8-9-T straight already on the flop)."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_9d8c6h_Kc_m4_action_9h7h_v430",
@@ -710,7 +710,7 @@
                           "actionReason":  "board_change_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 9h 7h?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -804,14 +804,14 @@
                                        ],
                           "handClass":  "no_pair_no_draw",
                           "heroHandRole":  "give_up",
-                          "drawCategory":  "gutshot",
+                          "drawCategory":  "none",
                           "showdownValue":  "none",
                           "blockerNote":  null,
                           "recommendedAction":  "fold",
                           "actionReason":  "range_disadvantage_turn_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 9d 8c 6h; turn Kc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ad Js?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -837,13 +837,13 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "AJ no pair on K-overcard turn -- fold; backdoor gutshot is dominated.",
-                                              "turnLogic":  "Kc turn does not help AJ; gutshot to T (Q-J-T-9-K wait need T for K-Q-J-T-9) has 4 outs but T pairs villain Kx range.",
-                                              "rangeContext":  "BB flop call with AJ overcards was thin; turn K kills the overcard equity (now A-pair and K-pair both lose to Kx).",
-                                              "handLogic":  "AdJs has gutshot to T plus 6 overcard outs that often lose to villain K-pair.",
-                                              "sizingLogic":  "Folding closes action; calling commits chips on dominated draw.",
-                                              "commonMistake":  "Calling AJ on overcard turns -because the gutshot- ignores domination.",
-                                              "takeaway":  "Naked overcards + dominated gutshot on overcard turn = fold."
+                                              "short":  "AJ no pair no draw on K-overcard turn -- fold; six overcards are mostly dominated.",
+                                              "turnLogic":  "Kc turn does not help AdJs at all -- hero misses every flop card and has no straight or flush draw. Villain barrel range is range-advantaged + nut-advantaged on this runout.",
+                                              "rangeContext":  "BB flop call with AdJs on 9d 8c 6h was already thin (overcards only, no draw). Turn K shifts range hard to villain Kx.",
+                                              "handLogic":  "AdJs has no pair, no draw. Six overcard outs (3 aces + 3 jacks) but villain Kx range dominates Jx and many Ax pair outs lose to better Kings.",
+                                              "sizingLogic":  "Folding closes action and saves chips; raising as a bluff has near-zero fold equity vs Kx-anchored barrel range.",
+                                              "commonMistake":  "Calling AJ on overcard turns hoping to hit one of six outs ignores the mostly-dominated reality and burns chips.",
+                                              "takeaway":  "Naked overcards with no draw on overcard turn = fold; raise with no fold equity is a punt."
                                           },
                           "conceptTags":  [
                                               "turn_range_disadvantage",
@@ -854,7 +854,7 @@
                           "difficultyHint":  3,
                           "auditStatus":  "planning_only",
                           "reviewStatus":  "v4.3.0_seed_candidate",
-                          "uniquenessNote":  "CRITICAL teaching: naked overcards + dominated gutshot fold on overcard turn. Distinct from 2.3 because hero has gutshot equity but it is dominated; tests that draw equity does not rescue range disadvantage."
+                          "uniquenessNote":  "CRITICAL teaching: naked overcards + no draw fold on overcard turn. Distinct from 2.3 (top-pair-weak-kicker fold) because here hero has zero made-hand value and overcard outs are dominated; tests that overcard equity alone does not rescue range disadvantage."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_6s5s_v430",
@@ -914,7 +914,7 @@
                           "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 6s 5s?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1016,7 +1016,7 @@
                           "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with As Kd?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1060,7 +1060,7 @@
                           "uniquenessNote":  "TPTK + nut blocker bluff-catch lesson on flush-complete turn. Tests recognition that nut blocker turns scary turn into call spot."
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_reason_AhJs_v430",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_reason_AsJd_v430",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
                           "schemaVersion":  "1.2.0",
@@ -1105,19 +1105,19 @@
                                         "pairStatusChange":  "no_change"
                                     },
                           "heroHand":  [
-                                           "Ah",
-                                           "Js"
+                                           "As",
+                                           "Jd"
                                        ],
-                          "handClass":  "flush_draw",
+                          "handClass":  "no_pair_no_draw",
                           "heroHandRole":  "blocker_bluff",
-                          "drawCategory":  "nut_flush_draw",
+                          "drawCategory":  "none",
                           "showdownValue":  "low",
-                          "blockerNote":  "Ah is not the nut-spade blocker; Js gives nut FD on river but no current flush. Hero blocks AhX bluffs.",
+                          "blockerNote":  "As is the nut-spade blocker; hero removes every Ax-spade nut-flush combo from villain barrel range. No made hand and no draw -- pure blocker bluff.",
                           "recommendedAction":  "check_raise_small",
                           "actionReason":  "blocker_check_raise_turn",
                           "question":  {
                                            "qtype":  "reason_choice",
-                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BB check-raises small with Ah Js vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BB check-raises small with As Jd vs BTN\u0027s turn barrel. What is the primary reason?",
                                            "choices":  [
                                                            "pot_odds_turn_call",
                                                            "equity_realization_turn_call",
@@ -1136,10 +1136,11 @@
                           "answer":  {
                                          "best":  "blocker_check_raise_turn",
                                          "acceptable":  [
-                                                            "equity_realization_turn_call",
-                                                            "semi_bluff_check_raise_turn"
+
                                                         ],
                                          "bad":  [
+                                                     "equity_realization_turn_call",
+                                                     "semi_bluff_check_raise_turn",
                                                      "value_check_raise_turn",
                                                      "protection_check_raise_turn",
                                                      "bluff_catch_turn",
@@ -1155,13 +1156,13 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Js nut FD + Ah blocker on flush-complete turn -- blocker check-raise (advanced; solver mixes).",
-                                              "turnLogic":  "2s completes flush; Js gives nut FD on river while Ah blocks villain barrel range Ahx air bluffs.",
-                                              "rangeContext":  "BB call with AhJs on flop was thin; turn flush + nut FD + A-blocker creates raise candidacy.",
-                                              "handLogic":  "AhJs has nut FD (Js + 3 spades on board needs 1 more = nut flush on river); blocker pressure on Ahx air.",
-                                              "sizingLogic":  "Small check-raise size leverages blocker; semi-bluff classification also defensible.",
-                                              "commonMistake":  "Identifying as bluff_catch misses the raise mechanism (blocker + draw equity).",
-                                              "takeaway":  "Nut FD + nut-blocker on flush-complete turn = blocker check-raise (advanced; mix-frequency line)."
+                                              "short":  "Nut spade blocker on flush-complete turn -- blocker check-raise (advanced; solver mixes).",
+                                              "turnLogic":  "2s completes flush; As is the nut spade blocker, removing every villain Ax-spade nut-flush combo and turning hero into a leveraged blocker bluff candidate.",
+                                              "rangeContext":  "BB flop call with AsJd was natural (broadway high cards, A-blocker presence). Turn 2s makes raising a pure blocker bluff line vs villain barrel range.",
+                                              "handLogic":  "AsJd has no made hand and no draw; As alone removes nut-spade combos from villain range. Pure blocker bluff.",
+                                              "sizingLogic":  "Small check-raise size leverages the nut blocker; large raise risks too much when called by lower flushes.",
+                                              "commonMistake":  "Identifying as semi-bluff (no draw) or value (no made hand) misses that the raise mechanism is purely the As blocker.",
+                                              "takeaway":  "Nut spade blocker on flush-complete turn = blocker check-raise (advanced; mix-frequency line)."
                                           },
                           "conceptTags":  [
                                               "turn_check_raise_bluff",
@@ -1172,7 +1173,7 @@
                           "difficultyHint":  5,
                           "auditStatus":  "planning_only",
                           "reviewStatus":  "v4.3.0_seed_candidate",
-                          "uniquenessNote":  "Reason_choice testing blocker_check_raise_turn vs semi_bluff_check_raise_turn. Tests that flush-complete turn + nut-FD-blocker is blocker-pressure-driven raise, not pure semi-bluff."
+                          "uniquenessNote":  "Reason_choice testing blocker_check_raise_turn vs other raise/fold reasons. Tests that pure nut-spade blocker (no draw, no pair) drives raise reason = blocker, not semi-bluff/value/protection. Distinct from 3.2 because hero has zero made-hand component, making blocker the only raise mechanism."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_Tc9c_v430",
@@ -1232,7 +1233,7 @@
                           "actionReason":  "board_change_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Tc 9c?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1335,7 +1336,7 @@
                           "actionReason":  "value_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 9c 8h?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1436,7 +1437,7 @@
                           "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Kh Qh?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1652,7 +1653,7 @@
                           "actionReason":  "board_change_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Qs Ts 6d; turn Jc. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 5h 4d?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1755,7 +1756,7 @@
                           "actionReason":  "slowplay_turn_call",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ah 3d?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -1857,7 +1858,7 @@
                           "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 5h 5d?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -2074,7 +2075,7 @@
                           "actionReason":  "range_disadvantage_turn_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop 8c 8d 3s; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Qh Jh?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -2176,7 +2177,7 @@
                           "actionReason":  "protection_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Tc Td?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -2277,7 +2278,7 @@
                           "actionReason":  "value_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 8c 7c?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -2378,7 +2379,7 @@
                           "actionReason":  "equity_realization_turn_call",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with ",
+                                           "prompt":  "Flop Ts 9s 5d; turn 6h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with As 6s?",
                                            "choices":  [
                                                            "fold",
                                                            "call",

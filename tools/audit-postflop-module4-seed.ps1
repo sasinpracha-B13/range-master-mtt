@@ -419,6 +419,104 @@ foreach ($s in $j.scenarios) {
   if ($approvedSourceConfidence -notcontains $s.sourceConfidence) {
     Add-Hard 'M4.R47' $sid "sourceConfidence '$($s.sourceConfidence)' not in approved set"
   }
+
+  # ============================================================
+  # v4.3.0-preA hardening rules R50-R54 (poker-sanity guards)
+  # ============================================================
+
+  # ----- M4.R50 -- action_choice prompt must not end with 'with ' -----
+  if ($s.question -and $s.question.qtype -eq 'action_choice') {
+    if ($s.question.prompt -match 'with\s*$') {
+      Add-Hard 'M4.R50' $sid "action_choice prompt ends with 'with ' -- hero hand was lost during string interpolation"
+    }
+  }
+
+  # ----- M4.R51 -- action_choice prompt must contain heroHand cards -----
+  if ($s.question -and $s.question.qtype -eq 'action_choice' -and $s.heroHand) {
+    $hh = @($s.heroHand)
+    if ($hh.Count -eq 2) {
+      $promptLower = $s.question.prompt
+      $heroFound = $true
+      foreach ($c in $hh) {
+        if ($promptLower -notmatch [regex]::Escape($c)) {
+          $heroFound = $false; break
+        }
+      }
+      if (-not $heroFound) {
+        Add-Hard 'M4.R51' $sid "action_choice prompt does not contain both hero cards ('$($hh -join "', '")')"
+      }
+    }
+  }
+
+  # ----- M4.R52 -- nut_flush_draw drawCategory requires hero to hold A of a 4-suited suit -----
+  if ($s.drawCategory -eq 'nut_flush_draw' -and $s.heroHand -and $s.board -and $s.board.cards) {
+    $hh = @($s.heroHand)
+    $bc = @($s.board.cards)
+    $foundNutFD = $false
+    foreach ($suit in 'cdhs'.ToCharArray()) {
+      $sc = [string]$suit
+      $heroHasA = ($hh -contains "A$sc")
+      $heroSuitCount = (@($hh) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+      $boardSuitCount = (@($bc) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+      $totalSuit = $heroSuitCount + $boardSuitCount
+      # Nut FD: hero has A-of-suit AND total of suit across hero+board is exactly 4
+      # (one card needed on river to complete; A guarantees nut flush).
+      if ($heroHasA -and $totalSuit -eq 4) { $foundNutFD = $true; break }
+    }
+    if (-not $foundNutFD) {
+      Add-Hard 'M4.R52' $sid "drawCategory='nut_flush_draw' but hero does not hold A of a suit with exactly 4 of that suit across hero+board (suit must have 4 cards total with A in hero)"
+    }
+  }
+
+  # ----- M4.R53 -- blockerNote claiming nut-<suit> blocker requires hero to hold A of that suit -----
+  if ($s.heroHandRole -eq 'blocker_bluff' -and $s.blockerNote -and $s.heroHand) {
+    $hh = @($s.heroHand)
+    $bn = $s.blockerNote
+    $suitMap = @{ 'spade'='s'; 'heart'='h'; 'club'='c'; 'diamond'='d' }
+    foreach ($word in $suitMap.Keys) {
+      $rxFull = "nut[- ]$word"
+      if ($bn -match $rxFull) {
+        $sc = $suitMap[$word]
+        if (-not ($hh -contains "A$sc")) {
+          Add-Hard 'M4.R53' $sid "blockerNote claims 'nut-$word' blocker but hero does not hold A$sc"
+        }
+      }
+    }
+  }
+
+  # ----- M4.R54 -- handClass='straight' requires 5 consecutive ranks in hero+board -----
+  if ($s.handClass -eq 'straight' -and $s.heroHand -and $s.board -and $s.board.cards) {
+    $hh = @($s.heroHand)
+    $bc = @($s.board.cards)
+    $allCards = $hh + $bc
+    $rankOrder = @('2','3','4','5','6','7','8','9','T','J','Q','K','A')
+    $rankSet = New-Object System.Collections.Generic.HashSet[int]
+    foreach ($c in $allCards) {
+      if ($c.Length -ge 2) {
+        $r = $c.Substring(0,1)
+        $idx = $rankOrder.IndexOf($r)
+        if ($idx -ge 0) { $null = $rankSet.Add($idx) }
+      }
+    }
+    $foundStraight = $false
+    # Standard 5-consecutive check
+    foreach ($start in 0..8) {
+      $allIn = $true
+      foreach ($k in 0..4) {
+        if (-not $rankSet.Contains($start + $k)) { $allIn = $false; break }
+      }
+      if ($allIn) { $foundStraight = $true; break }
+    }
+    # Ace-low (A-2-3-4-5) check
+    if (-not $foundStraight) {
+      if ($rankSet.Contains(12) -and $rankSet.Contains(0) -and $rankSet.Contains(1) -and $rankSet.Contains(2) -and $rankSet.Contains(3)) {
+        $foundStraight = $true
+      }
+    }
+    if (-not $foundStraight) {
+      Add-Hard 'M4.R54' $sid "handClass='straight' but no 5 consecutive ranks (or A-2-3-4-5) in hero+board"
+    }
+  }
 }
 
 # ---------- M4.R08 -- id uniqueness ----------
