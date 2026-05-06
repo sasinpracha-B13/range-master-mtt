@@ -11305,126 +11305,231 @@
        checklist styled parallel to M1 with orange accent; M2 hand-action
        breakdown block in session summary.
        ======================================================================== */
-    .home-mode-tabs {
-      margin: 0 0 14px 0;
-      padding: 14px 14px 12px 14px;
-      background: linear-gradient(135deg, rgba(110, 168, 254, 0.04), rgba(245, 166, 35, 0.04));
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
+    /* ========================================================================
+       v4.2.2F — Training Command Center (TCC)
+       Replaces v4.1.8 .home-mode-tabs which were misleading shortcut tiles.
+       The new system has:
+         .tcc-shell           wrapper card on Home
+         .tcc-header          title + helper copy
+         .tcc-selector        2-button segmented mode picker
+         .tcc-mode-btn        preflop / postflop selector card with selected state
+         .tcc-panel           mode-aware command panel
+         .tcc-panel-hero      primary CTA + mode subtitle
+         .tcc-action-grid     secondary action buttons
+         .tcc-action          single action tile
+         .tcc-action.preview  disabled / "coming soon" state
+       Mobile-first: selector stays 2-up at 375px (compact); action grid 2-col
+       on phones, 3-col on tablets.
+       ======================================================================== */
+    .tcc-shell {
+      margin: 0 0 16px 0;
+      padding: 14px 14px 14px 14px;
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.05), rgba(245, 166, 35, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
     }
-    .home-mode-tabs-title {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+    .tcc-header { text-align: center; margin-bottom: 12px; }
+    .tcc-eyebrow {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--text-secondary);
-      margin-bottom: 10px;
-      text-align: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .home-mode-tabs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .home-mode-tab {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-rows: auto auto;
-      column-gap: 12px;
-      row-gap: 6px;
-      align-items: center;
-      padding: 14px 14px 12px 14px;
-      border-radius: 10px;
-      background: var(--card-bg, #1a1a1f);
-      border: 1.5px solid rgba(255, 255, 255, 0.10);
-      cursor: pointer;
-      transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-      text-align: left;
-      color: var(--text);
-      min-height: 96px;
-    }
-    .home-mode-tab:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-    }
-    .home-mode-tab:active { transform: translateY(0); }
-    .home-mode-tab-preflop {
-      border-color: rgba(110, 168, 254, 0.45);
-      background: linear-gradient(135deg, rgba(110, 168, 254, 0.10), rgba(110, 168, 254, 0.02));
-    }
-    .home-mode-tab-preflop:hover {
-      border-color: rgba(110, 168, 254, 0.75);
-      background: linear-gradient(135deg, rgba(110, 168, 254, 0.18), rgba(110, 168, 254, 0.05));
-    }
-    .home-mode-tab-postflop {
-      border-color: rgba(245, 166, 35, 0.45);
-      background: linear-gradient(135deg, rgba(245, 166, 35, 0.10), rgba(245, 166, 35, 0.02));
-    }
-    .home-mode-tab-postflop:hover {
-      border-color: rgba(245, 166, 35, 0.75);
-      background: linear-gradient(135deg, rgba(245, 166, 35, 0.18), rgba(245, 166, 35, 0.05));
-    }
-    .home-mode-tab-postflop-disabled {
-      opacity: 0.85;
-    }
-    .home-mode-tab-icon {
-      grid-row: 1 / span 2;
-      grid-column: 1;
-      font-size: 28px;
-      line-height: 1;
-      align-self: center;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .home-mode-tab-preflop .home-mode-tab-icon { color: #6ea8fe; background: rgba(110, 168, 254, 0.10); }
-    .home-mode-tab-postflop .home-mode-tab-icon { color: #f5a623; background: rgba(245, 166, 35, 0.10); }
-    .home-mode-tab-body {
-      grid-column: 2;
-      grid-row: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .home-mode-tab-label {
-      font-size: 16px;
-      font-weight: 700;
+    .tcc-title {
+      margin-top: 6px;
+      font-size: 17px;
+      font-weight: 800;
       letter-spacing: 0.01em;
       color: var(--text);
     }
-    .home-mode-tab-sub {
-      font-size: 11px;
-      color: var(--text-secondary);
-      letter-spacing: 0.02em;
-    }
-    .home-mode-tab-cta {
-      grid-column: 2;
-      grid-row: 2;
+    .tcc-helper {
+      margin-top: 4px;
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
-    .home-mode-tab-preflop .home-mode-tab-cta { color: #6ea8fe; }
-    .home-mode-tab-postflop .home-mode-tab-cta { color: #f5a623; }
-    .home-mode-tabs-helper {
-      margin-top: 10px;
-      font-size: 11px;
       color: var(--text-secondary);
-      text-align: center;
       line-height: 1.45;
-      opacity: 0.85;
     }
-    @media (max-width: 480px) {
-      .home-mode-tabs { padding: 12px 10px 10px 10px; }
-      .home-mode-tabs-grid { grid-template-columns: 1fr; gap: 8px; }
-      .home-mode-tab { min-height: 80px; padding: 12px; column-gap: 10px; }
-      .home-mode-tab-icon { width: 36px; height: 36px; font-size: 22px; }
-      .home-mode-tab-label { font-size: 15px; }
+    .tcc-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tcc-mode-btn {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 10px;
+      align-items: center;
+      padding: 12px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1.5px solid rgba(255, 255, 255, 0.10);
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      text-align: left;
+      color: var(--text);
+      min-height: 64px;
+      position: relative;
+    }
+    .tcc-mode-btn:hover { transform: translateY(-1px); }
+    .tcc-mode-btn:active { transform: translateY(0); }
+    .tcc-mode-btn .tcc-mode-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; line-height: 1;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tcc-mode-btn .tcc-mode-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .tcc-mode-btn .tcc-mode-label { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
+    .tcc-mode-btn .tcc-mode-sub {
+      font-size: 11px; color: var(--text-secondary); letter-spacing: 0.01em;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    /* Selected state — strong, accent-colored */
+    .tcc-mode-btn.is-selected {
+      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset, 0 4px 14px rgba(0,0,0,0.18);
+    }
+    .tcc-mode-btn.is-selected .tcc-mode-icon { transform: scale(1.05); }
+    .tcc-mode-btn.is-preflop.is-selected {
+      border-color: rgba(110, 168, 254, 0.85);
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.18), rgba(110, 168, 254, 0.04));
+    }
+    .tcc-mode-btn.is-preflop.is-selected .tcc-mode-icon { color: #6ea8fe; background: rgba(110, 168, 254, 0.18); }
+    .tcc-mode-btn.is-postflop.is-selected {
+      border-color: rgba(245, 166, 35, 0.85);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.18), rgba(245, 166, 35, 0.04));
+    }
+    .tcc-mode-btn.is-postflop.is-selected .tcc-mode-icon { color: #f5a623; background: rgba(245, 166, 35, 0.18); }
+    /* Subtle cue for the unselected card */
+    .tcc-mode-btn:not(.is-selected) { opacity: 0.78; }
+    .tcc-mode-btn:not(.is-selected):hover { opacity: 1; border-color: rgba(255,255,255,0.20); }
+
+    /* Panel that swaps based on selected mode */
+    .tcc-panel {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .tcc-panel-hero {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 10px;
+    }
+    .tcc-panel-hero-text { flex: 1; min-width: 0; }
+    .tcc-panel-mode-label {
+      display: inline-block;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .tcc-panel.is-preflop .tcc-panel-mode-label { color: #6ea8fe; background: rgba(110, 168, 254, 0.12); }
+    .tcc-panel.is-postflop .tcc-panel-mode-label { color: #f5a623; background: rgba(245, 166, 35, 0.12); }
+    .tcc-panel-mode-title { font-size: 16px; font-weight: 800; letter-spacing: 0.01em; }
+    .tcc-panel-mode-desc {
+      margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--text-secondary);
+    }
+    .tcc-panel-status {
+      margin-top: 10px;
+      display: flex; flex-wrap: wrap; gap: 6px 12px;
+      font-size: 11px; color: var(--text-secondary);
+    }
+    .tcc-panel-status-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Action grid — primary CTA spans, secondary tiles in 2/3 col grid */
+    .tcc-action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .tcc-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.10s ease, background 0.15s ease, border-color 0.15s ease;
+      min-height: 56px;
+    }
+    .tcc-action:hover { transform: translateY(-1px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.14); }
+    .tcc-action:active { transform: translateY(0); }
+    .tcc-action.is-primary {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.16), rgba(110, 168, 254, 0.04));
+      border-color: rgba(110, 168, 254, 0.55);
+    }
+    .tcc-panel.is-postflop .tcc-action.is-primary {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.16), rgba(245, 166, 35, 0.04));
+      border-color: rgba(245, 166, 35, 0.55);
+    }
+    .tcc-action-row {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+    }
+    .tcc-action-icon {
+      font-size: 18px; line-height: 1;
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; background: rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    .tcc-action.is-primary .tcc-action-icon {
+      background: rgba(255,255,255,0.10);
+    }
+    .tcc-action-label {
+      font-size: 13px; font-weight: 700; letter-spacing: 0.01em; flex: 1; min-width: 0;
+    }
+    .tcc-action-hint {
+      font-size: 10.5px; color: var(--text-secondary); letter-spacing: 0.02em;
+      width: 100%; padding-left: 34px;
+    }
+    .tcc-action.is-preview {
+      cursor: default; opacity: 0.55;
+      background: rgba(255,255,255,0.02);
+      border-style: dashed;
+    }
+    .tcc-action.is-preview:hover { transform: none; background: rgba(255,255,255,0.02); }
+    .tcc-action.is-preview .tcc-action-icon { background: rgba(255,255,255,0.03); }
+    .tcc-action-badge {
+      margin-left: auto; flex-shrink: 0;
+      font-size: 9px; font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 4px;
+      background: rgba(245, 166, 35, 0.18); color: #f5a623;
+    }
+    .tcc-action-badge.is-preview { background: rgba(255,255,255,0.05); color: var(--text-secondary); }
+
+    @media (min-width: 720px) {
+      .tcc-action-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .tcc-action.is-primary { grid-column: 1 / -1; }
+    }
+    @media (max-width: 380px) {
+      .tcc-shell { padding: 12px 10px 12px 10px; }
+      .tcc-mode-btn { padding: 10px; column-gap: 8px; min-height: 60px; }
+      .tcc-mode-btn .tcc-mode-icon { width: 32px; height: 32px; font-size: 20px; }
+      .tcc-mode-btn .tcc-mode-label { font-size: 13px; }
+      .tcc-mode-btn .tcc-mode-sub { font-size: 10.5px; }
+      .tcc-action { min-height: 50px; padding: 9px 10px; }
+      .tcc-action-label { font-size: 12.5px; }
+      .tcc-action-hint { font-size: 10px; padding-left: 32px; }
     }
 
     /* M2 mastery section — orange accent vs M1 (neutral) */
@@ -32886,7 +32991,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.2.2E',
+    appVersion: '4.2.2F',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -35459,57 +35564,289 @@ function _pfAcademyHomeHtml() {
 // ============================================================================
 
 // ============================================================================
-// v4.1.8 — HOME MODE TABS
-// Prominent Preflop / Postflop entry tiles at the very top of Home. Renders
-// AFTER the Postflop Beta Lab section is mounted (because both prepend via
-// insertAdjacentHTML('afterbegin', ...), so the LAST one to call wins the
-// top slot). Always shows both tiles; if Postflop Beta is off, the Postflop
-// tile says "Enable in Settings" and routes to Settings instead of scrolling.
+// v4.2.2F — TRAINING COMMAND CENTER (TCC)
 // ============================================================================
-function renderHomeModeTabsMount() {
+// Replaces the v4.1.8 Home Mode Tabs (which were misleading shortcut tiles —
+// Preflop just jumped to Drill, Postflop just smooth-scrolled). The new system
+// has a proper foundation:
+//
+//   1. TRAINING_MODES registry         central metadata for both modes
+//   2. getTrainingMode / setTrainingMode  state with localStorage persistence
+//   3. runTrainingModeAction(mode, id)  single safe routing entry point
+//   4. renderHomeCommandCenterMount    premium selector + mode-aware panel
+//
+// Design principles learned from the v4.1.8 mistake (DO NOT VIOLATE):
+//   - A tile that looks like a mode switch must not behave like a shortcut.
+//   - Top-level navigation must create clear context.
+//   - Do not use scroll-only behavior for primary navigation.
+//   - Do not collapse a complex product area into one default action.
+//   - If an action's destination doesn't exist, mark it preview, not active.
+//
+// Bottom-nav rewrite is intentionally OUT OF SCOPE for this sprint. Future
+// sprint can wire mode-aware bottom nav once v4.2.3 (M3 migration) lands.
+// ============================================================================
+
+var TRAINING_MODES = {
+  preflop: {
+    id: 'preflop',
+    title: 'Preflop Training',
+    shortTitle: 'Preflop',
+    icon: '♠',
+    accent: '#6ea8fe',
+    subtitle: 'Ranges · Drills · Exams',
+    description: 'Build your MTT preflop range foundation. Drill positions, defend ranges, and graduate through ranks.',
+    actions: [
+      { id: 'quick',     label: 'Quick Drill',          hint: '15 hands · standard mix', icon: '⚡', kind: 'primary',   route: 'preflop:quick' },
+      { id: 'deep',      label: 'Deep Drill',           hint: '30 hands · longer set',   icon: '🎯', kind: 'secondary', route: 'preflop:deep' },
+      { id: 'weakness',  label: 'Weakness Review',      hint: 'Recent leaks',             icon: '🔧', kind: 'secondary', route: 'preflop:weakness' },
+      { id: 'marginal',  label: 'Marginal Spots',       hint: 'Tough decisions',          icon: '🧠', kind: 'secondary', route: 'preflop:marginal' },
+      { id: 'browse',    label: 'Browse Ranges',        hint: 'View charts',              icon: '📚', kind: 'secondary', route: 'preflop:browse' },
+      { id: 'mastery',   label: 'Boss Tests · Missions',hint: 'Open Drill setup',         icon: '⚔',  kind: 'secondary', route: 'preflop:drillsetup' }
+    ]
+  },
+  postflop: {
+    id: 'postflop',
+    title: 'Postflop Academy',
+    shortTitle: 'Postflop',
+    icon: '🎯',
+    accent: '#f5a623',
+    subtitle: 'Board Reading · Hand Decisions · Concepts',
+    description: 'Train postflop decisions: read boards (Module 1), choose actions (Module 2 BETA), and study concepts.',
+    actions: [
+      { id: 'm1',        label: 'Module 1 · Board Texture', hint: '15 hands · 251 scenarios', icon: '🧪', kind: 'primary',   route: 'postflop:m1' },
+      { id: 'm2',        label: 'Module 2 · Flop C-bet IP', hint: '12 hands · 49 scenarios',  icon: '🃏', kind: 'secondary', route: 'postflop:m2', badge: 'BETA' },
+      { id: 'concepts',  label: 'Concept Library',          hint: '15 concept drills',         icon: '📖', kind: 'secondary', route: 'postflop:concepts' },
+      { id: 'weakspot',  label: 'Weak Spot Review',         hint: 'From recent sessions',      icon: '🔧', kind: 'secondary', route: 'postflop:weakspot' },
+      { id: 'progress',  label: 'Postflop Progress',        hint: 'Mastery + history',         icon: '🏆', kind: 'secondary', route: 'postflop:progress' },
+      { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: 'Coming in v4.2.4 beta',     icon: '🔒', kind: 'preview',   route: null }
+    ]
+  }
+};
+
+function getTrainingModeMeta(mode) {
+  return (TRAINING_MODES[mode] ? TRAINING_MODES[mode] : TRAINING_MODES.preflop);
+}
+
+function getTrainingMode() {
+  var s = (App && App.state && App.state.settings) ? App.state.settings : null;
+  if (s && (s.trainingMode === 'preflop' || s.trainingMode === 'postflop')) return s.trainingMode;
+  return 'preflop';
+}
+
+function setTrainingMode(mode) {
+  if (mode !== 'preflop' && mode !== 'postflop') return;
+  if (!App.state.settings) App.state.settings = {};
+  App.state.settings.trainingMode = mode;
+  try { if (typeof App.saveProgress === 'function') App.saveProgress(); } catch (e) { /* swallow */ }
+  // Re-render the Command Center in place if visible
+  if (App.state && App.state.tab === 'mastery') {
+    if (typeof renderHomeCommandCenterMount === 'function') renderHomeCommandCenterMount();
+  }
+}
+
+function runTrainingModeAction(mode, actionId) {
+  var meta = getTrainingModeMeta(mode);
+  var action = null;
+  for (var i = 0; i < (meta.actions || []).length; i++) {
+    if (meta.actions[i].id === actionId) { action = meta.actions[i]; break; }
+  }
+  if (!action) return;
+  if (action.kind === 'preview' || !action.route) {
+    if (typeof showToast === 'function') showToast(action.label + ' — coming soon.');
+    return;
+  }
+  var betaOn = !!(App.state && App.state.settings && App.state.settings.postflopBeta);
+  switch (action.route) {
+    case 'preflop:quick':
+      App.state.drill.mode = 'quick';
+      switchTab('drill');
+      setTimeout(function () { try { if (typeof startDrill === 'function') startDrill(); } catch (e) {} }, 60);
+      break;
+    case 'preflop:deep':
+      App.state.drill.mode = 'deep';
+      switchTab('drill');
+      setTimeout(function () { try { if (typeof startDrill === 'function') startDrill(); } catch (e) {} }, 60);
+      break;
+    case 'preflop:weakness':
+      App.state.drill.mode = 'weakness';
+      switchTab('drill');
+      setTimeout(function () { try { if (typeof startDrill === 'function') startDrill(); } catch (e) {} }, 60);
+      break;
+    case 'preflop:marginal':
+      App.state.drill.mode = 'marginal';
+      switchTab('drill');
+      setTimeout(function () { try { if (typeof startDrill === 'function') startDrill(); } catch (e) {} }, 60);
+      break;
+    case 'preflop:browse':
+      switchTab('browse');
+      break;
+    case 'preflop:drillsetup':
+      // Boss / Mission / Exam pickers all live inside the Drill setup screen.
+      // Honest copy: "Open Drill setup" — user picks from there.
+      switchTab('drill');
+      break;
+    case 'postflop:m1':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_board_texture', 15);
+      break;
+    case 'postflop:m2':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_flop_cbet_ip', 12);
+      break;
+    case 'postflop:concepts':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      // Scroll to Concept Library section inside the existing Postflop Academy panel.
+      var lib = document.querySelector('.pf-concept-library') || document.querySelector('.postflop-betalab-section');
+      if (lib && lib.scrollIntoView) lib.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      break;
+    case 'postflop:weakspot':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopWeakSpotReview === 'function') {
+        startPostflopWeakSpotReview();
+      } else {
+        var sec = document.querySelector('.postflop-betalab-section');
+        if (sec && sec.scrollIntoView) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      break;
+    case 'postflop:progress':
+      var sec2 = document.querySelector('.postflop-betalab-section');
+      if (sec2 && sec2.scrollIntoView) sec2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      break;
+    default:
+      console.warn('[TCC] unknown route:', action.route);
+  }
+}
+
+function _tccBuildModeButtonHtml(mode, isSelected) {
+  var meta = getTrainingModeMeta(mode);
+  var classes = 'tcc-mode-btn is-' + meta.id + (isSelected ? ' is-selected' : '');
+  return '<button type="button" class="' + classes + '"' +
+            ' aria-pressed="' + (isSelected ? 'true' : 'false') + '"' +
+            ' onclick="setTrainingMode(\'' + meta.id + '\')">' +
+           '<span class="tcc-mode-icon">' + _pfEscape(meta.icon) + '</span>' +
+           '<span class="tcc-mode-body">' +
+             '<span class="tcc-mode-label">' + _pfEscape(meta.shortTitle) + '</span>' +
+             '<span class="tcc-mode-sub">' + _pfEscape(meta.subtitle) + '</span>' +
+           '</span>' +
+         '</button>';
+}
+
+function _tccBuildActionTileHtml(mode, action) {
+  var classes = 'tcc-action';
+  if (action.kind === 'primary') classes += ' is-primary';
+  if (action.kind === 'preview') classes += ' is-preview';
+  var clickAttr = (action.kind === 'preview')
+    ? ''
+    : ' onclick="runTrainingModeAction(\'' + mode + '\',\'' + action.id + '\')"';
+  var badgeHtml = '';
+  if (action.badge) {
+    badgeHtml = '<span class="tcc-action-badge">' + _pfEscape(action.badge) + '</span>';
+  } else if (action.kind === 'preview') {
+    badgeHtml = '<span class="tcc-action-badge is-preview">SOON</span>';
+  }
+  return '<button type="button" class="' + classes + '"' + clickAttr + (action.kind === 'preview' ? ' aria-disabled="true"' : '') + '>' +
+           '<span class="tcc-action-row">' +
+             '<span class="tcc-action-icon">' + _pfEscape(action.icon) + '</span>' +
+             '<span class="tcc-action-label">' + _pfEscape(action.label) + '</span>' +
+             badgeHtml +
+           '</span>' +
+           (action.hint ? '<span class="tcc-action-hint">' + _pfEscape(action.hint) + '</span>' : '') +
+         '</button>';
+}
+
+function _tccBuildPanelStatusHtml(mode) {
+  // Honest, lightweight status pills that are always safe to render.
+  var pills = [];
+  try {
+    if (mode === 'preflop') {
+      var prog = (App.state && App.state.progress) ? App.state.progress : null;
+      var rank = prog && prog.currentRank ? String(prog.currentRank) : null;
+      var totalAns = prog && prog.totalAnswered ? prog.totalAnswered : 0;
+      if (rank) pills.push('🏅 Rank: ' + _pfEscape(rank));
+      if (totalAns) pills.push('🧮 ' + totalAns + ' answers');
+    } else if (mode === 'postflop') {
+      var ready = (typeof getPostflopReady === 'function') ? getPostflopReady() : false;
+      if (ready) {
+        var m1count = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios().length : 0;
+        var m2count = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios().length : 0;
+        if (m1count) pills.push('M1: ' + m1count + ' scenarios');
+        if (m2count) pills.push('M2: ' + m2count + ' scenarios · BETA');
+      } else {
+        pills.push('Postflop Beta — enable in Settings');
+      }
+    }
+  } catch (e) { /* swallow — never break command center */ }
+  if (pills.length === 0) return '';
+  var inner = pills.map(function (p) { return '<span class="tcc-panel-status-pill">' + p + '</span>'; }).join('');
+  return '<div class="tcc-panel-status">' + inner + '</div>';
+}
+
+function _tccBuildPanelHtml(mode) {
+  var meta = getTrainingModeMeta(mode);
+  var actionsHtml = (meta.actions || []).map(function (a) { return _tccBuildActionTileHtml(mode, a); }).join('');
+  var statusHtml = _tccBuildPanelStatusHtml(mode);
+  return '<div class="tcc-panel is-' + meta.id + '">' +
+           '<div class="tcc-panel-hero">' +
+             '<div class="tcc-panel-hero-text">' +
+               '<span class="tcc-panel-mode-label">' + _pfEscape(meta.icon) + ' ' + _pfEscape(meta.title) + '</span>' +
+               '<div class="tcc-panel-mode-title">' + _pfEscape(meta.title) + '</div>' +
+               '<div class="tcc-panel-mode-desc">' + _pfEscape(meta.description) + '</div>' +
+             '</div>' +
+           '</div>' +
+           statusHtml +
+           '<div class="tcc-action-grid">' + actionsHtml + '</div>' +
+         '</div>';
+}
+
+function renderHomeCommandCenterMount() {
   var host = document.getElementById('masteryContent');
   if (!host) return;
-  // Remove existing tabs to avoid dupes on re-render
-  var existing = host.querySelector('.home-mode-tabs');
-  if (existing) existing.remove();
+  // Remove any prior Command Center or v4.1.8 tabs to avoid duplicates
+  var prior = host.querySelector('.tcc-shell, .home-mode-tabs');
+  if (prior) prior.remove();
 
-  var betaOn = !!(App.state && App.state.settings && App.state.settings.settings === undefined && App.state.settings.postflopBeta);
-  // (Settings shape: App.state.settings.postflopBeta is the actual boolean.)
-  betaOn = !!(App.state && App.state.settings && App.state.settings.postflopBeta);
-
-  var preflopOnclick = "switchTab('drill')";
-  var postflopOnclick = betaOn
-    ? "(function(){var el=document.querySelector('.postflop-betalab-section'); if(el && el.scrollIntoView){el.scrollIntoView({behavior:'smooth',block:'start'});} else if(typeof switchTab==='function'){switchTab('settings');}})()"
-    : "(function(){if(typeof showToast==='function'){showToast('Enable Postflop Beta in Settings to access the Academy.');} if(typeof switchTab==='function'){switchTab('settings');}})()";
-
-  var postflopCta = betaOn ? '▶ Enter Academy' : '⚙ Enable in Settings';
-  var postflopSub = betaOn ? 'Board Reading · Flop C-bet IP' : 'Board Reading · Flop C-bet IP · beta';
-  var postflopExtraClass = betaOn ? '' : ' home-mode-tab-postflop-disabled';
+  var current = getTrainingMode();
+  var preflopBtn  = _tccBuildModeButtonHtml('preflop',  current === 'preflop');
+  var postflopBtn = _tccBuildModeButtonHtml('postflop', current === 'postflop');
+  var panelHtml   = _tccBuildPanelHtml(current);
 
   var html =
-    '<div class="home-mode-tabs">' +
-      '<div class="home-mode-tabs-title">Choose your training mode</div>' +
-      '<div class="home-mode-tabs-grid">' +
-        '<button type="button" class="home-mode-tab home-mode-tab-preflop" onclick="' + preflopOnclick + '">' +
-          '<span class="home-mode-tab-icon">♠</span>' +
-          '<span class="home-mode-tab-body">' +
-            '<span class="home-mode-tab-label">Preflop</span>' +
-            '<span class="home-mode-tab-sub">Ranges · Browse · Exams</span>' +
-          '</span>' +
-          '<span class="home-mode-tab-cta">▶ Train ranges</span>' +
-        '</button>' +
-        '<button type="button" class="home-mode-tab home-mode-tab-postflop' + postflopExtraClass + '" onclick="' + postflopOnclick + '">' +
-          '<span class="home-mode-tab-icon">🎯</span>' +
-          '<span class="home-mode-tab-body">' +
-            '<span class="home-mode-tab-label">Postflop Academy</span>' +
-            '<span class="home-mode-tab-sub">' + _pfEscape(postflopSub) + '</span>' +
-          '</span>' +
-          '<span class="home-mode-tab-cta">' + _pfEscape(postflopCta) + '</span>' +
-        '</button>' +
+    '<div class="tcc-shell" role="region" aria-label="Training Command Center">' +
+      '<div class="tcc-header">' +
+        '<span class="tcc-eyebrow">Training Command Center</span>' +
+        '<div class="tcc-title">Choose your training world</div>' +
+        '<div class="tcc-helper">Preflop builds your range foundation. Postflop teaches board reading and hand-action decisions. Pick a world to focus your session.</div>' +
       '</div>' +
-      '<div class="home-mode-tabs-helper">Preflop builds your range foundation. Postflop teaches board reading and hand-action decisions.</div>' +
+      '<div class="tcc-selector" role="tablist">' +
+        preflopBtn +
+        postflopBtn +
+      '</div>' +
+      panelHtml +
     '</div>';
   host.insertAdjacentHTML('afterbegin', html);
+}
+
+// Backwards-compatibility alias: renderMastery() still calls
+// renderHomeModeTabsMount() at line ~30945. Keep the name so existing call
+// site keeps working; redirect to the new implementation.
+function renderHomeModeTabsMount() {
+  renderHomeCommandCenterMount();
 }
 
 function renderPostflopHomeCardMount() {
