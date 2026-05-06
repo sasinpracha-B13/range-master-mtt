@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-05-05.
+> Last updated: 2026-05-06.
 
 ---
 
@@ -15,7 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.1.8 staged — Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit (NAVIGATION POLISH + M2 PARALLEL MASTERY).** Adds prominent Home mode tabs (Preflop tile → switchTab('drill'); Postflop tile → smooth-scroll to Postflop Beta Lab; if beta off, routes to Settings). Adds M2 mastery checklist (5 criteria parallel to M1) inside Postflop Academy. Adds M2 session summary aggregation (handClass + actionReason groupings). Documents M2 concept-pool depth audit with v4.1.9 expansion targets (+14 scenarios). Browser QA 32/32 PASS. appVersion + SW bumped to v4.1.8. Production audit 286/0/0 unchanged. Awaiting commit.
+🟡 **v4.1.9 staged — Module 2 Data Expansion + Tester Pass (DATA EXPANSION).** Module 2 grows from 35 to **49 production scenarios**. Production audit gate raised from 286/0/0 to **300/0/0** (251 M1 + 49 M2). Authored 14 new M2 scenarios on 14 new boards targeting v4.1.8 primary-tag depth gaps: blocker_pressure +4 (B1-B4), value_betting +3 (V1-V3), range_advantage_stab +3 (R1-R3), pot_control +2 (P1-P2), give_up_strategy +2 (G1-G2). All 14 use action_choice qtype. Production audit caught 1 textureTag typo (`semi_wet → wet` on B3 + P2) which was fixed; final GPT/strategic review returned 14/14 PASS; flipped auditStatus → approved + reviewStatus → v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit on every concept (8/8/8/8/11). Browser QA 30/30 PASS via Claude Preview MCP (M2 from curriculum + 5 M2 concept drills + M1 normal + M1 concept + preflop + mobile 375px + console 0 errors). appVersion + SW bumped to v4.1.9. No schema changes, no taxonomy changes, no audit-script changes, no preflop touched. Two new docs: `postflop-v4.1.9-data-expansion-tester.md` + `postflop-v4.1.9-final-gpt-review-of-14-new.md`. Awaiting commit.
+
+🟢 **v4.1.8 committed + pushed** (`5eb12ac`). Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit. Home tabs (Preflop/Postflop entry tiles), M2 mastery checklist (5 criteria parallel to M1), M2 session summary aggregation by handClass+actionReason, depth audit doc identifying v4.1.9 expansion targets. Browser QA 32/32 PASS. appVersion + SW bumped to v4.1.8. Production audit 286/0/0 unchanged.
 
 🟢 **v4.1.7 committed + pushed** (`d48ffa9`). Module 2 Curriculum Playable Beta — Module 2 fully playable from Curriculum + Concept Library; hand-aware question/answer rendering; M2 weak-spot routes to M2 pool; runtime loads 286. Module 2 is now playable. Final seed review 24/24 PASS. 24 v4.1.2 seeds flipped to `auditStatus: approved`; runtime now loads 286 (was 262). New M2 helpers: `getModule2Scenarios`, `_pfM2TeachingFeedbackBlocksHtml`. Updated: `startPostflopDrill` / `_pfChoiceGuide` / `_pfBuildQuestionPrompt` / `renderPostflopQuestion` / `renderPostflopAnswer` / `renderPostflopComplete` / `startPostflopConceptDrill` / `startPostflopWeakSpotReview` / `_pfModuleStatus` / `_pfModuleCardHtml`. M2 weak-spot review routed to M2 pool (no contamination). 5 M2 concepts in library flipped from previewOnly to drillable. Module 2 curriculum card → "▶ Start Module 2 Beta" button calling `startPostflopDrill('pf_flop_cbet_ip', 12)`. New CSS for hero card row, M2 chips, M2 action block, beta status pill, secondary syllabus button. Browser QA 35/35 PASS (M2 from curriculum + M2 concept drill + M2 weak-spot stays in M2 pool + M2 summary + M1 normal drill + M1 concept drill + preflop unaffected + mobile + console clean). appVersion 4.1.6 → 4.1.7, SW VERSION v4.1.6 → v4.1.7. Production audit unchanged 286/0/0. M2 seed audit unchanged 24/0/8. Two new docs in `docs/specs/`. Awaiting commit.
 
@@ -86,7 +88,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-05: v4.1.8 Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit STAGED. Home tabs (Preflop/Postflop), M2 mastery checklist parallel to M1, M2 summary aggregation by handClass+actionReason, depth audit doc. 32/32 QA. appVersion + SW v4.1.8.
+- 2026-05-06: v4.1.9 Module 2 Data Expansion + Tester Pass STAGED. M2 grows 35 → 49 production scenarios via 14 new scenarios on 14 new boards (blocker_pressure +4, value_betting +3, range_advantage_stab +3, pot_control +2, give_up_strategy +2). All 14 PASS final GPT/strategic review; flipped to auditStatus=approved + reviewStatus=v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit (8/8/8/8/11). Production audit raised 286/0/0 → 300/0/0. Browser QA 30/30 PASS. appVersion + SW v4.1.9. No schema/taxonomy/audit-script changes.
+- 2026-05-05: v4.1.8 Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit COMMITTED (`5eb12ac`) + pushed. Home tabs (Preflop/Postflop), M2 mastery checklist parallel to M1, M2 summary aggregation by handClass+actionReason, depth audit doc. 32/32 QA. appVersion + SW v4.1.8.
 - 2026-05-05: v4.1.7 Module 2 Curriculum Playable Beta COMMITTED (`d48ffa9`) + pushed.
 - 2026-05-05: v4.1.7 Module 2 Curriculum Playable Beta STAGED. Module 2 is playable. 24 seeds flipped to approved (runtime loads 286). All M2 surfaces wired: curriculum start button, hand-aware question/answer rendering, all 5 M2 concept drills enabled, M2 weak-spot review (M2-only pool), M2 session summary. Browser QA 35/35 PASS. appVersion + SW bumped to v4.1.7.
 - 2026-05-05: v4.1.6 Concept Library Module 2 Bridge COMMITTED (`ca3ea31`) + pushed. Path A preview-only.
