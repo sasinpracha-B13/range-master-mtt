@@ -580,6 +580,43 @@ The following surfaces require explicit per-task approval to modify. **Subagents
 
 ---
 
+## 7.5. UI/UX Preview Capture Convention (PERMANENT — added 2026-05-06 v4.2.2F)
+
+**Rule:** Any sprint that touches UI/UX (CSS, layout, navigation, mode rendering, panels, tiles, modals, screens, etc.) **MUST** save preview captures to `GPT AUDIT/screenshots/v{VERSION}/` before commit so an external GPT reviewer can see what shipped.
+
+**Per-sprint subfolder structure:**
+
+```
+GPT AUDIT/screenshots/v{VERSION}/
+├── README.md                      describe what was captured + how to review
+├── 01-{name}-{viewport}.html      self-contained DOM+CSS snapshot
+├── 02-{name}-{viewport}.html      ...one per significant view state
+├── 03-state-snapshot.json         runtime state + relevant registry summary
+└── (optional) {name}.png          PNG only if a non-technical reviewer needs it
+```
+
+**Naming rules:**
+- Numeric prefix `01-`, `02-`, `03-` for predictable sort order
+- `{name}` describes the view: e.g., `preflop-mode`, `postflop-mode`, `drill-question`, `summary-screen`
+- `{viewport}` is mobile-first: `mobile-375`, `tablet-768`, `desktop-1280`
+
+**HTML snapshots are the default** (over PNG) because:
+- Claude Preview MCP returns inline screenshots but doesn't expose `save_to_disk` — HTML capture via `preview_eval` + base64-encoded `outerHTML` + computed CSS is the reliable persistence path
+- ~10KB per snapshot (vs 50–100KB PNG), diff-friendly across versions
+- GPT can read structure semantically (button labels, classes, ARIA attributes), not just pixels
+- Renders faithfully when opened in any browser
+
+**When to skip the screenshots folder:**
+- Pure data sprints (text fixes, audit tweaks, version bumps with no UI change)
+- Internal helper additions that don't change visible UI
+- Document the skip explicitly in the sprint doc to avoid confusion
+
+**The folder is git-ignored** (entry in `.gitignore`) — these are review artifacts, not source. Never commit them.
+
+**Reference implementation:** `GPT AUDIT/screenshots/v4.2.2F/` shows the canonical pattern (Preflop + Postflop mode HTML renders + state JSON + per-sprint README). Top-level convention rules are documented in `GPT AUDIT/README.md`.
+
+---
+
 ## 8. Open Questions (carried forward, awaiting human input)
 
 Tagged from `postflop/postflop_schema.md` "Open questions for review":
