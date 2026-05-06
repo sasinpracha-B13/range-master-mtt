@@ -11295,6 +11295,67 @@
       .postflop-hero-card { width: 40px; height: 56px; }
       .pf-m2-hand-chip { font-size: 9px; padding: 2px 6px; }
     }
+    /* v4.2.5: extra-narrow viewport polish for M3's 4-axis chip row.
+       At 375px the row still fits comfortably; at 360px and below we
+       trim padding/spacing further; at 320px we drop to the smallest
+       readable size. The chips wrap naturally via flex-wrap. */
+    @media (max-width: 380px) {
+      .pf-m2-hand-chips { gap: 4px; }
+      .pf-m2-hand-chip { font-size: 9px; padding: 2px 6px; letter-spacing: 0.02em; }
+    }
+    @media (max-width: 360px) {
+      .pf-m2-hand-chips { gap: 3px; margin-top: 4px; }
+      .pf-m2-hand-chip { font-size: 8.5px; padding: 2px 5px; letter-spacing: 0.01em; }
+    }
+    @media (max-width: 330px) {
+      .pf-m2-hand-chips { gap: 2px; }
+      .pf-m2-hand-chip { font-size: 8px; padding: 2px 4px; }
+    }
+    /* v4.2.5: Module 3 first-time "About this module" explainer block.
+       Shows on Q1 of a player's first M3 session. Collapsible. */
+    .pf-m3-first-time-explainer {
+      background: rgba(110, 168, 254, 0.06);
+      border: 1px solid rgba(110, 168, 254, 0.30);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 0 0 12px 0;
+    }
+    .pf-m3-first-time-explainer > summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      color: #6ea8fe;
+      letter-spacing: 0.02em;
+    }
+    .pf-m3-first-time-explainer > summary:hover { opacity: 0.85; }
+    .pf-m3-explainer-body {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+    .pf-m3-explainer-body p { margin: 6px 0; }
+    .pf-m3-explainer-body ul { margin: 6px 0; padding-left: 18px; }
+    .pf-m3-explainer-body li { margin: 3px 0; }
+    .pf-m3-explainer-body strong { color: #f5a623; font-weight: 700; }
+    @media (max-width: 380px) {
+      .pf-m3-first-time-explainer { padding: 8px 10px; }
+      .pf-m3-first-time-explainer > summary { font-size: 12px; }
+      .pf-m3-explainer-body { font-size: 11.5px; }
+    }
+    /* v4.2.5: Module 3 Limited Beta progression hint (shown after 3rd session). */
+    .pf-m3-progression-hint {
+      display: block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: rgba(245, 166, 35, 0.10);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      border-radius: 6px;
+      font-size: 11px;
+      color: #f5a623;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
     /* ========================================================================
        END v4.1.7 — MODULE 2 PLAYABLE BETA
        ======================================================================== */
@@ -33034,7 +33095,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.2.4',
+    appVersion: '4.2.5',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34617,6 +34678,50 @@ function _pfM3TeachingFeedbackBlocksHtml(scenario) {
 // ============================================================================
 
 // ============================================================================
+// v4.2.5 — MODULE 3 FIRST-TIME EXPLAINER + PROGRESSION HINT HELPERS
+// _pfM3IsFirstTime()    — true if no completed M3 sessions in localStorage
+// _pfM3SessionCount()   — number of M3 sessions in localStorage history
+// _pfM3FirstTimeExplainerHtml() — collapsible "About this module" block
+// All defensive against missing _pfHistoryLoad / corrupt history.
+// ============================================================================
+function _pfM3SessionCount() {
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return 0;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var n = 0;
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i] && sessions[i].module === 'pf_flop_cbet_oop_def') n++;
+    }
+    return n;
+  } catch (e) { return 0; }
+}
+function _pfM3IsFirstTime() {
+  return _pfM3SessionCount() === 0;
+}
+function _pfM3FirstTimeExplainerHtml() {
+  // Collapsible details element. Open by default (the user is on Q1 of their
+  // first M3 session — they're encountering the BB-OOP framing for the first
+  // time). Subsequent M3 sessions never see this.
+  return '<details class="pf-m3-first-time-explainer" open>' +
+           '<summary>About Module 3 — BB Defense OOP (Limited Beta)</summary>' +
+           '<div class="pf-m3-explainer-body">' +
+             '<p><strong>You are BB, out of position.</strong> BTN opened preflop, you called, and now BTN c-bets ~33% pot. Your job is to defend the pot OOP.</p>' +
+             '<ul>' +
+               '<li>BB must <strong>defend enough</strong> versus a small c-bet — folding too much is exploitable.</li>' +
+               '<li>But do <strong>not over-defend</strong> with dominated or no-equity hands — those leak the most chips.</li>' +
+               '<li><strong>OOP equity realizes worse than IP</strong> — you act first every street and face raises. The defense threshold is higher than nominal pot odds.</li>' +
+               '<li><strong>Check-raise</strong> needs a real reason: value, protection, semi-bluff, or a strong blocker. Don\'t raise just to "do something."</li>' +
+             '</ul>' +
+             '<p style="opacity:0.75;font-size:11px;font-style:italic;margin-top:8px;">This explainer shows once on your first Module 3 session. Tap the heading to collapse it.</p>' +
+           '</div>' +
+         '</details>';
+}
+// ============================================================================
+// END v4.2.5 — MODULE 3 FIRST-TIME EXPLAINER + PROGRESSION HINT HELPERS
+// ============================================================================
+
+// ============================================================================
 // END v4.0.8 — POSTFLOP TEACHING LAYER (helpers)
 // ============================================================================
 
@@ -35591,9 +35696,17 @@ function _pfM3MasteryProgressHtml(m3Stats) {
     return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
            ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
   }).join('');
+  // v4.2.5: Limited Beta progression hint — fires after 3rd M3 session.
+  // Honest copy: does NOT claim mastery / certification; just nudges the
+  // learner toward the weak-spot review now that there's enough history.
+  var progressionHintHtml = '';
+  if (m3Stats.sessionCount >= 3) {
+    progressionHintHtml = '<span class="pf-m3-progression-hint">📈 Beta progress unlocked — now review your weakest BB Defense reasons.</span>';
+  }
   return '<div class="pf-mastery-section pf-mastery-section-m2">' +
            '<span class="pf-mastery-title">🛡️ Module 3 Limited Beta progress (display only)</span>' +
            '<ul class="pf-mastery-list">' + rows + '</ul>' +
+           progressionHintHtml +
          '</div>';
 }
 // ============================================================================
@@ -35925,6 +36038,27 @@ function _pfConceptReviewSignal(conceptKey, academyStats) {
   if (!conceptKey) return false;
   var stats = academyStats || (typeof _pfAcademyStats === 'function' ? _pfAcademyStats() : null);
   if (!stats || !stats.latestSession) return false;
+  // v4.2.5: module-aware review signals. Find the concept's module.
+  // If conceptKey is an M3 concept, only signal when the latest session was M3.
+  // If conceptKey is an M2 concept, only signal when the latest session was M2.
+  // M1 (default) concepts signal on M1 sessions. Prevents M2 mistakes from
+  // lighting up an M3 concept card and vice versa.
+  var conceptModule = 'm1';
+  if (typeof _PF_CONCEPT_LIBRARY !== 'undefined' && Array.isArray(_PF_CONCEPT_LIBRARY)) {
+    for (var ei = 0; ei < _PF_CONCEPT_LIBRARY.length; ei++) {
+      if (_PF_CONCEPT_LIBRARY[ei] && _PF_CONCEPT_LIBRARY[ei].key === conceptKey) {
+        conceptModule = _PF_CONCEPT_LIBRARY[ei].module || 'm1';
+        break;
+      }
+    }
+  }
+  var latestModuleId = stats.latestSession.module || '';
+  var moduleMatch = (
+    (conceptModule === 'm3' && latestModuleId === 'pf_flop_cbet_oop_def') ||
+    (conceptModule === 'm2' && latestModuleId === 'pf_flop_cbet_ip') ||
+    (conceptModule === 'm1' && (latestModuleId === 'pf_board_texture' || latestModuleId === ''))
+  );
+  if (!moduleMatch) return false;
   var weakConcepts = (stats.latestSession && Array.isArray(stats.latestSession.weakConceptTags))
     ? stats.latestSession.weakConceptTags : [];
   // Also derive on the fly from latestSession.answers if weakConceptTags isn't stored
@@ -35937,6 +36071,36 @@ function _pfConceptReviewSignal(conceptKey, academyStats) {
       }
     });
     weakConcepts = Object.keys(counts);
+  }
+  // v4.2.5: M3 alias concepts (value_raise / protection_raise / semi_bluff_raise /
+  // blocker_raise / slowplay_call / domination_fold) ALSO match on the latest
+  // M3 session's weakActionReasons (computed live from session answers + scenario
+  // pool). This lets the Concept Library light up the right alias-concept card
+  // even when the missed scenario's conceptTags didn't include the alias name.
+  if (conceptModule === 'm3' && Array.isArray(stats.latestSession.answers)) {
+    var aliasMap = {
+      'value_raise':       'value_raise',
+      'protection_raise':  'protection_raise',
+      'semi_bluff_raise':  'semi_bluff_raise',
+      'blocker_raise':     'blocker_raise',
+      'slowplay_call':     'slowplay_call',
+      'domination_fold':   'domination_fold',
+      'bluff_catchers':    'bluff_catch',  // map plural concept to singular reason
+      'range_disadvantage':'range_disadvantage_fold'
+    };
+    var matchReason = aliasMap[conceptKey];
+    if (matchReason) {
+      var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+      var idMap = {};
+      for (var pi = 0; pi < pool.length; pi++) { if (pool[pi] && pool[pi].id) idMap[pool[pi].id] = pool[pi]; }
+      for (var ai = 0; ai < stats.latestSession.answers.length; ai++) {
+        var aRec = stats.latestSession.answers[ai];
+        if (aRec && (aRec.tier === 'bad' || aRec.tier === 'critical')) {
+          var sObj = idMap[aRec.scenarioId];
+          if (sObj && sObj.actionReason === matchReason) return true;
+        }
+      }
+    }
   }
   if (weakConcepts.length === 0) return false;
   var cfg = _pfConceptDrillConfig(conceptKey);
@@ -36713,12 +36877,23 @@ function renderPostflopQuestion() {
       '</div>';
   }
 
+  // v4.2.5: First-time M3 explainer — only on Q1, only for M3, only if no
+  // completed M3 sessions exist in localStorage history. Defensive against
+  // missing helpers (e.g., during early bootstrap).
+  var firstTimeExplainerHtml = '';
+  if (isM3 && d.currentIndex === 0
+      && typeof _pfM3IsFirstTime === 'function' && _pfM3IsFirstTime()
+      && typeof _pfM3FirstTimeExplainerHtml === 'function') {
+    firstTimeExplainerHtml = _pfM3FirstTimeExplainerHtml();
+  }
+
   var html =
     '<div class="postflop-context-bar">' +
       '<span class="postflop-context-label">' + contextLabelText + '</span>' +
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
+    firstTimeExplainerHtml +
     reviewModeBadge +
     modeTagHtml +
     '<div class="postflop-spot-card">' +
@@ -37369,6 +37544,11 @@ function _pfCurrentSessionWeakProfile(answers, scenarios) {
   var seenScenIds = {};
   var conceptCounts = {};
   var familyCounts = {};
+  // v4.2.5: track weak actionReasons + heroHandRoles for M3 (and any future
+  // hand-aware module). Looked up from the live scenarios pool because the
+  // history answers don't store these fields directly.
+  var actionReasonCounts = {};
+  var heroHandRoleCounts = {};
   var hardMisses = 0;
 
   function addScenario(id) {
@@ -37391,6 +37571,13 @@ function _pfCurrentSessionWeakProfile(answers, scenarios) {
         var key = _pfBoardFamilyKey(s.board);
         familyCounts[key] = (familyCounts[key] || 0) + 1;
       }
+      // v4.2.5: actionReason + heroHandRole
+      if (s && s.actionReason) {
+        actionReasonCounts[s.actionReason] = (actionReasonCounts[s.actionReason] || 0) + 1;
+      }
+      if (s && s.heroHandRole) {
+        heroHandRoleCounts[s.heroHandRole] = (heroHandRoleCounts[s.heroHandRole] || 0) + 1;
+      }
     }
   }
 
@@ -37409,14 +37596,23 @@ function _pfCurrentSessionWeakProfile(answers, scenarios) {
           var key2 = _pfBoardFamilyKey(s2.board);
           familyCounts[key2] = (familyCounts[key2] || 0) + 0.5;
         }
+        if (s2 && s2.actionReason) {
+          actionReasonCounts[s2.actionReason] = (actionReasonCounts[s2.actionReason] || 0) + 0.5;
+        }
+        if (s2 && s2.heroHandRole) {
+          heroHandRoleCounts[s2.heroHandRole] = (heroHandRoleCounts[s2.heroHandRole] || 0) + 0.5;
+        }
       }
     }
   }
 
   var targetConceptTags = Object.keys(conceptCounts);
   var targetFamilyKeys = Object.keys(familyCounts);
+  var targetActionReasons = Object.keys(actionReasonCounts);
+  var targetHeroHandRoles = Object.keys(heroHandRoleCounts);
 
-  if (targetScenarioIds.length === 0 && targetConceptTags.length === 0 && targetFamilyKeys.length === 0) {
+  if (targetScenarioIds.length === 0 && targetConceptTags.length === 0 && targetFamilyKeys.length === 0
+      && targetActionReasons.length === 0 && targetHeroHandRoles.length === 0) {
     return null;
   }
 
@@ -37426,7 +37622,10 @@ function _pfCurrentSessionWeakProfile(answers, scenarios) {
     hardMisses: hardMisses,
     targetScenarioIds: targetScenarioIds,
     targetConceptTags: targetConceptTags,
-    targetFamilyKeys: targetFamilyKeys
+    targetFamilyKeys: targetFamilyKeys,
+    // v4.2.5 additions for M3 (and future hand-aware modules)
+    targetActionReasons: targetActionReasons,
+    targetHeroHandRoles: targetHeroHandRoles
   };
 }
 
@@ -37455,6 +37654,19 @@ function _pfWeakScenarioScore(scenario, weakProfile, lastSessionIds) {
       score += 40;
       break;
     }
+  }
+  // v4.2.5: actionReason + heroHandRole boosts (primarily for M3 weak-spot
+  // review). Score weights are slightly higher than concept-tag (50) because
+  // M3's 9 reasons are denser predictors of learning gaps than the broader
+  // concept tag set, and slightly lower than scenarioId (100) because they
+  // group multiple scenarios together.
+  if (scenario.actionReason && weakProfile.targetActionReasons
+      && weakProfile.targetActionReasons.indexOf(scenario.actionReason) >= 0) {
+    score += 50;
+  }
+  if (scenario.heroHandRole && weakProfile.targetHeroHandRoles
+      && weakProfile.targetHeroHandRoles.indexOf(scenario.heroHandRole) >= 0) {
+    score += 35;
   }
   if (lastSessionIds && lastSessionIds[scenario.id]) score -= 30;
   score += Math.random() * 10;
@@ -37537,12 +37749,35 @@ function startPostflopWeakSpotReview() {
   // v4.1.7/v4.2.4: route the weak-spot pool by the module of the just-finished
   // session. M1 → M1 pool, M2 → M2 pool, M3 → M3 pool. Prevents cross-module
   // contamination of weak-spot review.
+  // v4.2.5: when no in-memory drill exists, also check localStorage history for
+  // M3 sessions before falling back. If the user invokes M3 weak-spot review
+  // with NO M3 history at all, show an explicit empty-state toast instead of
+  // silently starting a normal M3 drill.
   var prevModule = (prevDrill && prevDrill.module) || 'pf_board_texture';
   var moduleId;
   if (prevModule === 'pf_flop_cbet_ip')          moduleId = 'pf_flop_cbet_ip';
   else if (prevModule === 'pf_flop_cbet_oop_def') moduleId = 'pf_flop_cbet_oop_def';
   else                                            moduleId = 'pf_board_texture';
   if (!weakProfile) {
+    // v4.2.5: if M3 weak-spot is requested but no M3 sessions in history, show
+    // explicit empty-state — don't silently start a normal M3 drill.
+    if (moduleId === 'pf_flop_cbet_oop_def') {
+      var hasM3History = false;
+      try {
+        var hist = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+        if (hist && Array.isArray(hist.sessions)) {
+          for (var hi = 0; hi < hist.sessions.length; hi++) {
+            if (hist.sessions[hi] && hist.sessions[hi].module === 'pf_flop_cbet_oop_def') {
+              hasM3History = true; break;
+            }
+          }
+        }
+      } catch (e) { /* swallow */ }
+      if (!hasM3History) {
+        if (typeof showToast === 'function') showToast('Play Module 3 sessions to unlock BB Defense weak-spot review.');
+        return;
+      }
+    }
     // Nothing weak to focus on — fall back to a normal session in same module
     return startPostflopDrill(moduleId);
   }

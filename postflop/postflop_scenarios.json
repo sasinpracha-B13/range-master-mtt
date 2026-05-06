@@ -32033,7 +32033,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -32451,7 +32451,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -33697,7 +33697,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -34628,8 +34628,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "fold",
-                                                          "check_raise_big"
+                                                          "fold"
                                                       ]
                                      },
                           "scoring":  {
@@ -35041,7 +35040,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -35145,7 +35144,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -35863,7 +35862,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -36069,7 +36068,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -36274,7 +36273,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -36795,7 +36794,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -36898,7 +36897,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -37419,8 +37418,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "fold",
-                                                          "check_raise_big"
+                                                          "fold"
                                                       ]
                                      },
                           "scoring":  {
@@ -37729,7 +37727,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -37831,7 +37829,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -38767,8 +38765,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "fold",
-                                                          "check_raise_big"
+                                                          "fold"
                                                       ]
                                      },
                           "scoring":  {
@@ -38872,7 +38869,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -39194,7 +39191,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -39299,7 +39296,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -39617,8 +39614,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "fold",
-                                                          "check_raise_big"
+                                                          "fold"
                                                       ]
                                      },
                           "scoring":  {
@@ -39721,7 +39717,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
@@ -39823,7 +39819,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
-                                                          "check_raise_big"
+
                                                       ]
                                      },
                           "scoring":  {
