@@ -580,9 +580,63 @@ The following surfaces require explicit per-task approval to modify. **Subagents
 
 ---
 
-## 7.5. UI/UX Preview Capture Convention (PERMANENT — added 2026-05-06 v4.2.2F)
+## 7.5. GPT AUDIT Folder Convention (PERMANENT — added 2026-05-06 v4.2.2F, expanded)
 
-**Rule:** Any sprint that touches UI/UX (CSS, layout, navigation, mode rendering, panels, tiles, modals, screens, etc.) **MUST** save preview captures to `GPT AUDIT/screenshots/v{VERSION}/` before commit so an external GPT reviewer can see what shipped.
+**Two parallel artifact families** under `GPT AUDIT/` (folder is git-ignored — review artifacts, not source):
+
+### A. Versioned data + audit snapshot — `GPT AUDIT/v{VERSION}/`
+
+**Rule:** Every committed version that ships a sprint should have a snapshot folder under `GPT AUDIT/v{VERSION}/` containing the canonical 10 source files + per-sprint docs + audit outputs.
+
+**Canonical 10 files** (always copied, with directory structure preserved to mirror repo layout):
+
+1. `PROJECT_STATE.md`
+2. `TASK_BOARD.md`
+3. `index.html`
+4. `service-worker.js`
+5. `postflop/postflop_scenarios.json`
+6. `postflop/postflop_concepts.json`
+7. `postflop/postflop_taxonomy.json`
+8. `tools/audit-postflop-ps.ps1`
+9. `tools/audit-postflop-module2-seed.ps1`
+10. `tools/audit-postflop-module3-seed.ps1`
+
+**Plus per-version:**
+- `docs/specs/postflop-v{VERSION}-*.md` — the sprint doc(s) from the most recent sprint covered by this snapshot
+- `AUDIT_OUTPUT_production.txt` — full output of `tools/audit-postflop-ps.ps1`
+- `AUDIT_OUTPUT_M2_seed.txt` — full output of `tools/audit-postflop-module2-seed.ps1`
+- `AUDIT_OUTPUT_M3_seed.txt` — full output of `tools/audit-postflop-module3-seed.ps1`
+- `AUDIT_HEADLINES.txt` — top-line summary of the three audits
+
+**Snapshot folder structure:**
+
+```
+GPT AUDIT/v{VERSION}/
+├── PROJECT_STATE.md
+├── TASK_BOARD.md
+├── index.html
+├── service-worker.js
+├── postflop/
+│   ├── postflop_scenarios.json
+│   ├── postflop_concepts.json
+│   └── postflop_taxonomy.json
+├── tools/
+│   ├── audit-postflop-ps.ps1
+│   ├── audit-postflop-module2-seed.ps1
+│   └── audit-postflop-module3-seed.ps1
+├── docs/specs/
+│   └── postflop-v{VERSION}-*.md
+├── AUDIT_HEADLINES.txt
+├── AUDIT_OUTPUT_production.txt
+├── AUDIT_OUTPUT_M2_seed.txt
+└── AUDIT_OUTPUT_M3_seed.txt
+```
+
+The refresh PowerShell script is in `GPT AUDIT/README.md` ("How to refresh this snapshot at a later version" section).
+
+### B. UI screenshot per UI sprint — `GPT AUDIT/screenshots/v{VERSION}/`
+
+**Rule:** Any sprint that touches UI/UX (CSS, layout, navigation, mode rendering, panels, tiles, modals, screens, etc.) **MUST** also save preview captures to `GPT AUDIT/screenshots/v{VERSION}/` before commit so an external GPT reviewer can see what shipped visually.
 
 **Per-sprint subfolder structure:**
 
@@ -601,7 +655,7 @@ GPT AUDIT/screenshots/v{VERSION}/
 - `{viewport}` is mobile-first: `mobile-375`, `tablet-768`, `desktop-1280`
 
 **HTML snapshots are the default** (over PNG) because:
-- Claude Preview MCP returns inline screenshots but doesn't expose `save_to_disk` — HTML capture via `preview_eval` + base64-encoded `outerHTML` + computed CSS is the reliable persistence path
+- Claude Preview MCP returns inline screenshots but doesn't expose `save_to_disk` — HTML capture via `preview_eval` + base64-encoded `outerHTML` + inlined computed CSS is the reliable persistence path
 - ~10KB per snapshot (vs 50–100KB PNG), diff-friendly across versions
 - GPT can read structure semantically (button labels, classes, ARIA attributes), not just pixels
 - Renders faithfully when opened in any browser
@@ -611,9 +665,11 @@ GPT AUDIT/screenshots/v{VERSION}/
 - Internal helper additions that don't change visible UI
 - Document the skip explicitly in the sprint doc to avoid confusion
 
-**The folder is git-ignored** (entry in `.gitignore`) — these are review artifacts, not source. Never commit them.
+### General rules
 
-**Reference implementation:** `GPT AUDIT/screenshots/v4.2.2F/` shows the canonical pattern (Preflop + Postflop mode HTML renders + state JSON + per-sprint README). Top-level convention rules are documented in `GPT AUDIT/README.md`.
+- **Both folder families are git-ignored** (entry in `.gitignore`) — never commit them.
+- **Reference implementation:** `GPT AUDIT/v4.2.2F/` (data + audit snapshot) and `GPT AUDIT/screenshots/v4.2.2F/` (UI captures) show the canonical patterns.
+- **Top-level convention rules** live in `GPT AUDIT/README.md` — keep that file in sync with this section.
 
 ---
 
