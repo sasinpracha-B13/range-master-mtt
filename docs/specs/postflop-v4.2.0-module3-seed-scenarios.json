@@ -92,7 +92,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_As8d3h_m3_action_8c8h_v420",
@@ -177,7 +177,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_As8d3h_m3_reason_5h4h_v420",
@@ -251,7 +251,7 @@
                                                      "semi_bluff_raise"
                                                  ],
                                          "critical":  [
-
+                                                          "semi_bluff_raise"
                                                       ]
                                      },
                           "explanation":  {
@@ -269,7 +269,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_As8d3h_m3_action_JcTd_v420",
@@ -355,7 +355,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Kh9c4s_m3_action_9d8d_v420",
@@ -441,7 +441,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Kh9c4s_m3_action_9s9h_v420",
@@ -526,7 +526,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Kh9c4s_m3_reason_QcJc_v420",
@@ -618,7 +618,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Kh9c4s_m3_action_AhQs_v420",
@@ -703,7 +703,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_8s7d5h_m3_action_9c8c_v420",
@@ -788,7 +788,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_8s7d5h_m3_action_5c5d_v420",
@@ -873,7 +873,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_8s7d5h_m3_reason_Td9d_v420",
@@ -964,7 +964,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_8s7d5h_m3_action_AhKc_v420",
@@ -1050,7 +1050,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_QhJh6c_m3_action_AcTc_v420",
@@ -1134,7 +1134,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_QhJh6c_m3_action_QcQd_v420",
@@ -1220,7 +1220,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_QhJh6c_m3_reason_9h8h_v420",
@@ -1312,7 +1312,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_QhJh6c_m3_action_8c4c_v420",
@@ -1398,7 +1398,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m3_action_9h8c_v420",
@@ -1483,7 +1483,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m3_action_AhKh_v420",
@@ -1567,7 +1567,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m3_reason_KhQc_v420",
@@ -1639,7 +1639,7 @@
                                                      "semi_bluff_raise"
                                                  ],
                                          "critical":  [
-
+                                                          "semi_bluff_raise"
                                                       ]
                                      },
                           "explanation":  {
@@ -1657,7 +1657,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m3_action_6c5d_v420",
@@ -1742,7 +1742,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_KcKd7s_m3_action_7d6d_v420",
@@ -1828,7 +1828,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_KcKd7s_m3_action_AhKh_v420",
@@ -1871,8 +1871,8 @@
                           "drawCategory":  "none",
                           "showdownValue":  "nutted",
                           "blockerNote":  null,
-                          "recommendedAction":  "check_raise_small",
-                          "actionReason":  "value_raise",
+                          "recommendedAction":  "call",
+                          "actionReason":  "slowplay_call",
                           "question":  {
                                            "qtype":  "action_choice",
                                            "prompt":  "BTN c-bets ~33% pot. What\u0027s hero\u0027s best action with Ah Kh on Kc Kd 7s?",
@@ -1885,9 +1885,9 @@
                                                        ]
                                        },
                           "answer":  {
-                                         "best":  "check_raise_small",
+                                         "best":  "call",
                                          "acceptable":  [
-                                                            "call"
+                                                            "check_raise_small"
                                                         ],
                                          "bad":  [
                                                      "fold",
@@ -1899,13 +1899,13 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Trip K, nut kicker — raise small for value.",
+                                              "short":  "Trip K, nut kicker on paired board - slowplay to keep bluffs in.",
                                               "rangeContext":  "BTN c-bets paired-K wide; overpairs and 7-x pay off a small raise often.",
-                                              "defenseLogic":  "Hero is ahead of every overpair and lower trips; raising starts building the pot.",
+                                              "defenseLogic":  "Hero is way ahead, but villain s c-bet range on paired-K is air-heavy; slowplay extracts more than raising.",
                                               "handLogic":  "Trip K with Ace kicker loses only to KK (impossible — board has 2) and 77 (one combo).",
-                                              "sizingLogic":  "Small raise gets paid by QQ/JJ/AK; slowplay also reasonable to disguise the hand.",
-                                              "commonMistake":  "Always slowplaying trips OOP is exploitable; mixing in raises is correct.",
-                                              "takeaway":  "Trip K + nut kicker on paired-K = mostly raise OOP."
+                                              "sizingLogic":  "Calling traps villain s bluffs and overpairs; raising small is acceptable for value but folds out the bluff range that pays us.",
+                                              "commonMistake":  "Always raising trips OOP on paired boards is exploitable - villain just folds the air that would have barreled.",
+                                              "takeaway":  "Trip K + nut kicker on paired-K = slowplay (raise acceptable)."
                                           },
                           "conceptTags":  [
                                               "check_raise_value",
@@ -1913,7 +1913,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_KcKd7s_m3_reason_8d8s_v420",
@@ -2004,7 +2004,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_KcKd7s_m3_action_JcTc_v420",
@@ -2089,7 +2089,7 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "planning_only",
-                          "reviewStatus":  "v4.2.0_seed_reviewed"
+                          "reviewStatus":  "v4.2.0_final"
                       }
                   ],
     "summary":  {

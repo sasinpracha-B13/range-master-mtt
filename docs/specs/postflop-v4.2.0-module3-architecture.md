@@ -97,25 +97,25 @@ This creates the classic OOP defender problem: capped range, position disadvanta
 
 ## 6. Reason set
 
-Reason values used in v4.2.0 seeds — **trimmed from the 11 candidates** in the brief to the **8 that are actually used by the 24 seeds**:
+Reason values used in v4.2.0/v4.2.2 seeds — **trimmed from the 11 candidates** in the brief to the **9 that are actually used by the 24 seeds** (after v4.2.2 re-introduced `slowplay_call`):
 
 | Reason ID | Used by | Meaning |
 |---|---|---|
-| `value_raise` | sets, top-set, nut flush, trips on paired board | Raise to extract value from worse made hands. |
-| `protection_raise` | bottom set on wet board, trips that need to deny equity | Raise to charge draws / deny equity to two overcards. |
+| `value_raise` | sets, top-set, nut flush | Raise to extract value from worse made hands. |
+| `protection_raise` | bottom set on wet board | Raise to charge draws / deny equity to two overcards. |
 | `semi_bluff_raise` | OE+overcard combos, FD+gutshot combos | Raise as a bluff with backed-up equity. |
 | `blocker_raise` | A-blocker / K-blocker on dry boards (acceptable answer only) | Raise as a polar bluff using blockers to villain's value. |
-| `bluff_catch` | underpair on paired board | Call to capture villain's bluffs without raising. |
+| `bluff_catch` | pair-of-7s on KK7, underpair on paired | Call to capture villain's bluffs without raising. |
 | `equity_realization_call` | mid pair + draw, gutshot + 2 overcards, weak pair with redraw | Call to realize equity cheaply OOP. |
+| `slowplay_call` | trip K + nut kicker on paired-K (re-introduced in v4.2.2) | Call to disguise a nutted hand and keep villain's bluffs in. |
 | `range_disadvantage_fold` | overcards no draw, weak no-pair air | Fold because hero's capped range is dominated by villain's c-bet range. |
 | `domination_fold` | AQ on K-high (vs AK-AT range) | Fold because hero's hand is specifically dominated. |
 
 **Pruned (not used by the 24 seeds; reserved for future expansion):**
 - `pot_odds_call` — collapsed into `equity_realization_call` to avoid taxonomy bloat (the two are >90% overlapping).
-- `reverse_implied_odds_fold` — reserved for monotone / paired turn / river spots; not needed at flop scope.
-- `slowplay_call` — reserved for paired-board overpair scenarios; collapsed into `bluff_catch` / `equity_realization_call` for the v4.2.0 seeds.
+- `reverse_implied_odds_fold` — reserved for monotone / paired turn / river spots; v4.2.2 reviewed and confirmed not needed at flop scope (65o on monotone is range_disadvantage, not RIO).
 
-This pruning is explicitly reversible: if real-data testing later shows the player needs `pot_odds_call` distinct from `equity_realization_call`, we add it back. v4.2.0 starts narrow.
+This pruning is explicitly reversible: if real-data testing later shows the player needs `pot_odds_call` distinct from `equity_realization_call`, we add it back. v4.2.0 started narrow; v4.2.2 added `slowplay_call` because F6.2 (trip K + nut kicker on paired-K) genuinely warranted it.
 
 ---
 

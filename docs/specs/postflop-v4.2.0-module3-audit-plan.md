@@ -88,8 +88,8 @@ The audit plan below is implementation-agnostic — it describes *what* to check
 
 | ID | Rule | Severity | Notes |
 |---|---|---|---|
-| M3-R19 | If question.qtype == `reason_choice`, question.choices ⊆ {`value_raise`, `protection_raise`, `semi_bluff_raise`, `blocker_raise`, `bluff_catch`, `equity_realization_call`, `range_disadvantage_fold`, `domination_fold`} | hard | M3 reason vocabulary (8 values) |
-| M3-R20 | actionReason ∈ {`value_raise`, `protection_raise`, `semi_bluff_raise`, `blocker_raise`, `bluff_catch`, `equity_realization_call`, `range_disadvantage_fold`, `domination_fold`} | hard | |
+| M3-R19 | If question.qtype == `reason_choice`, question.choices ⊆ {`value_raise`, `protection_raise`, `semi_bluff_raise`, `blocker_raise`, `bluff_catch`, `equity_realization_call`, `slowplay_call`, `range_disadvantage_fold`, `domination_fold`} | hard | M3 reason vocabulary (9 values, post-v4.2.2 added `slowplay_call`) |
+| M3-R20 | actionReason ∈ {`value_raise`, `protection_raise`, `semi_bluff_raise`, `blocker_raise`, `bluff_catch`, `equity_realization_call`, `slowplay_call`, `range_disadvantage_fold`, `domination_fold`} | hard | |
 | M3-R21 | answer.best (when qtype == `reason_choice`) must equal actionReason | hard | Cross-consistency check |
 
 ### 3.7 handClass / heroHandRole / drawCategory validation (4 hard + 2 warnings)

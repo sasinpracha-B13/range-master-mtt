@@ -90,10 +90,11 @@ $validShowdown = @('none','low','decent','high','nutted','medium')
 # M3-specific (per schema doc s 4)
 $validActions = @('fold','call','check_raise_small','check_raise_big','mixed')
 
-# M3-specific 8 reasons (per schema doc s 5)
+# M3-specific reasons (per schema doc s 5; 9 values after v4.2.2 added slowplay_call)
 $validReasons = @(
     'value_raise','protection_raise','semi_bluff_raise','blocker_raise',
-    'bluff_catch','equity_realization_call','range_disadvantage_fold','domination_fold'
+    'bluff_catch','equity_realization_call','range_disadvantage_fold','domination_fold',
+    'slowplay_call'
 )
 
 $validQTypes = @('action_choice','reason_choice')

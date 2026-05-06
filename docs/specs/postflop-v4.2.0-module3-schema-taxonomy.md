@@ -138,22 +138,23 @@ The `choices` array in every seed is exactly these 5 values, in this order, rega
 
 ## 5. Reason choices (the `actionReason` enum + `reason_choice` qtype choices)
 
-The 8 reasons used by v4.2.0 seeds:
+The 9 reasons used by v4.2.0 + v4.2.2 seeds (post-v4.2.2 re-introduced `slowplay_call`):
 
-| Reason ID | Action implication | Used by (target seed count) |
+| Reason ID | Action implication | Used by (post-v4.2.2 seed count) |
 |---|---|---|
 | `value_raise` | check_raise_small / check_raise_big | 4 seeds |
-| `protection_raise` | check_raise_small | 2 seeds |
+| `protection_raise` | check_raise_small | 1 seed |
 | `semi_bluff_raise` | check_raise_small (via reason_choice) | 2 seeds |
 | `blocker_raise` | (acceptable answer; not best) | 1 seed |
-| `bluff_catch` | call | 1 seed |
-| `equity_realization_call` | call | 9 seeds |
+| `bluff_catch` | call | 2 seeds |
+| `equity_realization_call` | call | 8 seeds |
+| `slowplay_call` | call (re-introduced in v4.2.2) | 1 seed (F6.2 trip K on paired-K) |
 | `range_disadvantage_fold` | fold | 5 seeds |
 | `domination_fold` | fold | 1 seed |
 
-**Pruned (not used in v4.2.0):** `pot_odds_call`, `reverse_implied_odds_fold`, `slowplay_call` — see architecture doc §6 for justification.
+**Pruned (not used in v4.2.0/v4.2.2):** `pot_odds_call`, `reverse_implied_odds_fold` — see architecture doc §6 for justification. v4.2.2 reviewed `reverse_implied_odds_fold` for F5.4 and explicitly rejected re-introduction.
 
-For `reason_choice` qtype, the `question.choices` array contains the 8 reason IDs above (only the ones plausible for the scenario; the seed audit verifies plausibility).
+For `reason_choice` qtype, the `question.choices` array contains the reason IDs plausible for the scenario (the seed audit verifies plausibility).
 
 ---
 

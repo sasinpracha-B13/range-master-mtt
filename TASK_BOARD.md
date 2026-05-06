@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-05-06 (v4.2.1 staged).
+> Last updated: 2026-05-06 (v4.2.2 staged).
 
 ---
 
@@ -15,7 +15,9 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.2.1 staged — Module 3 Seed Auditor + Initial Strategic Review (PLANNING-ONLY).** New tool `tools/audit-postflop-module3-seed.ps1` (~440 LOC, Option A: new script not extension) enforces 38 hard rules + 7 soft warnings from v4.2.0 audit plan. **First run caught 13 mechanical defects** (M3-R31 violation: `critical ⊈ bad` — v4.2.0 author had treated bad/critical as disjoint sets). Fixed via batch script (added each critical value to bad). **Strategic review 24/24 scenarios: 17 PASS + 7 WARN + 0 FAIL.** All 7 WARNs addressed in-place via 7 targeted seed JSON edits. All 24 scenarios flipped to `reviewStatus: v4.2.0_seed_reviewed`. Final M3 seed audit: **24 / 0 hard / 0 warnings PASS clean**. New doc `docs/specs/postflop-v4.2.1-module3-seed-review.md` documents per-scenario verdict + applied fixes + 6 follow-up notes for v4.2.2/v4.2.3. **No production files touched.** Production audit unchanged 300/0/0. M2 seed audit unchanged 24/0/8. Module 3 still NOT productionized. Awaiting commit.
+🟡 **v4.2.2 staged — Module 3 Final Strategic Review + Planning Commit Lock (PLANNING-ONLY).** Second strategic pass over the 24 v4.2.1-reviewed M3 seeds. **22 FINAL_PASS + 2 FINAL_WARN + 0 BLOCKED.** All 24 flipped to `reviewStatus: v4.2.0_final`. 3 second-pass changes: F1.3 + F5.3 critical=[semi_bluff_raise] re-added (UN-soften from v4.2.1); F6.2 FLIPPED best=call with reason=slowplay_call (re-introduced from pruned vocab — teaches the paired-board slowplay exception, avoiding "always raise nuts OOP" anti-pattern across 6 board families). **Vocabulary expansion: slowplay_call re-added (8 → 9 reasons).** 6 follow-up notes resolved: 2 REJECTED (RIO reintroduction), 1 APPLIED NOW (F6.2 flip), 3 DEFERRED to v4.2.3/v4.2.4. **Training Quality + Volume Principle: Accuracy strong (92% FINAL_PASS), but coverage BELOW depth target (6 of 7 native concepts <8 primary-tag matches), count BELOW playable-beta minimum (24 < 40-60). Expansion verdict: C. major data sprint required — v4.3.x roadmap for 100+ scenarios.** Updated docs: arch §6, schema-tax §5, audit-plan M3-R19/R20, audit script $validReasons. New `docs/specs/postflop-v4.2.2-module3-final-review.md`. **No production files touched.** Production audit unchanged 300/0/0. M2 seed audit unchanged 24/0/8. M3 seed audit 24/0/0 PASS clean. Module 3 still NOT productionized. Awaiting commit.
+
+🟢 **v4.2.1 committed + pushed** (`70ee74d`). Module 3 Seed Auditor + Initial Strategic Review. New script (Option A). 13 mech defects caught + fixed batch. 17 PASS + 7 WARN + 0 FAIL. All 24 flipped to v4.2.0_seed_reviewed.
 
 🟢 **v4.2.0 committed + pushed** (`515a3c1`). Module 3 Architecture + Seed Plan. 5 docs in `docs/specs/postflop-v4.2.0-module3-*`. Planning-only.
 
@@ -92,7 +94,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Recently Completed
 
-- 2026-05-06: v4.2.1 Module 3 Seed Auditor + Strategic Review STAGED (planning-only). New `tools/audit-postflop-module3-seed.ps1` (Option A). M3 audit caught 13 mechanical defects (critical ⊈ bad); fixed batch. Strategic review: 17 PASS + 7 WARN + 0 FAIL. 7 targeted JSON edits. All 24 scenarios flipped to reviewStatus=v4.2.0_seed_reviewed. Final audit: 24/0/0 PASS clean. New review doc. No production touched. No version bumps.
+- 2026-05-06: v4.2.2 Module 3 Final Strategic Review + Planning Commit Lock STAGED. 22 FINAL_PASS + 2 FINAL_WARN + 0 BLOCKED. All 24 flipped to v4.2.0_final. 3 second-pass changes (2 UN-softens of v4.2.1 + F6.2 flip + slowplay_call vocab re-introduction). Training Quality assessment: M3 needs major data sprint (v4.3.x). M3 audit unchanged 24/0/0. Production unchanged 300/0/0. M2 unchanged 24/0/8.
+- 2026-05-06: v4.2.1 Module 3 Seed Auditor + Strategic Review COMMITTED (`70ee74d`) + pushed. New `tools/audit-postflop-module3-seed.ps1` (Option A). M3 audit caught 13 mechanical defects (critical ⊈ bad); fixed batch. Strategic review: 17 PASS + 7 WARN + 0 FAIL. 7 targeted JSON edits. All 24 scenarios flipped to reviewStatus=v4.2.0_seed_reviewed. Final audit: 24/0/0 PASS clean. New review doc. No production touched. No version bumps.
 - 2026-05-06: v4.2.0 Module 3 Architecture + Seed Plan COMMITTED (`515a3c1`) + pushed. 5 new docs in `docs/specs/postflop-v4.2.0-module3-*`: architecture, schema-taxonomy, 24-seed JSON (6 board families × 4 hands; 18 action + 6 reason), audit plan (38 hard rules + 7 warnings), GPT review package (per-scenario risk flags). Villain sizing scoped to bet_small for v4.2.0; reason set trimmed 11 → 8. No production touched. No version bumps. Production audit unchanged 300/0/0. M2 seed audit unchanged 24/0/8.
 - 2026-05-06: v4.1.9 Module 2 Data Expansion + Tester Pass COMMITTED (`454c470`) + pushed. M2 grows 35 → 49 production scenarios via 14 new scenarios on 14 new boards (blocker_pressure +4, value_betting +3, range_advantage_stab +3, pot_control +2, give_up_strategy +2). All 14 PASS final GPT/strategic review; flipped to auditStatus=approved + reviewStatus=v4.1.9_gpt_reviewed. Per-concept primary-tag depth target hit (8/8/8/8/11). Production audit raised 286/0/0 → 300/0/0. Browser QA 30/30 PASS. appVersion + SW v4.1.9. No schema/taxonomy/audit-script changes.
 - 2026-05-05: v4.1.8 Home Mode Tabs + M2 Mastery + Concept-Pool Depth Audit COMMITTED (`5eb12ac`) + pushed. Home tabs (Preflop/Postflop), M2 mastery checklist parallel to M1, M2 summary aggregation by handClass+actionReason, depth audit doc. 32/32 QA. appVersion + SW v4.1.8.
