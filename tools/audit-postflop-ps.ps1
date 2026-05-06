@@ -423,6 +423,38 @@ foreach($s in $data.scenarios){
     }
   }
 
+  # R29 (v4.2.2D) — Card/suit notation guard. Warning-only.
+  # Detects suspicious em-dash patterns inside text fields that suggest the
+  # CP874 mojibake cleanup (v4.2.2C) over-normalized suit symbols into em-dashes.
+  # Patterns flagged:
+  #   "[Rank] - -[xX]"   (was "[Rank][suit]-x" with suit destroyed)
+  #   "[Rank] - [Rank] -" (was "[Rank][suit][Rank][suit]")
+  #   "BTN with [Rank] - [Rank] -" (was "BTN with [hero hand]")
+  # Em-dashes used as legitimate sentence punctuation are NOT flagged.
+  $emDashChar = [char]0x2014
+  $rankClass = '[AKQJT2-9]'
+  $suspiciousPatterns = @(
+    @{ name = 'rank_dash_dash_x';    pattern = "$rankClass\s+$emDashChar\s+-[xX]" },
+    @{ name = 'rank_dash_rank_dash'; pattern = "$rankClass\s+$emDashChar\s+$rankClass\s+$emDashChar" },
+    @{ name = 'btn_with_dash_pair';  pattern = "BTN with $rankClass\s+$emDashChar\s+$rankClass" }
+  )
+  $textFieldsToCheck = @()
+  if ($s.question -and $s.question.prompt) { $textFieldsToCheck += @{ field='question.prompt'; text=$s.question.prompt } }
+  if ($s.explanation) {
+    foreach ($fldName in @('short','rangeLogic','nutLogic','handLogic','sizingLogic','commonMistake','takeaway','rangeContext','defenseLogic')) {
+      $val = $s.explanation.$fldName
+      if ($val -is [string]) { $textFieldsToCheck += @{ field="explanation.$fldName"; text=$val } }
+    }
+  }
+  if ($s.blockerNote -is [string]) { $textFieldsToCheck += @{ field='blockerNote'; text=$s.blockerNote } }
+  foreach ($entry in $textFieldsToCheck) {
+    foreach ($p in $suspiciousPatterns) {
+      if ([regex]::IsMatch($entry.text, $p.pattern)) {
+        Add-Issue $local 'R29' 'warning' $sid ("suspicious card/suit notation pattern '" + $p.name + "' in " + $entry.field + " (likely v4.2.2C-style over-normalization of suit symbols)") | Out-Null
+      }
+    }
+  }
+
   # R16 finalizer
   $errs = @($local | Where-Object { $_.severity -eq 'error' })
   if($s.auditStatus -eq 'approved' -and $errs.Count -gt 0){
