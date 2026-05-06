@@ -3860,12 +3860,15 @@
     .tooltip-wrap:hover .tooltip,
     .tooltip-wrap:focus-within .tooltip { opacity: 1; }
     /* IOS INSTALL BANNER */
+    /* v4.2.2C: safe-area-inset-top so the banner never overlaps the iOS status bar / clock
+       when running in PWA standalone mode. Margin-top stacks on top of any inset the
+       device reports; falls back to 8px on browsers that don't expose the env(). */
     .install-banner {
       background: rgba(110,231,183,0.1);
       border: 1px solid rgba(110,231,183,0.3);
       border-radius: 10px;
       padding: 12px 14px;
-      margin: 0 16px 12px;
+      margin: calc(env(safe-area-inset-top, 0px) + 8px) 16px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -32883,7 +32886,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.1.9',
+    appVersion: '4.2.2C',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34465,31 +34468,38 @@ function _pfFixMojibake(text) {
   if (!text) return text;
   // Walk char by char. Codepoints that are CP874-mojibake-ish accumulate as bytes;
   // when we hit an ASCII char (or end) we decode the buffered bytes as UTF-8.
-  // Falls back to original chars if a chunk fails to decode (so non-mojibake
-  // non-ASCII text — actual Thai, accents, etc. — passes through unchanged).
+  // v4.2.2C: track ORIGINAL chars in parallel to the byte buffer so the fallback
+  // path (decode failure) restores the original Unicode characters instead of
+  // garbage C1 controls. This lets clean text like "They don't — sets" pass
+  // through unchanged after v4.2.2C cleaned the source data, while still
+  // reversing real CP874-mojibake sequences when they occur.
   var result = '';
   var bytes = [];
+  var origs = [];
   var dec = (typeof TextDecoder !== 'undefined') ? new TextDecoder('utf-8', { fatal: true }) : null;
   function flush() {
     if (bytes.length === 0) return;
     if (dec) {
       try {
         result += dec.decode(new Uint8Array(bytes));
-        bytes = [];
+        bytes = []; origs = [];
         return;
       } catch (e) {
         // Fall through to fallback
       }
     }
-    // Fallback if TextDecoder unavailable or chunk failed: keep originals
-    for (var k = 0; k < bytes.length; k++) result += String.fromCharCode(bytes[k]);
-    bytes = [];
+    // Fallback if TextDecoder unavailable or chunk failed: restore original
+    // characters (preserves em-dashes, smart quotes, etc. that happen to live
+    // in the CP874 byte map but appear in isolation, not as a mojibake sequence).
+    result += origs.join('');
+    bytes = []; origs = [];
   }
   for (var i = 0; i < text.length; i++) {
     var cp = text.charCodeAt(i);
     var byte = _pfMaybeMojibakeByte(cp);
     if (byte != null) {
       bytes.push(byte);
+      origs.push(text[i]);
     } else {
       flush();
       result += text[i];
@@ -35788,21 +35798,25 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
   var openAttr = isMobile ? '' : ' open';
   var sections = [];
+  // v4.2.2C: route all explanation text through _pfFixMojibake as a safety net.
+  // Source data was cleaned in v4.2.2C, but keep the runtime sanitizer in place
+  // so future authoring slip-ups don't surface raw mojibake to users.
+  var _fix = (typeof _pfFixMojibake === 'function') ? _pfFixMojibake : function (x) { return x; };
   if (explanation.rangeLogic) {
-    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Range Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.rangeLogic) + '</div></details>');
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Range Logic</summary><div class="pf-section-body">' + _pfEscape(_fix(explanation.rangeLogic)) + '</div></details>');
   }
   if (explanation.nutLogic) {
-    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Nut Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.nutLogic) + '</div></details>');
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Nut Logic</summary><div class="pf-section-body">' + _pfEscape(_fix(explanation.nutLogic)) + '</div></details>');
   }
   if (explanation.handLogic) {
-    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Hand Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.handLogic) + '</div></details>');
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Hand Logic</summary><div class="pf-section-body">' + _pfEscape(_fix(explanation.handLogic)) + '</div></details>');
   }
   if (explanation.sizingLogic) {
-    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Sizing Logic</summary><div class="pf-section-body">' + _pfEscape(explanation.sizingLogic) + '</div></details>');
+    sections.push('<details class="postflop-explanation-section"' + openAttr + '><summary>Sizing Logic</summary><div class="pf-section-body">' + _pfEscape(_fix(explanation.sizingLogic)) + '</div></details>');
   }
   if (explanation.commonMistake) {
     var openCM = (cls.tier === 'critical') ? ' open' : openAttr;
-    sections.push('<details class="postflop-explanation-section pf-common-mistake"' + openCM + '><summary>Common Mistake</summary><div class="pf-section-body">' + _pfEscape(explanation.commonMistake) + '</div></details>');
+    sections.push('<details class="postflop-explanation-section pf-common-mistake"' + openCM + '><summary>Common Mistake</summary><div class="pf-section-body">' + _pfEscape(_fix(explanation.commonMistake)) + '</div></details>');
   }
 
   var tagsHtml = (scenario.conceptTags || []).map(function (t) {
