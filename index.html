@@ -11295,6 +11295,166 @@
     /* ========================================================================
        END v4.1.7 — MODULE 2 PLAYABLE BETA
        ======================================================================== */
+
+    /* ========================================================================
+       v4.1.8 — HOME MODE TABS + M2 MASTERY + M2 SUMMARY AGGREGATION
+       Prominent Preflop / Postflop entry tiles at the top of Home; M2 mastery
+       checklist styled parallel to M1 with orange accent; M2 hand-action
+       breakdown block in session summary.
+       ======================================================================== */
+    .home-mode-tabs {
+      margin: 0 0 14px 0;
+      padding: 14px 14px 12px 14px;
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.04), rgba(245, 166, 35, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+    }
+    .home-mode-tabs-title {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .home-mode-tabs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .home-mode-tab {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 12px;
+      row-gap: 6px;
+      align-items: center;
+      padding: 14px 14px 12px 14px;
+      border-radius: 10px;
+      background: var(--card-bg, #1a1a1f);
+      border: 1.5px solid rgba(255, 255, 255, 0.10);
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      text-align: left;
+      color: var(--text);
+      min-height: 96px;
+    }
+    .home-mode-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    }
+    .home-mode-tab:active { transform: translateY(0); }
+    .home-mode-tab-preflop {
+      border-color: rgba(110, 168, 254, 0.45);
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.10), rgba(110, 168, 254, 0.02));
+    }
+    .home-mode-tab-preflop:hover {
+      border-color: rgba(110, 168, 254, 0.75);
+      background: linear-gradient(135deg, rgba(110, 168, 254, 0.18), rgba(110, 168, 254, 0.05));
+    }
+    .home-mode-tab-postflop {
+      border-color: rgba(245, 166, 35, 0.45);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.10), rgba(245, 166, 35, 0.02));
+    }
+    .home-mode-tab-postflop:hover {
+      border-color: rgba(245, 166, 35, 0.75);
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.18), rgba(245, 166, 35, 0.05));
+    }
+    .home-mode-tab-postflop-disabled {
+      opacity: 0.85;
+    }
+    .home-mode-tab-icon {
+      grid-row: 1 / span 2;
+      grid-column: 1;
+      font-size: 28px;
+      line-height: 1;
+      align-self: center;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .home-mode-tab-preflop .home-mode-tab-icon { color: #6ea8fe; background: rgba(110, 168, 254, 0.10); }
+    .home-mode-tab-postflop .home-mode-tab-icon { color: #f5a623; background: rgba(245, 166, 35, 0.10); }
+    .home-mode-tab-body {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .home-mode-tab-label {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+    .home-mode-tab-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .home-mode-tab-cta {
+      grid-column: 2;
+      grid-row: 2;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .home-mode-tab-preflop .home-mode-tab-cta { color: #6ea8fe; }
+    .home-mode-tab-postflop .home-mode-tab-cta { color: #f5a623; }
+    .home-mode-tabs-helper {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.45;
+      opacity: 0.85;
+    }
+    @media (max-width: 480px) {
+      .home-mode-tabs { padding: 12px 10px 10px 10px; }
+      .home-mode-tabs-grid { grid-template-columns: 1fr; gap: 8px; }
+      .home-mode-tab { min-height: 80px; padding: 12px; column-gap: 10px; }
+      .home-mode-tab-icon { width: 36px; height: 36px; font-size: 22px; }
+      .home-mode-tab-label { font-size: 15px; }
+    }
+
+    /* M2 mastery section — orange accent vs M1 (neutral) */
+    .pf-mastery-section.pf-mastery-section-m2 {
+      margin-top: 8px;
+      border-left: 3px solid rgba(245, 166, 35, 0.55);
+    }
+    .pf-mastery-section.pf-mastery-section-m2 .pf-mastery-title {
+      color: rgba(245, 166, 35, 0.85);
+    }
+
+    /* M2 session summary aggregation block */
+    .pf-m2-aggr-section {
+      margin-top: 12px;
+      padding: 10px 12px 8px 12px;
+      background: rgba(245, 166, 35, 0.04);
+      border-radius: 8px;
+      border: 1px solid rgba(245, 166, 35, 0.18);
+    }
+    .pf-m2-aggr-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(245, 166, 35, 0.85);
+      margin-bottom: 6px;
+    }
+    .pf-m2-aggr-block {
+      margin-top: 6px;
+    }
+    /* ========================================================================
+       END v4.1.8 — HOME MODE TABS + M2 MASTERY + M2 SUMMARY AGGREGATION
+       ======================================================================== */
   </style>
 </head>
 <body>
@@ -30776,6 +30936,10 @@ function renderMastery() {
     try { renderHomeHeaderAvatar(); } catch (e) { console.warn('[HomeHeaderAvatar]', e); }
     // v4.0.2: append postflop beta entry card (defensive — never blocks Mastery render)
     try { if (typeof renderPostflopHomeCardMount === 'function') renderPostflopHomeCardMount(); } catch (e) { console.warn('[PostflopHomeCard]', e); }
+    // v4.1.8: prominent Preflop / Postflop mode tabs at the very TOP of Home.
+    // Called LAST in the prepend chain so it occupies the top slot (each
+    // afterbegin insert pushes prior content down). Defensive — never blocks Mastery.
+    try { if (typeof renderHomeModeTabsMount === 'function') renderHomeModeTabsMount(); } catch (e) { console.warn('[HomeModeTabs]', e); }
     return out;
   } catch (e) {
     console.error('[Mastery] render error:', e);
@@ -32719,7 +32883,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.1.7',
+    appVersion: '4.1.8',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34680,6 +34844,106 @@ function _pfMasteryProgress(stats) {
   ];
 }
 
+// ============================================================================
+// v4.1.8 — MODULE 2 MASTERY CHECKLIST
+// Parallel to _pfMasteryProgress but evaluates against Module 2 sessions only
+// (history.sessions filtered by module === 'pf_flop_cbet_ip'). 5 criteria:
+//   1. Complete 5 M2 sessions
+//   2. Hit 80%+ quality in 3 M2 sessions
+//   3. No critical leaks in latest M2 session
+//   4. Engage with M2 weak-spot review (proxy: any M2 session had bad+critical>0)
+//   5. Drill all 5 M2 concepts (history.concepts has each seen >= 1)
+// Display only — same policy as M1 mastery (no enforcement gating).
+// ============================================================================
+function _pfM2MasteryStats() {
+  var history = null;
+  try { if (typeof _pfHistoryLoad === 'function') history = _pfHistoryLoad(); } catch (e) { history = null; }
+  var allSessions = (history && Array.isArray(history.sessions)) ? history.sessions : [];
+  // Filter to M2 sessions only
+  var sessions = allSessions.filter(function (s) { return s && s.module === 'pf_flop_cbet_ip'; });
+  var sessionCount = sessions.length;
+  var latestSession = sessionCount > 0 ? sessions[sessionCount - 1] : null;
+
+  // Quality session count (M2 sessions with >= 80%)
+  var qualitySessionCount = 0;
+  for (var i = 0; i < sessions.length; i++) {
+    var sess = sessions[i];
+    var ans = sess.answered || 0;
+    var max = ans * 1.0;
+    var pct = max > 0 ? ((sess.score || 0) / max) * 100 : 0;
+    if (pct >= 80) qualitySessionCount += 1;
+  }
+
+  // Latest M2 session has zero critical
+  var latestNoCritical = !!(latestSession && (latestSession.critical || 0) === 0);
+
+  // Concept coverage — 5 M2 concepts
+  var conceptsObj = (history && history.concepts && typeof history.concepts === 'object') ? history.concepts : {};
+  var REQUIRED_M2_CONCEPTS = ['value_betting', 'pot_control', 'blocker_pressure', 'give_up_strategy', 'range_advantage_stab'];
+  var conceptCoverage = {};
+  for (var ci = 0; ci < REQUIRED_M2_CONCEPTS.length; ci++) {
+    var ck = REQUIRED_M2_CONCEPTS[ci];
+    conceptCoverage[ck] = !!(conceptsObj[ck] && (conceptsObj[ck].seen || 0) > 0);
+  }
+  var conceptsSeenCount = 0;
+  for (var ckey in conceptCoverage) { if (conceptCoverage[ckey]) conceptsSeenCount++; }
+
+  // Weak-spot review proxy: any M2 session with bad+critical > 0 AND sessionCount >= 2
+  var hasWeakSignal = false;
+  for (var j = 0; j < sessions.length; j++) {
+    var sj = sessions[j];
+    if ((sj.bad || 0) + (sj.critical || 0) > 0) { hasWeakSignal = true; break; }
+  }
+  var hasUsedWeakReview = hasWeakSignal && sessionCount >= 2;
+
+  return {
+    sessionCount: sessionCount,
+    latestSession: latestSession,
+    qualitySessionCount: qualitySessionCount,
+    latestNoCritical: latestNoCritical,
+    conceptCoverage: conceptCoverage,
+    conceptsSeenCount: conceptsSeenCount,
+    hasUsedWeakReview: hasUsedWeakReview,
+    masteryCriteriaMet: {
+      fiveSessions:        sessionCount >= 5,
+      threeQualitySessions: qualitySessionCount >= 3,
+      latestNoCritical:    latestNoCritical,
+      weakReviewUsed:      hasUsedWeakReview,
+      conceptCoverage:     Object.keys(conceptCoverage).every(function (k) { return conceptCoverage[k]; })
+    }
+  };
+}
+
+function _pfM2MasteryProgress(m2Stats) {
+  if (!m2Stats) m2Stats = _pfM2MasteryStats();
+  var m = m2Stats.masteryCriteriaMet || {};
+  return [
+    { key: 'fiveSessions',         label: 'Complete 5 Module 2 sessions',                 met: !!m.fiveSessions,         detail: m2Stats.sessionCount + ' / 5' },
+    { key: 'threeQualitySessions', label: 'Hit 80%+ quality in 3 M2 sessions',            met: !!m.threeQualitySessions, detail: m2Stats.qualitySessionCount + ' / 3' },
+    { key: 'latestNoCritical',     label: 'No critical leaks in latest M2 session',       met: !!m.latestNoCritical,     detail: m2Stats.latestSession ? (m.latestNoCritical ? 'clean' : 'critical fired') : '—' },
+    { key: 'weakReviewUsed',       label: 'Engage with M2 weak-spot review',              met: !!m.weakReviewUsed,       detail: m.weakReviewUsed ? 'engaged' : 'not yet' },
+    { key: 'conceptCoverage',      label: 'Drill all 5 Module 2 concepts',                met: !!m.conceptCoverage,      detail: m2Stats.conceptsSeenCount + ' / 5 concepts seen' }
+  ];
+}
+
+function _pfM2MasteryProgressHtml(m2Stats) {
+  if (!m2Stats) m2Stats = _pfM2MasteryStats();
+  var items = _pfM2MasteryProgress(m2Stats);
+  var rows = items.map(function (it) {
+    var icon = it.met ? '✅' : '○';
+    var cls = it.met ? 'is-met' : 'is-not-met';
+    return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
+           ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
+  }).join('');
+  return '<div class="pf-mastery-section pf-mastery-section-m2">' +
+           '<span class="pf-mastery-title">🎯 Module 2 mastery (display only)</span>' +
+           '<ul class="pf-mastery-list">' + rows + '</ul>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.1.8 — MODULE 2 MASTERY CHECKLIST
+// ============================================================================
+
 // _pfAcademyRecommendation — picks one recommendation given current stats.
 // Returns { title, body }.
 function _pfAcademyRecommendation(stats) {
@@ -35159,6 +35423,13 @@ function _pfConceptLibraryHtml() {
 // home: header + snapshot + recommendation + curriculum + mastery + library.
 function _pfAcademyHomeHtml() {
   var stats = _pfAcademyStats();
+  // v4.1.8: M2 mastery checklist appears below M1 mastery, parallel layout.
+  var m2MasteryHtml = '';
+  try {
+    if (typeof _pfM2MasteryProgressHtml === 'function') {
+      m2MasteryHtml = _pfM2MasteryProgressHtml();
+    }
+  } catch (e) { /* swallow — never block academy render */ }
   return '<div class="pf-academy-section">' +
            '<div class="pf-academy-header">' +
              '<span class="pf-academy-title">🎓 Postflop Academy</span>' +
@@ -35168,6 +35439,7 @@ function _pfAcademyHomeHtml() {
            _pfAcademyRecommendationHtml(stats) +
            _pfCurriculumMapHtml(stats) +
            _pfMasteryProgressHtml(stats) +
+           m2MasteryHtml +
            _pfConceptLibraryHtml() +
            '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
          '</div>';
@@ -35175,6 +35447,60 @@ function _pfAcademyHomeHtml() {
 // ============================================================================
 // END v4.1.0 — POSTFLOP ACADEMY FOUNDATION
 // ============================================================================
+
+// ============================================================================
+// v4.1.8 — HOME MODE TABS
+// Prominent Preflop / Postflop entry tiles at the very top of Home. Renders
+// AFTER the Postflop Beta Lab section is mounted (because both prepend via
+// insertAdjacentHTML('afterbegin', ...), so the LAST one to call wins the
+// top slot). Always shows both tiles; if Postflop Beta is off, the Postflop
+// tile says "Enable in Settings" and routes to Settings instead of scrolling.
+// ============================================================================
+function renderHomeModeTabsMount() {
+  var host = document.getElementById('masteryContent');
+  if (!host) return;
+  // Remove existing tabs to avoid dupes on re-render
+  var existing = host.querySelector('.home-mode-tabs');
+  if (existing) existing.remove();
+
+  var betaOn = !!(App.state && App.state.settings && App.state.settings.settings === undefined && App.state.settings.postflopBeta);
+  // (Settings shape: App.state.settings.postflopBeta is the actual boolean.)
+  betaOn = !!(App.state && App.state.settings && App.state.settings.postflopBeta);
+
+  var preflopOnclick = "switchTab('drill')";
+  var postflopOnclick = betaOn
+    ? "(function(){var el=document.querySelector('.postflop-betalab-section'); if(el && el.scrollIntoView){el.scrollIntoView({behavior:'smooth',block:'start'});} else if(typeof switchTab==='function'){switchTab('settings');}})()"
+    : "(function(){if(typeof showToast==='function'){showToast('Enable Postflop Beta in Settings to access the Academy.');} if(typeof switchTab==='function'){switchTab('settings');}})()";
+
+  var postflopCta = betaOn ? '▶ Enter Academy' : '⚙ Enable in Settings';
+  var postflopSub = betaOn ? 'Board Reading · Flop C-bet IP' : 'Board Reading · Flop C-bet IP · beta';
+  var postflopExtraClass = betaOn ? '' : ' home-mode-tab-postflop-disabled';
+
+  var html =
+    '<div class="home-mode-tabs">' +
+      '<div class="home-mode-tabs-title">Choose your training mode</div>' +
+      '<div class="home-mode-tabs-grid">' +
+        '<button type="button" class="home-mode-tab home-mode-tab-preflop" onclick="' + preflopOnclick + '">' +
+          '<span class="home-mode-tab-icon">♠</span>' +
+          '<span class="home-mode-tab-body">' +
+            '<span class="home-mode-tab-label">Preflop</span>' +
+            '<span class="home-mode-tab-sub">Ranges · Browse · Exams</span>' +
+          '</span>' +
+          '<span class="home-mode-tab-cta">▶ Train ranges</span>' +
+        '</button>' +
+        '<button type="button" class="home-mode-tab home-mode-tab-postflop' + postflopExtraClass + '" onclick="' + postflopOnclick + '">' +
+          '<span class="home-mode-tab-icon">🎯</span>' +
+          '<span class="home-mode-tab-body">' +
+            '<span class="home-mode-tab-label">Postflop Academy</span>' +
+            '<span class="home-mode-tab-sub">' + _pfEscape(postflopSub) + '</span>' +
+          '</span>' +
+          '<span class="home-mode-tab-cta">' + _pfEscape(postflopCta) + '</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="home-mode-tabs-helper">Preflop builds your range foundation. Postflop teaches board reading and hand-action decisions.</div>' +
+    '</div>';
+  host.insertAdjacentHTML('afterbegin', html);
+}
 
 function renderPostflopHomeCardMount() {
   var host = document.getElementById('masteryContent');
@@ -35773,6 +36099,126 @@ function _pfRenderLearningSummary(answers, scenarios, counts, total) {
 // ============================================================================
 
 // ============================================================================
+// v4.1.8 — MODULE 2 SESSION SUMMARY AGGREGATION
+// Aggregates Module 2 answers by handClass and actionReason to surface
+// "weak hand classes" and "weak action reasons" alongside the existing
+// concept aggregation. Returns string HTML to be injected after the
+// generic learning summary in renderPostflopComplete (M2 sessions only).
+// ============================================================================
+
+// _pfM2GroupAnswersBy — generic grouper. Returns array of { key, seen,
+// scoreSum, badCount, critCount, bestCount, pct } sorted by `seen` desc.
+function _pfM2GroupAnswersBy(answers, scenarios, fieldName) {
+  if (!answers || answers.length === 0) return [];
+  var byId = {};
+  if (scenarios) for (var i = 0; i < scenarios.length; i++) byId[scenarios[i].id] = scenarios[i];
+  var tally = {};
+  for (var j = 0; j < answers.length; j++) {
+    var a = answers[j];
+    var sc = byId[a.scenarioId];
+    if (!sc) continue;
+    var val = sc[fieldName];
+    if (!val) continue;
+    if (!tally[val]) tally[val] = { key: val, seen: 0, scoreSum: 0, badCount: 0, critCount: 0, bestCount: 0 };
+    tally[val].seen += 1;
+    tally[val].scoreSum += (a.score || 0);
+    if (a.tier === 'bad') tally[val].badCount += 1;
+    if (a.tier === 'critical') tally[val].critCount += 1;
+    if (a.tier === 'best') tally[val].bestCount += 1;
+  }
+  var rows = [];
+  for (var k in tally) {
+    var t = tally[k];
+    t.pct = t.seen > 0 ? Math.round((t.scoreSum / t.seen) * 100) : 0;
+    rows.push(t);
+  }
+  rows.sort(function (a, b) { return b.seen - a.seen; });
+  return rows;
+}
+
+// _pfM2PrettyLabel — human-readable label from an enum key (snake_case → Title Case).
+function _pfM2PrettyLabel(key) {
+  if (!key) return '';
+  return String(key).replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+}
+
+// _pfM2RenderSessionAggregations — surfaces M2-specific groupings:
+// - weakest hand classes (rows with critCount>0 or badCount>=2)
+// - weakest action reasons (same threshold)
+// - strongest hand classes (>= 80% over >=2 seen)
+// Returns '' if not an M2 session or zero applicable data.
+function _pfM2RenderSessionAggregations(d, scenarios, counts, total) {
+  if (!d || d.module !== 'pf_flop_cbet_ip') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var html = '';
+
+  // Hand-class aggregation
+  var hcRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'handClass');
+  var hcWeak = hcRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  var hcStrong = hcRows.filter(function (r) { return r.seen >= 2 && r.pct >= 80; });
+
+  if (hcStrong.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-strong pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">💪 Strongest hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcStrong.slice(0, 4).map(function (r) {
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hcWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  // Action-reason aggregation
+  var arRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'actionReason');
+  var arWeak = arRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+
+  if (arRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Action reason coverage</span>' +
+              '<ul class="pf-learn-list">' +
+                arRows.slice(0, 6).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (arWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak action reasons</span>' +
+              '<ul class="pf-learn-list">' +
+                arWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  if (html) {
+    html = '<div class="pf-m2-aggr-section">' +
+             '<div class="pf-m2-aggr-section-title">Module 2 · hand-action breakdown</div>' +
+             html +
+           '</div>';
+  }
+  return html;
+}
+// ============================================================================
+// END v4.1.8 — MODULE 2 SESSION SUMMARY AGGREGATION
+// ============================================================================
+
+// ============================================================================
 // v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
 // Helpers + entry point for a focused review session derived from the just-
 // completed session's mistakes. Local-only, in-memory profile (no persistent
@@ -36062,6 +36508,13 @@ function renderPostflopComplete() {
   var learnSummaryHtml = (typeof _pfRenderLearningSummary === 'function')
     ? _pfRenderLearningSummary(d.answers, App.postflop && App.postflop.scenarios, counts, total)
     : '';
+  // v4.1.8: Module 2 hand-action breakdown (handClass + actionReason aggregations)
+  var m2AggrHtml = '';
+  try {
+    if (typeof _pfM2RenderSessionAggregations === 'function') {
+      m2AggrHtml = _pfM2RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
+    }
+  } catch (e) { /* swallow */ }
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
   // v4.1.1: also differentiate when this was a concept-focused drill
@@ -36108,6 +36561,7 @@ function renderPostflopComplete() {
       '</div>' +
     '</div>' +
     learnSummaryHtml +
+    m2AggrHtml +
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
