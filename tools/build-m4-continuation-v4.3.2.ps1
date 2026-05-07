@@ -229,51 +229,66 @@ $scenarios = @()
 # Each tests strategic diagnosis, not label memorization.
 # ============================================================
 
-# R1 -- F8 (Ts 8s 4d, 7c): QcQd overpair, draw-intensifier turn
-# Best = check_raise_small. Diagnose WHY: protection vs draws, not value.
+# R1 -- F8 (Ts 8s 4d, 7c): QcQd overpair, STRAIGHT-COMPLETE turn (not draw-intensifier)
+# v4.3.2A correction: 7c on T-8-4 actually COMPLETES multiple straights via villain
+#   one-pair / two-card combos:
+#     65 makes 4-5-6-7-8;  96 makes 6-7-8-9-T;  J9 makes 7-8-9-T-J.
+#   98 has pair-of-8 + OESD (4-card 7-8-9-T needing 6 or J).
+#   T9 has top-pair + OESD.
+# QQ on this board is now BEHIND every made straight (65/96/J9) and every set
+# (TT/88/44). QQ is overpair-to-T but in BLUFF-CATCH territory, NOT protection-raise:
+# raising folds out air and isolates vs straights that crush us.
+# Strategic verdict: CALL with bluff_catch_turn.
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_reason_QcQd_v432' `
   -board $f8 -heroHand @('Qc','Qd') `
-  -handClass 'overpair' -heroHandRole 'strong_value' -drawCategory 'none' -showdownValue 'high' `
-  -blockerNote 'Overpair QQ to T-high board with one Q remaining in deck; no Q-suited blocker effect.' `
-  -recommendedAction 'check_raise_small' -actionReason 'protection_check_raise_turn' `
-  -question (Q-Reason 'check-raises small' 'Qc Qd' $f8Str '7c') `
-  -answer (New-Answer 'protection_check_raise_turn' @('value_check_raise_turn') @('bluff_catch_turn','equity_realization_turn_call','pot_odds_turn_call','semi_bluff_check_raise_turn','slowplay_turn_call','mixed_indifference_turn','blocker_check_raise_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold') @()) `
+  -handClass 'overpair' -heroHandRole 'bluff_catcher' -drawCategory 'none' -showdownValue 'high' `
+  -blockerNote 'Overpair QQ to T-high board on a straight-completing turn; no relevant straight-blocker (Qc Qd does not block 65/96/J9 made-straight combos).' `
+  -recommendedAction 'call' -actionReason 'bluff_catch_turn' `
+  -question (Q-Reason 'calls' 'Qc Qd' $f8Str '7c') `
+  -answer (New-Answer 'bluff_catch_turn' @('pot_odds_turn_call') @('protection_check_raise_turn','value_check_raise_turn','equity_realization_turn_call','semi_bluff_check_raise_turn','slowplay_turn_call','mixed_indifference_turn','blocker_check_raise_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold') @()) `
   -explanation (New-Explanation `
-    'Overpair QQ on draw-intensifier turn -- check-raise small to protect equity vs draws.' `
-    '7c adds OESDs (98, J9), gutshots (96, 65), and clubs FD threats. Hero QQ is overpair-to-T but vulnerable to free river equity from many draws. Protection-raise charges all draws and air; calling lets villain realize draw equity at no cost.' `
-    'BB flop call with QQ on T-8-4 was natural overpair. Turn 7 expands draw-density of villain barrel range and reweights toward draws more than value.' `
-    'QcQd has overpair below only KK/AA. Beats all Tx, all 8x, all underpairs, all draws, air. Loses to TT/88/44 sets, T8/T4/84 two-pair (rare), J9 made straight (1 combo blocker-light).' `
-    'Small check-raise charges draws with appropriate sizing; calling surrenders equity vs villain draw realization. The motivation is NOT extracting value from worse made hands -- it is denying free equity to the wide draw bucket.' `
-    'Slowplaying overpair on draw-intensifier turn lets villain realize free draw equity.' `
-    'Overpair on draw-heavy turn = check-raise small for PROTECTION (not value).') `
-  -conceptTags @('turn_check_raise_value','turn_equity_shift','second_barrel_defense') `
+    'Overpair QQ on straight-complete turn -- call (bluff-catch); raising folds air and isolates vs straights.' `
+    '7c lands the connector that completes multiple straights on T-8-4: 65 makes 4-5-6-7-8, 96 makes 6-7-8-9-T, J9 makes 7-8-9-T-J. Plus 98 has pair-of-8 + OESD and T9 has top pair + OESD. The made-straight density in villain barrel range is significant; QQ is now overpair-to-T but BEHIND every made straight + every set, sitting in bluff-catch territory only.' `
+    'BB flop call with QQ on T-8-4 was natural overpair. Turn 7 polarizes villain barrel: the value side now contains made straights (65/96/J9) and sets/two-pair; the bluff side contains failed broadway gutshots and missed overcards. QQ does not interact with any of the straight-completing combos, so blocker effects are minimal.' `
+    'QcQd has overpair below only KK/AA. Beats all Tx pairs, all 8x pairs, all underpairs, all bluffs and air. Loses to 65/96/J9 made straights, TT/88/44 sets, T8/T4/84 two-pair (rare combos in BTN flop call range).' `
+    'Calling captures the air/bluff portion of the polarized barrel range and reaches showdown. Small check-raise folds out air and isolates against the straight portion that crushes QQ -- bad EV. Big raise even worse. Folding is too tight given QQ still beats every bluff.' `
+    'Hard-coding overpair = "always raise for protection on draw turns" without checking which DRAWS actually completed leads to raising into completed-straight density. The 7c here is straight-complete, not draw-intensifier.' `
+    'Overpair on straight-complete turn vs polar barrel = call (bluff-catch); not protection-raise.') `
+  -conceptTags @('turn_bluff_catcher','turn_draw_completion','second_barrel_defense') `
   -difficulty 4 `
-  -uniquenessNote 'reason_choice diagnosing PROTECTION (not value) as the dominant motive on F8 draw-intensifier. Distinct from existing F8 JsJh (action_choice value-raise with J-spade-blocker; same action, same reason but reason field is now the test). Reason_choice form forces the learner to discriminate protection_check_raise_turn from value_check_raise_turn -- a key diagnosis skill.'
+  -uniquenessNote 'reason_choice diagnosing BLUFF-CATCH (not protection) on F8 STRAIGHT-COMPLETE turn. Trains the lesson that 7c on T-8-4 is a straight-complete (65/96/J9 all make), NOT a draw-intensifier. Distinct from F8 JsJh action_choice (overpair value-raise) because here the overpair is BEHIND completed straights -- the same overpair classification leads to opposite actions on this turn category. Tests the discrimination protection_check_raise_turn (wrong here) vs bluff_catch_turn (correct here).'
 
-# R2 -- F13 NEW (9c 6c 3h, 8c): 7s5s OESD-into-completed-board, turn brings flush-complete
-# Hero made bottom straight 5-6-7-8-9 on turn -- but board now has 3-card flush.
-# Best = check_raise_small. Diagnose WHY: value_check_raise_turn (made straight) vs blocker_check_raise (no flush blocker).
-# This is a value raise specifically because flush-complete cards pay off small with worse.
+# R2 -- F13 NEW (9c 6c 3h, 8c): 7s5s bottom straight on flush-complete monotone turn
+# v4.3.2A correction: hero has bottom straight 5-6-7-8-9 (NINE-HIGH), but the turn 8c
+#   completes a 3-card club flush AND there is a higher straight T7 (T-7 + board
+#   6-8-9 = 6-7-8-9-T = T-high straight). Hero has ZERO clubs (7s5s = both spades),
+#   so hero has no flush blocker. Made flushes BEAT hero. T7 BEATS hero.
+#   Hero cannot raise for value: raising folds out air bluffs (which we beat) and
+#   gets called/raised by flushes + T7 (which beat us). The strategic verdict is
+#   CALL (bluff-catch), NOT raise-for-value.
+# heroHandRole reclassified: nutted_value -> bluff_catcher (hero loses to flushes
+#   and to T-high straight; not nutted, only mid-strength relative to barrel range).
+# showdownValue reclassified: nutted -> high (loses to material portion of barrel value).
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_9c6c3h_8c_m4_reason_7s5s_v432' `
   -board $f13 -heroHand @('7s','5s') `
-  -handClass 'straight' -heroHandRole 'nutted_value' -drawCategory 'none' -showdownValue 'nutted' `
-  -blockerNote 'Made bottom straight 5-6-7-8-9 with no club blocker; loses only to T-high straight (T7/T-x specific) or made flush (Ax-of-clubs, KQ-clubs, 2-club hands).' `
-  -recommendedAction 'check_raise_small' -actionReason 'value_check_raise_turn' `
-  -question (Q-Reason 'check-raises small' '7s 5s' $f13Str '8c') `
-  -answer (New-Answer 'value_check_raise_turn' @('protection_check_raise_turn') @('bluff_catch_turn','equity_realization_turn_call','pot_odds_turn_call','semi_bluff_check_raise_turn','slowplay_turn_call','mixed_indifference_turn','blocker_check_raise_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold') @()) `
+  -handClass 'straight' -heroHandRole 'bluff_catcher' -drawCategory 'none' -showdownValue 'high' `
+  -blockerNote 'Made 9-high straight 5-6-7-8-9 on a monotone-club turn. Hero holds ZERO clubs (7s5s = both spades) so has NO flush blocker; loses to every made flush (any Ax-clubs, any 2-club hand) and to T-high straight (T7 specifically; 6-7-8-9-T).' `
+  -recommendedAction 'call' -actionReason 'bluff_catch_turn' `
+  -question (Q-Reason 'calls' '7s 5s' $f13Str '8c') `
+  -answer (New-Answer 'bluff_catch_turn' @('pot_odds_turn_call','mixed_indifference_turn') @('value_check_raise_turn','protection_check_raise_turn','equity_realization_turn_call','semi_bluff_check_raise_turn','slowplay_turn_call','blocker_check_raise_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold') @()) `
   -explanation (New-Explanation `
-    'Made bottom straight on flush-complete turn -- check-raise small for value, charging worse pairs and made flushes that call.' `
-    '8c lands the bottom straight (5-6-7-8-9) AND completes a 3-club flush. Hero has the made straight without flush blocker. Villain barrel range now includes made-flush combos plus value-pair Tx/9x; both call the small check-raise.' `
-    'BB flop call with 75-suited on 9-6-3 was thin (gutshot to 8 + backdoor flush dies on the 3rd club here). Turn 8 lands straight directly.' `
-    '7s5s makes 5-6-7-8-9 straight. Loses to T7/T-suited straight (T-7-8-9 needs T+7 villain; rare), 6-7-8-9-T (needs T7 villain; rare), and made flushes. Beats every set, two-pair, weaker straight, all worse made hands and bluffs.' `
-    'Small check-raise charges Tx, sets, two-pair, made flushes, and air. Big raise risks too much vs higher straights and flushes that may stack off. Calling surrenders value vs flushes that pay off the raise.' `
-    'Slowplaying made straight on flush-complete turn lets villain river-improve to higher hand or check back showdown for free.' `
-    'Made straight on flush-complete turn = check-raise small for VALUE (extracts from flush + Tx) -- not protection.') `
-  -conceptTags @('turn_check_raise_value','turn_draw_completion','second_barrel_defense') `
-  -difficulty 4 `
-  -uniquenessNote 'NEW BOARD F13 + reason_choice diagnosing VALUE (not blocker_check_raise or semi_bluff) on flush-complete turn. Distinct from F4 (Qs 8s 4d 2s) flush-complete bluff-catch family because here hero has MADE STRAIGHT (not pair) on a board where flush ALSO completed -- different value source.'
+    'Bottom straight 5-6-7-8-9 on flush-complete monotone turn with NO flush blocker -- call (bluff-catch); raising loses to flushes + T7.' `
+    '8c lands the 9-high straight AND completes a 3-card club flush. Villain barrel range on this monotone-flush-complete turn polarizes toward made flushes (any 2-club hand: Ax-clubs nut flush, KQ-clubs, JT-clubs, etc.) plus the higher T-high straight (T7) plus air bluffs (missed overcards / failed gutshots). Hero straight is BEHIND every made flush and behind T7; ahead of every set, every two-pair, every pair, every air combo.' `
+    'BB flop call with 75-suited on 9-6-3 was thin (gutshot to 8 + backdoor flush via spades). Turn 8c lands the straight but kills the spade BDFD (wrong suit) and simultaneously completes the club-flush threat against hero.' `
+    '7s5s makes 5-6-7-8-9 straight (the LOWEST possible straight on this board). Loses to: every made flush (Ax-clubs, KQ-clubs, 2-club combos -- significant density on monotone turn), T7 made T-high straight (6-7-8-9-T). Beats: every set (66/99/33/88), every two-pair, every pair, every air bluff, every weaker straight (none lower exists).' `
+    'Calling captures the air/bluff portion of the polarized barrel and reaches showdown without bloating vs flushes. Small check-raise is bad EV: it folds out the air bucket (which we beat) and isolates against flushes + T7 (which crush us). Mixed defensible vs sizing/opponent. Big raise commits chips against a value range we mostly lose to.' `
+    'Reading made-straight as "always-value-raise" without checking the flush-complete texture or the higher-straight threat (T7) leads to raising into a value range that beats us. Bottom straight on monotone turn with no suit blocker is bluff-catch, not value-raise.' `
+    'Bottom straight on monotone-flush-complete turn with no suit blocker = call (bluff-catch); not value-raise.') `
+  -conceptTags @('turn_bluff_catcher','turn_draw_completion','second_barrel_defense') `
+  -difficulty 5 `
+  -uniquenessNote 'NEW BOARD F13 + reason_choice diagnosing BLUFF-CATCH (not value-raise) on flush-complete-monotone turn. Trains the lesson that a made straight is NOT automatically a value-raise hand -- when the same turn that lands the straight ALSO completes a 3-flush AND there is a higher straight (T7), the made straight is BEHIND the polar value range (flushes + T7) and AHEAD of only the bluff range. Distinct from F4 flush-complete scenarios (TPTK bluff-catch / NFD blocker) because here hero has the MADE STRAIGHT not made pair -- different made-hand category facing the same flush-complete texture.'
 
 # R3 -- F1 (Ac 7d 2s, 4h): 9d8d gutshot+BDFD on brick turn
 # Best = fold. Diagnose WHY: range_disadvantage_turn_fold vs board_change_fold or pot_odds.

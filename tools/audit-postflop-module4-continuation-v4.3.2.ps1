@@ -451,6 +451,83 @@ foreach ($s in $contScenarios) {
       }
     }
   }
+
+  # ============================================================
+  # M4.R73 (NEW v4.3.2A) -- flush-complete-monotone "not-nutted" guard
+  # On a monotone-suited turn or where drawCompletion=flush_completed, any
+  # non-flush made hand (straight, set, two_pair, top_two_pair, trips,
+  # full_house) where hero holds ZERO cards of the completed suit is NOT
+  # nutted_value: the made-flush portion of villain barrel range beats it.
+  # WARN level (not HARD) because there are rare valid edge cases on flop
+  # textures already polar enough to make villain flush combos negligible
+  # (e.g. very specific BTN preflop range filters); learner discretion
+  # required to override the warning. v4.3.2A bug R2 (7s5s on 9c6c3h8c
+  # mislabelled nutted_value) would have been caught by this rule.
+  # ============================================================
+  if ($s.board -and $s.heroHand) {
+    $isFlushComplete = ($s.board.suitTextureTurn -eq 'monotone') -or ($s.board.drawCompletion -eq 'flush_completed')
+    if ($isFlushComplete) {
+      $nonFlushMade = @('straight','set','two_pair','top_two_pair','trips','full_house')
+      $isNonFlushMade = $nonFlushMade -contains $s.handClass
+      if ($isNonFlushMade) {
+        # Determine the completed suit -- on monotone the suit is the most
+        # common in board.cards; on drawCompletion=flush_completed prefer the
+        # turn-card suit (final flush-completing card).
+        $bc73 = @($s.board.cards)
+        $hh73 = @($s.heroHand)
+        $completedSuit = $null
+        $turnSuit = $null
+        if ($s.board.turnCard -and $s.board.turnCard.Length -ge 2) { $turnSuit = $s.board.turnCard.Substring(1,1) }
+        # Build per-suit count from board
+        $boardSuitCount73 = @{}
+        foreach ($c in $bc73) { if ($c.Length -ge 2) { $sc = $c.Substring(1,1); if (-not $boardSuitCount73.ContainsKey($sc)) { $boardSuitCount73[$sc] = 0 }; $boardSuitCount73[$sc]++ } }
+        # Most common suit on board -- if 3+ cards share a suit, that is the flush threat
+        $maxSuit = $null; $maxCount = 0
+        foreach ($k in $boardSuitCount73.Keys) { if ($boardSuitCount73[$k] -gt $maxCount) { $maxCount = $boardSuitCount73[$k]; $maxSuit = $k } }
+        if ($maxCount -ge 3) { $completedSuit = $maxSuit }
+        elseif ($turnSuit -and $boardSuitCount73.ContainsKey($turnSuit) -and $boardSuitCount73[$turnSuit] -ge 3) { $completedSuit = $turnSuit }
+        if ($completedSuit) {
+          $heroSuitCount73 = (@($hh73) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $completedSuit }).Count
+          if ($heroSuitCount73 -eq 0) {
+            $isNutted = ($s.heroHandRole -eq 'nutted_value') -or ($s.showdownValue -eq 'nutted')
+            if ($isNutted) {
+              Add-Warn 'M4.R73' $sid ("flush completed (suit=$completedSuit, $maxCount on board) and hero holds zero $completedSuit; non-flush made hand (handClass='$($s.handClass)') labelled heroHandRole='$($s.heroHandRole)' / showdownValue='$($s.showdownValue)' -- consider bluff_catcher / strong_value / high since made flushes beat hero")
+            }
+          }
+        }
+      }
+    }
+  }
+
+  # ============================================================
+  # M4.R74 (NEW v4.3.2A) -- prose scan: "made flushes" framed as a value
+  # target when hero handClass is not flush / nut_flush / full_house.
+  # Catches the v4.3.2A bug R2 prose pattern "small check-raise charges ...
+  # made flushes" when hero is a non-flush hand.
+  # WARN level. Edge cases: on rare boards a non-flush made hand can still
+  # raise for value vs straight-and-pair-only barrel ranges where flushes
+  # are filtered out preflop; learner discretion required.
+  # ============================================================
+  if ($s.explanation -and $s.handClass -and ($s.handClass -ne 'flush') -and ($s.handClass -ne 'nut_flush') -and ($s.handClass -ne 'full_house')) {
+    $r74Patterns = @(
+      'charges made flushes', 'charges flushes', 'charging made flushes',
+      'value from made flushes', 'extracts from made flushes',
+      'made flushes pay off', 'made flushes that call', 'made flushes call',
+      'made flushes that pay'
+    )
+    foreach ($k in 'short','turnLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway') {
+      $v = $s.explanation.$k
+      if ($null -ne $v -and ($v -is [string]) -and $v.Length -gt 0) {
+        $vLower = $v.ToLowerInvariant()
+        foreach ($pat in $r74Patterns) {
+          if ($vLower.Contains($pat.ToLowerInvariant())) {
+            Add-Warn 'M4.R74' $sid ("explanation.$k frames made flushes as a value target ('" + $pat + "') but handClass='$($s.handClass)' is not flush/nut_flush/full_house -- made flushes beat hero")
+            break
+          }
+        }
+      }
+    }
+  }
 }
 
 # ============================================================
