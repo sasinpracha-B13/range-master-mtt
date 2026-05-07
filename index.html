@@ -9974,6 +9974,30 @@
     .postflop-board-card.suit-h, .postflop-board-card.suit-d { color: #dc2626; }
     .postflop-board-card .pf-rank { font-size: 24px; line-height: 1; }
     .postflop-board-card .pf-suit { font-size: 22px; line-height: 1; margin-top: 2px; }
+    /* v4.3.1: M4 turn-card visual distinction. The 4th card on a M4 board is
+       the turn — distinguished via amber outline + "Turn" pill so learners can
+       see at a glance which card the turn-defense decision is about. */
+    .postflop-board-card.is-turn-card {
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 2px #f5a623;
+      margin-left: 6px;
+    }
+    .postflop-board-card.is-turn-card .pf-turn-pill {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f5a623;
+      color: #1a1a1a;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 2px 5px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      line-height: 1;
+      white-space: nowrap;
+    }
 
     .postflop-question-prompt {
       font-size: 14px;
@@ -33223,7 +33247,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.3.0D',
+    appVersion: '4.3.1',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -33908,6 +33932,15 @@ function getModule3Scenarios() {
     return s.module === 'pf_flop_cbet_oop_def' && s.auditStatus === 'approved';
   });
 }
+// v4.3.1: Module 4 (Facing Turn Barrel OOP) scenario pool. Mirrors M3.
+// Filters approved-only — Limited Beta ships with 72 approved scenarios:
+// 24 baseline + 29 expansion + 19 polish (all v4.3.0D).
+function getModule4Scenarios() {
+  if (!getPostflopReady()) return [];
+  return App.postflop.scenarios.filter(function (s) {
+    return s.module === 'pf_turn_barrel_oop_def' && s.auditStatus === 'approved';
+  });
+}
 
 // ============================================================================
 // v4.2.4 — Schema normalization helpers (M3 string-form vs M1/M2 object/array)
@@ -33940,6 +33973,25 @@ var _PF_M3_REASON_LABELS = {
   'range_disadvantage_fold':  'Range disadvantage fold',
   'domination_fold':          'Domination fold'
 };
+// v4.3.1: M4 (Facing Turn Barrel OOP) reason labels. The 12 _turn-suffixed
+// reasons map to BB's diagnostic question on a turn-defense decision. Distinct
+// from M3 reason labels because M3 is flop defense and M4 is turn defense; the
+// shared 5-action menu is mapped via _PF_M3_ACTION_LABELS (which is kept module-
+// agnostic — the action vocabulary is identical for M3 and M4).
+var _PF_M4_REASON_LABELS = {
+  'pot_odds_turn_call':           'Pot odds (turn call)',
+  'equity_realization_turn_call': 'Equity realization (turn call)',
+  'bluff_catch_turn':             'Bluff-catch (turn)',
+  'board_change_fold':            'Board-change fold',
+  'domination_turn_fold':         'Domination fold (turn)',
+  'range_disadvantage_turn_fold': 'Range disadvantage fold (turn)',
+  'value_check_raise_turn':       'Value check-raise (turn)',
+  'protection_check_raise_turn':  'Protection check-raise (turn)',
+  'semi_bluff_check_raise_turn':  'Semi-bluff check-raise (turn)',
+  'blocker_check_raise_turn':     'Blocker check-raise (turn)',
+  'slowplay_turn_call':           'Slowplay call (turn)',
+  'mixed_indifference_turn':      'Mixed indifference (turn)'
+};
 
 // _pfNormalizePostflopChoices(scenario) → [{id, label}, ...]
 // Returns an array of {id,label} objects regardless of source schema. Returns
@@ -33951,10 +34003,13 @@ function _pfNormalizePostflopChoices(scenario) {
   for (var i = 0; i < raw.length; i++) {
     var c = raw[i];
     if (typeof c === 'string') {
-      // M3 flat string form. Pick label from action or reason map; fall back
-      // to a humanized version of the id.
+      // M3 / M4 flat string form. Pick label from action or reason map; fall
+      // back to a humanized version of the id. M4 _turn-suffixed reason ids
+      // are looked up in _PF_M4_REASON_LABELS first (more specific), then
+      // M3 reason map, then humanized fallback.
       var id = c;
       var label = _PF_M3_ACTION_LABELS[id]
+                  || _PF_M4_REASON_LABELS[id]
                   || _PF_M3_REASON_LABELS[id]
                   || id.replace(/_/g, ' ');
       out.push({ id: id, label: label });
@@ -34055,6 +34110,7 @@ function startPostflopDrill(moduleId, sessionLength) {
   }
   // v4.1.7: route pool by moduleId. Module 1 = board_texture; Module 2 = flop_cbet_ip.
   // v4.2.4: Module 3 = flop_cbet_oop_def (Limited Beta · 85 approved scenarios).
+  // v4.3.1: Module 4 = turn_barrel_oop_def (Limited Beta · 72 approved scenarios).
   var pool;
   if (moduleId === 'pf_board_texture') {
     pool = getModule1Scenarios();
@@ -34062,6 +34118,8 @@ function startPostflopDrill(moduleId, sessionLength) {
     pool = getModule2Scenarios();
   } else if (moduleId === 'pf_flop_cbet_oop_def') {
     pool = getModule3Scenarios();
+  } else if (moduleId === 'pf_turn_barrel_oop_def') {
+    pool = getModule4Scenarios();
   } else {
     pool = [];
   }
@@ -34072,10 +34130,13 @@ function startPostflopDrill(moduleId, sessionLength) {
   // v4.1.7: Module 2 sessions default to 12 questions.
   // v4.2.4: Module 3 Limited Beta sessions default to 10 questions (shorter to keep
   // mobile sessions tight while content matures).
+  // v4.3.1: Module 4 Limited Beta sessions default to 12 questions per the
+  // v4.3.1 brief (72 scenarios; 12 keeps mobile sessions tight while content matures).
   var defaultLen;
-  if (moduleId === 'pf_flop_cbet_ip')      defaultLen = 12;
+  if (moduleId === 'pf_flop_cbet_ip')           defaultLen = 12;
   else if (moduleId === 'pf_flop_cbet_oop_def') defaultLen = 10;
-  else                                     defaultLen = 15;
+  else if (moduleId === 'pf_turn_barrel_oop_def') defaultLen = 12;
+  else                                          defaultLen = 15;
   var queue = buildPostflopQueue(pool, sessionLength || defaultLen);
   App.state.postflopDrill = {
     active: true,
@@ -34806,6 +34867,104 @@ function _pfM3TeachingFeedbackBlocksHtml(scenario) {
 // ============================================================================
 
 // ============================================================================
+// v4.3.1 — MODULE 4 TEACHING FEEDBACK BLOCKS (Facing Turn Barrel OOP)
+// ----------------------------------------------------------------------------
+// M4 explanation schema mirrors M3 but uses `turnLogic` as the M4-defining
+// field (parallel to M3's `defenseLogic`). The block order is intentional:
+//   1. Recommended Action (5-action menu) + reason chip (12 _turn reasons)
+//   2. Turn Logic (M4 PROMINENT — what the turn card did to the spot)
+//   3. Hand Logic (the strategic frame for THIS hand on THIS turn)
+//   4. Sizing Logic (when raising/sizing matters)
+//   5. Blocker note (M4 frequently leverages turn-card blockers)
+//   6. Range Context (collapsed details)
+//   7. Takeaway
+//   8. Common Mistake
+// Hides any block whose source field is empty.
+// ============================================================================
+function _pfM4TeachingFeedbackBlocksHtml(scenario) {
+  var explanation = (scenario && scenario.explanation) || {};
+  var fix = (typeof _pfFixMojibake === 'function') ? _pfFixMojibake : function (x) { return x; };
+  var html = '';
+
+  // A. Recommended action + action reason chip row
+  var recAction = scenario.recommendedAction || '';
+  var actionReason = scenario.actionReason || '';
+  var recLabel = (_PF_M3_ACTION_LABELS && _PF_M3_ACTION_LABELS[recAction]) || recAction.replace(/_/g, ' ');
+  var reasonLabel = (_PF_M4_REASON_LABELS && _PF_M4_REASON_LABELS[actionReason])
+                    || (actionReason ? actionReason.replace(/_/g, ' ') : '');
+  if (recAction || reasonLabel) {
+    html += '<div class="pf-teach-fb-block pf-fb-m2-action">' +
+              '<span class="pf-fb-block-title">🛡️ Recommended Action (BB OOP, turn)</span>' +
+              '<div class="pf-fb-block-body">' +
+                (recLabel ? '<span class="pf-m2-rec-action">' + _pfEscape(recLabel) + '</span>' : '') +
+                (reasonLabel ? '<span class="pf-m2-action-reason">Reason: ' + _pfEscape(reasonLabel) + '</span>' : '') +
+              '</div>' +
+            '</div>';
+  }
+
+  // B. Turn Logic (M4-specific — the main lesson)
+  if (explanation.turnLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">🎯 Turn Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.turnLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // C. Hand Logic (the strategic frame for THIS hand on THIS turn)
+  if (explanation.handLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Hand Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.handLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // D. Sizing Logic (only when raising/sizing matters)
+  if (explanation.sizingLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">Sizing Logic</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.sizingLogic)) + '</div>' +
+            '</div>';
+  }
+
+  // E. Blocker note (M4 emphasizes blockers heavily — show when present)
+  if (scenario.blockerNote) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason">' +
+              '<span class="pf-fb-block-title">🃏 Blocker note</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(scenario.blockerNote)) + '</div>' +
+            '</div>';
+  }
+
+  // F. Range Context (collapsed details — broader board/range frame)
+  if (explanation.rangeContext) {
+    html += '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;">' +
+              '<summary>Range / Board Context</summary>' +
+              '<div class="pf-section-body">' + _pfEscape(fix(explanation.rangeContext)) + '</div>' +
+            '</details>';
+  }
+
+  // G. Takeaway
+  if (explanation.takeaway) {
+    html += '<div class="pf-teach-fb-block pf-fb-takeaway">' +
+              '<span class="pf-fb-block-title">💡 Takeaway</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.takeaway)) + '</div>' +
+            '</div>';
+  }
+
+  // H. Common Mistake (only if present)
+  if (explanation.commonMistake) {
+    html += '<div class="pf-teach-fb-block pf-fb-mistake">' +
+              '<span class="pf-fb-block-title">⚠️ Common Mistake</span>' +
+              '<div class="pf-fb-block-body">' + _pfEscape(fix(explanation.commonMistake)) + '</div>' +
+            '</div>';
+  }
+
+  return html;
+}
+// ============================================================================
+// END v4.3.1 — MODULE 4 TEACHING FEEDBACK BLOCKS
+// ============================================================================
+
+// ============================================================================
 // v4.2.5 — MODULE 3 FIRST-TIME EXPLAINER + PROGRESSION HINT HELPERS
 // _pfM3IsFirstTime()    — true if no completed M3 sessions in localStorage
 // _pfM3SessionCount()   — number of M3 sessions in localStorage history
@@ -34826,6 +34985,38 @@ function _pfM3SessionCount() {
 }
 function _pfM3IsFirstTime() {
   return _pfM3SessionCount() === 0;
+}
+// v4.3.1: M4 (Facing Turn Barrel OOP) first-time explainer helpers. Mirror the
+// M3 helpers; the explainer focuses on turn-defense framing instead of flop.
+function _pfM4SessionCount() {
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return 0;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var n = 0;
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i] && sessions[i].module === 'pf_turn_barrel_oop_def') n++;
+    }
+    return n;
+  } catch (e) { return 0; }
+}
+function _pfM4IsFirstTime() {
+  return _pfM4SessionCount() === 0;
+}
+function _pfM4FirstTimeExplainerHtml() {
+  return '<details class="pf-m3-first-time-explainer" open>' +
+           '<summary>About Module 4 — Facing Turn Barrel OOP (Limited Beta)</summary>' +
+           '<div class="pf-m3-explainer-body">' +
+             '<p><strong>You are BB, out of position, on the turn.</strong> Pre-flop: BTN opened 2.5x, you called. Flop: BTN c-bet small (~33%), you called. Turn: BTN now barrels — your decision OOP.</p>' +
+             '<ul>' +
+               '<li>The <strong>turn card matters more than the flop card</strong> — it can shift range advantage, complete draws, or counterfeit pairs.</li>' +
+               '<li>Your <strong>5-action menu</strong> is the same as M3: fold / call / check-raise small / check-raise big / mixed.</li>' +
+               '<li>Your <strong>12 actionReasons</strong> are turn-specific (pot odds, equity realization, bluff-catch, board-change fold, domination fold, range-disadvantage fold, value/protection/semi-bluff/blocker check-raise, slowplay, mixed indifference).</li>' +
+               '<li>Hand classes use the <strong>full 4-card board</strong> — verify draws against flop+turn together, not flop alone.</li>' +
+               '<li><strong>Limited Beta — 72 scenarios.</strong> Good for structured practice, not final certification.</li>' +
+             '</ul>' +
+           '</div>' +
+         '</details>';
 }
 function _pfM3FirstTimeExplainerHtml() {
   // Collapsible details element. Open by default (the user is on Q1 of their
@@ -34934,6 +35125,31 @@ function _pfChoiceGuide(qType) {
                '<br><strong>Slowplay call</strong> — call a strong hand to keep villain\'s bluffs in the range. ' +
                '<br><strong>Range disadvantage fold</strong> — fold despite seeming pot odds because villain\'s range crushes hero. ' +
                '<br><strong>Domination fold</strong> — fold a marginal hand whose pair outs are dominated by villain\'s value combos.'
+    },
+    // v4.3.1 Module 4 — BB facing turn barrel (OOP). 5-action menu identical to
+    // M3 but the diagnostic "why" comes from the 12 _turn-suffixed reasons.
+    action_choice_m4: {
+      summary: 'BB facing BTN turn barrel — what is hero\'s best response OOP?',
+      details: '<strong>Fold</strong> — give up; equity + realization too low to defend on this turn. ' +
+               '<br><strong>Call</strong> — defend OOP via pot-odds, bluff-catch, or equity realization. ' +
+               '<br><strong>Check-raise small</strong> — raise for value / protection / semi-bluff at a sizing that keeps the river navigable OOP. ' +
+               '<br><strong>Check-raise big</strong> — polar raise for value or bluff with strong combo / nut blockers when sizing matters. ' +
+               '<br><strong>Mixed / close</strong> — solver mixes between two lines; both are correct.'
+    },
+    reason_choice_m4: {
+      summary: 'Why does the recommended turn-defense action work for this hand?',
+      details: '<strong>Pot odds (turn call)</strong> — call because pot odds + draw equity make the call profitable. ' +
+               '<br><strong>Equity realization (turn call)</strong> — call to realize multi-source equity (made-hand + draw). ' +
+               '<br><strong>Bluff-catch (turn)</strong> — call with showdown value that beats villain\'s air. ' +
+               '<br><strong>Board-change fold</strong> — fold because the turn card structurally changed the spot. ' +
+               '<br><strong>Domination fold (turn)</strong> — fold because hero\'s pair / kicker outs are dominated. ' +
+               '<br><strong>Range disadvantage fold (turn)</strong> — fold because villain barrel range crushes hero range on this turn. ' +
+               '<br><strong>Value check-raise (turn)</strong> — raise a strong made hand to charge worse value + air. ' +
+               '<br><strong>Protection check-raise (turn)</strong> — raise to deny equity to live draws on a dynamic turn. ' +
+               '<br><strong>Semi-bluff check-raise (turn)</strong> — raise a draw with fold equity + showdown equity. ' +
+               '<br><strong>Blocker check-raise (turn)</strong> — raise leveraging card removal as the primary engine (not draw equity). ' +
+               '<br><strong>Slowplay call (turn)</strong> — call a strong hand to preserve villain\'s bluff bucket for the river. ' +
+               '<br><strong>Mixed indifference (turn)</strong> — solver mixes; frequency depends on villain bluff %.'
     }
   };
   // v4.2.4: M3 uses its own dedicated guides keyed by `<qtype>_m3`. The caller
@@ -35196,10 +35412,20 @@ var _PF_CURRICULUM = [
     ]
   },
   {
-    key: 'm4', name: 'Module 4 — Turn Strategy',
-    focus: ['barrel cards', 'equity shift', 'blockers', 'delayed c-bets'],
-    scenarioCount: 0,
-    masteryNote: 'Future module.'
+    key: 'm4', name: 'Module 4 — Facing Turn Barrel OOP',
+    focus: ['turn equity shift', 'pot odds + equity realization OOP', 'turn bluff-catch', 'blocker check-raise', 'turn slowplay', 'critical turn folds'],
+    scenarioCount: 72,
+    masteryNote: 'Limited Beta · 72 scenarios · 12 actionReasons · 16 boards.',
+    syllabus: [
+      'BB defending OOP vs BTN turn barrel after flop check-call',
+      '5-action menu: fold / call / check-raise small / check-raise big / mixed',
+      '12 actionReasons (turn-specific): pot_odds, equity_realization, bluff_catch; board_change, domination, range_disadvantage folds; value, protection, semi_bluff, blocker check-raises; slowplay; mixed indifference',
+      'Turn equity shift recognition (overcard / brick / draw-completing / paired)',
+      'Multi-source equity calls (pair + draw, overpair + OESD)',
+      'Blocker check-raise with nut blockers (nut spade / A-blocker on overcard turn)',
+      'Domination folds vs counterfeit / range-shifted turn',
+      'Slowplay top set on draw-intensifier turns'
+    ]
   },
   {
     key: 'm5', name: 'Module 5 — River Strategy',
@@ -35469,6 +35695,133 @@ var _PF_CONCEPT_LIBRARY = [
     relatedTags: ['check_raise_bluff', 'semi_bluff_with_equity', 'wet_board'],
     questionTypes: ['action_choice', 'reason_choice'],
     suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  // ============================================================================
+  // v4.3.1 — Module 4 concepts (Facing Turn Barrel OOP)
+  // 12 turn-defense concepts surfaced into the runtime Concept Library. Source
+  // metadata lives in postflop_concepts.json (category: module4); the runtime
+  // entries below add `module: 'm4'`, drill-mapping fields (tags / relatedTags
+  // / questionTypes), and `previewOnly: false` so the M4 concept drill works.
+  // ============================================================================
+  { key: 'turn_equity_shift',
+    name: 'Turn Equity Shift',
+    def: 'How the turn card changes range vs range equity for both players. Foundation for all M4 defense decisions.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_equity_shift'],
+    relatedTags: ['range_advantage', 'nut_advantage', 'second_barrel_defense'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'second_barrel_defense',
+    name: 'Second-Barrel Defense',
+    def: 'BB defends OOP vs a turn barrel after flop check-call. Defending too tight is exploitable; calling too loose pays off Ax / made flushes.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['second_barrel_defense'],
+    relatedTags: ['turn_pot_odds', 'turn_bluff_catcher', 'turn_range_disadvantage'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_pot_odds',
+    name: 'Turn Pot Odds',
+    def: 'Defending OOP via pot odds + equity realization. Multi-source equity (pair + draw) clears most thresholds; pure overcards rarely do.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_pot_odds'],
+    relatedTags: ['second_barrel_defense', 'turn_equity_shift'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_bluff_catcher',
+    name: 'Turn Bluff-Catcher',
+    def: 'Calling a turn barrel with showdown value that beats villain bluffs but loses to value. TPGK + A-blocker on dry brick is the textbook spot.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_bluff_catcher'],
+    relatedTags: ['turn_blocker_pressure', 'second_barrel_defense'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_domination_fold',
+    name: 'Turn Domination Fold',
+    def: 'Folding when hero pair / kicker outs are dominated by villain barrel range. Naked overcards on draw-intensifier turns are the canonical example.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_domination_fold'],
+    relatedTags: ['turn_range_disadvantage', 'second_barrel_defense'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_board_change',
+    name: 'Turn Board Change',
+    def: 'How the turn card structurally changes the spot — overcard, brick, flush-complete, straight-complete, paired, or draw-intensifier. Drives every M4 decision.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_board_change'],
+    relatedTags: ['turn_equity_shift', 'turn_draw_completion'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_draw_completion',
+    name: 'Turn Draw Completion',
+    def: 'When the turn lands a card that completes a draw — flush-complete, straight-complete, OESD-added, gutshot-added. Polarizes barrel range.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_draw_completion'],
+    relatedTags: ['turn_board_change', 'turn_equity_shift'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  { key: 'turn_check_raise_value',
+    name: 'Turn Check-Raise (Value)',
+    def: 'Raising a strong made hand on the turn for value. Top set / nut straight / TPTK with blockers on the right turn — charge worse value + air.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_check_raise_value'],
+    relatedTags: ['turn_blocker_pressure', 'turn_draw_completion'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_check_raise_bluff',
+    name: 'Turn Check-Raise (Bluff)',
+    def: 'Raising as a bluff on the turn — leverage blockers (nut-flush, A-blocker on overcard) or combo draw (FD + OESD). Pure bluff without backbone gets owned.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_check_raise_bluff'],
+    relatedTags: ['turn_blocker_pressure', 'turn_equity_shift'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  { key: 'turn_blocker_pressure',
+    name: 'Turn Blocker Pressure',
+    def: 'Leveraging card removal on the turn — nut-flush blocker on flush-complete turn or A-blocker on A-overcard turn — to remove villain calling combos.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_blocker_pressure'],
+    relatedTags: ['turn_check_raise_bluff', 'turn_check_raise_value'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  { key: 'turn_slowplay_call',
+    name: 'Turn Slowplay Call',
+    def: 'Calling a strong hand on a draw-intensifier turn to preserve villain bluff bucket for the river. Top set on dynamic turns is the canonical spot.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_slowplay_call'],
+    relatedTags: ['turn_check_raise_value', 'second_barrel_defense'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'turn_range_disadvantage',
+    name: 'Turn Range Disadvantage',
+    def: 'When the turn card shifts range advantage to villain. Mid-pair below villain range, naked overcards on BB-favored turn — fold or play passively.',
+    module: 'm4',
+    previewOnly: false,
+    tags: ['turn_range_disadvantage'],
+    relatedTags: ['turn_domination_fold', 'turn_board_change'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
     textureTags: [] }
 ];
 
@@ -35588,6 +35941,12 @@ function _pfModuleStatus(moduleKey, stats) {
     // v4.2.4: Module 3 ships as Limited Beta — 85 approved scenarios across
     // 19 boards, all 9 actionReasons covered, hand-aware OOP rendering, M3
     // concept drills, M3 weak-spot review, M3 mastery checklist all wired.
+    return 'beta';
+  }
+  if (moduleKey === 'm4') {
+    // v4.3.1: Module 4 ships as Limited Beta — 72 approved scenarios across
+    // 16 boards, 12 actionReasons covered, hand-aware turn-defense rendering,
+    // M4 concept drills, M4 weak-spot review, M4 mastery checklist all wired.
     return 'beta';
   }
   return 'future';
@@ -35842,6 +36201,138 @@ function _pfM3MasteryProgressHtml(m3Stats) {
 // ============================================================================
 
 // ============================================================================
+// v4.3.1 — MODULE 4 LIMITED BETA MASTERY CHECKLIST
+// Mirrors M3 mastery; thresholds tuned for the v4.3.0D 72-scenario corpus.
+// Limited Beta thresholds (per v4.3.1 brief):
+//   1. 4 completed Module 4 sessions (vs 3 for M3, 5 for M1/M2)
+//   2. 75%+ accuracy in 2 sessions (same as M3)
+//   3. All 9-of-12 M4 actionReasons seen at least once (turn-defense reason
+//      coverage; the threshold is 9 not 12 because some reasons like
+//      blocker_check_raise_turn ship at 3/72 — requiring all 12 would be too
+//      bursty for early Limited Beta sessions)
+//   4. Engaged with M4 weak-spot review at least once
+//   5. No critical leaks in latest M4 session (optional — same as M1/M2/M3)
+// ============================================================================
+function _pfM4MasteryStats() {
+  var history = null;
+  try { if (typeof _pfHistoryLoad === 'function') history = _pfHistoryLoad(); } catch (e) { history = null; }
+  var allSessions = (history && Array.isArray(history.sessions)) ? history.sessions : [];
+  var sessions = allSessions.filter(function (s) { return s && s.module === 'pf_turn_barrel_oop_def'; });
+  var sessionCount = sessions.length;
+  var latestSession = sessionCount > 0 ? sessions[sessionCount - 1] : null;
+
+  // Quality session count (M4 sessions with >= 75% — Limited Beta threshold).
+  var qualitySessionCount = 0;
+  for (var i = 0; i < sessions.length; i++) {
+    var sess = sessions[i];
+    var ans = sess.answered || 0;
+    var max = ans * 1.0;
+    var pct = max > 0 ? ((sess.score || 0) / max) * 100 : 0;
+    if (pct >= 75) qualitySessionCount += 1;
+  }
+
+  // Latest M4 session has zero critical leaks
+  var latestNoCritical = !!(latestSession && (latestSession.critical || 0) === 0);
+
+  // ActionReason coverage — 12 M4 _turn-suffixed reasons. Tracked via answers
+  // by re-deriving actionReason from the live scenarios pool (history doesn't
+  // store actionReason per answer).
+  var REQUIRED_M4_REASONS = [
+    'pot_odds_turn_call', 'equity_realization_turn_call', 'bluff_catch_turn',
+    'board_change_fold', 'domination_turn_fold', 'range_disadvantage_turn_fold',
+    'value_check_raise_turn', 'protection_check_raise_turn', 'semi_bluff_check_raise_turn',
+    'blocker_check_raise_turn', 'slowplay_turn_call', 'mixed_indifference_turn'
+  ];
+  var seenReasons = {};
+  var scenIdMap = {};
+  if (App && App.postflop && App.postflop.scenarios) {
+    for (var ai = 0; ai < App.postflop.scenarios.length; ai++) {
+      var sc = App.postflop.scenarios[ai];
+      if (sc && sc.id) scenIdMap[sc.id] = sc;
+    }
+  }
+  for (var si = 0; si < sessions.length; si++) {
+    var sObj = sessions[si];
+    var ansArr = (sObj && Array.isArray(sObj.answers)) ? sObj.answers : [];
+    for (var aj = 0; aj < ansArr.length; aj++) {
+      var aRec = ansArr[aj];
+      var sid = aRec && aRec.scenarioId;
+      if (sid && scenIdMap[sid] && scenIdMap[sid].actionReason) {
+        seenReasons[scenIdMap[sid].actionReason] = true;
+      }
+    }
+  }
+  var reasonCoverage = {};
+  for (var ri = 0; ri < REQUIRED_M4_REASONS.length; ri++) {
+    reasonCoverage[REQUIRED_M4_REASONS[ri]] = !!seenReasons[REQUIRED_M4_REASONS[ri]];
+  }
+  var reasonsSeenCount = 0;
+  for (var rk in reasonCoverage) { if (reasonCoverage[rk]) reasonsSeenCount++; }
+
+  // Weak-spot review proxy: any M4 session with bad+critical > 0 AND >=2 sessions
+  var hasWeakSignal = false;
+  for (var j = 0; j < sessions.length; j++) {
+    var sj = sessions[j];
+    if ((sj.bad || 0) + (sj.critical || 0) > 0) { hasWeakSignal = true; break; }
+  }
+  var hasUsedWeakReview = hasWeakSignal && sessionCount >= 2;
+
+  return {
+    sessionCount: sessionCount,
+    latestSession: latestSession,
+    qualitySessionCount: qualitySessionCount,
+    latestNoCritical: latestNoCritical,
+    reasonCoverage: reasonCoverage,
+    reasonsSeenCount: reasonsSeenCount,
+    hasUsedWeakReview: hasUsedWeakReview,
+    masteryCriteriaMet: {
+      fourSessions:         sessionCount >= 4,
+      twoQualitySessions:   qualitySessionCount >= 2,
+      latestNoCritical:     latestNoCritical,
+      weakReviewUsed:       hasUsedWeakReview,
+      reasonCoverage:       reasonsSeenCount >= 9 // 9-of-12 threshold per v4.3.1 brief
+    }
+  };
+}
+
+function _pfM4MasteryProgress(m4Stats) {
+  if (!m4Stats) m4Stats = _pfM4MasteryStats();
+  var m = m4Stats.masteryCriteriaMet || {};
+  return [
+    { key: 'fourSessions',        label: 'Complete 4 Module 4 sessions',                    met: !!m.fourSessions,        detail: m4Stats.sessionCount + ' / 4' },
+    { key: 'twoQualitySessions',  label: 'Hit 75%+ quality in 2 M4 sessions',               met: !!m.twoQualitySessions,  detail: m4Stats.qualitySessionCount + ' / 2' },
+    { key: 'reasonCoverage',      label: 'See at least 9 of 12 M4 actionReasons',           met: !!m.reasonCoverage,      detail: m4Stats.reasonsSeenCount + ' / 12 reasons seen' },
+    { key: 'weakReviewUsed',      label: 'Engage with M4 weak-spot review',                 met: !!m.weakReviewUsed,      detail: m.weakReviewUsed ? 'engaged' : 'not yet' },
+    { key: 'latestNoCritical',    label: 'No critical leaks in latest M4 session',          met: !!m.latestNoCritical,    detail: m4Stats.latestSession ? (m.latestNoCritical ? 'clean' : 'critical fired') : '—' }
+  ];
+}
+
+function _pfM4MasteryProgressHtml(m4Stats) {
+  if (!m4Stats) m4Stats = _pfM4MasteryStats();
+  var items = _pfM4MasteryProgress(m4Stats);
+  var rows = items.map(function (it) {
+    var icon = it.met ? '✅' : '○';
+    var cls = it.met ? 'is-met' : 'is-not-met';
+    return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
+           ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
+  }).join('');
+  // Limited Beta progression hint — fires after 4th M4 session.
+  // Honest copy: does NOT claim mastery / certification.
+  var progressionHintHtml = '';
+  if (m4Stats.sessionCount >= 4) {
+    progressionHintHtml = '<span class="pf-m3-progression-hint">📈 Beta progress unlocked — now review your weakest turn-defense reasons.</span>';
+  }
+  return '<div class="pf-mastery-section pf-mastery-section-m2">' +
+           '<span class="pf-mastery-title">🎯 Module 4 Limited Beta progress (display only · 72 scenarios · more scenarios coming)</span>' +
+           '<ul class="pf-mastery-list">' + rows + '</ul>' +
+           progressionHintHtml +
+         '</div>';
+}
+// ============================================================================
+// END v4.3.1 — MODULE 4 LIMITED BETA MASTERY CHECKLIST
+// ============================================================================
+
+// ============================================================================
 // v4.2.6 — POSTFLOP BETA QA DASHBOARD (Module 3 first; reusable for M4+)
 // ----------------------------------------------------------------------------
 // Internal-facing diagnostic panel that surfaces M3 Limited Beta learning
@@ -35999,6 +36490,8 @@ function _pfBetaQAStatsForModule(moduleId) {
 }
 
 function _pfM3BetaQAStats() { return _pfBetaQAStatsForModule('pf_flop_cbet_oop_def'); }
+// v4.3.1: M4 wrappers reuse _pfBetaQAStatsForModule (module-agnostic).
+function _pfM4BetaQAStats() { return _pfBetaQAStatsForModule('pf_turn_barrel_oop_def'); }
 
 // _pfM3BetaQAWeakSpotPreview — given the latest weak profile, count candidate
 // scenarios that match each weak actionReason. Helps the project owner verify
@@ -36319,6 +36812,306 @@ function _pfM3BetaSessionLeakHtml(d, scenarios) {
            '</div>' +
          '</div>';
 }
+// ============================================================================
+// v4.3.1 — MODULE 4 BETA QA HELPERS (mirrors M3 but for pf_turn_barrel_oop_def)
+// ----------------------------------------------------------------------------
+// _pfM4BetaQAStats reuses the module-agnostic _pfBetaQAStatsForModule helper.
+// _pfM4BetaQAWeakSpotPreview / _pfM4BetaQACriticalMonitor / dashboard / copy
+// snapshot / session leak hint mirror the M3 versions with M4 module filter
+// and M4-specific labels.
+// ============================================================================
+function _pfM4BetaQAWeakSpotPreview(stats) {
+  if (!stats || !stats.lastWeakProfile) return [];
+  var profile = stats.lastWeakProfile;
+  var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+  var m4 = pool.filter(function (s) { return s && s.module === 'pf_turn_barrel_oop_def' && s.auditStatus === 'approved'; });
+  var reasonCandidateCounts = {};
+  for (var ri = 0; ri < (profile.targetActionReasons || []).length; ri++) {
+    var rsn = profile.targetActionReasons[ri];
+    reasonCandidateCounts[rsn] = m4.filter(function (s) { return s.actionReason === rsn; }).length;
+  }
+  var rowsAR = stats.rowsByActionReason || [];
+  var rsnMissMap = {};
+  for (var li = 0; li < rowsAR.length; li++) {
+    rsnMissMap[rowsAR[li].key] = (rowsAR[li].badCount || 0) + (rowsAR[li].critCount || 0);
+  }
+  var out = (profile.targetActionReasons || []).map(function (rsn) {
+    return {
+      reason: rsn,
+      lifetimeMisses: rsnMissMap[rsn] || 0,
+      candidates: reasonCandidateCounts[rsn] || 0
+    };
+  }).sort(function (a, b) {
+    if (b.lifetimeMisses !== a.lifetimeMisses) return b.lifetimeMisses - a.lifetimeMisses;
+    return b.candidates - a.candidates;
+  });
+  return out.slice(0, 3);
+}
+
+function _pfM4BetaQACriticalMonitor(stats) {
+  var out = {
+    totalCritical: stats.criticalCount,
+    bySelectedAction: {},
+    byScenarioReason: {},
+    crbHabitCount: 0,
+    latestCritIds: stats.criticalScenarioIds || []
+  };
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return out;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var modSessions = sessions.filter(function (s) { return s && s.module === 'pf_turn_barrel_oop_def'; });
+    var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+    var byId = {};
+    for (var pi = 0; pi < pool.length; pi++) { if (pool[pi] && pool[pi].id) byId[pool[pi].id] = pool[pi]; }
+    for (var i = 0; i < modSessions.length; i++) {
+      var aArr = (modSessions[i] && modSessions[i].answers) || [];
+      for (var j = 0; j < aArr.length; j++) {
+        var a = aArr[j];
+        if (!a || a.tier !== 'critical') continue;
+        var picked = a.choiceId || 'unknown';
+        out.bySelectedAction[picked] = (out.bySelectedAction[picked] || 0) + 1;
+        if (picked === 'check_raise_big') out.crbHabitCount++;
+        var sc = byId[a.scenarioId];
+        if (sc && sc.actionReason) {
+          out.byScenarioReason[sc.actionReason] = (out.byScenarioReason[sc.actionReason] || 0) + 1;
+        }
+      }
+    }
+  } catch (e) { /* swallow */ }
+  return out;
+}
+
+function _pfM4BetaQADashboardHtml() {
+  var stats = _pfM4BetaQAStats();
+  if (stats.sessionCount === 0) {
+    return '<details class="pf-m3-qa-dashboard">' +
+             '<summary>🎯 Module 4 Beta QA dashboard (project-owner view)</summary>' +
+             '<div class="pf-m3-qa-empty">Play Module 4 sessions to generate beta feedback.</div>' +
+           '</details>';
+  }
+  var weakSpotPreview = _pfM4BetaQAWeakSpotPreview(stats);
+  var critMon = _pfM4BetaQACriticalMonitor(stats);
+  var sampleBanner = '';
+  if (stats.sessionCount < 4 || stats.questionCount < 36) {
+    // M4 thresholds for "early signal" tightened slightly: 4 sessions / 36 answers
+    // (4 sessions x 12 questions = 48 baseline; 36 is ~3 full sessions worth).
+    sampleBanner = '<div class="pf-m3-qa-sample-warn">⚠ Early signal — ' +
+                     stats.sessionCount + ' session' + (stats.sessionCount === 1 ? '' : 's') + ', ' +
+                     stats.questionCount + ' answer' + (stats.questionCount === 1 ? '' : 's') +
+                     '. Needs more sessions for confident readings.' +
+                   '</div>';
+  }
+  var topMetrics =
+    '<div class="pf-m3-qa-grid">' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.sessionCount + '</span><span class="pf-m3-qa-lbl">sessions</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.questionCount + '</span><span class="pf-m3-qa-lbl">answers</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.latestPctScore != null ? stats.latestPctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">latest</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.averagePctScore != null ? stats.averagePctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">avg</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalCount + '</span><span class="pf-m3-qa-lbl">critical</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalRate + '%</span><span class="pf-m3-qa-lbl">crit rate</span></div>' +
+    '</div>';
+  function rowsHtml(rows, title, icon) {
+    if (!rows || rows.length === 0) return '';
+    var topRows = rows.slice(0, 6);
+    return '<div class="pf-m3-qa-block">' +
+             '<div class="pf-m3-qa-block-title">' + icon + ' ' + title + '</div>' +
+             '<ul class="pf-m3-qa-list">' +
+               topRows.map(function (r) {
+                 var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                 var miss = r.critCount > 0 ? '⚡' + r.critCount : '';
+                 return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                        ' <span class="pf-m3-qa-detail">(' + r.pct + '% over ' + r.seen + (miss ? ' · ' + miss + ' crit' : '') + ')</span></li>';
+               }).join('') +
+             '</ul>' +
+           '</div>';
+  }
+  var byAxisHtml =
+    rowsHtml(stats.rowsByActionReason, 'By actionReason', '🎯') +
+    rowsHtml(stats.rowsByRecommendedAction, 'By recommendedAction', '🛡️') +
+    rowsHtml(stats.rowsByHeroHandRole, 'By heroHandRole', '🃏') +
+    rowsHtml(stats.rowsByHandClass, 'By handClass', '🪜');
+  var weakSpotHtml = '';
+  if (weakSpotPreview.length > 0) {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target (top 3 reasons)</div>' +
+                     '<ul class="pf-m3-qa-list">' +
+                       weakSpotPreview.map(function (w) {
+                         return '<li>' + _pfEscape(_pfM2PrettyLabel(w.reason)) +
+                                ' <span class="pf-m3-qa-detail">(' + w.lifetimeMisses + ' miss' + (w.lifetimeMisses === 1 ? '' : 'es') +
+                                ', ' + w.candidates + ' candidate scenario' + (w.candidates === 1 ? '' : 's') + ')</span></li>';
+                       }).join('') +
+                     '</ul>' +
+                   '</div>';
+  } else {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target</div>' +
+                     '<div class="pf-m3-qa-empty-mini">No weak signals detected this session — clean read.</div>' +
+                   '</div>';
+  }
+  var critMonHtml = '<div class="pf-m3-qa-block">' +
+                      '<div class="pf-m3-qa-block-title">⚡ Critical-mistake monitor</div>' +
+                      '<div class="pf-m3-qa-detail" style="margin-bottom:6px">' +
+                        'Total critical: ' + critMon.totalCritical +
+                        ' · check-raise-big habit: ' + critMon.crbHabitCount +
+                      '</div>';
+  var bySelected = Object.keys(critMon.bySelectedAction);
+  if (bySelected.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail">By selected action:</div><ul class="pf-m3-qa-list">' +
+      bySelected.sort(function (a, b) { return critMon.bySelectedAction[b] - critMon.bySelectedAction[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.bySelectedAction[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  var byReason = Object.keys(critMon.byScenarioReason);
+  if (byReason.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail" style="margin-top:6px">By scenario actionReason:</div><ul class="pf-m3-qa-list">' +
+      byReason.sort(function (a, b) { return critMon.byScenarioReason[b] - critMon.byScenarioReason[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.byScenarioReason[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  critMonHtml += '</div>';
+  var sessHtml = '';
+  if (stats.last3Sessions.length > 0) {
+    sessHtml = '<div class="pf-m3-qa-block">' +
+                 '<div class="pf-m3-qa-block-title">🕘 Last 3 sessions</div>' +
+                 '<ul class="pf-m3-qa-list">' +
+                   stats.last3Sessions.map(function (s, i) {
+                     return '<li>#' + (stats.sessionCount - stats.last3Sessions.length + i + 1) + ' · ' +
+                            (s.pct != null ? s.pct + '%' : '—') + ' (' + s.answered + 'q · best ' + s.best + ' / acc ' + s.acceptable + ' / bad ' + s.bad + ' / crit ' + s.critical + ') · mode ' + s.mode + '</li>';
+                   }).join('') +
+                 '</ul>' +
+               '</div>';
+  }
+  var privacy = '<div class="pf-m3-qa-privacy">' +
+                  '<button type="button" class="pf-m3-qa-copy-btn" onclick="_pfM4BetaQACopySnapshotClick(this)">📋 Copy M4 Beta QA Snapshot</button>' +
+                  '<div class="pf-m3-qa-privacy-note">Local only · browser history · no server upload · no tracking. Snapshot is JSON copied to clipboard for offline review.</div>' +
+                '</div>';
+  return '<details class="pf-m3-qa-dashboard">' +
+           '<summary>🎯 Module 4 Beta QA dashboard (project-owner view)</summary>' +
+           sampleBanner +
+           topMetrics +
+           weakSpotHtml +
+           critMonHtml +
+           byAxisHtml +
+           sessHtml +
+           privacy +
+         '</details>';
+}
+
+function _pfM4BetaQACopySnapshotClick(btn) {
+  try {
+    var stats = _pfM4BetaQAStats();
+    var weakSpotPreview = _pfM4BetaQAWeakSpotPreview(stats);
+    var critMon = _pfM4BetaQACriticalMonitor(stats);
+    var snapshot = {
+      kind: 'rmtt-m4-beta-qa-snapshot',
+      schema: '1.0.0',
+      appVersion: (function () { try { return buildBackupPayload().appVersion; } catch (e) { return 'unknown'; } })(),
+      moduleId: 'pf_turn_barrel_oop_def',
+      timestampISO: new Date().toISOString(),
+      sessionCount: stats.sessionCount,
+      questionCount: stats.questionCount,
+      latestPctScore: stats.latestPctScore,
+      averagePctScore: stats.averagePctScore,
+      criticalCount: stats.criticalCount,
+      criticalRatePct: stats.criticalRate,
+      weakReviewUsed: stats.weakReviewUsed,
+      weakActionReasons: (stats.weakActionReasons || []).slice(0, 5).map(function (r) {
+        return { reason: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakHeroHandRoles: (stats.weakHeroHandRoles || []).slice(0, 5).map(function (r) {
+        return { role: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakRecommendedActions: (stats.weakRecommendedActions || []).slice(0, 5).map(function (r) {
+        return { action: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakConcepts: (stats.weakConcepts || []).slice(0, 5),
+      weakSpotReviewWouldTarget: weakSpotPreview,
+      criticalMonitor: {
+        totalCritical: critMon.totalCritical,
+        crbHabitCount: critMon.crbHabitCount,
+        bySelectedAction: critMon.bySelectedAction,
+        byScenarioReason: critMon.byScenarioReason,
+        latestCritIds: critMon.latestCritIds
+      },
+      betaMastery: (function () {
+        try {
+          var m = (typeof _pfM4MasteryStats === 'function') ? _pfM4MasteryStats() : null;
+          return m ? m.masteryCriteriaMet : null;
+        } catch (e) { return null; }
+      })(),
+      last3Sessions: stats.last3Sessions,
+      _privacy: 'Local-only snapshot. Generated from browser localStorage M4 session history. No network upload.'
+    };
+    var json = JSON.stringify(snapshot, null, 2);
+    function showOk() {
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied to clipboard';
+        btn.disabled = true;
+        setTimeout(function () { if (btn) { btn.textContent = orig; btn.disabled = false; } }, 1800);
+      }
+      if (typeof showToast === 'function') showToast('M4 Beta QA snapshot copied to clipboard.');
+    }
+    function showFail(msg) {
+      if (typeof showToast === 'function') showToast('Copy failed — ' + msg);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(showOk, function (err) { showFail(String(err || '')); });
+    } else {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = json;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) showOk(); else showFail('clipboard unavailable');
+      } catch (e2) { showFail(String(e2)); }
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Snapshot generation failed.');
+  }
+}
+
+function _pfM4BetaSessionLeakHtml(d, scenarios) {
+  if (!d || d.module !== 'pf_turn_barrel_oop_def') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var pool = scenarios || [];
+  var rowsAR = _pfM2GroupAnswersBy(d.answers, pool, 'actionReason');
+  var weakAR = rowsAR.filter(function (r) {
+    return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50);
+  });
+  if (weakAR.length === 0) return '';
+  weakAR.sort(function (a, b) {
+    if (b.critCount !== a.critCount) return b.critCount - a.critCount;
+    if (b.badCount !== a.badCount) return b.badCount - a.badCount;
+    return a.pct - b.pct;
+  });
+  var top = weakAR[0];
+  var detail = top.critCount > 0 ? top.critCount + ' critical' : (top.badCount > 0 ? top.badCount + ' bad' : top.pct + '%');
+  var sampleHonest = (d.answers.length < 5)
+    ? ' <span class="pf-m3-qa-detail" style="opacity:0.75">(early signal — small sample)</span>'
+    : '';
+  return '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+           '<span class="pf-learn-title">🔥 Biggest leak this session</span>' +
+           '<ul class="pf-learn-list">' +
+             '<li><strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong>' +
+             ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + top.seen + ')</span>' +
+             sampleHonest + '</li>' +
+           '</ul>' +
+           '<div class="pf-m3-qa-detail" style="margin-top:6px;font-size:11px;opacity:0.85;">' +
+             'Best next review: <strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong> — ' +
+             'open Module 4 Weak-Spot Review to drill it.' +
+           '</div>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.3.1 — MODULE 4 BETA QA HELPERS
+// ============================================================================
+
 // ============================================================================
 // END v4.2.6 — POSTFLOP BETA QA DASHBOARD
 // ============================================================================
@@ -36759,14 +37552,18 @@ function startPostflopConceptDrill(conceptKey) {
   }
   var pool;
   var moduleId;
-  // v4.2.4: route by concept's module — M1, M2, or M3. M3 concept drills
-  // draw only from approved M3 scenarios so Limited Beta sessions stay clean.
+  // v4.2.4: route by concept's module — M1, M2, M3. M3 concept drills draw only
+  // from approved M3 scenarios so Limited Beta sessions stay clean.
+  // v4.3.1: M4 concept drills draw only from approved M4 scenarios.
   if (moduleForConcept === 'm2') {
     pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
     moduleId = 'pf_flop_cbet_ip';
   } else if (moduleForConcept === 'm3') {
     pool = (typeof getModule3Scenarios === 'function') ? getModule3Scenarios() : [];
     moduleId = 'pf_flop_cbet_oop_def';
+  } else if (moduleForConcept === 'm4') {
+    pool = (typeof getModule4Scenarios === 'function') ? getModule4Scenarios() : [];
+    moduleId = 'pf_turn_barrel_oop_def';
   } else {
     pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
     moduleId = 'pf_board_texture';
@@ -36776,7 +37573,11 @@ function startPostflopConceptDrill(conceptKey) {
     return;
   }
   // v4.2.4: M3 concept drills cap at 10 questions to match Limited Beta session length.
-  var conceptLen = (moduleForConcept === 'm3') ? 10 : 12;
+  // v4.3.1: M4 concept drills cap at 12 (M4 default session length).
+  var conceptLen;
+  if (moduleForConcept === 'm3') conceptLen = 10;
+  else if (moduleForConcept === 'm4') conceptLen = 12;
+  else conceptLen = 12;
   var built = _pfBuildConceptQueue(conceptKey, pool, conceptLen);
   if (!built || !built.queue || built.queue.length === 0) {
     // Unknown concept or empty pool — fall back to normal drill in the same module
@@ -36855,12 +37656,15 @@ function _pfConceptLibraryHtml() {
   }
 
   // v4.2.4: include Module 3 group.
+  // v4.3.1: include Module 4 group.
   var m1List = _PF_CONCEPT_LIBRARY.filter(function (c) { return (c.module || 'm1') === 'm1'; });
   var m2List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm2'; });
   var m3List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm3'; });
+  var m4List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm4'; });
   var m1Cards = m1List.map(renderCard).join('');
   var m2Cards = m2List.map(renderCard).join('');
   var m3Cards = m3List.map(renderCard).join('');
+  var m4Cards = m4List.map(renderCard).join('');
 
   var m1Section = '<div class="pf-concept-group-header">Module 1 — Board Reading <span class="pf-concept-group-count">(' + m1List.length + ')</span></div>' + m1Cards;
   var m2Section = m2List.length > 0
@@ -36869,10 +37673,13 @@ function _pfConceptLibraryHtml() {
   var m3Section = m3List.length > 0
     ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 3 — BB Defense OOP <span class="pf-concept-group-count">(' + m3List.length + ' · Limited Beta)</span></div>' + m3Cards)
     : '';
+  var m4Section = m4List.length > 0
+    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 4 — Turn Defense OOP <span class="pf-concept-group-count">(' + m4List.length + ' · Limited Beta)</span></div>' + m4Cards)
+    : '';
 
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 + ' + m3List.length + ' M3) · tap to drill</summary>' +
-           '<div class="pf-concept-grid">' + m1Section + m2Section + m3Section + '</div>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 + ' + m3List.length + ' M3 + ' + m4List.length + ' M4) · tap to drill</summary>' +
+           '<div class="pf-concept-grid">' + m1Section + m2Section + m3Section + m4Section + '</div>' +
          '</details>';
 }
 
@@ -36895,6 +37702,13 @@ function _pfAcademyHomeHtml() {
       m3MasteryHtml = _pfM3MasteryProgressHtml();
     }
   } catch (e) { /* swallow — never block academy render */ }
+  // v4.3.1: M4 mastery checklist appears below M3 mastery, parallel layout.
+  var m4MasteryHtml = '';
+  try {
+    if (typeof _pfM4MasteryProgressHtml === 'function') {
+      m4MasteryHtml = _pfM4MasteryProgressHtml();
+    }
+  } catch (e) { /* swallow — never block academy render */ }
   // v4.2.6: M3 Beta QA dashboard — internal-facing diagnostic panel that
   // surfaces M3 Limited Beta learning signals from localStorage. Collapsed by
   // default. Shows empty state when no M3 history exists.
@@ -36902,6 +37716,13 @@ function _pfAcademyHomeHtml() {
   try {
     if (typeof _pfM3BetaQADashboardHtml === 'function') {
       m3BetaQAHtml = _pfM3BetaQADashboardHtml();
+    }
+  } catch (e) { /* swallow — never block Academy render */ }
+  // v4.3.1: M4 Beta QA dashboard — parallel to M3.
+  var m4BetaQAHtml = '';
+  try {
+    if (typeof _pfM4BetaQADashboardHtml === 'function') {
+      m4BetaQAHtml = _pfM4BetaQADashboardHtml();
     }
   } catch (e) { /* swallow — never block Academy render */ }
   return '<div class="pf-academy-section">' +
@@ -36915,7 +37736,9 @@ function _pfAcademyHomeHtml() {
            _pfMasteryProgressHtml(stats) +
            m2MasteryHtml +
            m3MasteryHtml +
+           m4MasteryHtml +
            m3BetaQAHtml +
+           m4BetaQAHtml +
            _pfConceptLibraryHtml() +
            '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
          '</div>';
@@ -36996,7 +37819,11 @@ var TRAINING_MODES = {
       { id: 'progress',  label: 'Postflop Progress',        hint: 'View mastery + history',    icon: '🏆', kind: 'secondary', route: 'postflop:progress' },
       // v4.2.4: Module 3 flipped from preview to available. Limited Beta · 85
       // approved scenarios. Honest copy: do not promise full module quality.
-      { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: '85 OOP defense scenarios · Limited Beta', icon: '🛡️', kind: 'secondary', route: 'postflop:m3', badge: 'BETA' }
+      { id: 'm3',        label: 'Module 3 · BB Defense OOP',hint: '85 OOP defense scenarios · Limited Beta', icon: '🛡️', kind: 'secondary', route: 'postflop:m3', badge: 'BETA' },
+      // v4.3.1: Module 4 flipped from preview to available. Limited Beta · 72
+      // approved scenarios. Honest copy: more scenarios coming, structured
+      // practice (not final certification).
+      { id: 'm4',        label: 'Module 4 · Facing Turn Barrel OOP', hint: '72 turn-defense scenarios · Limited Beta', icon: '🎯', kind: 'secondary', route: 'postflop:m4', badge: 'BETA' }
     ]
   }
 };
@@ -37089,6 +37916,16 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_flop_cbet_oop_def', 10);
+      break;
+    case 'postflop:m4':
+      // v4.3.1: Module 4 Limited Beta — 72 approved scenarios. Default queue
+      // length 12 (per v4.3.1 brief). Same Postflop Beta gating as M1/M2/M3.
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_turn_barrel_oop_def', 12);
       break;
     case 'postflop:concepts':
       if (!betaOn) {
@@ -37375,10 +38212,17 @@ function renderPostflopQuestion() {
   var board = scenario.board || {};
   var question = scenario.question || {};
 
-  var boardHtml = (board.cards || []).map(function (card) {
+  // v4.3.1: M4 has 4-card boards (flop + turn). The 4th card (index 3) is the
+  // turn card and is visually distinguished via the .is-turn-card class so
+  // learners can immediately see which card the barrel-defense question is
+  // about. M1/M2/M3 boards are 3 cards (flop only) — turn-card flag is unused.
+  var isM4Board = (scenario.module === 'pf_turn_barrel_oop_def');
+  var boardHtml = (board.cards || []).map(function (card, idx) {
     var rank = card.charAt(0);
     var suit = card.charAt(1);
-    return '<div class="postflop-board-card ' + _pfSuitClass(suit) + '">' +
+    var turnCls = (isM4Board && idx === 3) ? ' is-turn-card' : '';
+    return '<div class="postflop-board-card ' + _pfSuitClass(suit) + turnCls + '">' +
+      (isM4Board && idx === 3 ? '<span class="pf-turn-pill">Turn</span>' : '') +
       '<span class="pf-rank">' + _pfEscape(rank) + '</span>' +
       '<span class="pf-suit">' + _pfSuitChar(suit) + '</span>' +
       '</div>';
@@ -37387,9 +38231,11 @@ function renderPostflopQuestion() {
   // v4.1.7: Module 2 (pf_flop_cbet_ip) is hand-aware — render hero hand as cards
   // alongside board cards. Module 1 stays board-only.
   // v4.2.4: Module 3 (pf_flop_cbet_oop_def) is also hand-aware (BB defense OOP).
+  // v4.3.1: Module 4 (pf_turn_barrel_oop_def) is hand-aware (BB turn-defense OOP).
   var isM2 = (scenario.module === 'pf_flop_cbet_ip');
   var isM3 = (scenario.module === 'pf_flop_cbet_oop_def');
-  var isHandAware = isM2 || isM3;
+  var isM4 = (scenario.module === 'pf_turn_barrel_oop_def');
+  var isHandAware = isM2 || isM3 || isM4;
   var heroHandHtml = '';
   var heroLine;
   if (isHandAware && scenario.heroHand && scenario.heroHand.length === 2) {
@@ -37424,8 +38270,10 @@ function renderPostflopQuestion() {
   // v4.2.4: M3 has its own dedicated guide keyed `<qtype>_m3` (different
   // vocabulary from M2's IP-c-bet vocabulary).
   // v4.2.4: M3 schema uses qtype, M1/M2 schema uses type. Read both.
+  // v4.3.1: M4 uses its own dedicated guide keyed `<qtype>_m4`.
   var qtypeForGuide = question.type || question.qtype || '';
-  if (isM3) qtypeForGuide = qtypeForGuide + '_m3';
+  if (isM4)      qtypeForGuide = qtypeForGuide + '_m4';
+  else if (isM3) qtypeForGuide = qtypeForGuide + '_m3';
   var guideHtml = _pfChoiceGuide(qtypeForGuide);
 
   // v4.0.8: teaching layer — pattern label + board reading checklist + hint
@@ -37437,13 +38285,14 @@ function renderPostflopQuestion() {
   var checklistHtml = isHandAware ? '' : ((typeof _pfBoardChecklistHtml === 'function') ? _pfBoardChecklistHtml() : '');
   var hintHtml = (typeof _pfHintRowHtml === 'function') ? _pfHintRowHtml(board) : '';
   // v4.1.7/v4.2.4: hand-aware modules show handClass + heroHandRole chips
+  // v4.3.1: M4 also shows drawCategory + showdownValue chips (same as M3).
   var handChipHtml = '';
   if (isHandAware && (scenario.handClass || scenario.heroHandRole || scenario.drawCategory || scenario.showdownValue)) {
     var hcLabel = scenario.handClass ? _pfEscape(scenario.handClass.replace(/_/g, ' ')) : '';
     var hrLabel = scenario.heroHandRole ? _pfEscape(scenario.heroHandRole.replace(/_/g, ' ')) : '';
-    var dcLabel = (isM3 && scenario.drawCategory && scenario.drawCategory !== 'none')
+    var dcLabel = ((isM3 || isM4) && scenario.drawCategory && scenario.drawCategory !== 'none')
                   ? _pfEscape(scenario.drawCategory.replace(/_/g, ' ')) : '';
-    var svLabel = (isM3 && scenario.showdownValue) ? _pfEscape(scenario.showdownValue) : '';
+    var svLabel = ((isM3 || isM4) && scenario.showdownValue) ? _pfEscape(scenario.showdownValue) : '';
     handChipHtml = '<div class="pf-m2-hand-chips">' +
       (hcLabel ? '<span class="pf-m2-hand-chip pf-m2-handclass-chip" title="Mechanical hand class">🃏 ' + hcLabel + '</span>' : '') +
       (hrLabel ? '<span class="pf-m2-hand-chip pf-m2-handrole-chip" title="Strategic role on this board">🎯 ' + hrLabel + '</span>' : '') +
@@ -37474,9 +38323,11 @@ function renderPostflopQuestion() {
       '</div>';
   }
 
-  // v4.1.7/v4.2.4: per-module context label.
+  // v4.1.7/v4.2.4/v4.3.1: per-module context label.
   var contextLabelText;
-  if (isM3) {
+  if (isM4) {
+    contextLabelText = '🎯 Module 4 · Facing Turn Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
+  } else if (isM3) {
     contextLabelText = '🛡️ Module 3 · BB Defense OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM2) {
     contextLabelText = '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total;
@@ -37484,11 +38335,11 @@ function renderPostflopQuestion() {
     contextLabelText = '🧪 Board Texture Trainer · Q ' + qNum + '/' + total;
   }
 
-  // v4.1.7/v4.2.4: hand-aware modules (M2, M3) render the hero hand row.
-  // M3 labels the section "Your Hand (BB)" to keep BB framing explicit.
+  // v4.1.7/v4.2.4/v4.3.1: hand-aware modules (M2, M3, M4) render the hero hand row.
+  // M3 + M4 label the section "Your Hand (BB)" to keep BB-OOP framing explicit.
   var heroHandSection = '';
   if (isHandAware && heroHandHtml) {
-    var heroSectionTitle = isM3 ? '🃏 Your Hand (BB)' : '🃏 Hero Hand';
+    var heroSectionTitle = (isM3 || isM4) ? '🃏 Your Hand (BB)' : '🃏 Hero Hand';
     heroHandSection =
       '<div class="postflop-question-card">' +
         '<div class="postflop-section-title">' + heroSectionTitle + '</div>' +
@@ -37500,8 +38351,13 @@ function renderPostflopQuestion() {
   // v4.2.5: First-time M3 explainer — only on Q1, only for M3, only if no
   // completed M3 sessions exist in localStorage history. Defensive against
   // missing helpers (e.g., during early bootstrap).
+  // v4.3.1: same first-time pattern for M4.
   var firstTimeExplainerHtml = '';
-  if (isM3 && d.currentIndex === 0
+  if (isM4 && d.currentIndex === 0
+      && typeof _pfM4IsFirstTime === 'function' && _pfM4IsFirstTime()
+      && typeof _pfM4FirstTimeExplainerHtml === 'function') {
+    firstTimeExplainerHtml = _pfM4FirstTimeExplainerHtml();
+  } else if (isM3 && d.currentIndex === 0
       && typeof _pfM3IsFirstTime === 'function' && _pfM3IsFirstTime()
       && typeof _pfM3FirstTimeExplainerHtml === 'function') {
     firstTimeExplainerHtml = _pfM3FirstTimeExplainerHtml();
@@ -37519,20 +38375,32 @@ function renderPostflopQuestion() {
     '<div class="postflop-spot-card">' +
       '<div class="postflop-section-title">📋 Spot</div>' +
       '<div class="postflop-spot-tags">' +
-        // v4.2.4: M3 uses spot.stackDepth ("100BB"); M1/M2 use spot.effectiveStackBB (100).
+        // v4.2.4/v4.3.1: M3 + M4 use spot.stackDepth ("100BB"); M1/M2 use spot.effectiveStackBB (100).
         '<span class="postflop-spot-tag tag-stack">' + _pfEscape(
-          isM3 ? (spot.stackDepth || '100BB')
-               : ((spot.effectiveStackBB ? spot.effectiveStackBB : '?') + 'BB')
+          (isM3 || isM4) ? (spot.stackDepth || '100BB')
+                         : ((spot.effectiveStackBB ? spot.effectiveStackBB : '?') + 'BB')
         ) + '</span>' +
         // v4.2.4: M3 framing — BB defends OOP; M1/M2 framing — BTN opens.
-        (isM3
+        // v4.3.1: M4 framing — BB defends OOP on the turn after flop check-call.
+        // The 5-step flow (BTN open / BB call / BTN c-bet small / BB call /
+        // BTN barrels turn) is rendered as 5 distinct chips so the learner can
+        // see the full action history at a glance.
+        (isM4
           ? '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || 'BB') + ' (hero, OOP)</span>' +
             '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || 'BTN') + ' (villain, IP)</span>' +
             '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || 'SRP') + '</span>' +
-            '<span class="postflop-spot-tag tag-action">' + _pfEscape((spot.villainAction || 'cbet') + ' ' + (spot.villainSizing || 'small')) + '</span>'
-          : '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || '?') + ' open</span>' +
-            '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
-            '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>'
+            '<span class="postflop-spot-tag tag-action">BTN open 2.5x · BB call</span>' +
+            '<span class="postflop-spot-tag tag-action">BTN cbet small · BB call</span>' +
+            '<span class="postflop-spot-tag tag-action">BTN barrels turn</span>'
+          : (isM3
+            ? '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || 'BB') + ' (hero, OOP)</span>' +
+              '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || 'BTN') + ' (villain, IP)</span>' +
+              '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || 'SRP') + '</span>' +
+              '<span class="postflop-spot-tag tag-action">' + _pfEscape((spot.villainAction || 'cbet') + ' ' + (spot.villainSizing || 'small')) + '</span>'
+            : '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || '?') + ' open</span>' +
+              '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
+              '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>'
+          )
         ) +
       '</div>' +
       (heroLine ? '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' : '') +
@@ -37579,9 +38447,10 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var pickedLabel = _findChoiceLabel(scenario, choiceId);
   var explanation = scenario.explanation || {};
   var isLast = (d.currentIndex + 1) >= total;
-  // v4.1.7/v4.2.4: module awareness for routing the right teaching block.
+  // v4.1.7/v4.2.4/v4.3.1: module awareness for routing the right teaching block.
   var isM2 = (scenario.module === 'pf_flop_cbet_ip');
   var isM3 = (scenario.module === 'pf_flop_cbet_oop_def');
+  var isM4 = (scenario.module === 'pf_turn_barrel_oop_def');
 
   // Build expandable sections (only for non-null fields)
   var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
@@ -37614,10 +38483,13 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
 
   // v4.0.8: 5-block teaching feedback layout (Result / Board Pattern / Core Reason / Takeaway / Common Mistake).
   // v4.1.7: Module 2 routes through _pfM2TeachingFeedbackBlocksHtml — hand-action focused.
-  // v4.2.4: Module 3 routes through _pfM3TeachingFeedbackBlocksHtml — BB-defense focused
-  //         (Recommended Action / Defense Logic / Hand Logic / Blocker / Range / Takeaway / Common Mistake).
+  // v4.2.4: Module 3 routes through _pfM3TeachingFeedbackBlocksHtml — BB-defense focused.
+  // v4.3.1: Module 4 routes through _pfM4TeachingFeedbackBlocksHtml — turn-defense focused
+  //         (Recommended Action / Turn Logic [PROMINENT] / Hand Logic / Sizing / Blocker / Range / Takeaway / Common Mistake).
   var teachingBlocksHtml;
-  if (isM3 && typeof _pfM3TeachingFeedbackBlocksHtml === 'function') {
+  if (isM4 && typeof _pfM4TeachingFeedbackBlocksHtml === 'function') {
+    teachingBlocksHtml = _pfM4TeachingFeedbackBlocksHtml(scenario);
+  } else if (isM3 && typeof _pfM3TeachingFeedbackBlocksHtml === 'function') {
     teachingBlocksHtml = _pfM3TeachingFeedbackBlocksHtml(scenario);
   } else if (isM2 && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') {
     teachingBlocksHtml = _pfM2TeachingFeedbackBlocksHtml(scenario);
@@ -37627,9 +38499,11 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
     teachingBlocksHtml = '';
   }
 
-  // v4.2.4: per-module context label on the answer screen (parallel to question screen).
+  // v4.2.4/v4.3.1: per-module context label on the answer screen (parallel to question screen).
   var fbContextLabel;
-  if (isM3) {
+  if (isM4) {
+    fbContextLabel = '🎯 Module 4 · Facing Turn Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
+  } else if (isM3) {
     fbContextLabel = '🛡️ Module 3 · BB Defense OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM2) {
     fbContextLabel = '🎯 Module 2 · Flop C-bet IP · Q ' + qNum + '/' + total;
@@ -38141,6 +39015,106 @@ function _pfM3RenderSessionAggregations(d, scenarios, counts, total) {
 // ============================================================================
 
 // ============================================================================
+// v4.3.1 — MODULE 4 SESSION SUMMARY AGGREGATION
+// Aggregates M4 answers by handClass, heroHandRole, and actionReason. Only
+// renders when scenario.module === 'pf_turn_barrel_oop_def'. Mirrors M3
+// aggregations exactly (same _pfM2GroupAnswersBy + _pfM2PrettyLabel infra)
+// because M4 schema is parallel to M3.
+// ============================================================================
+function _pfM4RenderSessionAggregations(d, scenarios, counts, total) {
+  if (!d || d.module !== 'pf_turn_barrel_oop_def') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var html = '';
+
+  var hcRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'handClass');
+  var hcWeak = hcRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  var hcStrong = hcRows.filter(function (r) { return r.seen >= 2 && r.pct >= 80; });
+  if (hcStrong.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-strong pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">💪 Strongest hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcStrong.slice(0, 4).map(function (r) {
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hcWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  var hrRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'heroHandRole');
+  var hrWeak = hrRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  if (hrRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Hand role coverage</span>' +
+              '<ul class="pf-learn-list">' +
+                hrRows.slice(0, 6).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hrWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand roles</span>' +
+              '<ul class="pf-learn-list">' +
+                hrWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  // ActionReason aggregation — M4 has 12 _turn-suffixed reasons.
+  var arRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'actionReason');
+  var arWeak = arRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  if (arRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Action reason coverage (turn)</span>' +
+              '<ul class="pf-learn-list">' +
+                arRows.slice(0, 12).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (arWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak action reasons (turn)</span>' +
+              '<ul class="pf-learn-list">' +
+                arWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  if (html) {
+    html = '<div class="pf-m2-aggr-section">' +
+             '<div class="pf-m2-aggr-section-title">Module 4 · turn defense breakdown (Limited Beta)</div>' +
+             html +
+           '</div>';
+  }
+  return html;
+}
+// ============================================================================
+// END v4.3.1 — MODULE 4 SESSION SUMMARY AGGREGATION
+// ============================================================================
+
+// ============================================================================
 // v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
 // Helpers + entry point for a focused review session derived from the just-
 // completed session's mistakes. Local-only, in-memory profile (no persistent
@@ -38375,9 +39349,10 @@ function startPostflopWeakSpotReview() {
   // silently starting a normal M3 drill.
   var prevModule = (prevDrill && prevDrill.module) || 'pf_board_texture';
   var moduleId;
-  if (prevModule === 'pf_flop_cbet_ip')          moduleId = 'pf_flop_cbet_ip';
-  else if (prevModule === 'pf_flop_cbet_oop_def') moduleId = 'pf_flop_cbet_oop_def';
-  else                                            moduleId = 'pf_board_texture';
+  if (prevModule === 'pf_flop_cbet_ip')             moduleId = 'pf_flop_cbet_ip';
+  else if (prevModule === 'pf_flop_cbet_oop_def')   moduleId = 'pf_flop_cbet_oop_def';
+  else if (prevModule === 'pf_turn_barrel_oop_def') moduleId = 'pf_turn_barrel_oop_def';
+  else                                              moduleId = 'pf_board_texture';
   if (!weakProfile) {
     // v4.2.5: if M3 weak-spot is requested but no M3 sessions in history, show
     // explicit empty-state — don't silently start a normal M3 drill.
@@ -38398,6 +39373,24 @@ function startPostflopWeakSpotReview() {
         return;
       }
     }
+    // v4.3.1: same empty-state pattern for M4.
+    if (moduleId === 'pf_turn_barrel_oop_def') {
+      var hasM4History = false;
+      try {
+        var hist4 = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+        if (hist4 && Array.isArray(hist4.sessions)) {
+          for (var hi4 = 0; hi4 < hist4.sessions.length; hi4++) {
+            if (hist4.sessions[hi4] && hist4.sessions[hi4].module === 'pf_turn_barrel_oop_def') {
+              hasM4History = true; break;
+            }
+          }
+        }
+      } catch (e) { /* swallow */ }
+      if (!hasM4History) {
+        if (typeof showToast === 'function') showToast('Play Module 4 sessions to unlock Turn Defense weak-spot review.');
+        return;
+      }
+    }
     // Nothing weak to focus on — fall back to a normal session in same module
     return startPostflopDrill(moduleId);
   }
@@ -38406,11 +39399,17 @@ function startPostflopWeakSpotReview() {
     pool = (typeof getModule2Scenarios === 'function') ? getModule2Scenarios() : [];
   } else if (moduleId === 'pf_flop_cbet_oop_def') {
     pool = (typeof getModule3Scenarios === 'function') ? getModule3Scenarios() : [];
+  } else if (moduleId === 'pf_turn_barrel_oop_def') {
+    pool = (typeof getModule4Scenarios === 'function') ? getModule4Scenarios() : [];
   } else {
     pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
   }
   // v4.2.4: M3 weak-spot reviews cap at 10 questions to match Limited Beta session length.
-  var weakLen = (moduleId === 'pf_flop_cbet_oop_def') ? 10 : 12;
+  // v4.3.1: M4 weak-spot reviews cap at 12 (M4 default session length).
+  var weakLen;
+  if (moduleId === 'pf_flop_cbet_oop_def') weakLen = 10;
+  else if (moduleId === 'pf_turn_barrel_oop_def') weakLen = 12;
+  else weakLen = 12;
   var queue = _pfBuildWeakSpotQueue(weakProfile, pool, weakLen);
   if (!queue || queue.length === 0) {
     return startPostflopDrill(moduleId);
@@ -38516,12 +39515,26 @@ function renderPostflopComplete() {
       m3AggrHtml = _pfM3RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
     }
   } catch (e) { /* swallow */ }
+  // v4.3.1: Module 4 turn-defense breakdown (parallel to M3 aggregations)
+  var m4AggrHtml = '';
+  try {
+    if (typeof _pfM4RenderSessionAggregations === 'function') {
+      m4AggrHtml = _pfM4RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
+    }
+  } catch (e) { /* swallow */ }
   // v4.2.6: Biggest leak this session + best-next-review hint (M3 only).
   // Honest copy: shows "early signal" when sample size < 5.
+  // v4.3.1: same hint pattern wired for M4 via _pfM4BetaSessionLeakHtml.
   var m3LeakHtml = '';
   try {
     if (typeof _pfM3BetaSessionLeakHtml === 'function') {
       m3LeakHtml = _pfM3BetaSessionLeakHtml(d, App.postflop && App.postflop.scenarios);
+    }
+  } catch (e) { /* swallow */ }
+  var m4LeakHtml = '';
+  try {
+    if (typeof _pfM4BetaSessionLeakHtml === 'function') {
+      m4LeakHtml = _pfM4BetaSessionLeakHtml(d, App.postflop && App.postflop.scenarios);
     }
   } catch (e) { /* swallow */ }
 
@@ -38529,18 +39542,21 @@ function renderPostflopComplete() {
   // v4.1.1: also differentiate when this was a concept-focused drill
   // v4.1.7: also differentiate when this was a Module 2 session
   // v4.2.4: also differentiate when this was a Module 3 session (Limited Beta)
+  // v4.3.1: also differentiate when this was a Module 4 session (Limited Beta)
   var isWeakReview = !!(d && d.mode === 'weak_spots');
   var isConceptDrill = !!(d && d.mode === 'concept');
   var isM2Module = !!(d && d.module === 'pf_flop_cbet_ip');
   var isM3Module = !!(d && d.module === 'pf_flop_cbet_oop_def');
+  var isM4Module = !!(d && d.module === 'pf_turn_barrel_oop_def');
   var conceptName = isConceptDrill
     ? (d.conceptDisplayName || _pfConceptDisplayName(d.conceptKey) || 'Concept')
     : '';
   var moduleLabel;
   var moduleEmoji;
-  if (isM3Module)      { moduleLabel = 'Module 3 · BB Defense OOP · Limited Beta'; moduleEmoji = '🛡️'; }
-  else if (isM2Module) { moduleLabel = 'Module 2 · Flop C-bet IP';                 moduleEmoji = '🎯'; }
-  else                 { moduleLabel = 'Board Texture Trainer';                    moduleEmoji = '🧪'; }
+  if (isM4Module)      { moduleLabel = 'Module 4 · Facing Turn Barrel OOP · Limited Beta'; moduleEmoji = '🎯'; }
+  else if (isM3Module) { moduleLabel = 'Module 3 · BB Defense OOP · Limited Beta';         moduleEmoji = '🛡️'; }
+  else if (isM2Module) { moduleLabel = 'Module 2 · Flop C-bet IP';                         moduleEmoji = '🎯'; }
+  else                 { moduleLabel = 'Board Texture Trainer';                            moduleEmoji = '🧪'; }
   var contextLabel;
   var summaryHeadline;
   var summaryEyebrow = '';
@@ -38553,7 +39569,8 @@ function renderPostflopComplete() {
     summaryHeadline = 'Review Session Summary';
   } else {
     contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Complete';
-    if (isM3Module) summaryHeadline = 'Module 3 Session Summary (Limited Beta)';
+    if (isM4Module) summaryHeadline = 'Module 4 Session Summary (Limited Beta)';
+    else if (isM3Module) summaryHeadline = 'Module 3 Session Summary (Limited Beta)';
     else if (isM2Module) summaryHeadline = 'Module 2 Session Summary';
     else summaryHeadline = 'Session Learning Summary';
   }
@@ -38579,7 +39596,9 @@ function renderPostflopComplete() {
     learnSummaryHtml +
     m2AggrHtml +
     m3AggrHtml +
+    m4AggrHtml +
     m3LeakHtml +
+    m4LeakHtml +
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
@@ -38599,11 +39618,13 @@ function renderPostflopComplete() {
         }
         return '';
       })() +
-      // v4.1.7/v4.2.4: Drill again routes to the same module the player just played.
-      // M3 sessions default to 10, M2 to 12, M1 to 15.
+      // v4.1.7/v4.2.4/v4.3.1: Drill again routes to the same module the player just played.
+      // M4 sessions default to 12, M3 to 10, M2 to 12, M1 to 15.
       '<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (
-        isM3Module ? 'pf_flop_cbet_oop_def' : (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture')
-      ) + '\', ' + (isM3Module ? 10 : (isM2Module ? 12 : 15)) + ')">▶ Drill again</button>' +
+        isM4Module ? 'pf_turn_barrel_oop_def' :
+        (isM3Module ? 'pf_flop_cbet_oop_def' :
+         (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture'))
+      ) + '\', ' + (isM4Module ? 12 : (isM3Module ? 10 : (isM2Module ? 12 : 15))) + ')">▶ Drill again</button>' +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
       // Inline note when no weak signals (positive feedback, no nag)
       (function () {
