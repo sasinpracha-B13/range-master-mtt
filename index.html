@@ -33247,7 +33247,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.3.1',
+    appVersion: '4.3.1A',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -35243,6 +35243,44 @@ function _pfBuildQuestionPrompt(scenario) {
     }
     // Unknown M3 qtype — fall through to general fix-and-return.
     return _pfFixMojibake(question.prompt) || ('On ' + boardText + ', BB defends OOP.');
+  }
+  // v4.3.1-qa: M4 (BB facing turn barrel OOP) uses BB-defending-on-turn framing.
+  // Detect M4 by module. Without this branch the function falls through to the
+  // M1/M2 BTN framing below ("what should BTN do most often"), which is wrong:
+  // M4 hero is BB defending OOP after a flop check-call, facing a turn barrel.
+  // Layout: present flop + turn separately so the turn card is visually clear.
+  // The 5-step action history is already shown in the spot-tag chip row above
+  // the question — so the prompt doesn't need to spell out every street.
+  var isM4 = (scenario && scenario.module === 'pf_turn_barrel_oop_def');
+  if (isM4) {
+    var flopCards = (scenario.board && scenario.board.flopCards) ? scenario.board.flopCards : [];
+    var turnCard = (scenario.board && scenario.board.turnCard) ? scenario.board.turnCard : '';
+    var flopText = (flopCards.length === 3) ? _pfBoardText(flopCards) : '';
+    var turnText = turnCard ? _pfBoardText([turnCard]) : '';
+    var boardLine = (flopText && turnText) ? (flopText + ', turn ' + turnText) : boardText;
+    if (qtype === 'action_choice') {
+      if (heroText) {
+        return 'BB has ' + heroText + ' on ' + boardLine + ' (BTN open 2.5x, BB call, 100BB SRP). After flop check-call, BTN now barrels turn. What is BB\'s best action OOP?';
+      }
+      return 'On ' + boardLine + ', BTN barrels turn. What is BB\'s best action OOP?';
+    }
+    if (qtype === 'reason_choice') {
+      // Prefer the data prompt if substantial — M4 reason_choice prompts
+      // already carry the committed-action context ("BB check-raises small with...").
+      if (question.prompt && question.prompt.trim().length > 30) {
+        return _pfFixMojibake(question.prompt);
+      }
+      var recAction4 = scenario && scenario.recommendedAction ? scenario.recommendedAction : 'this action';
+      var actText4 = (_PF_M3_ACTION_LABELS && _PF_M3_ACTION_LABELS[recAction4])
+                     ? _PF_M3_ACTION_LABELS[recAction4].toLowerCase()
+                     : recAction4.replace(/_/g, ' ');
+      if (heroText) {
+        return 'BB has ' + heroText + ' on ' + boardLine + ' and chooses to ' + actText4 + '. What is the primary reason?';
+      }
+      return 'On ' + boardLine + ', BB chooses to ' + actText4 + '. What is the primary reason?';
+    }
+    // Unknown M4 qtype — fall through to general fix-and-return.
+    return _pfFixMojibake(question.prompt) || ('On ' + boardLine + ', BB defends OOP on the turn.');
   }
   switch (qtype) {
     case 'range_advantage':
