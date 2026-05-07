@@ -11787,6 +11787,21 @@
       .tcc-action-label { font-size: 12.5px; }
       .tcc-action-hint { font-size: 10px; padding-left: 32px; }
     }
+    /* v4.3.1B: at very narrow viewports (iPhone SE 320 width), the 2-column
+       Training Command Center tile grid exceeds the panel width because the
+       tile min-content (icon + label + BETA badge) is wider than the
+       allocated 1fr track. This caused right-column tiles (Concept Library,
+       Postflop Progress, Module 4 — Facing Turn Barrel OOP) to clip ~36px
+       past the right viewport edge under body { overflow-x: hidden }, so
+       the M4 entry tile and its BETA badge were partially hidden on iPhone
+       SE 320 / similar narrow Android devices. Switching to single column
+       at <360 width eliminates the clipping while keeping all tile content
+       visible. The 380 block above already shrinks tile font/min-height
+       for the 320-379 band; this rule only changes column count for <360. */
+    @media (max-width: 359px) {
+      .tcc-action-grid { grid-template-columns: 1fr; }
+      .tcc-action.is-primary { grid-column: 1; }
+    }
 
     /* M2 mastery section — orange accent vs M1 (neutral) */
     .pf-mastery-section.pf-mastery-section-m2 {
@@ -33247,7 +33262,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.3.1A',
+    appVersion: '4.3.1B',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
