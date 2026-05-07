@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-05-07 (v4.3.0C staged — Module 4 Data Expansion 24 → 53).
+> Last updated: 2026-05-07 (v4.3.0C committed + pushed at `19569e6` — Module 4 Data Expansion 24 → 53).
 
 ---
 
@@ -15,7 +15,7 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 
 ## Current Status
 
-🟡 **v4.3.0C staged — Module 4 Data Expansion (24 → 53).** Authored 29 new expansion scenarios across 10 new board families. **Production count 409 → 438** (M4 24 → 53). **All 5 actions now represented:** fold 12 / call 21 / check_raise_small 15 / **check_raise_big 2** / **mixed 3**. **All 12 actionReasons covered** (only blocker_check_raise_turn thin). **6 turn categories all expanded.** Two-phase migration (review_pending → approved) via canonical tool with no Invoke-Expression / no unsafe Remove-Item. 29/29 strategic review PROMOTE. 4 critical-flag recalibrations applied. R71 bidirectional FD: 0 fires on full 53-scenario corpus (stays WARN). Concepts/taxonomy/auditor unchanged from v4.3.0B. **Audits:** production 438/0/0 PASS; M2/M3/M4 seed unchanged. **Cache bump:** appVersion 4.3.0C, SW VERSION v4.3.0C. **Runtime-lock preserved:** M4 NOT in TRAINING_MODES, no postflop:m4 route. **Forbidden files byte-identical** (original v4.3.0 builder, original M4 seed JSON, M2/M3/M4 seed auditors all untouched). New tools `tools/build-m4-expansion-v4.3.0C.ps1` + `tools/audit-postflop-module4-expansion-v4.3.0C.ps1` + `tools/migrate-module4-v4.3.0C.ps1`. New doc `docs/specs/postflop-v4.3.0C-module4-data-expansion.md`. New seed JSON `docs/specs/postflop-v4.3.0C-module4-expansion-seeds.json`. New snapshot `GPT AUDIT/v4.3.0C/` with SHA256 manifest. Awaiting commit + push.
+🟢 **v4.3.0C committed + pushed** (`19569e6`). Module 4 Data Expansion (24 → 53). Authored 29 new expansion scenarios across 10 new board families. **Production count 409 → 438** (M4 24 → 53). **All 5 actions now represented:** fold 12 / call 21 / check_raise_small 15 / **check_raise_big 2** / **mixed 3**. **All 12 actionReasons covered** (only blocker_check_raise_turn thin). **6 turn categories all expanded.** Two-phase migration (review_pending → approved) via canonical tool with no Invoke-Expression / no unsafe Remove-Item. 29/29 strategic review PROMOTE. 4 critical-flag recalibrations applied. R71 bidirectional FD: 0 fires on full 53-scenario corpus (stays WARN). Concepts/taxonomy/auditor unchanged from v4.3.0B. **Audits:** production 438/0/0 PASS; M2/M3/M4 seed unchanged. **Cache bump:** appVersion 4.3.0C, SW VERSION v4.3.0C. **Runtime-lock preserved:** M4 NOT in TRAINING_MODES, no postflop:m4 route. **Forbidden files byte-identical** (original v4.3.0 builder, original M4 seed JSON, M2/M3/M4 seed auditors all untouched). New tools `tools/build-m4-expansion-v4.3.0C.ps1` + `tools/audit-postflop-module4-expansion-v4.3.0C.ps1` + `tools/migrate-module4-v4.3.0C.ps1`. New doc `docs/specs/postflop-v4.3.0C-module4-data-expansion.md`. New seed JSON `docs/specs/postflop-v4.3.0C-module4-expansion-seeds.json`. New snapshot `GPT AUDIT/v4.3.0C/` with SHA256 manifest exported from final HEAD.
 
 🟢 **v4.3.0B-doc committed + pushed** (`c65ce16`). State-doc reconciliation flipping v4.3.0B from staged to committed (`95fe02f`).
 
