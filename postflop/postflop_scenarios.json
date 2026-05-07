@@ -43736,12 +43736,12 @@
                                            "6h"
                                        ],
                           "handClass":  "mid_pair",
-                          "heroHandRole":  "marginal_made_hand",
-                          "drawCategory":  "gutshot",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
                           "showdownValue":  "decent",
-                          "blockerNote":  null,
+                          "blockerNote":  "No straight draw: hero+board ranks 2,4,6,7,A leave a 2-card gap (3 and 5 both needed) for 3-4-5-6-7. One-card gutshot does NOT exist.",
                           "recommendedAction":  "call",
-                          "actionReason":  "equity_realization_turn_call",
+                          "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
                                            "prompt":  "Flop Ac 7d 2s; turn 4h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 7s 6h?",
@@ -43768,18 +43768,18 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Middle pair 7 + gutshot to 5 on brick turn -- call to realize multi-source equity.",
-                                              "turnLogic":  "4h adds gutshot to hero (need 5 for 3-4-5-6-7 ... wait need 3+5; actually 4-5-6-7 + need 3 or 8 = OESD with hero 6 only? Hero has 7 + 6: 4,6,7 + need 3+5 for 3-4-5-6-7, or 5+8 for 4-5-6-7-8 -- 5 is the unique-help card making 4-5-6-7 with hero 6 contributing). 5 makes 3-4-5-6-7 needs board 3 too. Simplifies to gutshot to 5 alone. Plus middle pair 7.",
-                                              "rangeContext":  "BB flop call with 7-6o on A-7-2 was natural (mid pair + backdoor). Turn 4 adds the gutshot to 5 plus pair-of-7 still beats villain bluffs.",
-                                              "handLogic":  "7s6h has middle pair (7) + gutshot to 5 = 4 outs straight + 5 outs trips/two-pair = ~9 effective outs. Vs barrel that contains air, multi-source equity earns the call.",
-                                              "sizingLogic":  "Calling realizes equity cheaply. Raising too thin OOP without made strength.",
-                                              "commonMistake":  "Folding mid-pair + gutshot vs small barrel under-defends BB range.",
-                                              "takeaway":  "Mid pair + gutshot on brick turn = call (multi-source equity)."
+                                              "short":  "Middle pair 7 with no draw on brick turn -- call as bluff-catcher vs polarized barrel.",
+                                              "turnLogic":  "4h is a brick. Hero+board ranks are 2,4,6,7,A: no one-card straight is available (3-4-5-6-7 needs both 3 and 5; 4-5-6-7-8 needs both 5 and 8). Hero has middle pair 7 with no draw equity, only showdown value vs villain bluffs.",
+                                              "rangeContext":  "BB flop call with 7-6o on A-7-2 was natural (middle pair). Turn 4 brick keeps hero at middle pair with no draw added.",
+                                              "handLogic":  "7s6h has middle pair (7) with 6 kicker. Beats villain air and worse pairs (66, 55, 33, 22 if any). Loses to Ax, 77, sets, two-pair. Calling captures villain bluff frequency.",
+                                              "sizingLogic":  "Calling realizes pair showdown value vs polarized barrel. Raising thin pair OOP folds out bluffs and isolates against value.",
+                                              "commonMistake":  "Folding middle pair vs small barrel under-defends the BB calling range and pays off villain over-bluffing.",
+                                              "takeaway":  "Middle pair no draw on brick turn = call (bluff-catch)."
                                           },
                           "conceptTags":  [
-                                              "turn_pot_odds",
                                               "turn_bluff_catcher",
-                                              "second_barrel_defense"
+                                              "second_barrel_defense",
+                                              "turn_range_disadvantage"
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
@@ -45985,7 +45985,7 @@
                           "heroHandRole":  "nutted_value",
                           "drawCategory":  "none",
                           "showdownValue":  "nutted",
-                          "blockerNote":  "Hero made T-high straight 6-7-8-9-T (second-nut behind J9).",
+                          "blockerNote":  "Hero made T-high straight 6-7-8-9-T. The only higher straight on this turn is J-high (7-8-9-T-J), which requires J9 in villain (rare combo given hero blocks one 9).",
                           "recommendedAction":  "check_raise_small",
                           "actionReason":  "value_check_raise_turn",
                           "question":  {
@@ -46015,12 +46015,12 @@
                                      },
                           "explanation":  {
                                               "short":  "6-7-8-9-T straight on draw-intensifier turn -- check-raise small for value.",
-                                              "turnLogic":  "7c adds new draw lines and completes hero straight: hero+board ranks 4,6,7,8,9,T = 6-7-8-9-T = T-high straight. Loses only to JT and J9 (J9 makes 7-8-9-T-J wait needs J actually impossible without J on board). Realistically only QJ/J9 specific combos higher.",
+                                              "turnLogic":  "7c completes hero straight: hero+board ranks 4,6,7,8,9,T = 6-7-8-9-T = T-high straight. The only higher straight is J-high (7-8-9-T-J) which requires villain to hold J9 (hero blocks one of the four 9s, leaving 9 J9 combos). Sets (TT/88/44), two-pair, and Tx are all behind hero.",
                                               "rangeContext":  "BB flop call with 96-suited on T-8-4 was thin (overcards + BDFD); turn 7 lands the straight.",
-                                              "handLogic":  "9d6d makes 6-7-8-9-T = T-high straight. The only beats are J-T-9-8-7 which needs J in villain hand (rare combo on the flop call).",
-                                              "sizingLogic":  "Small check-raise charges Tx, overpairs, sets, weaker draws. Big raise on a dynamic turn also justified vs sets that may continue.",
-                                              "commonMistake":  "Slowplaying nut-ish straight on dynamic turn surrenders value as runout brings new threats.",
-                                              "takeaway":  "Made straight on draw-intensifier turn = check-raise for value."
+                                              "handLogic":  "9d6d makes 6-7-8-9-T = T-high straight. Loses only to J9 (J-high straight). Beats Tx/overpairs/sets/two-pair/draws.",
+                                              "sizingLogic":  "Small check-raise charges Tx, overpairs, sets, and weaker draws. Big raise on a dynamic turn also justified vs sets that may continue.",
+                                              "commonMistake":  "Slowplaying second-nut straight on dynamic turn surrenders value as flush/higher-straight rivers kill action.",
+                                              "takeaway":  "Made T-high straight on draw-intensifier turn = check-raise for value."
                                           },
                           "conceptTags":  [
                                               "turn_check_raise_value",

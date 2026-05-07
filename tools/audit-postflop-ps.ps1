@@ -1012,6 +1012,39 @@ foreach($s in $data.scenarios){
         }
       }
     }
+
+    # R72 -- TEXT-INTEGRITY guard (NEW for v4.3.0C1)
+    # Hard error if explanation prose or blockerNote contains unresolved
+    # self-correction artifacts that signal authoring drafts shipped without
+    # revision (e.g. "wait need 3+5", "wait needs J actually impossible").
+    # Patterns are case-insensitive Contains() against lowercased text.
+    $r72Patterns = @(
+      ' wait ', ' wait,', ' wait.', ' wait;', ' wait:', ' wait?', ' wait!',
+      'wait needs', 'wait need ', 'actually impossible', '... wait', '...wait'
+    )
+    if ($s.explanation) {
+      foreach ($k72 in 'short','turnLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway') {
+        $v72 = $s.explanation.$k72
+        if ($null -ne $v72 -and ($v72 -is [string]) -and $v72.Length -gt 0) {
+          $v72Lower = $v72.ToLowerInvariant()
+          foreach ($pat72 in $r72Patterns) {
+            if ($v72Lower.Contains($pat72.ToLowerInvariant())) {
+              Add-Issue $local 'R72' 'error' $sid ("M4 explanation." + $k72 + " contains self-correction artifact '" + $pat72.Trim() + "' -- unresolved authoring draft prose") | Out-Null
+              break
+            }
+          }
+        }
+      }
+    }
+    if ($null -ne $s.blockerNote -and ($s.blockerNote -is [string]) -and $s.blockerNote.Length -gt 0) {
+      $bn72Lower = $s.blockerNote.ToLowerInvariant()
+      foreach ($pat72 in $r72Patterns) {
+        if ($bn72Lower.Contains($pat72.ToLowerInvariant())) {
+          Add-Issue $local 'R72' 'error' $sid ("M4 blockerNote contains self-correction artifact '" + $pat72.Trim() + "' -- unresolved authoring draft prose") | Out-Null
+          break
+        }
+      }
+    }
   }
 
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.

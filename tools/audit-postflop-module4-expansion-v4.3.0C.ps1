@@ -11,6 +11,8 @@
 #   - no duplicate IDs within expansion
 #   - reviewStatus = v4.3.0C_expansion_candidate
 #   - bidirectional nut_flush_draw WARN (R71 from production auditor)
+#   - text-integrity HARD on self-correction artifacts in explanation prose
+#     (R72: " wait ", "wait needs", "actually impossible", "... wait", etc.)
 #
 # Safety: ASCII-only, no Invoke-Expression, no Remove-Item.
 # ============================================================
@@ -116,10 +118,54 @@ $prodScenarios = @($prod.scenarios)
 $prodIds = $prodScenarios | ForEach-Object { $_.id }
 $expIds  = $expScenarios | ForEach-Object { $_.id }
 
-# ---------- Cross-corpus duplicate ID check ----------
+# ---------- Cross-corpus content sync / drift check (CR.R03) ----------
+# Pre-migration: an expansion ID in production would create a duplicate -> HARD.
+# Post-migration: an expansion ID in production with MATCHING content is the
+# successfully-synced steady state -> OK. Only an expansion ID with DIFFERENT
+# content from its production twin indicates source-of-truth drift -> HARD.
+# Field set compared: recommendedAction, actionReason, drawCategory, handClass,
+# heroHandRole, showdownValue, explanation.{short, turnLogic, rangeContext,
+# handLogic, sizingLogic, commonMistake, takeaway}, blockerNote, conceptTags.
+$prodById = @{}
+foreach ($ps in $prodScenarios) { if ($ps.id) { $prodById[$ps.id] = $ps } }
+
+function Compare-ScalarField($a, $b) {
+  if ($null -eq $a -and $null -eq $b) { return $true }
+  if ($null -eq $a -or  $null -eq $b) { return $false }
+  return ([string]$a -ceq [string]$b)
+}
+function Compare-ArrayField($a, $b) {
+  $aa = @($a); $bb = @($b)
+  if ($aa.Count -ne $bb.Count) { return $false }
+  for ($i = 0; $i -lt $aa.Count; $i++) {
+    if (-not (Compare-ScalarField $aa[$i] $bb[$i])) { return $false }
+  }
+  return $true
+}
+
 foreach ($eid in $expIds) {
-  if ($prodIds -contains $eid) {
-    Add-Hard 'CR.R03' $eid "expansion ID already present in production postflop_scenarios.json (would create duplicate on migration)"
+  if (-not ($prodIds -contains $eid)) { continue }
+  $ps = $prodById[$eid]
+  $es = $expScenarios | Where-Object { $_.id -eq $eid } | Select-Object -First 1
+  if ($null -eq $ps -or $null -eq $es) { continue }
+  $diffs = New-Object System.Collections.Generic.List[string]
+  if (-not (Compare-ScalarField $ps.recommendedAction $es.recommendedAction)) { $diffs.Add('recommendedAction') | Out-Null }
+  if (-not (Compare-ScalarField $ps.actionReason      $es.actionReason))      { $diffs.Add('actionReason') | Out-Null }
+  if (-not (Compare-ScalarField $ps.drawCategory      $es.drawCategory))      { $diffs.Add('drawCategory') | Out-Null }
+  if (-not (Compare-ScalarField $ps.handClass         $es.handClass))         { $diffs.Add('handClass') | Out-Null }
+  if (-not (Compare-ScalarField $ps.heroHandRole      $es.heroHandRole))      { $diffs.Add('heroHandRole') | Out-Null }
+  if (-not (Compare-ScalarField $ps.showdownValue     $es.showdownValue))     { $diffs.Add('showdownValue') | Out-Null }
+  if (-not (Compare-ScalarField $ps.blockerNote       $es.blockerNote))       { $diffs.Add('blockerNote') | Out-Null }
+  if ($ps.explanation -and $es.explanation) {
+    foreach ($k in 'short','turnLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway') {
+      if (-not (Compare-ScalarField $ps.explanation.$k $es.explanation.$k)) { $diffs.Add("explanation.$k") | Out-Null }
+    }
+  } elseif ($null -ne $ps.explanation -or $null -ne $es.explanation) {
+    $diffs.Add('explanation') | Out-Null
+  }
+  if (-not (Compare-ArrayField $ps.conceptTags $es.conceptTags)) { $diffs.Add('conceptTags') | Out-Null }
+  if ($diffs.Count -gt 0) {
+    Add-Hard 'CR.R03' $eid ("expansion source / production drift on fields: " + ($diffs -join ','))
   }
 }
 
@@ -347,6 +393,44 @@ foreach ($s in $expScenarios) {
       $totalSuit = $heroSuitCount + $boardSuitCount
       if ($totalSuit -eq 4) {
         Add-Warn 'M4.R71' $sid "hero holds A$sc with 4 of suit but drawCategory='$($s.drawCategory)' (expected nut_flush_draw)"
+        break
+      }
+    }
+  }
+
+  # R72 TEXT-INTEGRITY: detect unresolved self-correction artifacts in explanation prose.
+  # Match self-correction patterns that signal authoring drafts shipped without revision.
+  # Pattern list (case-insensitive on whole-word ' wait ' and exact phrases):
+  #   - ' wait '         (whitespace-bounded "wait")
+  #   - ' wait,' / ' wait.' / ' wait;' / ' wait:' / ' wait?' / ' wait!'  (sentence-mid "wait")
+  #   - 'wait needs'     ("wait needs J", "wait needs both")
+  #   - 'wait need '     ("wait need 3+5")
+  #   - 'actually impossible'
+  #   - '... wait' / '...wait'
+  $r72Patterns = @(
+    ' wait ', ' wait,', ' wait.', ' wait;', ' wait:', ' wait?', ' wait!',
+    'wait needs', 'wait need ', 'actually impossible', '... wait', '...wait'
+  )
+  if ($s.explanation) {
+    foreach ($k in 'short','turnLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway') {
+      $v = $s.explanation.$k
+      if ($null -ne $v -and ($v -is [string]) -and $v.Length -gt 0) {
+        $vLower = $v.ToLowerInvariant()
+        foreach ($pat in $r72Patterns) {
+          if ($vLower.Contains($pat.ToLowerInvariant())) {
+            Add-Hard 'M4.R72' $sid ("explanation.$k contains self-correction artifact '" + $pat.Trim() + "' -- unresolved authoring draft prose")
+            break
+          }
+        }
+      }
+    }
+    # Also scan blockerNote (top-level field, not inside explanation)
+  }
+  if ($null -ne $s.blockerNote -and ($s.blockerNote -is [string]) -and $s.blockerNote.Length -gt 0) {
+    $bnLower = $s.blockerNote.ToLowerInvariant()
+    foreach ($pat in $r72Patterns) {
+      if ($bnLower.Contains($pat.ToLowerInvariant())) {
+        Add-Hard 'M4.R72' $sid ("blockerNote contains self-correction artifact '" + $pat.Trim() + "' -- unresolved authoring draft prose")
         break
       }
     }
