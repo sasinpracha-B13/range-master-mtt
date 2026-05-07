@@ -61,10 +61,10 @@
                                                             "semi_connected"
                                                         ],
                                         "highCardClass":  "T_high",
-                                        "turnCategory":  "draw_intensifier",
-                                        "boardChange":  "draw_added",
-                                        "equityShift":  "improves_bb_draws",
-                                        "drawCompletion":  "oesd_added",
+                                        "turnCategory":  "straight_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "polarizes_btn",
+                                        "drawCompletion":  "straight_completed",
                                         "pairStatusChange":  "no_change"
                                     },
                           "heroHand":  [

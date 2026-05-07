@@ -500,6 +500,55 @@ foreach ($s in $contScenarios) {
   }
 
   # ============================================================
+  # M4.R75 (NEW v4.3.2B) -- T-8-4 / 7 straight-complete metadata guard
+  # On the specific physical board flop ranks {T, 8, 4} (any suits) and
+  # turn rank 7, three two-card hands make completed straights:
+  #   J9 = 7-8-9-T-J     (made straight)
+  #   96 = 6-7-8-9-T     (made straight)
+  #   65 = 4-5-6-7-8     (made straight)
+  # Therefore the turn 7 is a STRAIGHT-COMPLETE event for this exact board.
+  # Any scenario classifying turnCategory=draw_intensifier on this board
+  # AND framing hero strategically as bluff-catcher is internally
+  # inconsistent (bluff-catch only makes sense relative to made-straight
+  # density, which the metadata then denies).
+  # HARD level for the scoped pattern: handClass in
+  # {overpair, underpair, top_pair_top_kicker, top_pair_good_kicker,
+  #    top_pair_weak_kicker, mid_pair, bottom_pair, second_pair}
+  # AND heroHandRole = 'bluff_catcher'
+  # AND turnCategory = 'draw_intensifier'.
+  # Other strategic verdicts (combo_draw NFD semi-bluff; nutted_value set
+  # value-raise) on the same physical board are allowed to keep
+  # draw_intensifier classification because their strategic verdicts
+  # genuinely emphasize the draw-axis -- the made-straight density is
+  # priced into their EV calculation but is not the framing axis.
+  # v4.3.2A R1 (QcQd) would have fired this rule pre-fix.
+  # v4.3.2B fix sets R1 board metadata to straight_complete /
+  # polarizing / polarizes_btn / straight_completed, clearing this rule.
+  # ============================================================
+  if ($s.board -and $s.board.flopCards -and $s.board.turnCard) {
+    $fc75 = @($s.board.flopCards) | ForEach-Object { if ($_ -and $_.Length -ge 1) { $_.Substring(0,1) } }
+    $tr75 = $null
+    if ($s.board.turnCard.Length -ge 1) { $tr75 = $s.board.turnCard.Substring(0,1) }
+    $hasT = ($fc75 -contains 'T')
+    $has8 = ($fc75 -contains '8')
+    $has4 = ($fc75 -contains '4')
+    $turnIs7 = ($tr75 -eq '7')
+    if ($hasT -and $has8 -and $has4 -and $turnIs7) {
+      $bluffCatchHandClasses = @('overpair','underpair','top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker','mid_pair','bottom_pair','second_pair')
+      $isBluffCatchPattern = ($bluffCatchHandClasses -contains $s.handClass) -and ($s.heroHandRole -eq 'bluff_catcher')
+      if ($isBluffCatchPattern -and $s.board.turnCategory -eq 'draw_intensifier') {
+        Add-Hard 'M4.R75' $sid "T-8-4 flop + 7 turn lands 65/96/J9 made straights; bluff-catcher hand (handClass=$($s.handClass), role=bluff_catcher) cannot also have turnCategory=draw_intensifier -- strategic verdict and metadata are inconsistent"
+      }
+      if ($isBluffCatchPattern -and $s.board.drawCompletion -eq 'oesd_added') {
+        Add-Hard 'M4.R75' $sid "T-8-4 flop + 7 turn completes straights (not adds OESDs); bluff-catcher hand cannot have drawCompletion=oesd_added"
+      }
+      if ($isBluffCatchPattern -and $s.board.boardChange -eq 'draw_added') {
+        Add-Hard 'M4.R75' $sid "T-8-4 flop + 7 turn completes straights (not just adds draws); bluff-catcher hand cannot have boardChange=draw_added"
+      }
+    }
+  }
+
+  # ============================================================
   # M4.R74 (NEW v4.3.2A) -- prose scan: "made flushes" framed as a value
   # target when hero handClass is not flush / nut_flush / full_house.
   # Catches the v4.3.2A bug R2 prose pattern "small check-raise charges ...

@@ -176,10 +176,30 @@ $f7Flop = @('Qs','7d','3c'); $f7Turn = '3h'
 $f7 = New-Board $f7Flop $f7Turn 'Q_high' 'Q_high' 'rainbow' 'rainbow' @('dry','paired') 'board_pair' 'counterfeit' 'counterfeits_bb_pairs' 'none' 'flop_card_paired'
 $f7Str = BoardStr $f7Flop
 
-# Family 8: Draw-intensifier (Ts 8s 4d, 7c)  -- existing
+# Family 8: Draw-intensifier (Ts 8s 4d, 7c)  -- existing label kept for
+# scenarios whose strategic verdict treats the turn primarily as
+# draw-intensifying (NFD semi-bluff A5; top-set value-raise A7). The
+# 7c turn IS technically straight-completing too (lands J9/96/65 made
+# straights -- see $f8R1 below), but A5 and A7 emphasize the draw axis.
 $f8Flop = @('Ts','8s','4d'); $f8Turn = '7c'
 $f8 = New-Board $f8Flop $f8Turn 'T_high' 'T_high' 'two_tone' 'two_tone' @('wet','semi_connected') 'draw_intensifier' 'draw_added' 'improves_bb_draws' 'oesd_added' 'no_change'
 $f8Str = BoardStr $f8Flop
+
+# Family 8 (R1 variant, v4.3.2B metadata hotfix): Same physical board
+# Ts 8s 4d / 7c, but classified by its STRAIGHT-COMPLETING aspect
+# (J9 = 7-8-9-T-J made; 96 = 6-7-8-9-T made; 65 = 4-5-6-7-8 made).
+# Used by R1 (QcQd overpair as bluff-catch on this polar straight-
+# complete turn). Scenarios whose strategic verdict treats the turn
+# as bluff-catch territory should use this metadata variant instead
+# of the draw-intensifier $f8 variant.
+# Taxonomy validation:
+#   turnCategory   : straight_complete (in approved enum)
+#   boardChange    : polarizing        (in approved enum;
+#                                       'draw_completed' not approved)
+#   equityShift    : polarizes_btn     (in approved enum;
+#                                       'polarizes_range' not approved)
+#   drawCompletion : straight_completed (in approved enum)
+$f8R1 = New-Board $f8Flop $f8Turn 'T_high' 'T_high' 'two_tone' 'two_tone' @('wet','semi_connected') 'straight_complete' 'polarizing' 'polarizes_btn' 'straight_completed' 'no_change'
 
 # Family 9: Multi-FD turn (Ah 9d 4d, 7h)  -- existing
 $f9Flop = @('Ah','9d','4d'); $f9Turn = '7h'
@@ -229,19 +249,22 @@ $scenarios = @()
 # Each tests strategic diagnosis, not label memorization.
 # ============================================================
 
-# R1 -- F8 (Ts 8s 4d, 7c): QcQd overpair, STRAIGHT-COMPLETE turn (not draw-intensifier)
-# v4.3.2A correction: 7c on T-8-4 actually COMPLETES multiple straights via villain
+# R1 -- F8R1 (Ts 8s 4d, 7c, STRAIGHT-COMPLETE variant): QcQd overpair as bluff-catch
+# v4.3.2A: 7c on T-8-4 actually COMPLETES multiple straights via villain
 #   one-pair / two-card combos:
 #     65 makes 4-5-6-7-8;  96 makes 6-7-8-9-T;  J9 makes 7-8-9-T-J.
 #   98 has pair-of-8 + OESD (4-card 7-8-9-T needing 6 or J).
 #   T9 has top-pair + OESD.
-# QQ on this board is now BEHIND every made straight (65/96/J9) and every set
+# v4.3.2B: board metadata corrected from draw_intensifier (stale) to
+#   straight_complete / polarizing / polarizes_btn / straight_completed
+#   via the new $f8R1 variant (see board declaration above).
+# QQ on this board is BEHIND every made straight (65/96/J9) and every set
 # (TT/88/44). QQ is overpair-to-T but in BLUFF-CATCH territory, NOT protection-raise:
 # raising folds out air and isolates vs straights that crush us.
 # Strategic verdict: CALL with bluff_catch_turn.
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_reason_QcQd_v432' `
-  -board $f8 -heroHand @('Qc','Qd') `
+  -board $f8R1 -heroHand @('Qc','Qd') `
   -handClass 'overpair' -heroHandRole 'bluff_catcher' -drawCategory 'none' -showdownValue 'high' `
   -blockerNote 'Overpair QQ to T-high board on a straight-completing turn; no relevant straight-blocker (Qc Qd does not block 65/96/J9 made-straight combos).' `
   -recommendedAction 'call' -actionReason 'bluff_catch_turn' `
