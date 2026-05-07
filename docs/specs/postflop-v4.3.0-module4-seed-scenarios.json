@@ -529,7 +529,7 @@
                           "conceptTags":  [
                                               "turn_check_raise_value",
                                               "turn_equity_shift",
-                                              "turn_check_raise_value"
+                                              "turn_board_change"
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "difficultyHint":  3,
@@ -701,7 +701,7 @@
                                            "9h",
                                            "7h"
                                        ],
-                          "handClass":  "top_pair_weak_kicker",
+                          "handClass":  "mid_pair",
                           "heroHandRole":  "dominated_marginal",
                           "drawCategory":  "gutshot",
                           "showdownValue":  "decent",
@@ -734,10 +734,10 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Top pair 9 weak kicker on K-overcard turn -- fold; range advantage shifted hard.",
-                                              "turnLogic":  "Kc overcard means BTN now has every K-x in barrel range, including KQ/KJ/AK; hero 9-pair drops below the threshold.",
-                                              "rangeContext":  "BB flop call with mid pair + gutshot was fine; turn K shifts range and kills gutshot equity (need T or 5 for straight, K does not help).",
-                                              "handLogic":  "9h7h has top pair 9 with 7 kicker + gutshot. K barrel turns this into clear underdog vs barrel range.",
+                                              "short":  "Mid pair 9 weak kicker on K-overcard turn -- fold; range advantage shifted hard.",
+                                              "turnLogic":  "Kc overcard means BTN now has every K-x in barrel range, including KQ/KJ/AK; hero 9-pair (now middle pair below the K) drops below the bluff-catch threshold.",
+                                              "rangeContext":  "BB flop call with top-pair-9 + gutshot was fine on the flop; turn K shifts range hard and demotes 9-pair from top pair to middle pair.",
+                                              "handLogic":  "9h7h had top pair 9 on the flop, but after the K turn the 9 is middle pair. K barrel range turns this into a clear underdog vs Kx-anchored value.",
                                               "sizingLogic":  "Folding closes action; calling chases dominated outs into K-x heavy range.",
                                               "commonMistake":  "Stationing top-pair-weak-kicker on overcard turns is the prototypical M4 leak.",
                                               "takeaway":  "Top pair on overcard turn that brings villain range advantage = fold."
@@ -942,7 +942,7 @@
                                               "short":  "Made low flush on flush-completing turn -- call; raising bloats vs higher flushes.",
                                               "turnLogic":  "2s completes flush; BTN barrel range now contains AsX/QsX higher flushes + air with no spade.",
                                               "rangeContext":  "BB flopped low flush draw + small straight draw, called flop. Turn 2s makes flush; raising commits vs Ax-of-spades.",
-                                              "handLogic":  "6s5s has 6-high flush + small backdoor straight (3-4-5-6-7 still alive on river).",
+                                              "handLogic":  "6s5s has made 6-high flush; only 1 card on river remaining so no further straight redraws apply.",
                                               "sizingLogic":  "Calling captures villain air-bluffs without bloating vs nut flush. Small raise occasionally to charge worse flushes.",
                                               "commonMistake":  "Auto-raising any flush on monotone turns commits OOP into nut-flush range.",
                                               "takeaway":  "Made low flush on flush-complete turn = call (raise small as alt; never big)."
@@ -1009,7 +1009,7 @@
                                        ],
                           "handClass":  "top_pair_top_kicker",
                           "heroHandRole":  "bluff_catcher",
-                          "drawCategory":  "flush_draw",
+                          "drawCategory":  "nut_flush_draw",
                           "showdownValue":  "high",
                           "blockerNote":  "As is the nut-flush card; blocks every Ax-of-spades flush combo in BTN range.",
                           "recommendedAction":  "call",
@@ -1110,9 +1110,9 @@
                                        ],
                           "handClass":  "no_pair_no_draw",
                           "heroHandRole":  "blocker_bluff",
-                          "drawCategory":  "none",
+                          "drawCategory":  "nut_flush_draw",
                           "showdownValue":  "low",
-                          "blockerNote":  "As is the nut-spade blocker; hero removes every Ax-spade nut-flush combo from villain barrel range. No made hand and no draw -- pure blocker bluff.",
+                          "blockerNote":  "As is the nut-spade blocker AND gives hero the nut flush draw on river spades; hero removes every Ax-spade nut-flush combo from villain barrel range while retaining nut-flush redraw equity.",
                           "recommendedAction":  "check_raise_small",
                           "actionReason":  "blocker_check_raise_turn",
                           "question":  {
@@ -1156,13 +1156,13 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Nut spade blocker on flush-complete turn -- blocker check-raise (advanced; solver mixes).",
-                                              "turnLogic":  "2s completes flush; As is the nut spade blocker, removing every villain Ax-spade nut-flush combo and turning hero into a leveraged blocker bluff candidate.",
-                                              "rangeContext":  "BB flop call with AsJd was natural (broadway high cards, A-blocker presence). Turn 2s makes raising a pure blocker bluff line vs villain barrel range.",
-                                              "handLogic":  "AsJd has no made hand and no draw; As alone removes nut-spade combos from villain range. Pure blocker bluff.",
+                                              "short":  "Nut spade blocker + nut FD redraw on flush-complete turn -- blocker check-raise (advanced; solver mixes).",
+                                              "turnLogic":  "2s completes flush; As is the nut spade blocker (removes Ax-spade nut-flush combos) AND gives hero a nut-flush redraw on river spades. The raise mechanism is primarily blocker pressure, with nut-FD redraw as a secondary backup.",
+                                              "rangeContext":  "BB flop call with AsJd was natural (broadway high cards, A-blocker presence). Turn 2s makes the line a leveraged blocker check-raise with nut-flush redraw.",
+                                              "handLogic":  "AsJd has no current made hand or pair, but As provides (a) the nut spade blocker against villain Ax-spade combos, and (b) a nut flush redraw if river is a spade.",
                                               "sizingLogic":  "Small check-raise size leverages the nut blocker; large raise risks too much when called by lower flushes.",
-                                              "commonMistake":  "Identifying as semi-bluff (no draw) or value (no made hand) misses that the raise mechanism is purely the As blocker.",
-                                              "takeaway":  "Nut spade blocker on flush-complete turn = blocker check-raise (advanced; mix-frequency line)."
+                                              "commonMistake":  "Identifying as semi-bluff misses that the primary raise mechanism is the nut-spade blocker (the FD redraw is secondary backup, not the trigger). Identifying as value misses that hero has no made hand.",
+                                              "takeaway":  "Nut spade blocker + nut FD on flush-complete turn = blocker check-raise (advanced; mix-frequency line)."
                                           },
                           "conceptTags":  [
                                               "turn_check_raise_bluff",
@@ -1173,7 +1173,7 @@
                           "difficultyHint":  5,
                           "auditStatus":  "planning_only",
                           "reviewStatus":  "v4.3.0_seed_candidate",
-                          "uniquenessNote":  "Reason_choice testing blocker_check_raise_turn vs other raise/fold reasons. Tests that pure nut-spade blocker (no draw, no pair) drives raise reason = blocker, not semi-bluff/value/protection. Distinct from 3.2 because hero has zero made-hand component, making blocker the only raise mechanism."
+                          "uniquenessNote":  "Reason_choice testing blocker_check_raise_turn vs semi_bluff_check_raise_turn. Tests that the PRIMARY raise mechanism on flush-complete turn with As is blocker pressure -- the nut FD redraw is secondary backup, not the trigger. Distinct from 3.2 because hero is bluff-catching with TPTK there; here hero has no made hand and the raise is leveraged purely on the As blocker plus nut-FD redraw."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_Tc9c_v430",
@@ -1261,8 +1261,8 @@
                           "explanation":  {
                                               "short":  "No spade no draw on flush-complete turn -- fold; zero flush equity and dominated overcards.",
                                               "turnLogic":  "2s completes flush; without a spade, hero has no flush threat and faces a polarized barrel range (flushes + air-with-no-spade).",
-                                              "rangeContext":  "BB flop call with T9 on K-high two-tone was already thin (gutshot to J for QJ-x straight). Turn 2s kills the gutshot.",
-                                              "handLogic":  "Tc9c has no spade, no pair, no current draw. The straight gutshot (need J for K-Q-J-T-9 wait there is no Q on board, so no straight available). Pure giveup.",
+                                              "rangeContext":  "BB flop call with T9 on K-high two-tone was already thin (overcards + backdoor potential only). Turn 2s eliminates the runner-runner equity and adds a flush hero cannot make.",
+                                              "handLogic":  "Tc9c has no spade, no pair, no current draw. Any straight would require Q+J on the runout (5-card 9-T-J-Q-K needs both Q and J), but only one card remains, so no straight is achievable. Pure give-up.",
                                               "sizingLogic":  "Folding closes action; calling on flush turn with zero flush equity is uniquely worst.",
                                               "commonMistake":  "Continuing turn with no spade on flush-completing turns is the prototypical leak.",
                                               "takeaway":  "No spade + no draw on flush turn = fold."
@@ -1430,7 +1430,7 @@
                                        ],
                           "handClass":  "top_pair_good_kicker",
                           "heroHandRole":  "bluff_catcher",
-                          "drawCategory":  "gutshot",
+                          "drawCategory":  "oesd",
                           "showdownValue":  "high",
                           "blockerNote":  "K blocks K-high straight combos KT/K9; hero card is part of multiple straight structures.",
                           "recommendedAction":  "call",
@@ -1461,13 +1461,13 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "TPGK + gutshot to K-Q-J-T-A on straight-complete turn -- call.",
-                                              "turnLogic":  "Jc completes some straights but BB Q-x is still strong. Hero KhQh has top pair (Q) + redraw to nut straight (need 9 for K-Q-J-T-9 wait 9-T-J-Q-K = open-ender now? Need 9 makes 9-T-J-Q-K, need A makes T-J-Q-K-A. Both straight outs!).",
-                                              "rangeContext":  "BB flop call with KQ on QT6 was natural (TPGK + backdoor). Turn J adds gutshot/OE redraw.",
-                                              "handLogic":  "KhQh has TPGK + redraw to nut straight (T-J-Q-K-A or 9-T-J-Q-K).",
-                                              "sizingLogic":  "Calling captures villain air-bluffs + leaves redraw alive. Small raise also acceptable.",
-                                              "commonMistake":  "Folding TPGK + redraw vs straight-complete turn over-folds vs villain barrel.",
-                                              "takeaway":  "TPGK + nut redraw on straight turn = call."
+                                              "short":  "TPGK + OESD redraw to Broadway on straight-complete turn -- call.",
+                                              "turnLogic":  "Jc completes some lower straights but BB Q-x with redraw remains strong. Hero KhQh now has top pair (Q) plus an open-ended straight redraw: hero+board form T-J-Q-K (4 consecutive ranks), so 9 completes 9-T-J-Q-K and A completes Broadway T-J-Q-K-A. ~8 outs to a higher straight, with A giving the nut.",
+                                              "rangeContext":  "BB flop call with KQ on QT6 was natural (TPGK + backdoor). Turn J adds an OESD redraw to a higher straight.",
+                                              "handLogic":  "KhQh has TPGK + OESD redraw to higher straight (9 makes 9-T-J-Q-K, A makes Broadway T-J-Q-K-A).",
+                                              "sizingLogic":  "Calling captures villain air-bluffs + leaves the OESD redraw alive. Small raise also acceptable.",
+                                              "commonMistake":  "Folding TPGK + OESD redraw vs straight-complete turn over-folds vs villain barrel.",
+                                              "takeaway":  "TPGK + OESD redraw to higher straight on straight-complete turn = call."
                                           },
                           "conceptTags":  [
                                               "turn_bluff_catcher",
@@ -1529,7 +1529,7 @@
                                            "Tc",
                                            "9d"
                                        ],
-                          "handClass":  "top_pair_weak_kicker",
+                          "handClass":  "mid_pair",
                           "heroHandRole":  "marginal_made_hand",
                           "drawCategory":  "oesd",
                           "showdownValue":  "decent",
@@ -2096,6 +2096,7 @@
                                                      "check_raise_big"
                                                  ],
                                          "critical":  [
+                                                          "call",
                                                           "check_raise_big"
                                                       ]
                                      },
@@ -2404,9 +2405,9 @@
                                      },
                           "explanation":  {
                                               "short":  "Nut FD + pair of 6 + Ace overcard on draw-intensifier turn -- call to realize multi-source equity.",
-                                              "turnLogic":  "6h pairs hero turn card; nut FD still alive (4 spades visible: Ts, 9s, As, 6s); plus gutshot to 7 (5-6-7-8-9).",
-                                              "rangeContext":  "BB flopped nut FD + Ace overcard; turn 6 adds pair + new straight draws.",
-                                              "handLogic":  "As6s has nut FD (1 more spade for nut flush) + pair of 6 + 3 overcard outs + nut blocker.",
+                                              "turnLogic":  "6h pairs hero turn card; nut FD still alive (4 spades visible: Ts, 9s, As, 6s -- 1 more spade on river makes nut flush). Hero now has pair of 6s plus the As overcard outs.",
+                                              "rangeContext":  "BB flopped nut FD + Ace overcard; turn 6 pairs hero (mid pair) and the board becomes more dynamic.",
+                                              "handLogic":  "As6s has nut FD (~9 spade outs to nut flush) + pair of 6 (~5 outs to two-pair/trips) + 3 Ace overcard outs + nut spade blocker. Multi-source equity, ~50%+ to barrel range.",
                                               "sizingLogic":  "Calling realizes ~50% equity cheaply. Raising too thin OOP given turn deepens pot more than flop.",
                                               "commonMistake":  "Folding combo equity OOP under-defends vs villain barrel.",
                                               "takeaway":  "Combo draw + pair on dynamic turn = call to realize equity."
@@ -2473,7 +2474,7 @@
                                        ],
                           "handClass":  "no_pair_no_draw",
                           "heroHandRole":  "give_up",
-                          "drawCategory":  "none",
+                          "drawCategory":  "gutshot",
                           "showdownValue":  "none",
                           "blockerNote":  null,
                           "recommendedAction":  "fold",
@@ -2518,10 +2519,10 @@
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "KQ no spade no pair no draw on draw-intensifier turn -- fold; range disadvantage with no equity.",
-                                              "turnLogic":  "6h adds new draws to villain range while BB KQ has no spade for FD and gutshot to J still alive but dominated.",
-                                              "rangeContext":  "BB flop call with KQ on T-9-5 two-tone was thin (gutshot to J). Turn 6 keeps gutshot but adds villain draws + reduces relative equity.",
-                                              "handLogic":  "KhQd has gutshot to J (need J for K-Q-J-T-9? need K-Q-J-T- + 9 yes works) but pair outs dominated.",
+                                              "short":  "KQ no spade with weak gutshot on draw-intensifier turn -- fold; gutshot equity is dominated and there is no FD.",
+                                              "turnLogic":  "6h adds new draws to villain range; BB KhQd has no spade FD and only a 4-out gutshot to J for 9-T-J-Q-K, which is dominated by villain Tx made hands and AK ranges.",
+                                              "rangeContext":  "BB flop call with KQ on T-9-5 two-tone was thin (gutshot to J + backdoor potential). Turn 6h preserves the gutshot but adds villain draws and reduces relative equity.",
+                                              "handLogic":  "KhQd has a 4-out gutshot to J (completes 9-T-J-Q-K) but no FD, no pair, no blocker. Pair outs (K or Q on river) are dominated by Kx/Qx in villain range.",
                                               "sizingLogic":  "Folding closes action cleanly; calling chases dominated outs.",
                                               "commonMistake":  "Identifying as bluff_catch_turn misses that no pair / no FD / no blocker has no bluff-catch claim.",
                                               "takeaway":  "KQ no equity no blocker on dynamic turn = range_disadvantage fold (not bluff-catch)."

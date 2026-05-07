@@ -263,7 +263,7 @@ $scenarios += New-Scenario `
     'Small raise charges Kx; big raise also viable on dynamic turns.' `
     'Slowplaying flopped set on overcard turn surrenders value vs Kx that pays off raise.' `
     'Top set on overcard turn = raise (protection + value); call also fine.') `
-  -conceptTags @('turn_check_raise_value','turn_equity_shift','turn_check_raise_value') `
+  -conceptTags @('turn_check_raise_value','turn_equity_shift','turn_board_change') `
   -difficulty 3 `
   -uniquenessNote 'Overcard turn protection-raise lesson with set. Tests that overcard turn shifts range but does not eliminate top-set value -- raise > slowplay because Kx now exists to charge.'
 
@@ -294,15 +294,15 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_9d8c6h_Kc_m4_action_9h7h_v430' `
   -board $b2 -heroHand @('9h','7h') `
-  -handClass 'top_pair_weak_kicker' -heroHandRole 'dominated_marginal' -drawCategory 'gutshot' -showdownValue 'decent' `
+  -handClass 'mid_pair' -heroHandRole 'dominated_marginal' -drawCategory 'gutshot' -showdownValue 'decent' `
   -blockerNote $null -recommendedAction 'fold' -actionReason 'board_change_fold' `
   -question (Q-Action '9h 7h' $b2Str 'Kc') `
   -answer (New-Answer 'fold' @('call') @('mixed','check_raise_small','check_raise_big') @('check_raise_big')) `
   -explanation (New-Explanation `
-    'Top pair 9 weak kicker on K-overcard turn -- fold; range advantage shifted hard.' `
-    'Kc overcard means BTN now has every K-x in barrel range, including KQ/KJ/AK; hero 9-pair drops below the threshold.' `
-    'BB flop call with mid pair + gutshot was fine; turn K shifts range and kills gutshot equity (need T or 5 for straight, K does not help).' `
-    '9h7h has top pair 9 with 7 kicker + gutshot. K barrel turns this into clear underdog vs barrel range.' `
+    'Mid pair 9 weak kicker on K-overcard turn -- fold; range advantage shifted hard.' `
+    'Kc overcard means BTN now has every K-x in barrel range, including KQ/KJ/AK; hero 9-pair (now middle pair below the K) drops below the bluff-catch threshold.' `
+    'BB flop call with top-pair-9 + gutshot was fine on the flop; turn K shifts range hard and demotes 9-pair from top pair to middle pair.' `
+    '9h7h had top pair 9 on the flop, but after the K turn the 9 is middle pair. K barrel range turns this into a clear underdog vs Kx-anchored value.' `
     'Folding closes action; calling chases dominated outs into K-x heavy range.' `
     'Stationing top-pair-weak-kicker on overcard turns is the prototypical M4 leak.' `
     'Top pair on overcard turn that brings villain range advantage = fold.') `
@@ -349,7 +349,7 @@ $scenarios += New-Scenario `
     'Made low flush on flush-completing turn -- call; raising bloats vs higher flushes.' `
     '2s completes flush; BTN barrel range now contains AsX/QsX higher flushes + air with no spade.' `
     'BB flopped low flush draw + small straight draw, called flop. Turn 2s makes flush; raising commits vs Ax-of-spades.' `
-    '6s5s has 6-high flush + small backdoor straight (3-4-5-6-7 still alive on river).' `
+    '6s5s has made 6-high flush; only 1 card on river remaining so no further straight redraws apply.' `
     'Calling captures villain air-bluffs without bloating vs nut flush. Small raise occasionally to charge worse flushes.' `
     'Auto-raising any flush on monotone turns commits OOP into nut-flush range.' `
     'Made low flush on flush-complete turn = call (raise small as alt; never big).') `
@@ -361,7 +361,7 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_AsKd_v430' `
   -board $b3 -heroHand @('As','Kd') `
-  -handClass 'top_pair_top_kicker' -heroHandRole 'bluff_catcher' -drawCategory 'flush_draw' -showdownValue 'high' `
+  -handClass 'top_pair_top_kicker' -heroHandRole 'bluff_catcher' -drawCategory 'nut_flush_draw' -showdownValue 'high' `
   -blockerNote 'As is the nut-flush card; blocks every Ax-of-spades flush combo in BTN range.' `
   -recommendedAction 'call' -actionReason 'bluff_catch_turn' `
   -question (Q-Action 'As Kd' $b3Str '2s') `
@@ -385,22 +385,22 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_reason_AsJd_v430' `
   -board $b3 -heroHand @('As','Jd') `
-  -handClass 'no_pair_no_draw' -heroHandRole 'blocker_bluff' -drawCategory 'none' -showdownValue 'low' `
-  -blockerNote 'As is the nut-spade blocker; hero removes every Ax-spade nut-flush combo from villain barrel range. No made hand and no draw -- pure blocker bluff.' `
+  -handClass 'no_pair_no_draw' -heroHandRole 'blocker_bluff' -drawCategory 'nut_flush_draw' -showdownValue 'low' `
+  -blockerNote 'As is the nut-spade blocker AND gives hero the nut flush draw on river spades; hero removes every Ax-spade nut-flush combo from villain barrel range while retaining nut-flush redraw equity.' `
   -recommendedAction 'check_raise_small' -actionReason 'blocker_check_raise_turn' `
   -question (Q-Reason 'check-raises small' 'As Jd' $b3Str '2s') `
   -answer (New-Answer 'blocker_check_raise_turn' @() @('equity_realization_turn_call','semi_bluff_check_raise_turn','value_check_raise_turn','protection_check_raise_turn','bluff_catch_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold','slowplay_turn_call','mixed_indifference_turn','pot_odds_turn_call') @()) `
   -explanation (New-Explanation `
-    'Nut spade blocker on flush-complete turn -- blocker check-raise (advanced; solver mixes).' `
-    '2s completes flush; As is the nut spade blocker, removing every villain Ax-spade nut-flush combo and turning hero into a leveraged blocker bluff candidate.' `
-    'BB flop call with AsJd was natural (broadway high cards, A-blocker presence). Turn 2s makes raising a pure blocker bluff line vs villain barrel range.' `
-    'AsJd has no made hand and no draw; As alone removes nut-spade combos from villain range. Pure blocker bluff.' `
+    'Nut spade blocker + nut FD redraw on flush-complete turn -- blocker check-raise (advanced; solver mixes).' `
+    '2s completes flush; As is the nut spade blocker (removes Ax-spade nut-flush combos) AND gives hero a nut-flush redraw on river spades. The raise mechanism is primarily blocker pressure, with nut-FD redraw as a secondary backup.' `
+    'BB flop call with AsJd was natural (broadway high cards, A-blocker presence). Turn 2s makes the line a leveraged blocker check-raise with nut-flush redraw.' `
+    'AsJd has no current made hand or pair, but As provides (a) the nut spade blocker against villain Ax-spade combos, and (b) a nut flush redraw if river is a spade.' `
     'Small check-raise size leverages the nut blocker; large raise risks too much when called by lower flushes.' `
-    'Identifying as semi-bluff (no draw) or value (no made hand) misses that the raise mechanism is purely the As blocker.' `
-    'Nut spade blocker on flush-complete turn = blocker check-raise (advanced; mix-frequency line).') `
+    'Identifying as semi-bluff misses that the primary raise mechanism is the nut-spade blocker (the FD redraw is secondary backup, not the trigger). Identifying as value misses that hero has no made hand.' `
+    'Nut spade blocker + nut FD on flush-complete turn = blocker check-raise (advanced; mix-frequency line).') `
   -conceptTags @('turn_check_raise_bluff','turn_blocker_pressure','turn_draw_completion') `
   -difficulty 5 `
-  -uniquenessNote 'Reason_choice testing blocker_check_raise_turn vs other raise/fold reasons. Tests that pure nut-spade blocker (no draw, no pair) drives raise reason = blocker, not semi-bluff/value/protection. Distinct from 3.2 because hero has zero made-hand component, making blocker the only raise mechanism.'
+  -uniquenessNote 'Reason_choice testing blocker_check_raise_turn vs semi_bluff_check_raise_turn. Tests that the PRIMARY raise mechanism on flush-complete turn with As is blocker pressure -- the nut FD redraw is secondary backup, not the trigger. Distinct from 3.2 because hero is bluff-catching with TPTK there; here hero has no made hand and the raise is leveraged purely on the As blocker plus nut-FD redraw.'
 
 # 3.4 - no spade no equity on flush turn, critical fold
 $scenarios += New-Scenario `
@@ -413,8 +413,8 @@ $scenarios += New-Scenario `
   -explanation (New-Explanation `
     'No spade no draw on flush-complete turn -- fold; zero flush equity and dominated overcards.' `
     '2s completes flush; without a spade, hero has no flush threat and faces a polarized barrel range (flushes + air-with-no-spade).' `
-    'BB flop call with T9 on K-high two-tone was already thin (gutshot to J for QJ-x straight). Turn 2s kills the gutshot.' `
-    'Tc9c has no spade, no pair, no current draw. The straight gutshot (need J for K-Q-J-T-9 wait there is no Q on board, so no straight available). Pure giveup.' `
+    'BB flop call with T9 on K-high two-tone was already thin (overcards + backdoor potential only). Turn 2s eliminates the runner-runner equity and adds a flush hero cannot make.' `
+    'Tc9c has no spade, no pair, no current draw. Any straight would require Q+J on the runout (5-card 9-T-J-Q-K needs both Q and J), but only one card remains, so no straight is achievable. Pure give-up.' `
     'Folding closes action; calling on flush turn with zero flush equity is uniquely worst.' `
     'Continuing turn with no spade on flush-completing turns is the prototypical leak.' `
     'No spade + no draw on flush turn = fold.') `
@@ -449,19 +449,19 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_QsTs6d_Jc_m4_action_KhQh_v430' `
   -board $b4 -heroHand @('Kh','Qh') `
-  -handClass 'top_pair_good_kicker' -heroHandRole 'bluff_catcher' -drawCategory 'gutshot' -showdownValue 'high' `
+  -handClass 'top_pair_good_kicker' -heroHandRole 'bluff_catcher' -drawCategory 'oesd' -showdownValue 'high' `
   -blockerNote 'K blocks K-high straight combos KT/K9; hero card is part of multiple straight structures.' `
   -recommendedAction 'call' -actionReason 'bluff_catch_turn' `
   -question (Q-Action 'Kh Qh' $b4Str 'Jc') `
   -answer (New-Answer 'call' @('check_raise_small') @('fold','mixed','check_raise_big') @('fold')) `
   -explanation (New-Explanation `
-    'TPGK + gutshot to K-Q-J-T-A on straight-complete turn -- call.' `
-    'Jc completes some straights but BB Q-x is still strong. Hero KhQh has top pair (Q) + redraw to nut straight (need 9 for K-Q-J-T-9 wait 9-T-J-Q-K = open-ender now? Need 9 makes 9-T-J-Q-K, need A makes T-J-Q-K-A. Both straight outs!).' `
-    'BB flop call with KQ on QT6 was natural (TPGK + backdoor). Turn J adds gutshot/OE redraw.' `
-    'KhQh has TPGK + redraw to nut straight (T-J-Q-K-A or 9-T-J-Q-K).' `
-    'Calling captures villain air-bluffs + leaves redraw alive. Small raise also acceptable.' `
-    'Folding TPGK + redraw vs straight-complete turn over-folds vs villain barrel.' `
-    'TPGK + nut redraw on straight turn = call.') `
+    'TPGK + OESD redraw to Broadway on straight-complete turn -- call.' `
+    'Jc completes some lower straights but BB Q-x with redraw remains strong. Hero KhQh now has top pair (Q) plus an open-ended straight redraw: hero+board form T-J-Q-K (4 consecutive ranks), so 9 completes 9-T-J-Q-K and A completes Broadway T-J-Q-K-A. ~8 outs to a higher straight, with A giving the nut.' `
+    'BB flop call with KQ on QT6 was natural (TPGK + backdoor). Turn J adds an OESD redraw to a higher straight.' `
+    'KhQh has TPGK + OESD redraw to higher straight (9 makes 9-T-J-Q-K, A makes Broadway T-J-Q-K-A).' `
+    'Calling captures villain air-bluffs + leaves the OESD redraw alive. Small raise also acceptable.' `
+    'Folding TPGK + OESD redraw vs straight-complete turn over-folds vs villain barrel.' `
+    'TPGK + OESD redraw to higher straight on straight-complete turn = call.') `
   -conceptTags @('turn_bluff_catcher','turn_draw_completion','turn_blocker_pressure') `
   -difficulty 4 `
   -uniquenessNote 'TPGK + nut-redraw call lesson on straight-complete turn. Tests recognition that own pair + redraw to higher straight beats villain weaker top pair barrels.'
@@ -470,7 +470,7 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_QsTs6d_Jc_m4_reason_Tc9d_v430' `
   -board $b4 -heroHand @('Tc','9d') `
-  -handClass 'top_pair_weak_kicker' -heroHandRole 'marginal_made_hand' -drawCategory 'oesd' -showdownValue 'decent' `
+  -handClass 'mid_pair' -heroHandRole 'marginal_made_hand' -drawCategory 'oesd' -showdownValue 'decent' `
   -blockerNote $null -recommendedAction 'call' -actionReason 'equity_realization_turn_call' `
   -question (Q-Reason 'calls' 'Tc 9d' $b4Str 'Jc') `
   -answer (New-Answer 'equity_realization_turn_call' @('bluff_catch_turn','pot_odds_turn_call') @('value_check_raise_turn','protection_check_raise_turn','semi_bluff_check_raise_turn','blocker_check_raise_turn','board_change_fold','domination_turn_fold','range_disadvantage_turn_fold','slowplay_turn_call','mixed_indifference_turn') @()) `
@@ -577,7 +577,7 @@ $scenarios += New-Scenario `
   -handClass 'no_pair_no_draw' -heroHandRole 'give_up' -drawCategory 'none' -showdownValue 'none' `
   -blockerNote $null -recommendedAction 'fold' -actionReason 'range_disadvantage_turn_fold' `
   -question (Q-Action 'Qh Jh' $b5Str '3h') `
-  -answer (New-Answer 'fold' @() @('call','mixed','check_raise_small','check_raise_big') @('check_raise_big')) `
+  -answer (New-Answer 'fold' @() @('call','mixed','check_raise_small','check_raise_big') @('call','check_raise_big')) `
   -explanation (New-Explanation `
     'QJ no pair no draw on double-paired turn -- fold; no equity even on counterfeit board.' `
     '3h double-pairs board. QJ has 6 overcard outs but pair of Q or J still loses to overpairs / Ax with 3 / 88.' `
@@ -644,9 +644,9 @@ $scenarios += New-Scenario `
   -answer (New-Answer 'call' @('check_raise_small') @('fold','mixed','check_raise_big') @('fold')) `
   -explanation (New-Explanation `
     'Nut FD + pair of 6 + Ace overcard on draw-intensifier turn -- call to realize multi-source equity.' `
-    '6h pairs hero turn card; nut FD still alive (4 spades visible: Ts, 9s, As, 6s); plus gutshot to 7 (5-6-7-8-9).' `
-    'BB flopped nut FD + Ace overcard; turn 6 adds pair + new straight draws.' `
-    'As6s has nut FD (1 more spade for nut flush) + pair of 6 + 3 overcard outs + nut blocker.' `
+    '6h pairs hero turn card; nut FD still alive (4 spades visible: Ts, 9s, As, 6s -- 1 more spade on river makes nut flush). Hero now has pair of 6s plus the As overcard outs.' `
+    'BB flopped nut FD + Ace overcard; turn 6 pairs hero (mid pair) and the board becomes more dynamic.' `
+    'As6s has nut FD (~9 spade outs to nut flush) + pair of 6 (~5 outs to two-pair/trips) + 3 Ace overcard outs + nut spade blocker. Multi-source equity, ~50%+ to barrel range.' `
     'Calling realizes ~50% equity cheaply. Raising too thin OOP given turn deepens pot more than flop.' `
     'Folding combo equity OOP under-defends vs villain barrel.' `
     'Combo draw + pair on dynamic turn = call to realize equity.') `
@@ -658,15 +658,15 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_turn_Ts9s5d_6h_m4_reason_KhQd_v430' `
   -board $b6 -heroHand @('Kh','Qd') `
-  -handClass 'no_pair_no_draw' -heroHandRole 'give_up' -drawCategory 'none' -showdownValue 'none' `
+  -handClass 'no_pair_no_draw' -heroHandRole 'give_up' -drawCategory 'gutshot' -showdownValue 'none' `
   -blockerNote $null -recommendedAction 'fold' -actionReason 'range_disadvantage_turn_fold' `
   -question (Q-Reason 'folds' 'Kh Qd' $b6Str '6h') `
   -answer (New-Answer 'range_disadvantage_turn_fold' @('board_change_fold','domination_turn_fold') @('value_check_raise_turn','protection_check_raise_turn','semi_bluff_check_raise_turn','blocker_check_raise_turn','bluff_catch_turn','equity_realization_turn_call','slowplay_turn_call','mixed_indifference_turn','pot_odds_turn_call') @()) `
   -explanation (New-Explanation `
-    'KQ no spade no pair no draw on draw-intensifier turn -- fold; range disadvantage with no equity.' `
-    '6h adds new draws to villain range while BB KQ has no spade for FD and gutshot to J still alive but dominated.' `
-    'BB flop call with KQ on T-9-5 two-tone was thin (gutshot to J). Turn 6 keeps gutshot but adds villain draws + reduces relative equity.' `
-    'KhQd has gutshot to J (need J for K-Q-J-T-9? need K-Q-J-T- + 9 yes works) but pair outs dominated.' `
+    'KQ no spade with weak gutshot on draw-intensifier turn -- fold; gutshot equity is dominated and there is no FD.' `
+    '6h adds new draws to villain range; BB KhQd has no spade FD and only a 4-out gutshot to J for 9-T-J-Q-K, which is dominated by villain Tx made hands and AK ranges.' `
+    'BB flop call with KQ on T-9-5 two-tone was thin (gutshot to J + backdoor potential). Turn 6h preserves the gutshot but adds villain draws and reduces relative equity.' `
+    'KhQd has a 4-out gutshot to J (completes 9-T-J-Q-K) but no FD, no pair, no blocker. Pair outs (K or Q on river) are dominated by Kx/Qx in villain range.' `
     'Folding closes action cleanly; calling chases dominated outs.' `
     'Identifying as bluff_catch_turn misses that no pair / no FD / no blocker has no bluff-catch claim.' `
     'KQ no equity no blocker on dynamic turn = range_disadvantage fold (not bluff-catch).') `
