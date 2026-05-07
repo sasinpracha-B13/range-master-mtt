@@ -33262,7 +33262,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.3.2B',
+    appVersion: '4.3.2C',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -39501,6 +39501,10 @@ function renderPostflopComplete() {
     if (typeof _pfHistoryRecordSession === 'function') {
       _pfHistoryRecordSession({
         module: d.module,
+        // v4.3.2C: forward drill mode so the BetaQA dashboard's
+        // weakReviewUsed signal correctly identifies weak_spots /
+        // concept sessions in localStorage history.
+        mode: d.mode || 'normal',
         queue: d.queue,
         answers: d.answers,
         totalScore: totalScore,
@@ -39783,21 +39787,50 @@ function _pfHistoryRecordAnswer(scenario, cls) {
 }
 
 function _pfHistoryRecordSession(s) {
-  // s = { module, queue (array of scenarios), answers, totalScore, counts }
+  // s = { module, queue (array of scenarios), answers, totalScore, counts, mode }
   if (!s || !s.queue || !s.answers) return;
   var h = _pfHistoryLoad();
   var sessionId = 'pfs_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  // v4.3.2C signal-collection fix: persist a compact per-answer array alongside
+  // the existing session metadata so the BetaQA dashboard's multi-session
+  // per-axis aggregations (rowsByActionReason / rowsByRecommendedAction /
+  // rowsByHeroHandRole / rowsByHandClass / weakConcepts / lastWeakProfile)
+  // can read across sessions instead of always reading 0. Pre-v4.3.2C the
+  // session record stored only scenarioIds + tier-counts; the dashboard's
+  // for-loop over session.answers always had 0 iterations across sessions
+  // because the field did not exist. Per-answer payload is small (~80 bytes
+  // each); 12 questions x 50 sessions cap = ~48 KB of localStorage growth
+  // which is well within budget. No strategy / UI / route / scoring change.
+  var compactAnswers = [];
+  for (var ai = 0; ai < s.answers.length; ai++) {
+    var a = s.answers[ai];
+    if (!a) continue;
+    compactAnswers.push({
+      scenarioId: a.scenarioId,
+      questionType: a.questionType || '',
+      choiceId: a.choiceId,
+      tier: a.tier,
+      score: a.score,
+      isCritical: !!a.isCritical,
+      conceptTags: a.conceptTags ? a.conceptTags.slice() : []
+    });
+  }
   var session = {
     id: sessionId,
     date: new Date().toISOString(),
     module: s.module || 'pf_board_texture',
+    mode: s.mode || 'normal',
     scenarioIds: s.queue.map(function (x) { return x.id; }),
     answered: s.answers.length,
     score: s.totalScore || 0,
     best: (s.counts && s.counts.best) || 0,
     acceptable: (s.counts && s.counts.acceptable) || 0,
     bad: (s.counts && s.counts.bad) || 0,
-    critical: (s.counts && s.counts.critical) || 0
+    critical: (s.counts && s.counts.critical) || 0,
+    // v4.3.2C: per-answer detail required by the BetaQA dashboard for
+    // multi-session per-axis aggregation. Each entry mirrors the in-memory
+    // postflopDrill.answers record produced by recordPostflopAnswer().
+    answers: compactAnswers
   };
   h.sessions.push(session);
   // Cap to most recent N sessions to prevent unbounded growth
