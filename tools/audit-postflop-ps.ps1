@@ -160,8 +160,11 @@ foreach($s in $data.scenarios){
     }
   }
 
-  # R10 advantage enums
-  if($s.board){
+  # R10 advantage enums (FLOP-MODULES ONLY)
+  # M4 (pf_turn_barrel_oop_def) uses turn-board structure with equityShift
+  # instead of board.rangeAdvantage / board.nutAdvantage. R10 is scoped to
+  # flop modules; M4 has its own R55+ rules for board validation.
+  if($s.board -and $s.module -ne 'pf_turn_barrel_oop_def'){
     if(-not $validRA.Contains($s.board.rangeAdvantage)){
       Add-Issue $local 'R10' 'error' $sid "Invalid board.rangeAdvantage: `"$($s.board.rangeAdvantage)`"" | Out-Null
     }
@@ -187,8 +190,12 @@ foreach($s in $data.scenarios){
     }
   }
 
-  # R13 contradictory tags + suit consistency
-  if($s.board -and $s.board.textureTags){
+  # R13 contradictory tags + suit consistency (FLOP-MODULES ONLY)
+  # M4 uses suitTextureFlop + suitTextureTurn instead of single suitTexture;
+  # M4 board has 4 cards (3 flop + 1 turn) so the flop-only "derive suit
+  # texture from board.cards" check does not apply. M4 has its own R55+
+  # rules. Scope this rule to flop modules.
+  if($s.board -and $s.board.textureTags -and $s.module -ne 'pf_turn_barrel_oop_def'){
     $tagSet = @{}; foreach($t in $s.board.textureTags){ $tagSet[$t] = $true }
     foreach($pair in $tax.contradictoryPairs){
       if($tagSet.ContainsKey($pair[0]) -and $tagSet.ContainsKey($pair[1])){
@@ -643,6 +650,370 @@ foreach($s in $data.scenarios){
     }
   }
 
+  # ========================================================================
+  # R55-R75 -- Module 4 (pf_turn_barrel_oop_def) v4.3.0B production rules
+  # Apply only to Module 4 scenarios. Mirror the hard-error subset of the
+  # M4 seed audit plan (docs/specs/postflop-v4.3.0-module4-audit-plan.md
+  # rules M4.R01..R49 + R50..R54). Numbering: R55 onwards to avoid the
+  # R29 (card-notation guard) and R30-R41 (M3) ranges.
+  # ========================================================================
+  if ($s.module -eq 'pf_turn_barrel_oop_def') {
+    $m4ValidActions   = @('fold','call','check_raise_small','check_raise_big','mixed')
+    $m4ValidReasons   = @('pot_odds_turn_call','equity_realization_turn_call','bluff_catch_turn',
+                          'board_change_fold','domination_turn_fold','range_disadvantage_turn_fold',
+                          'value_check_raise_turn','protection_check_raise_turn','semi_bluff_check_raise_turn',
+                          'blocker_check_raise_turn','slowplay_turn_call','mixed_indifference_turn')
+    $m4ValidQTypes    = @('action_choice','reason_choice')
+    $m4ValidHandRoles = @('strong_value','nutted_value','bluff_catcher','marginal_made_hand',
+                          'dominated_marginal','combo_draw','draw','give_up','air',
+                          'bluff_candidate','blocker_bluff','slowplay_trap','protection_needed')
+    $m4ValidHandClass = @('set','top_two_pair','two_pair','overpair','underpair',
+                          'top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker',
+                          'second_pair','third_pair_or_lower','mid_pair','bottom_pair',
+                          'combo_draw','oesd','gutshot','flush_draw','nut_flush_draw',
+                          'backdoor_only','no_pair_no_draw','straight','flush','nut_flush','trips','full_house')
+    $m4ValidDrawCats  = @('none','backdoor_only','gutshot','oesd','flush_draw','combo_draw','nut_flush_draw',
+                          'straight_draw_added','flush_draw_added','oesd_added','gutshot_added','multi_draw_added')
+    $m4ValidShowdown  = @('none','low','decent','high','nutted')
+    $m4ValidConcepts  = @('turn_equity_shift','second_barrel_defense','turn_pot_odds','turn_bluff_catcher',
+                          'turn_domination_fold','turn_board_change','turn_draw_completion',
+                          'turn_check_raise_value','turn_check_raise_bluff','turn_blocker_pressure',
+                          'turn_slowplay_call','turn_range_disadvantage')
+    $m4ValidTurnCats  = @('brick','overcard','flush_complete','flush_draw_added','straight_complete',
+                          'straight_draw_added','board_pair','draw_intensifier','top_pair_changer',
+                          'ace_overcard','low_blank','high_blank')
+    $m4ValidAuditStat = @('approved','review_pending','planning_only','draft','needs_review','deprecated')
+
+    # R55 -- module id + street + game lock
+    if ($s.module -ne 'pf_turn_barrel_oop_def') {
+      Add-Issue $local 'R55' 'error' $sid ("M4 expects module='pf_turn_barrel_oop_def', got '" + $s.module + "'") | Out-Null
+    }
+    if ($s.street -ne 'turn') {
+      Add-Issue $local 'R55' 'error' $sid ("M4 expects street=turn, got " + $s.street) | Out-Null
+    }
+    if ($s.game -and $s.game -ne 'NLH_MTT') {
+      Add-Issue $local 'R55' 'error' $sid ("M4 expects game=NLH_MTT, got " + $s.game) | Out-Null
+    }
+    if ($s.schemaVersion -and $s.schemaVersion -ne '1.2.0') {
+      Add-Issue $local 'R55' 'error' $sid ("M4 expects schemaVersion=1.2.0, got " + $s.schemaVersion) | Out-Null
+    }
+
+    # R56 -- spot block matches BB-vs-BTN turn-defense lock
+    if ($s.spot) {
+      if ($s.spot.format          -and $s.spot.format          -ne 'NLH_MTT')                { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.format=NLH_MTT, got " + $s.spot.format) | Out-Null }
+      if ($s.spot.stackDepth      -and $s.spot.stackDepth      -ne '100BB')                  { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.stackDepth=100BB, got " + $s.spot.stackDepth) | Out-Null }
+      if ($s.spot.potType         -and $s.spot.potType         -ne 'SRP')                    { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.potType=SRP, got " + $s.spot.potType) | Out-Null }
+      if ($s.spot.heroPosition    -and $s.spot.heroPosition    -ne 'BB')                     { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.heroPosition=BB, got " + $s.spot.heroPosition) | Out-Null }
+      if ($s.spot.villainPosition -and $s.spot.villainPosition -ne 'BTN')                    { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.villainPosition=BTN, got " + $s.spot.villainPosition) | Out-Null }
+      if ($s.spot.heroRole        -and $s.spot.heroRole        -ne 'flop_check_caller_oop')  { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.heroRole=flop_check_caller_oop, got " + $s.spot.heroRole) | Out-Null }
+      if ($s.spot.villainRole     -and $s.spot.villainRole     -ne 'turn_barreler_ip')       { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.villainRole=turn_barreler_ip, got " + $s.spot.villainRole) | Out-Null }
+      if ($s.spot.street          -and $s.spot.street          -ne 'turn')                   { Add-Issue $local 'R56' 'error' $sid ("M4 expects spot.street=turn, got " + $s.spot.street) | Out-Null }
+    } else {
+      Add-Issue $local 'R56' 'error' $sid 'M4 spot block missing' | Out-Null
+    }
+
+    # R57 -- 4-card board structure (flopCards + turnCard + cards)
+    if (-not $s.board) {
+      Add-Issue $local 'R57' 'error' $sid 'M4 board block missing' | Out-Null
+    } else {
+      $fc = @($s.board.flopCards)
+      if ($fc.Count -ne 3) {
+        Add-Issue $local 'R57' 'error' $sid ("M4 board.flopCards count " + $fc.Count + ", expected 3") | Out-Null
+      }
+      if (-not $s.board.turnCard) {
+        Add-Issue $local 'R57' 'error' $sid 'M4 board.turnCard missing' | Out-Null
+      } elseif ($s.board.turnCard.Length -ne 2) {
+        Add-Issue $local 'R57' 'error' $sid ("M4 board.turnCard '" + $s.board.turnCard + "' invalid format") | Out-Null
+      } else {
+        $r = $s.board.turnCard.Substring(0,1); $u = $s.board.turnCard.Substring(1,1)
+        if ($validRanks -notcontains $r) { Add-Issue $local 'R57' 'error' $sid ("M4 turnCard rank invalid '" + $r + "'") | Out-Null }
+        if ($validSuits -notcontains $u) { Add-Issue $local 'R57' 'error' $sid ("M4 turnCard suit invalid '" + $u + "'") | Out-Null }
+      }
+      $cards = @($s.board.cards)
+      if ($cards.Count -ne 4) {
+        Add-Issue $local 'R57' 'error' $sid ("M4 board.cards count " + $cards.Count + ", expected 4") | Out-Null
+      } else {
+        # cards must equal flopCards + turnCard
+        $expected = @()
+        if ($fc.Count -eq 3) { $expected = @($fc) + @($s.board.turnCard) }
+        $expectedJoin = ($expected -join ',')
+        $actualJoin = ($cards -join ',')
+        if ($expected.Count -eq 4 -and $expectedJoin -ne $actualJoin) {
+          Add-Issue $local 'R57' 'error' $sid ("M4 board.cards != flopCards+turnCard ('" + $actualJoin + "' vs '" + $expectedJoin + "')") | Out-Null
+        }
+        # No duplicate cards
+        $u2 = ($cards | Sort-Object -Unique).Count
+        if ($u2 -ne $cards.Count) {
+          Add-Issue $local 'R57' 'error' $sid ("M4 board has duplicate cards: " + ($cards -join ',')) | Out-Null
+        }
+      }
+    }
+
+    # R58 -- M4-specific board enums
+    if ($s.board) {
+      if ($s.board.turnCategory -and ($m4ValidTurnCats -notcontains $s.board.turnCategory)) {
+        Add-Issue $local 'R58' 'error' $sid ("M4 turnCategory '" + $s.board.turnCategory + "' not in valid set") | Out-Null
+      }
+    }
+
+    # R59 -- heroHand 2 cards + no hero/board collision
+    if (-not $s.heroHand) {
+      Add-Issue $local 'R59' 'error' $sid 'M4 requires heroHand' | Out-Null
+    } elseif ($s.heroHand.Count -ne 2) {
+      Add-Issue $local 'R59' 'error' $sid ("M4 heroHand has " + $s.heroHand.Count + " cards, expected 2") | Out-Null
+    } else {
+      foreach ($c in $s.heroHand) {
+        if (-not $c -or $c.Length -ne 2) { Add-Issue $local 'R59' 'error' $sid ("M4 invalid hero card '" + $c + "'") | Out-Null; continue }
+        $r = $c.Substring(0,1); $u = $c.Substring(1,1)
+        if ($validRanks -notcontains $r) { Add-Issue $local 'R59' 'error' $sid ("M4 invalid rank in hero card '" + $c + "'") | Out-Null }
+        if ($validSuits -notcontains $u) { Add-Issue $local 'R59' 'error' $sid ("M4 invalid suit in hero card '" + $c + "'") | Out-Null }
+      }
+      if ($s.board -and $s.board.cards) {
+        $boardSet = @{}
+        foreach ($c in $s.board.cards) { $boardSet["$c"] = $true }
+        foreach ($c in $s.heroHand) {
+          if ($boardSet.ContainsKey("$c")) {
+            Add-Issue $local 'R59' 'error' $sid ("M4 hero card '" + $c + "' also on board") | Out-Null
+          }
+        }
+      }
+    }
+
+    # R60 -- handClass / heroHandRole / drawCategory / showdownValue vocab
+    if ($s.handClass     -and ($m4ValidHandClass -notcontains $s.handClass))     { Add-Issue $local 'R60' 'error' $sid ("M4 handClass '" + $s.handClass + "' not in v4.3.0B vocab") | Out-Null }
+    if ($s.heroHandRole  -and ($m4ValidHandRoles -notcontains $s.heroHandRole))  { Add-Issue $local 'R60' 'error' $sid ("M4 heroHandRole '" + $s.heroHandRole + "' not in v4.3.0B vocab") | Out-Null }
+    if ($s.drawCategory  -and ($m4ValidDrawCats  -notcontains $s.drawCategory))  { Add-Issue $local 'R60' 'error' $sid ("M4 drawCategory '" + $s.drawCategory + "' not in v4.3.0B vocab") | Out-Null }
+    if ($s.showdownValue -and ($m4ValidShowdown  -notcontains $s.showdownValue)) { Add-Issue $local 'R60' 'error' $sid ("M4 showdownValue '" + $s.showdownValue + "' not in v4.3.0B vocab") | Out-Null }
+
+    # R61 -- question schema (qtype + choices)
+    $m4qtype = $null
+    if ($s.question -and $s.question.qtype) { $m4qtype = $s.question.qtype }
+    if ($m4qtype -and ($m4ValidQTypes -notcontains $m4qtype)) {
+      Add-Issue $local 'R61' 'error' $sid ("M4 question.qtype '" + $m4qtype + "' not in valid set") | Out-Null
+    }
+    if ($m4qtype -eq 'action_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R61' 'error' $sid 'M4 action_choice requires question.choices' | Out-Null
+      } else {
+        $m4choices = @($s.question.choices)
+        $missing = @($m4ValidActions | Where-Object { $m4choices -notcontains $_ })
+        $extra   = @($m4choices | Where-Object { $m4ValidActions -notcontains $_ })
+        if ($missing.Count -gt 0) { Add-Issue $local 'R61' 'error' $sid ("M4 action_choice missing required: " + ($missing -join ',')) | Out-Null }
+        if ($extra.Count   -gt 0) { Add-Issue $local 'R61' 'error' $sid ("M4 action_choice has unexpected: " + ($extra -join ',')) | Out-Null }
+      }
+      if ($s.recommendedAction -and ($m4ValidActions -notcontains $s.recommendedAction)) {
+        Add-Issue $local 'R61' 'error' $sid ("M4 recommendedAction '" + $s.recommendedAction + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.recommendedAction -and ($s.answer.best -ne $s.recommendedAction)) {
+        Add-Issue $local 'R61' 'error' $sid ("M4 answer.best '" + $s.answer.best + "' != recommendedAction '" + $s.recommendedAction + "'") | Out-Null
+      }
+      # R62 -- prompt completeness: must not end with 'with ' and must contain both hero cards
+      if ($s.question.prompt -match 'with\s*$') {
+        Add-Issue $local 'R62' 'error' $sid "M4 action_choice prompt ends with 'with ' (hero hand lost)" | Out-Null
+      }
+      if ($s.heroHand -and $s.heroHand.Count -eq 2 -and $s.question.prompt) {
+        $promptText = $s.question.prompt
+        $foundBoth = $true
+        foreach ($c in $s.heroHand) {
+          if ($promptText -notmatch [regex]::Escape($c)) { $foundBoth = $false; break }
+        }
+        if (-not $foundBoth) {
+          Add-Issue $local 'R62' 'error' $sid ("M4 action_choice prompt does not contain both hero cards '" + ($s.heroHand -join "','") + "'") | Out-Null
+        }
+      }
+    }
+
+    # R63 -- reason_choice schema: choices subset of m4ValidReasons; actionReason matches answer.best
+    if ($m4qtype -eq 'reason_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R63' 'error' $sid 'M4 reason_choice requires question.choices' | Out-Null
+      } else {
+        $m4rc = @($s.question.choices)
+        $invalid = @($m4rc | Where-Object { $m4ValidReasons -notcontains $_ })
+        if ($invalid.Count -gt 0) { Add-Issue $local 'R63' 'error' $sid ("M4 reason_choice has invalid: " + ($invalid -join ',')) | Out-Null }
+      }
+      if ($s.actionReason -and ($m4ValidReasons -notcontains $s.actionReason)) {
+        Add-Issue $local 'R63' 'error' $sid ("M4 actionReason '" + $s.actionReason + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.actionReason -and ($s.answer.best -ne $s.actionReason)) {
+        Add-Issue $local 'R63' 'error' $sid ("M4 answer.best '" + $s.answer.best + "' != actionReason '" + $s.actionReason + "' for reason_choice") | Out-Null
+      }
+    }
+    # actionReason vocab check (also applies to action_choice scenarios where actionReason is present)
+    if ($s.actionReason -and ($m4ValidReasons -notcontains $s.actionReason)) {
+      Add-Issue $local 'R63' 'error' $sid ("M4 actionReason '" + $s.actionReason + "' not in v4.3.0B vocab") | Out-Null
+    }
+
+    # R64 -- answer partition consistency: best/acceptable/bad disjoint; critical subset of bad
+    if ($s.answer) {
+      if ($null -eq $s.answer.best) {
+        Add-Issue $local 'R64' 'error' $sid 'M4 answer.best is required' | Out-Null
+      } elseif ($s.answer.best -isnot [string]) {
+        Add-Issue $local 'R64' 'error' $sid ("M4 answer.best must be a string, got " + $s.answer.best.GetType().Name) | Out-Null
+      }
+      $m4best = $s.answer.best
+      $m4acc  = @(); if ($s.answer.acceptable) { $m4acc  = @($s.answer.acceptable) }
+      $m4bad  = @(); if ($s.answer.bad)        { $m4bad  = @($s.answer.bad) }
+      $m4crit = @(); if ($s.answer.critical)   { $m4crit = @($s.answer.critical) }
+      if ($m4best -and ($m4acc -contains $m4best)) {
+        Add-Issue $local 'R64' 'error' $sid ("M4 answer.best '" + $m4best + "' also appears in acceptable") | Out-Null
+      }
+      if ($m4best -and ($m4bad -contains $m4best)) {
+        Add-Issue $local 'R64' 'error' $sid ("M4 answer.best '" + $m4best + "' also appears in bad") | Out-Null
+      }
+      foreach ($a in $m4acc) {
+        if ($m4bad -contains $a) {
+          Add-Issue $local 'R64' 'error' $sid ("M4 acceptable choice '" + $a + "' also appears in bad") | Out-Null
+        }
+      }
+      foreach ($c in $m4crit) {
+        if (-not ($m4bad -contains $c)) {
+          Add-Issue $local 'R64' 'error' $sid ("M4 critical choice '" + $c + "' must also appear in bad") | Out-Null
+        }
+      }
+      $m4choiceUniverse = if ($m4qtype -eq 'action_choice') { $m4ValidActions } elseif ($m4qtype -eq 'reason_choice') { $m4ValidReasons } else { @() }
+      if ($m4choiceUniverse.Count -gt 0) {
+        $allM4 = @($m4best) + $m4acc + $m4bad + $m4crit | Where-Object { $_ }
+        foreach ($id in $allM4) {
+          if ($m4choiceUniverse -notcontains $id) {
+            Add-Issue $local 'R64' 'error' $sid ("M4 answer references invalid id '" + $id + "' for qtype " + $m4qtype) | Out-Null
+          }
+        }
+      }
+    }
+
+    # R65 -- explanation completeness: short / turnLogic / rangeContext / handLogic / sizingLogic / commonMistake / takeaway
+    if ($s.explanation) {
+      foreach ($fld in @('short','turnLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway')) {
+        $v = $s.explanation.$fld
+        if (-not $v -or ($v -is [string] -and $v.Trim().Length -eq 0)) {
+          Add-Issue $local 'R65' 'error' $sid ("M4 explanation." + $fld + " is required") | Out-Null
+        }
+      }
+    } else {
+      Add-Issue $local 'R65' 'error' $sid 'M4 explanation block missing' | Out-Null
+    }
+
+    # R66 -- conceptTags: 1-4 entries, no duplicates, all in M4 concept vocab
+    if (-not $s.conceptTags -or $s.conceptTags.Count -eq 0) {
+      Add-Issue $local 'R66' 'error' $sid 'M4 conceptTags must be non-empty' | Out-Null
+    } else {
+      if ($s.conceptTags.Count -gt 4) {
+        Add-Issue $local 'R66' 'error' $sid ("M4 conceptTags has " + $s.conceptTags.Count + " entries (max 4)") | Out-Null
+      }
+      $tagSeen = @{}
+      foreach ($tg in $s.conceptTags) {
+        if ($m4ValidConcepts -notcontains $tg) {
+          Add-Issue $local 'R66' 'error' $sid ("M4 conceptTag '" + $tg + "' not in M4 concept vocab") | Out-Null
+        }
+        if ($tagSeen.ContainsKey("$tg")) {
+          Add-Issue $local 'R66' 'error' $sid ("M4 duplicate conceptTag '" + $tg + "'") | Out-Null
+        }
+        $tagSeen["$tg"] = $true
+      }
+    }
+
+    # R67 -- auditStatus + sourceConfidence
+    if ($s.auditStatus -and ($m4ValidAuditStat -notcontains $s.auditStatus)) {
+      Add-Issue $local 'R67' 'error' $sid ("M4 auditStatus '" + $s.auditStatus + "' not in valid set") | Out-Null
+    }
+    if ($s.sourceConfidence -eq 'solver_verified' -and -not $s.solverRunRef) {
+      Add-Issue $local 'R67' 'error' $sid 'M4 sourceConfidence=solver_verified requires solverRunRef field' | Out-Null
+    }
+
+    # R68 -- nut_flush_draw invariant: drawCategory='nut_flush_draw' requires hero to hold A of a 4-suited suit
+    if ($s.drawCategory -eq 'nut_flush_draw' -and $s.heroHand -and $s.board -and $s.board.cards) {
+      $hh = @($s.heroHand)
+      $bc = @($s.board.cards)
+      $foundNutFD = $false
+      foreach ($suit in 'cdhs'.ToCharArray()) {
+        $sc = [string]$suit
+        $heroHasA = ($hh -contains "A$sc")
+        $heroSuitCount = (@($hh) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+        $boardSuitCount = (@($bc) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+        $totalSuit = $heroSuitCount + $boardSuitCount
+        if ($heroHasA -and $totalSuit -eq 4) { $foundNutFD = $true; break }
+      }
+      if (-not $foundNutFD) {
+        Add-Issue $local 'R68' 'error' $sid "M4 drawCategory=nut_flush_draw but hero does not hold A of a suit with exactly 4 of that suit across hero+board" | Out-Null
+      }
+    }
+
+    # R69 -- "nut-<suit>" blocker invariant: blockerNote claiming nut-<color> requires hero A of that suit
+    if ($s.heroHandRole -eq 'blocker_bluff' -and $s.blockerNote -and $s.heroHand) {
+      $hh = @($s.heroHand)
+      $bn = $s.blockerNote
+      $suitMap = @{ 'spade'='s'; 'heart'='h'; 'club'='c'; 'diamond'='d' }
+      foreach ($word in $suitMap.Keys) {
+        $rxFull = "nut[- ]$word"
+        if ($bn -match $rxFull) {
+          $sc = $suitMap[$word]
+          if (-not ($hh -contains "A$sc")) {
+            Add-Issue $local 'R69' 'error' $sid ("M4 blockerNote claims 'nut-" + $word + "' blocker but hero does not hold A" + $sc) | Out-Null
+          }
+        }
+      }
+    }
+
+    # R70 -- handClass='straight' invariant: 5 consecutive ranks (or A-2-3-4-5) in hero+board
+    if ($s.handClass -eq 'straight' -and $s.heroHand -and $s.board -and $s.board.cards) {
+      $hh = @($s.heroHand)
+      $bc = @($s.board.cards)
+      $allCards = $hh + $bc
+      $rankOrder = @('2','3','4','5','6','7','8','9','T','J','Q','K','A')
+      $rankSet = New-Object System.Collections.Generic.HashSet[int]
+      foreach ($c in $allCards) {
+        if ($c.Length -ge 2) {
+          $r = $c.Substring(0,1)
+          $idx = $rankOrder.IndexOf($r)
+          if ($idx -ge 0) { $null = $rankSet.Add($idx) }
+        }
+      }
+      $foundStraight = $false
+      foreach ($start in 0..8) {
+        $allIn = $true
+        foreach ($k in 0..4) {
+          if (-not $rankSet.Contains($start + $k)) { $allIn = $false; break }
+        }
+        if ($allIn) { $foundStraight = $true; break }
+      }
+      if (-not $foundStraight) {
+        if ($rankSet.Contains(12) -and $rankSet.Contains(0) -and $rankSet.Contains(1) -and $rankSet.Contains(2) -and $rankSet.Contains(3)) {
+          $foundStraight = $true
+        }
+      }
+      if (-not $foundStraight) {
+        Add-Issue $local 'R70' 'error' $sid "M4 handClass=straight but no 5 consecutive ranks (or A-2-3-4-5) in hero+board" | Out-Null
+      }
+    }
+
+    # R71 -- BIDIRECTIONAL nut_flush_draw invariant (NEW for v4.3.0B)
+    # If hero has A-of-suit AND total suit count is exactly 4 across hero+board AND
+    # hero is not already classified as nut_flush_draw / flush / nut_flush, AND
+    # handClass is not flush-class -- then drawCategory should be nut_flush_draw.
+    # WARN-only because of edge cases (hand may simultaneously have stronger value;
+    # in M4 v4.3.0B all relevant cases produce nut_flush_draw classification).
+    if ($s.heroHand -and $s.board -and $s.board.cards -and $s.drawCategory -ne 'nut_flush_draw' `
+        -and $s.handClass -ne 'flush' -and $s.handClass -ne 'nut_flush' -and $s.handClass -ne 'full_house' `
+        -and $s.handClass -ne 'set' -and $s.handClass -ne 'two_pair' -and $s.handClass -ne 'top_two_pair' `
+        -and $s.handClass -ne 'straight' -and $s.handClass -ne 'trips') {
+      $hh = @($s.heroHand)
+      $bc = @($s.board.cards)
+      foreach ($suit in 'cdhs'.ToCharArray()) {
+        $sc = [string]$suit
+        $heroHasA = ($hh -contains "A$sc")
+        if (-not $heroHasA) { continue }
+        $heroSuitCount = (@($hh) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+        $boardSuitCount = (@($bc) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+        $totalSuit = $heroSuitCount + $boardSuitCount
+        if ($totalSuit -eq 4) {
+          Add-Issue $local 'R71' 'warning' $sid ("M4 hero holds A" + $sc + " with 4 of suit across hero+board (nut FD pattern) but drawCategory='" + $s.drawCategory + "' (expected nut_flush_draw)") | Out-Null
+          break
+        }
+      }
+    }
+  }
+
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
   # Detects suspicious em-dash and collapsed-board patterns inside text fields
   # that suggest a CP874 mojibake cleanup over-normalized suit symbols.
@@ -787,6 +1158,18 @@ if ($m3.Count -gt 0) {
   $m3 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
   $m3 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
   $m3 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
+}
+
+# v4.3.0B -- Module 4 stats block
+$m4 = @($data.scenarios | Where-Object { $_.module -eq 'pf_turn_barrel_oop_def' })
+if ($m4.Count -gt 0) {
+  Write-Output ''
+  Write-Output ('  Module 4 total: ' + $m4.Count)
+  $m4 | Group-Object { $_.question.qtype } | Sort-Object Name | ForEach-Object { Write-Output ('    qtype ' + $_.Name + ': ' + $_.Count) }
+  $m4 | Group-Object { $_.board.turnCategory } | Sort-Object Name | ForEach-Object { Write-Output ('    turnCategory ' + $_.Name + ': ' + $_.Count) }
+  $m4 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
+  $m4 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
+  $m4 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
 }
 
 if($totalErrors -gt 0){ exit 1 } else { exit 0 }

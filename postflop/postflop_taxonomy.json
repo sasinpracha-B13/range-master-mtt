@@ -1,297 +1,529 @@
 {
-  "version": "1.0.0",
-  "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-04",
-  "description": "Enums and structured vocabulary for post-flop board taxonomy. Source of truth for audit rule R09, R10, R13.",
-
-  "highCardClass": [
-    "A_high",
-    "K_high",
-    "Q_high",
-    "J_high",
-    "T_high",
-    "low"
-  ],
-
-  "textureTags": [
-    "dry",
-    "semi_dry",
-    "wet",
-    "very_wet",
-    "connected",
-    "semi_connected",
-    "disconnected",
-    "highly_connected",
-    "paired",
-    "trips_possible",
-    "monotone",
-    "two_tone",
-    "rainbow",
-    "straightening",
-    "flushing",
-    "broadway_heavy",
-    "low_heavy",
-    "middle_heavy",
-    "ace_high_dry",
-    "ace_high_wet",
-    "low_connected",
-    "low_disconnected",
-    "broadway_dry",
-    "broadway_wet",
-    "high_card_dominant",
-    "set_heavy_for_caller",
-    "two_pair_heavy_for_caller",
-    "overpair_heavy_for_raiser",
-    "static"
-  ],
-
-  "suitTexture": [
-    "rainbow",
-    "two_tone",
-    "monotone"
-  ],
-
-  "connectedness": [
-    "disconnected",
-    "semi_connected",
-    "connected",
-    "highly_connected"
-  ],
-
-  "pairedStatus": [
-    "unpaired",
-    "paired",
-    "trips"
-  ],
-
-  "dynamicLevel": {
-    "1": "static",
-    "2": "semi_static",
-    "3": "dynamic",
-    "4": "very_dynamic"
-  },
-
-  "rangeAdvantage": [
-    "preflop_raiser",
-    "caller",
-    "neutral",
-    "split"
-  ],
-
-  "nutAdvantage": [
-    "preflop_raiser",
-    "caller",
-    "neutral",
-    "split"
-  ],
-
-  "sizingFamily": [
-    "range_small",
-    "mixed_small_check",
-    "polar_big",
-    "check_heavy",
-    "low_frequency"
-  ],
-
-  "potType": [
-    "SRP",
-    "3BP",
-    "4BP",
-    "limped"
-  ],
-
-  "street": [
-    "flop",
-    "turn",
-    "river"
-  ],
-
-  "position": [
-    "SB",
-    "BB",
-    "UTG",
-    "UTG1",
-    "LJ",
-    "HJ",
-    "CO",
-    "BTN"
-  ],
-
-  "actionMenuByModule": {
-    "pf_board_texture": {
-      "range_advantage":     ["preflop_raiser", "caller", "neutral", "split"],
-      "nut_advantage":       ["preflop_raiser", "caller", "neutral", "split"],
-      "dynamic_level":       ["static", "semi_static", "dynamic", "very_dynamic"],
-      "frequency_strategy":  ["range_small", "mixed_small_check", "polar_big", "check_heavy", "low_frequency"],
-      "sizing_family":       ["range_small", "mixed_small_check", "polar_big", "check_heavy", "low_frequency"]
-    },
-    "pf_flop_cbet_ip": {
-      "action_choice":       ["check", "bet_33", "bet_75"]
-    },
-    "pf_bb_def_vs_cbet": {
-      "action_choice":       ["fold", "call", "raise"]
-    }
-  },
-
-  "contradictoryPairs": [
-    ["monotone", "rainbow"],
-    ["monotone", "two_tone"],
-    ["rainbow", "two_tone"],
-    ["paired", "trips"],
-    ["dry", "wet"],
-    ["dry", "very_wet"],
-    ["disconnected", "highly_connected"],
-    ["disconnected", "connected"],
-    ["broadway_heavy", "low_heavy"],
-    ["broadway_dry", "broadway_wet"],
-    ["ace_high_dry", "ace_high_wet"],
-    ["low_connected", "low_disconnected"]
-  ],
-
-  "highCardDerivation": {
-    "_comment": "Mechanically derived from board cards; audit rule R02 verifies highCardClass matches highest rank on board",
-    "A": "A_high",
-    "K": "K_high",
-    "Q": "Q_high",
-    "J": "J_high",
-    "T": "T_high",
-    "9": "low",
-    "8": "low",
-    "7": "low",
-    "6": "low",
-    "5": "low",
-    "4": "low",
-    "3": "low",
-    "2": "low"
-  },
-
-  "validRanks": ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"],
-
-  "validSuits": ["s", "h", "d", "c"],
-
-  "sourceConfidenceLevels": [
-    "consensus_gto",
-    "solver_verified",
-    "expert_judgment",
-    "community_consensus",
-    "experimental"
-  ],
-
-  "auditStatusValues": [
-    "draft",
-    "needs_review",
-    "approved",
-    "deprecated",
-    "review_pending",
-    "planning_only"
-  ],
-
-  "heroHandRole": {
-    "_comment": "Union of M2 v4.1.2 vocabulary and M3 v4.2.0 vocabulary. Used by audit-postflop-ps.ps1 R30+ for Module 3 (pf_flop_cbet_oop_def). M2 (pf_flop_cbet_ip) uses its own subset enforced inline by R24.",
-    "module2": [
-      "strong_value",
-      "thin_value",
-      "medium_showdown",
-      "weak_showdown",
-      "nut_draw",
-      "strong_draw",
-      "weak_draw",
-      "air",
-      "blocker_bluff",
-      "trap_check"
-    ],
-    "module3": [
-      "nutted_value",
-      "strong_value",
-      "marginal_made_hand",
-      "bluff_catcher",
-      "semi_bluff_combo",
-      "pure_draw",
-      "blocker_bluff",
-      "give_up",
-      "dominated_marginal"
-    ]
-  },
-
-  "actionReason": {
-    "_comment": "M2 reasons + M3 reasons. M3 audit (R31) accepts the M3 set including post-v4.2.2 slowplay_call.",
-    "module2": [
-      "value",
-      "thin_value",
-      "protection",
-      "bluff",
-      "equity_realization",
-      "pot_control",
-      "blocker_pressure",
-      "range_advantage_stab",
-      "give_up",
-      "semi_bluff"
-    ],
-    "module3": [
-      "value_raise",
-      "protection_raise",
-      "semi_bluff_raise",
-      "blocker_raise",
-      "bluff_catch",
-      "equity_realization_call",
-      "slowplay_call",
-      "range_disadvantage_fold",
-      "domination_fold"
-    ]
-  },
-
-  "difficultyRange": {
-    "min": 1,
-    "max": 5,
-    "labels": {
-      "1": "foundation",
-      "2": "intermediate",
-      "3": "solid",
-      "4": "advanced",
-      "5": "expert"
-    }
-  },
-
-  "scoringTiers": {
-    "best":       { "value": 1.0,  "fixed": true },
-    "acceptable": { "value": null, "allowed": [0.25, 0.5, 0.75] },
-    "bad":        { "value": 0,    "fixed": true },
-    "critical":   { "value": 0,    "fixed": true, "flag": true }
-  },
-
-  "modules": {
-    "pf_board_texture": {
-      "displayName": "Board Texture Trainer",
-      "shortDesc":   "Read the board before any action — range adv, nut adv, dynamic vs static, sizing family.",
-      "v": "v4.0.0",
-      "supportedQuestionTypes": ["range_advantage", "nut_advantage", "dynamic_level", "frequency_strategy", "sizing_family"]
-    },
-    "pf_flop_cbet_ip": {
-      "displayName": "Flop C-bet IP",
-      "shortDesc":   "BTN open vs BB call, 100BB SRP, flop only. Choose check / bet 33% / bet 75%.",
-      "spot":        "BTN_open_2.5x_BB_call",
-      "v": "v4.0.0",
-      "supportedQuestionTypes": ["action_choice"]
-    },
-    "pf_bb_def_vs_cbet": {
-      "displayName": "BB Defense vs C-bet",
-      "shortDesc":   "(planned v4.1) BB facing BTN c-bet on the flop.",
-      "spot":        "BTN_open_2.5x_BB_call",
-      "v": "v4.1.0_planned",
-      "supportedQuestionTypes": ["action_choice"]
-    },
-    "pf_flop_cbet_oop_def": {
-      "displayName": "Facing C-bet OOP",
-      "shortDesc":   "(v4.2.3) BB facing BTN c-bet on the flop. 24 production seeds; not runtime-wired in v4.2.3.",
-      "spot":        "BTN_open_2.5x_BB_call",
-      "v": "v4.2.3",
-      "supportedQuestionTypes": ["action_choice", "reason_choice"],
-      "validActions": ["fold", "call", "check_raise_small", "check_raise_big", "mixed"],
-      "validReasons": [
-        "value_raise", "protection_raise", "semi_bluff_raise", "blocker_raise",
-        "bluff_catch", "equity_realization_call", "slowplay_call",
-        "range_disadvantage_fold", "domination_fold"
-      ]
-    }
-  }
+    "version":  "1.0.0",
+    "schemaVersion":  "1.0.0",
+    "generatedAt":  "2026-05-04",
+    "description":  "Enums and structured vocabulary for post-flop board taxonomy. Source of truth for audit rule R09, R10, R13.",
+    "highCardClass":  [
+                          "A_high",
+                          "K_high",
+                          "Q_high",
+                          "J_high",
+                          "T_high",
+                          "low"
+                      ],
+    "textureTags":  [
+                        "dry",
+                        "semi_dry",
+                        "wet",
+                        "very_wet",
+                        "connected",
+                        "semi_connected",
+                        "disconnected",
+                        "highly_connected",
+                        "paired",
+                        "trips_possible",
+                        "monotone",
+                        "two_tone",
+                        "rainbow",
+                        "straightening",
+                        "flushing",
+                        "broadway_heavy",
+                        "low_heavy",
+                        "middle_heavy",
+                        "ace_high_dry",
+                        "ace_high_wet",
+                        "low_connected",
+                        "low_disconnected",
+                        "broadway_dry",
+                        "broadway_wet",
+                        "high_card_dominant",
+                        "set_heavy_for_caller",
+                        "two_pair_heavy_for_caller",
+                        "overpair_heavy_for_raiser",
+                        "static"
+                    ],
+    "suitTexture":  [
+                        "rainbow",
+                        "two_tone",
+                        "monotone"
+                    ],
+    "connectedness":  [
+                          "disconnected",
+                          "semi_connected",
+                          "connected",
+                          "highly_connected"
+                      ],
+    "pairedStatus":  [
+                         "unpaired",
+                         "paired",
+                         "trips"
+                     ],
+    "dynamicLevel":  {
+                         "1":  "static",
+                         "2":  "semi_static",
+                         "3":  "dynamic",
+                         "4":  "very_dynamic"
+                     },
+    "rangeAdvantage":  [
+                           "preflop_raiser",
+                           "caller",
+                           "neutral",
+                           "split"
+                       ],
+    "nutAdvantage":  [
+                         "preflop_raiser",
+                         "caller",
+                         "neutral",
+                         "split"
+                     ],
+    "sizingFamily":  [
+                         "range_small",
+                         "mixed_small_check",
+                         "polar_big",
+                         "check_heavy",
+                         "low_frequency"
+                     ],
+    "potType":  [
+                    "SRP",
+                    "3BP",
+                    "4BP",
+                    "limped"
+                ],
+    "street":  [
+                   "flop",
+                   "turn",
+                   "river"
+               ],
+    "position":  [
+                     "SB",
+                     "BB",
+                     "UTG",
+                     "UTG1",
+                     "LJ",
+                     "HJ",
+                     "CO",
+                     "BTN"
+                 ],
+    "actionMenuByModule":  {
+                               "pf_board_texture":  {
+                                                        "range_advantage":  [
+                                                                                "preflop_raiser",
+                                                                                "caller",
+                                                                                "neutral",
+                                                                                "split"
+                                                                            ],
+                                                        "nut_advantage":  [
+                                                                              "preflop_raiser",
+                                                                              "caller",
+                                                                              "neutral",
+                                                                              "split"
+                                                                          ],
+                                                        "dynamic_level":  [
+                                                                              "static",
+                                                                              "semi_static",
+                                                                              "dynamic",
+                                                                              "very_dynamic"
+                                                                          ],
+                                                        "frequency_strategy":  [
+                                                                                   "range_small",
+                                                                                   "mixed_small_check",
+                                                                                   "polar_big",
+                                                                                   "check_heavy",
+                                                                                   "low_frequency"
+                                                                               ],
+                                                        "sizing_family":  [
+                                                                              "range_small",
+                                                                              "mixed_small_check",
+                                                                              "polar_big",
+                                                                              "check_heavy",
+                                                                              "low_frequency"
+                                                                          ]
+                                                    },
+                               "pf_flop_cbet_ip":  {
+                                                       "action_choice":  [
+                                                                             "check",
+                                                                             "bet_33",
+                                                                             "bet_75"
+                                                                         ]
+                                                   },
+                               "pf_bb_def_vs_cbet":  {
+                                                         "action_choice":  [
+                                                                               "fold",
+                                                                               "call",
+                                                                               "raise"
+                                                                           ]
+                                                     },
+                               "pf_turn_barrel_oop_def":  [
+                                                              "fold",
+                                                              "call",
+                                                              "check_raise_small",
+                                                              "check_raise_big",
+                                                              "mixed"
+                                                          ]
+                           },
+    "contradictoryPairs":  [
+                               [
+                                   "monotone",
+                                   "rainbow"
+                               ],
+                               [
+                                   "monotone",
+                                   "two_tone"
+                               ],
+                               [
+                                   "rainbow",
+                                   "two_tone"
+                               ],
+                               [
+                                   "paired",
+                                   "trips"
+                               ],
+                               [
+                                   "dry",
+                                   "wet"
+                               ],
+                               [
+                                   "dry",
+                                   "very_wet"
+                               ],
+                               [
+                                   "disconnected",
+                                   "highly_connected"
+                               ],
+                               [
+                                   "disconnected",
+                                   "connected"
+                               ],
+                               [
+                                   "broadway_heavy",
+                                   "low_heavy"
+                               ],
+                               [
+                                   "broadway_dry",
+                                   "broadway_wet"
+                               ],
+                               [
+                                   "ace_high_dry",
+                                   "ace_high_wet"
+                               ],
+                               [
+                                   "low_connected",
+                                   "low_disconnected"
+                               ]
+                           ],
+    "highCardDerivation":  {
+                               "_comment":  "Mechanically derived from board cards; audit rule R02 verifies highCardClass matches highest rank on board",
+                               "A":  "A_high",
+                               "K":  "K_high",
+                               "Q":  "Q_high",
+                               "J":  "J_high",
+                               "T":  "T_high",
+                               "9":  "low",
+                               "8":  "low",
+                               "7":  "low",
+                               "6":  "low",
+                               "5":  "low",
+                               "4":  "low",
+                               "3":  "low",
+                               "2":  "low"
+                           },
+    "validRanks":  [
+                       "A",
+                       "K",
+                       "Q",
+                       "J",
+                       "T",
+                       "9",
+                       "8",
+                       "7",
+                       "6",
+                       "5",
+                       "4",
+                       "3",
+                       "2"
+                   ],
+    "validSuits":  [
+                       "s",
+                       "h",
+                       "d",
+                       "c"
+                   ],
+    "sourceConfidenceLevels":  [
+                                   "consensus_gto",
+                                   "solver_verified",
+                                   "expert_judgment",
+                                   "community_consensus",
+                                   "experimental"
+                               ],
+    "auditStatusValues":  [
+                              "draft",
+                              "needs_review",
+                              "approved",
+                              "deprecated",
+                              "review_pending",
+                              "planning_only"
+                          ],
+    "heroHandRole":  {
+                         "_comment":  "Union of M2 v4.1.2 vocabulary and M3 v4.2.0 vocabulary. Used by audit-postflop-ps.ps1 R30+ for Module 3 (pf_flop_cbet_oop_def). M2 (pf_flop_cbet_ip) uses its own subset enforced inline by R24.",
+                         "module2":  [
+                                         "strong_value",
+                                         "thin_value",
+                                         "medium_showdown",
+                                         "weak_showdown",
+                                         "nut_draw",
+                                         "strong_draw",
+                                         "weak_draw",
+                                         "air",
+                                         "blocker_bluff",
+                                         "trap_check"
+                                     ],
+                         "module3":  [
+                                         "nutted_value",
+                                         "strong_value",
+                                         "marginal_made_hand",
+                                         "bluff_catcher",
+                                         "semi_bluff_combo",
+                                         "pure_draw",
+                                         "blocker_bluff",
+                                         "give_up",
+                                         "dominated_marginal"
+                                     ],
+                         "module4":  [
+                                         "strong_value",
+                                         "nutted_value",
+                                         "bluff_catcher",
+                                         "marginal_made_hand",
+                                         "dominated_marginal",
+                                         "combo_draw",
+                                         "draw",
+                                         "give_up",
+                                         "air",
+                                         "bluff_candidate",
+                                         "blocker_bluff",
+                                         "slowplay_trap",
+                                         "protection_needed"
+                                     ]
+                     },
+    "actionReason":  {
+                         "_comment":  "M2 reasons + M3 reasons. M3 audit (R31) accepts the M3 set including post-v4.2.2 slowplay_call.",
+                         "module2":  [
+                                         "value",
+                                         "thin_value",
+                                         "protection",
+                                         "bluff",
+                                         "equity_realization",
+                                         "pot_control",
+                                         "blocker_pressure",
+                                         "range_advantage_stab",
+                                         "give_up",
+                                         "semi_bluff"
+                                     ],
+                         "module3":  [
+                                         "value_raise",
+                                         "protection_raise",
+                                         "semi_bluff_raise",
+                                         "blocker_raise",
+                                         "bluff_catch",
+                                         "equity_realization_call",
+                                         "slowplay_call",
+                                         "range_disadvantage_fold",
+                                         "domination_fold"
+                                     ],
+                         "module4":  [
+                                         "pot_odds_turn_call",
+                                         "equity_realization_turn_call",
+                                         "bluff_catch_turn",
+                                         "board_change_fold",
+                                         "domination_turn_fold",
+                                         "range_disadvantage_turn_fold",
+                                         "value_check_raise_turn",
+                                         "protection_check_raise_turn",
+                                         "semi_bluff_check_raise_turn",
+                                         "blocker_check_raise_turn",
+                                         "slowplay_turn_call",
+                                         "mixed_indifference_turn"
+                                     ]
+                     },
+    "difficultyRange":  {
+                            "min":  1,
+                            "max":  5,
+                            "labels":  {
+                                           "1":  "foundation",
+                                           "2":  "intermediate",
+                                           "3":  "solid",
+                                           "4":  "advanced",
+                                           "5":  "expert"
+                                       }
+                        },
+    "scoringTiers":  {
+                         "best":  {
+                                      "value":  1.0,
+                                      "fixed":  true
+                                  },
+                         "acceptable":  {
+                                            "value":  null,
+                                            "allowed":  [
+                                                            0.25,
+                                                            0.5,
+                                                            0.75
+                                                        ]
+                                        },
+                         "bad":  {
+                                     "value":  0,
+                                     "fixed":  true
+                                 },
+                         "critical":  {
+                                          "value":  0,
+                                          "fixed":  true,
+                                          "flag":  true
+                                      }
+                     },
+    "modules":  {
+                    "pf_board_texture":  {
+                                             "displayName":  "Board Texture Trainer",
+                                             "shortDesc":  "Read the board before any action — range adv, nut adv, dynamic vs static, sizing family.",
+                                             "v":  "v4.0.0",
+                                             "supportedQuestionTypes":  [
+                                                                            "range_advantage",
+                                                                            "nut_advantage",
+                                                                            "dynamic_level",
+                                                                            "frequency_strategy",
+                                                                            "sizing_family"
+                                                                        ]
+                                         },
+                    "pf_flop_cbet_ip":  {
+                                            "displayName":  "Flop C-bet IP",
+                                            "shortDesc":  "BTN open vs BB call, 100BB SRP, flop only. Choose check / bet 33% / bet 75%.",
+                                            "spot":  "BTN_open_2.5x_BB_call",
+                                            "v":  "v4.0.0",
+                                            "supportedQuestionTypes":  [
+                                                                           "action_choice"
+                                                                       ]
+                                        },
+                    "pf_bb_def_vs_cbet":  {
+                                              "displayName":  "BB Defense vs C-bet",
+                                              "shortDesc":  "(planned v4.1) BB facing BTN c-bet on the flop.",
+                                              "spot":  "BTN_open_2.5x_BB_call",
+                                              "v":  "v4.1.0_planned",
+                                              "supportedQuestionTypes":  [
+                                                                             "action_choice"
+                                                                         ]
+                                          },
+                    "pf_flop_cbet_oop_def":  {
+                                                 "displayName":  "Facing C-bet OOP",
+                                                 "shortDesc":  "(v4.2.3) BB facing BTN c-bet on the flop. 24 production seeds; not runtime-wired in v4.2.3.",
+                                                 "spot":  "BTN_open_2.5x_BB_call",
+                                                 "v":  "v4.2.3",
+                                                 "supportedQuestionTypes":  [
+                                                                                "action_choice",
+                                                                                "reason_choice"
+                                                                            ],
+                                                 "validActions":  [
+                                                                      "fold",
+                                                                      "call",
+                                                                      "check_raise_small",
+                                                                      "check_raise_big",
+                                                                      "mixed"
+                                                                  ],
+                                                 "validReasons":  [
+                                                                      "value_raise",
+                                                                      "protection_raise",
+                                                                      "semi_bluff_raise",
+                                                                      "blocker_raise",
+                                                                      "bluff_catch",
+                                                                      "equity_realization_call",
+                                                                      "slowplay_call",
+                                                                      "range_disadvantage_fold",
+                                                                      "domination_fold"
+                                                                  ]
+                                             },
+                    "pf_turn_barrel_oop_def":  {
+                                                   "displayName":  "Facing Turn Barrel OOP",
+                                                   "shortDesc":  "(v4.3.0B) BB facing BTN turn barrel after flop check-call. 24 production seeds; not runtime-wired in v4.3.0B (preview-locked until expansion to 50+).",
+                                                   "spot":  "BTN_open_2.5x_BB_call_BTN_cbet_small_BB_call",
+                                                   "v":  "v4.3.0B",
+                                                   "supportedQuestionTypes":  [
+                                                                                  "action_choice",
+                                                                                  "reason_choice"
+                                                                              ],
+                                                   "validActions":  [
+                                                                        "fold",
+                                                                        "call",
+                                                                        "check_raise_small",
+                                                                        "check_raise_big",
+                                                                        "mixed"
+                                                                    ],
+                                                   "validReasons":  [
+                                                                        "pot_odds_turn_call",
+                                                                        "equity_realization_turn_call",
+                                                                        "bluff_catch_turn",
+                                                                        "board_change_fold",
+                                                                        "domination_turn_fold",
+                                                                        "range_disadvantage_turn_fold",
+                                                                        "value_check_raise_turn",
+                                                                        "protection_check_raise_turn",
+                                                                        "semi_bluff_check_raise_turn",
+                                                                        "blocker_check_raise_turn",
+                                                                        "slowplay_turn_call",
+                                                                        "mixed_indifference_turn"
+                                                                    ]
+                                               }
+                },
+    "boardChange":  [
+                        "brick",
+                        "range_shift_btn",
+                        "range_shift_bb",
+                        "polarizing",
+                        "counterfeit",
+                        "draw_added",
+                        "static",
+                        "dynamic"
+                    ],
+    "suitTextureTurn":  [
+                            "rainbow",
+                            "two_tone",
+                            "monotone"
+                        ],
+    "equityShift":  [
+                        "neutral",
+                        "favors_btn",
+                        "favors_bb",
+                        "polarizes_btn",
+                        "improves_bb_draws",
+                        "completes_bb_draws",
+                        "counterfeits_bb_pairs"
+                    ],
+    "pairStatusChange":  [
+                             "no_change",
+                             "flop_card_paired",
+                             "paired_top",
+                             "paired_middle",
+                             "paired_bottom",
+                             "double_paired",
+                             "trips_possible"
+                         ],
+    "turnCategory":  [
+                         "brick",
+                         "overcard",
+                         "flush_complete",
+                         "flush_draw_added",
+                         "straight_complete",
+                         "straight_draw_added",
+                         "board_pair",
+                         "draw_intensifier",
+                         "top_pair_changer",
+                         "ace_overcard",
+                         "low_blank",
+                         "high_blank"
+                     ],
+    "drawCompletion":  [
+                           "none",
+                           "flush_completed",
+                           "straight_completed",
+                           "flush_draw_added",
+                           "straight_draw_added",
+                           "oesd_added",
+                           "gutshot_added",
+                           "multi_draw_added"
+                       ]
 }
