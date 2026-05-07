@@ -46815,6 +46815,2219 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.3.0C_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs8s4d_2s_m4_action_KsQc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Qs",
+                                                          "8s",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "2s",
+                                        "cards":  [
+                                                      "Qs",
+                                                      "8s",
+                                                      "4d",
+                                                      "2s"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high",
+                                        "turnCategory":  "flush_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "completes_bb_draws",
+                                        "drawCompletion":  "flush_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ks",
+                                           "Qc"
+                                       ],
+                          "handClass":  "top_pair_top_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "flush_draw",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Ks gives K-high spade FD redraw (2nd-nut, since Ax-of-spade is still possible in villain range).",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Qs 8s 4d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ks Qc?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPTK with K-high spade redraw on flush-complete turn -- call (bluff-catch).",
+                                              "turnLogic":  "2s makes the 3rd spade. Hero has TPTK (Q-pair, K kicker) plus K-high spade FD via Ks (board has Qs+8s+2s+Ks = 4 spades; need 1 more for K-high flush). Loses to Ax-of-spades flush combos but blocks all KQ/QQ value combos and beats every Q-x non-spade-flush bet.",
+                                              "rangeContext":  "BB flop call with KQ-suited on Q-8-4 was natural (TPTK + BDFD spade). Turn 2s lands the FD on top of TPTK.",
+                                              "handLogic":  "KsQc has TPTK + K-high FD redraw + reduced Ax-flush combos via the Ks blocker. ~30% equity vs villain barrel range.",
+                                              "sizingLogic":  "Calling captures villain bluffs and keeps the 2nd-nut FD alive. Raising folds out bluffs and isolates against Ax-of-spades flushes.",
+                                              "commonMistake":  "Folding TPTK with FD redraw vs small barrel under-defends the BB calling range.",
+                                              "takeaway":  "TPTK + 2nd-nut FD on flush-complete turn = call (bluff-catch + redraw)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_bluff_catcher",
+                                              "turn_blocker_pressure",
+                                              "turn_draw_completion"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_9s8d4c_7h_m4_action_TsTc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "9s",
+                                                          "8d",
+                                                          "4c"
+                                                      ],
+                                        "turnCard":  "7h",
+                                        "cards":  [
+                                                      "9s",
+                                                      "8d",
+                                                      "4c",
+                                                      "7h"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "low",
+                                        "turnCategory":  "straight_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "favors_bb",
+                                        "drawCompletion":  "straight_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ts",
+                                           "Tc"
+                                       ],
+                          "handClass":  "overpair",
+                          "heroHandRole":  "combo_draw",
+                          "drawCategory":  "oesd",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Hero overpair plus OESD (7-8-9-T) needing 6 or J = 8 outs to straight, plus 2 outs to set-of-Tens.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_turn_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop 9s 8d 4c; turn 7h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ts Tc?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Overpair TT + OESD on BB-favored straight-complete turn -- call (multi-source equity).",
+                                              "turnLogic":  "7h adds OESD: hero+board has 4,7,8,9,T,T = 7-8-9-T four consecutive + need 6 or J for straight = 8 outs, plus 2 outs to set of Ts and pair-of-board outs. The 7 also turns BB range into the value-favored side, so villain barrel range is more polarized.",
+                                              "rangeContext":  "BB flop call with TT on 9-8-4 was natural (overpair to flop, with backdoor reach). Turn 7 keeps the overpair AND lands the OESD on top.",
+                                              "handLogic":  "TsTc has overpair to all four board ranks plus open-ender (8 straight outs) plus 2 set outs. ~35% one-card equity vs villain barrel range.",
+                                              "sizingLogic":  "Calling realizes multi-source equity at small price. Raising folds out bluffs and bloats vs already-made straights (J9, T6 specific combos).",
+                                              "commonMistake":  "Folding overpair-plus-OESD vs small barrel under-defends BB range and abandons real equity.",
+                                              "takeaway":  "Overpair + OESD on straight-complete turn = call (multi-source equity)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_pot_odds",
+                                              "turn_equity_shift",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Kd8s3c_8h_m4_action_JsJd_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kd",
+                                                          "8s",
+                                                          "3c"
+                                                      ],
+                                        "turnCard":  "8h",
+                                        "cards":  [
+                                                      "Kd",
+                                                      "8s",
+                                                      "3c",
+                                                      "8h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "turnCategory":  "board_pair",
+                                        "boardChange":  "counterfeit",
+                                        "equityShift":  "counterfeits_bb_pairs",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "flop_card_paired"
+                                    },
+                          "heroHand":  [
+                                           "Js",
+                                           "Jd"
+                                       ],
+                          "handClass":  "underpair",
+                          "heroHandRole":  "dominated_marginal",
+                          "drawCategory":  "none",
+                          "showdownValue":  "low",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_turn_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Kd 8s 3c; turn 8h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Js Jd?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "call",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "JJ underpair on board-paired K-high turn -- fold; hero is below villain barrel range.",
+                                              "turnLogic":  "8h pairs the flop 8 -- counterfeits hero pair below the K and adds 8x trip combos to villain range. Hero JJ now sits below K-pair, A-overcards (with sequencing equity), AND any 8x trip combo (88/A8/K8). Vs villain barrel range that is Kx-heavy plus turned trips, JJ is dominated.",
+                                              "rangeContext":  "BB flop call with JJ on K-8-3 was thin (underpair to top, no draw, only set outs). Turn 8 doubles up the existing 8 and worsens hero range position significantly.",
+                                              "handLogic":  "JsJd has underpair to K with no draw, no relevant blocker, and hero is dominated by Kx, 8x, and overpairs. Only 2 outs to set-of-Js.",
+                                              "sizingLogic":  "Folding closes action; calling pays off Kx + 8x value range while only beating air. Raising commits chips into a dominated range.",
+                                              "commonMistake":  "Stationing underpairs vs board-pair turns is a textbook leak; the pair counterfeits range upward.",
+                                              "takeaway":  "Underpair on board-pair turn vs Kx-heavy barrel = fold (range disadvantage + counterfeit)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_range_disadvantage",
+                                              "turn_board_change",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Kd8s3c_8h_m4_action_AdKh_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kd",
+                                                          "8s",
+                                                          "3c"
+                                                      ],
+                                        "turnCard":  "8h",
+                                        "cards":  [
+                                                      "Kd",
+                                                      "8s",
+                                                      "3c",
+                                                      "8h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "turnCategory":  "board_pair",
+                                        "boardChange":  "counterfeit",
+                                        "equityShift":  "counterfeits_bb_pairs",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "flop_card_paired"
+                                    },
+                          "heroHand":  [
+                                           "Ad",
+                                           "Kh"
+                                       ],
+                          "handClass":  "top_pair_top_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "A-blocker reduces villain AA value combos; Kh gives top pair top kicker on a paired board.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Kd 8s 3c; turn 8h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ad Kh?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPTK with A-blocker on board-paired K-high turn -- call (bluff-catch).",
+                                              "turnLogic":  "8h pairs the flop 8 but does not change hero best showdown: TPTK (K-pair, A kicker) still beats Kx-with-weaker-kicker, all underpairs, and air. Loses to 88 and A8/K8 trip combos but A-blocker reduces AA combos and the K-pair is still range-top vs villain barrel range.",
+                                              "rangeContext":  "BB flop call with AK-suited on K-8-3 made TPTK on the flop. Turn 8 pairs and adds trip threats but does not demote TPTK below the villain range top.",
+                                              "handLogic":  "AdKh has TPTK with A kicker (top kicker possible) plus A-blocker reducing AA combos. Beats Kx-weaker, underpairs, air. Loses to 88, A8, K8 trips.",
+                                              "sizingLogic":  "Calling captures villain bluffs and air. Raising folds out bluffs and isolates against trips. Folding the absolute top of bluff-catcher range over-folds vs a polarized barrel.",
+                                              "commonMistake":  "Folding TPTK with A-blocker on board-paired turns over-folds the BB range top.",
+                                              "takeaway":  "TPTK + A-blocker on board-paired turn = call (textbook bluff-catch)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_bluff_catcher",
+                                              "turn_blocker_pressure",
+                                              "turn_board_change"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_AhQc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Qs",
+                                                          "7d",
+                                                          "3c"
+                                                      ],
+                                        "turnCard":  "3h",
+                                        "cards":  [
+                                                      "Qs",
+                                                      "7d",
+                                                      "3c",
+                                                      "3h"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "paired"
+                                                        ],
+                                        "highCardClass":  "Q_high",
+                                        "turnCategory":  "board_pair",
+                                        "boardChange":  "counterfeit",
+                                        "equityShift":  "counterfeits_bb_pairs",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "flop_card_paired"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "Qc"
+                                       ],
+                          "handClass":  "top_pair_top_kicker",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "A-heart blocker reduces villain AA combos; TPTK with the absolute top kicker on Q-high paired-low turn.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ah Qc?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPTK + A-blocker on board-paired low turn -- check-raise small for value.",
+                                              "turnLogic":  "3h pairs the flop 3 but the second-pair is below TPTK and irrelevant to hero hand strength. Villain barrel range is Q-x-and-down value plus air; hero has TPTK with the absolute top kicker (A) plus A-heart blocker reducing AA combos. Only 33 (set), 77 (set), 7-x trips, QQ (overpair) beat hero.",
+                                              "rangeContext":  "BB flop call with AQ-offsuit on Q-7-3 was natural (TPTK). Turn 3 doubles up the second board card but does not threaten TPTK seriously.",
+                                              "handLogic":  "AhQc has TPTK with A kicker plus A-blocker reducing AA combos. Beats Q-weak-kicker, all underpairs, air, and turned trips of 3 (very rare combo for villain). Loses to 33/77/7-x trips/QQ overpair.",
+                                              "sizingLogic":  "Small check-raise charges Qx weaker kickers and turns villain bluffs into folding equity. Big raise risks too much vs the rare set/trips. Calling preserves bluffs but surrenders value.",
+                                              "commonMistake":  "Slowplaying TPTK with the absolute top kicker on a paired-low turn surrenders chips that worse Qx pays off.",
+                                              "takeaway":  "TPTK with A kicker on second-paired low turn = check-raise small for value."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "turn_blocker_pressure",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_action_JsJh_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ts",
+                                                          "8s",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "7c",
+                                        "cards":  [
+                                                      "Ts",
+                                                      "8s",
+                                                      "4d",
+                                                      "7c"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high",
+                                        "turnCategory":  "draw_intensifier",
+                                        "boardChange":  "draw_added",
+                                        "equityShift":  "improves_bb_draws",
+                                        "drawCompletion":  "oesd_added",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Js",
+                                           "Jh"
+                                       ],
+                          "handClass":  "overpair",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Js blocks one J9 combo (the most threatening straight-completing combo) and gives a J-high spade backdoor.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "protection_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ts 8s 4d; turn 7c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Js Jh?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call",
+                                                            "check_raise_big"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Overpair JJ with J9-straight-blocker on draw-intensifier turn -- check-raise small for protection.",
+                                              "turnLogic":  "7c is a draw-intensifier: villain barrel range now includes OESDs (98, J9), gutshots (65, 96), and FDs (spade combos). Hero JJ is overpair to all four board ranks (J \u003e T) plus Js blocks one of the four J9 combos that make the J-high straight on the river. Many bad rivers (any spade, any J/9/T/8 helping draws) make hero re-evaluate; raising NOW charges draws and air.",
+                                              "rangeContext":  "BB flop call with JJ on T-8-4 was thin (overpair-to-T, no FD, no draw). Turn 7 adds straight threats; hero must decide between protection raise vs trapped slowplay -- raise wins because draws have meaningful equity vs JJ.",
+                                              "handLogic":  "JsJh has overpair JJ plus J-spade-blocker reducing nut FD combos and J9-straight combos. Loses to TT/88/44 sets, T-x two-pair, made straights (J9 specifically; hero blocks 1 of 4). Beats Tx, weaker pairs, air.",
+                                              "sizingLogic":  "Small check-raise charges flush draws, OESDs, gutshots, and air. Big raise also defensible given draw density. Calling commits hero to a tough river decision when a draw-completing card lands.",
+                                              "commonMistake":  "Slowplaying overpair on draw-intensifier turn lets villain realize FREE equity with draws.",
+                                              "takeaway":  "Overpair with straight-blocker on dynamic turn = check-raise small for protection."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "turn_blocker_pressure",
+                                              "turn_equity_shift"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ah9d4d_7h_m4_action_AsKs_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ah",
+                                                          "9d",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "7h",
+                                        "cards":  [
+                                                      "Ah",
+                                                      "9d",
+                                                      "4d",
+                                                      "7h"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "turnCategory":  "draw_intensifier",
+                                        "boardChange":  "draw_added",
+                                        "equityShift":  "improves_bb_draws",
+                                        "drawCompletion":  "gutshot_added",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "As",
+                                           "Ks"
+                                       ],
+                          "handClass":  "top_pair_top_kicker",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "high",
+                          "blockerNote":  "A-blocker reduces villain AA + AK value; spade backdoor is dead since flop and turn are diamond/heart based, but A-pair still tops the bluff-catcher region.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ah 9d 4d; turn 7h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with As Ks?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPTK with A-blocker on multi-FD turn -- check-raise small for value.",
+                                              "turnLogic":  "7h adds heart-FD threats AND straight-draw threats (5-6, 6-8 combos). Hero TPTK (A-pair, K kicker) is still the top of the made-hand region; A-blocker reduces villain AA and AK combos. Many turn-FD combos pay off the raise; folding them gives them free equity.",
+                                              "rangeContext":  "BB flop call with AKs on A-9-4 with backdoor diamond was natural (TPTK + BDFD). Turn 7 keeps TPTK and adds heart-FD threats to villain range; raise NOW for value while villain still calls with weaker Ax / draws.",
+                                              "handLogic":  "AsKs has TPTK with K kicker, A-blocker reducing AA combos, and A-spade-blocker reducing nut FD combos. Beats AQ/AJ/AT/A-weak, all sets are blocker-light, all draws. Loses to AA/A9/A4/two-pair/sets (rare).",
+                                              "sizingLogic":  "Small check-raise charges weaker Ax, all draws, and turns villain barrel bluffs into folding equity. Big raise risks too much vs the rare two-pair/set on a wet turn. Calling preserves bluffs but lets draws realize equity.",
+                                              "commonMistake":  "Slowplaying TPTK with A-blocker on multi-FD turn surrenders value vs draws that pay off the raise.",
+                                              "takeaway":  "TPTK + A-blocker on multi-FD turn = check-raise small for value."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "turn_blocker_pressure",
+                                              "turn_equity_shift"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_JdTd5s_2c_m4_action_JhJs_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  2,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Jd",
+                                                          "Td",
+                                                          "5s"
+                                                      ],
+                                        "turnCard":  "2c",
+                                        "cards":  [
+                                                      "Jd",
+                                                      "Td",
+                                                      "5s",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "J_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "J_high",
+                                        "turnCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "equityShift":  "neutral",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Jh",
+                                           "Js"
+                                       ],
+                          "handClass":  "set",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  "Top set of jacks; blocks the highest pair and reduces JT-two-pair combos (hero has both remaining Jx).",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Jd Td 5s; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Jh Js?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "check_raise_big"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "call",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top set of jacks on polar brick turn -- check-raise small for value.",
+                                              "turnLogic":  "2c is a brick. Hero set of jacks beats every made hand except QQ (rare BTN preflop range) and turned straights from villain holding 89 (slim flop call combos for 89). Polar brick favors raising to charge value-region hands plus bluffs while villain has not yet given up.",
+                                              "rangeContext":  "BB flop call with JJ on J-T-5 was natural (top set, heavy flop check-call). Turn 2 brick keeps hero ahead of every continuation and adds zero meaningful threats.",
+                                              "handLogic":  "JhJs makes top set of jacks. Loses only to QQ (rare) and 89 made straight (rare combo on flop call). Beats every Tx, every overpair below QQ, every two-pair, every draw.",
+                                              "sizingLogic":  "Small check-raise charges weaker Tx/overpairs/draws while keeping bluffs in. Big raise also defensible vs villain who calls big with TT/T9-suited two-pair. Calling slowplays -- acceptable but lets draws realize free equity vs the rare turn river.",
+                                              "commonMistake":  "Auto-calling top set on polar brick turns surrenders value vs villain Tx and overpair pay-offs.",
+                                              "takeaway":  "Top set on polar brick turn = check-raise small for value."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "second_barrel_defense",
+                                              "turn_blocker_pressure"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_JdTd5s_2c_m4_action_KsKh_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Jd",
+                                                          "Td",
+                                                          "5s"
+                                                      ],
+                                        "turnCard":  "2c",
+                                        "cards":  [
+                                                      "Jd",
+                                                      "Td",
+                                                      "5s",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "J_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "J_high",
+                                        "turnCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "equityShift":  "neutral",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ks",
+                                           "Kh"
+                                       ],
+                          "handClass":  "overpair",
+                          "heroHandRole":  "strong_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Overpair KK with no spade redraw (board only has 5s spade); blocks 0 of villain key combos but tops every J-x value combo.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Jd Td 5s; turn 2c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ks Kh?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Overpair KK on polar brick turn -- check-raise small for value.",
+                                              "turnLogic":  "2c is a brick. Hero KK is overpair to J (highest board) and beats every Jx, every Tx, every smaller pair, every draw. Loses only to AA, JJ/TT/55/22 sets, and 89 made straight -- combined a small fraction of villain barrel range.",
+                                              "rangeContext":  "BB flop call with KK on J-T-5 was thin (overpair to flop, no draw). Turn 2 brick is harmless and the polar dynamic favors charging Jx.",
+                                              "handLogic":  "KsKh has overpair KK below AA only. Beats Jx, Tx, weaker pairs, air, draws. Loses to AA, sets (rare), and 89 made straight (rare combo).",
+                                              "sizingLogic":  "Small check-raise charges Jx, weaker pairs, and draws while keeping bluffs in. Calling slowplays acceptable but surrenders value vs villain Jx call-down. Big raise risks too much vs sets.",
+                                              "commonMistake":  "Folding KK overpair on polar brick because of \"the J top pair on board\" misreads villain range and over-folds the BB region top.",
+                                              "takeaway":  "Overpair below only AA on polar brick = check-raise small for value."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "second_barrel_defense",
+                                              "turn_range_disadvantage"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_action_6h6d_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  2,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "7s",
+                                                          "5d",
+                                                          "3h"
+                                                      ],
+                                        "turnCard":  "4c",
+                                        "cards":  [
+                                                      "7s",
+                                                      "5d",
+                                                      "3h",
+                                                      "4c"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "low",
+                                        "turnCategory":  "straight_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "favors_bb",
+                                        "drawCompletion":  "straight_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "6h",
+                                           "6d"
+                                       ],
+                          "handClass":  "straight",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  "Hero made 7-high straight (3-4-5-6-7) using one of two pocket sixes. Loses only to 8-high straight (4-5-6-7-8) requiring villain to hold 86 or 8X.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "value_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop 7s 5d 3h; turn 4c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 6h 6d?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "check_raise_big",
+                                                            "call"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "7-high straight (3-4-5-6-7) on low BB-favored straight-complete turn -- check-raise small for value.",
+                                              "turnLogic":  "4c lands the bottom-end straight: any 6 makes 3-4-5-6-7. Hero 66 makes the made 7-high straight directly. Range strongly favors BB (BB call range contains 65, 64s, A2-A4, 6x suited; BTN open range is much narrower in low connectors). Higher straight (4-5-6-7-8) requires villain to hold 8x with a 6 or specific 86 -- rare combo on flop call.",
+                                              "rangeContext":  "BB flop call with 66 on 7-5-3 was thin (underpair to 7, gutshot to 4 for the wheel). Turn 4 lands the wheel-adjacent straight directly via the existing pocket pair.",
+                                              "handLogic":  "6h6d makes 3-4-5-6-7 = 7-high straight. Loses to 4-5-6-7-8 (requires villain 8x; uncommon BTN combo with hero blocking one 6). Beats every set, every two-pair, every weaker straight (none higher except the 8-high), all draws.",
+                                              "sizingLogic":  "Small check-raise charges 7x value, sets, two-pair, all draws. Big raise also defensible vs sets that may stack off. Calling slowplays but lets sky-rivers (any 8) potentially counterfeit.",
+                                              "commonMistake":  "Slowplaying made straight on low straight-complete turn lets the higher-straight river (any 8) potentially redirect the pot.",
+                                              "takeaway":  "Made 7-high straight on low BB-favored straight-complete turn = check-raise small for value."
+                                          },
+                          "conceptTags":  [
+                                              "turn_check_raise_value",
+                                              "turn_draw_completion",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_action_8d7d_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "7s",
+                                                          "5d",
+                                                          "3h"
+                                                      ],
+                                        "turnCard":  "4c",
+                                        "cards":  [
+                                                      "7s",
+                                                      "5d",
+                                                      "3h",
+                                                      "4c"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "low",
+                                        "turnCategory":  "straight_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "favors_bb",
+                                        "drawCompletion":  "straight_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "8d",
+                                           "7d"
+                                       ],
+                          "handClass":  "oesd",
+                          "heroHandRole":  "combo_draw",
+                          "drawCategory":  "oesd",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Pair of 7s + OESD: hero+board has 3,4,5,7,8 with one 7. 4-5-6-7-8 needs 6; 5-6-7-8-9 needs 6 or 9; combined gives OESD via 6 (8 outs minus shared) plus pair-7 outs.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "equity_realization_turn_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop 7s 5d 3h; turn 4c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 8d 7d?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+                                                            "check_raise_small",
+                                                            "mixed"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Pair-of-7 + OESD via 6 on low BB-favored turn -- call (multi-source equity).",
+                                              "turnLogic":  "4c adds OESD: hero+board ranks 3,4,5,7,8 with hero pair of 7s. 4-5-6-7-8 needs 6 (4 outs); 5-6-7-8-9 needs 6 OR 9 (extra outs to 9 since hero already pair). Combined ~10 effective outs counting pair improvements; ~22% one-card equity vs villain barrel range.",
+                                              "rangeContext":  "BB flop call with 87-suited on 7-5-3 was natural (top pair + diamond backdoor + slim straight reach). Turn 4 lands the OESD on top of pair.",
+                                              "handLogic":  "8d7d has pair of 7 plus OESD-to-6 plus 9-river-pair improvement. Multi-source equity earns the call vs polarized barrel.",
+                                              "sizingLogic":  "Calling realizes equity at small price. Small check-raise also defensible as semi-bluff vs over-bluffy villain. Folding combo equity OOP under-defends BB range.",
+                                              "commonMistake":  "Folding pair-plus-OESD vs small barrel under-defends and abandons real combo equity.",
+                                              "takeaway":  "Pair + OESD on low straight-complete turn = call (multi-source equity)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_pot_odds",
+                                              "turn_equity_shift",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_action_KsTd_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  2,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "7s",
+                                                          "5d",
+                                                          "3h"
+                                                      ],
+                                        "turnCard":  "4c",
+                                        "cards":  [
+                                                      "7s",
+                                                      "5d",
+                                                      "3h",
+                                                      "4c"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "low",
+                                        "turnCategory":  "straight_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "favors_bb",
+                                        "drawCompletion":  "straight_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ks",
+                                           "Td"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_turn_fold",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop 7s 5d 3h; turn 4c. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ks Td?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "call",
+                                                          "check_raise_big"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "KT no pair no draw on low BB-favored straight-complete turn -- fold (range disadvantage).",
+                                              "turnLogic":  "4c is a polar straight-complete card on a low BB-favored board. Villain barrel range is wedged: either made-straight value (any 6, plus rare 8x for 8-high) or air. Hero KT has zero pair outs that beat anything in villain value range (K or T pair on river still loses to made straights). No flush draw, no straight draw.",
+                                              "rangeContext":  "BB flop call with KT-offsuit on 7-5-3 was already thin (two overcards, no draw). Turn 4 makes the spot hopeless.",
+                                              "handLogic":  "KsTd has zero made-hand value, no FD, no straight draw, no relevant blocker. The 6 overcard outs to K-pair or T-pair are dominated by the made-straight portion of villain range and irrelevant vs villain air bucket.",
+                                              "sizingLogic":  "Folding closes action; calling chases dominated outs; raising commits to a bluff with no equity backbone on a board where BB range advantage gets exposed by the bluff.",
+                                              "commonMistake":  "Continuing two overcards on low BB-favored straight turns because of \"outs to K or T\" misreads the villain range structure.",
+                                              "takeaway":  "Naked overcards on low straight-complete BB-favored turn = fold."
+                                          },
+                          "conceptTags":  [
+                                              "turn_range_disadvantage",
+                                              "turn_domination_fold",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs8s4d_2s_m4_reason_As9c_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  5,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Qs",
+                                                          "8s",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "2s",
+                                        "cards":  [
+                                                      "Qs",
+                                                      "8s",
+                                                      "4d",
+                                                      "2s"
+                                                  ],
+                                        "boardKind":  "Q_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "monotone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "Q_high",
+                                        "turnCategory":  "flush_complete",
+                                        "boardChange":  "polarizing",
+                                        "equityShift":  "completes_bb_draws",
+                                        "drawCompletion":  "flush_completed",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "As",
+                                           "9c"
+                                       ],
+                          "handClass":  "nut_flush_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "nut_flush_draw",
+                          "showdownValue":  "low",
+                          "blockerNote":  "As gives the nut spade blocker AND a 1-card nut spade redraw on river (board has 3 spades + hero As = 4 spades; need 1 more for the absolute nuts).",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "blocker_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Qs 8s 4d; turn 2s. BB check-raises small with As 9c vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "blocker_check_raise_turn",
+                                         "acceptable":  [
+                                                            "semi_bluff_check_raise_turn"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "bluff_catch_turn",
+                                                     "equity_realization_turn_call",
+                                                     "pot_odds_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "As blocker bluff on flush-complete turn -- primary reason is BLOCKER pressure (with nut FD as secondary backup).",
+                                              "turnLogic":  "2s makes the 3rd spade. Villain barrel range that continues vs a check-raise is dominated by Ax-of-spades (nut flushes) and Qx with redraw. Hero As removes EVERY nut-flush combo from villain calling range, AND hero has the 1-card nut FD redraw if a 4th spade lands on the river (~9 outs, ~17%).",
+                                              "rangeContext":  "BB flop call with A9-offsuit on Q-8-4 was thin (single A-overcard plus backdoor spade). Turn 2s simultaneously creates the flush threat (villain range) AND lands the nut spade redraw (hero), making the blocker bluff structurally sound.",
+                                              "handLogic":  "As9c has no made hand. The 9c does no work. The strategic engine is the As blocker effect on villain calling range; the 1-card nut FD redraw is secondary equity. ~17% straight equity from the nut FD plus ~50% blocker fold-equity uplift.",
+                                              "sizingLogic":  "Small check-raise leverages the blocker primarily. Big raise risks too much without made-hand backbone. Calling concedes the spot. The PRIMARY reason is BLOCKER pressure, not semi-bluff -- semi_bluff_check_raise_turn is acceptable but secondary because the made-hand-replacement value is the blocker, not the draw.",
+                                              "commonMistake":  "Misclassifying this as semi-bluff first frames the raise around the 17% draw rather than the ~50% fold equity from the blocker; the diagnostic ranks blocker first, draw second.",
+                                              "takeaway":  "Nut-suit blocker plus nut FD on flush-complete turn = textbook blocker_check_raise_turn (semi-bluff is acceptable but secondary)."
+                                          },
+                          "conceptTags":  [
+                                              "turn_blocker_pressure",
+                                              "turn_check_raise_bluff",
+                                              "turn_draw_completion"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Kd8c4s_Ah_m4_reason_As6c_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  5,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kd",
+                                                          "8c",
+                                                          "4s"
+                                                      ],
+                                        "turnCard":  "Ah",
+                                        "cards":  [
+                                                      "Kd",
+                                                      "8c",
+                                                      "4s",
+                                                      "Ah"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "turnCategory":  "overcard",
+                                        "boardChange":  "range_shift_btn",
+                                        "equityShift":  "favors_btn",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "As",
+                                           "6c"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "none",
+                          "showdownValue":  "low",
+                          "blockerNote":  "As blocks AA value combos on the A-overcard turn AND blocks every Ax that turned a pair (AK, AQ, AJ, AT, A8, A4 etc.) -- removes the densest portion of villain calling range.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "blocker_check_raise_turn",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Kd 8c 4s; turn Ah. BB check-raises small with As 6c vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "blocker_check_raise_turn",
+                                         "acceptable":  [
+                                                            "semi_bluff_check_raise_turn"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "bluff_catch_turn",
+                                                     "equity_realization_turn_call",
+                                                     "pot_odds_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "As blocker bluff on A-overcard turn -- primary reason is BLOCKER pressure on villain Ax range.",
+                                              "turnLogic":  "Ah on K-8-4 demotes hero pair candidates and brings every Ax into villain barrel range (AK/AQ/AJ/AT/A8/A4). Hero As removes one ace from villain entire Ax region -- the dominant portion of villain barrel range that would call a check-raise. Plus AA combos drop from 6 to 1.",
+                                              "rangeContext":  "BB flop call with A6-offsuit on K-8-4 was thin (A-blocker + backdoor reach but no immediate value). Turn A creates the blocker-bluff opportunity by amplifying the Ax-density in villain range.",
+                                              "handLogic":  "As6c has no pair, no draw, no real outs. The 6c does no work. The raise is entirely about removing villain Ax / AA combos from the calling range.",
+                                              "sizingLogic":  "Small check-raise leverages the blocker effect on Ax-density. Big raise risks too much without made-hand backbone. Calling pays off Ax. The reason is NOT semi-bluff (no draw) and NOT bluff-catch (hero has no showdown value).",
+                                              "commonMistake":  "Confusing the A-blocker bluff with semi-bluff or value-raise misreads the strategic engine -- the raise lives entirely on the blocker.",
+                                              "takeaway":  "A-blocker on A-overcard turn vs Ax-heavy barrel = textbook blocker_check_raise_turn."
+                                          },
+                          "conceptTags":  [
+                                              "turn_blocker_pressure",
+                                              "turn_check_raise_bluff",
+                                              "turn_board_change"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_reason_AdJc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ac",
+                                                          "7d",
+                                                          "2s"
+                                                      ],
+                                        "turnCard":  "4h",
+                                        "cards":  [
+                                                      "Ac",
+                                                      "7d",
+                                                      "2s",
+                                                      "4h"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "turnCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "equityShift":  "neutral",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ad",
+                                           "Jc"
+                                       ],
+                          "handClass":  "top_pair_good_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "A-pair with J kicker plus A-blocker reducing AA / AK / AQ value combos.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_turn",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ac 7d 2s; turn 4h. BB calls with Ad Jc vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "bluff_catch_turn",
+                                         "acceptable":  [
+                                                            "range_disadvantage_turn_fold"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "blocker_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
+                                                     "pot_odds_turn_call",
+                                                     "equity_realization_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TPGK with A-blocker on A-high dry brick -- primary reason is BLUFF-CATCH (showdown value vs polarized barrel).",
+                                              "turnLogic":  "4h is a brick that does not change ranges. Hero TPGK (A-pair, J kicker) has clean showdown value vs villain barrel range that is polarized into Ax-with-better-kicker (AK/AQ) and air. The A-blocker reduces villain better-kicker combos.",
+                                              "rangeContext":  "BB flop call with AJ-offsuit on A-7-2 was natural (TPGK + A-blocker). Turn 4 brick keeps the spot exactly the same -- a clean bluff-catch decision.",
+                                              "handLogic":  "AdJc has TPGK with J kicker and A-blocker reducing AA/AK/AQ combos. Beats Ax-weaker (A2-A8 if any), 77/22 (rare), bluffs. Loses to AK/AQ.",
+                                              "sizingLogic":  "Calling captures villain bluff frequency. The reason is NOT pot odds (no draw) and NOT range disadvantage (BB has mid-pair-plus region this barrel reaches). The strategic engine is BLUFF-CATCH with showdown value.",
+                                              "commonMistake":  "Misclassifying TPGK on dry brick as range-disadvantage-fold over-folds the BB region top.",
+                                              "takeaway":  "TPGK + A-blocker on A-high brick vs barrel = textbook bluff_catch_turn."
+                                          },
+                          "conceptTags":  [
+                                              "turn_bluff_catcher",
+                                              "turn_blocker_pressure",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_reason_KsQc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ts",
+                                                          "8s",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "7c",
+                                        "cards":  [
+                                                      "Ts",
+                                                      "8s",
+                                                      "4d",
+                                                      "7c"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high",
+                                        "turnCategory":  "draw_intensifier",
+                                        "boardChange":  "draw_added",
+                                        "equityShift":  "improves_bb_draws",
+                                        "drawCompletion":  "oesd_added",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Ks",
+                                           "Qc"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "none",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "domination_turn_fold",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ts 8s 4d; turn 7c. BB folds with Ks Qc vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "domination_turn_fold",
+                                         "acceptable":  [
+                                                            "range_disadvantage_turn_fold"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "blocker_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
+                                                     "bluff_catch_turn",
+                                                     "equity_realization_turn_call",
+                                                     "pot_odds_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "KQ no pair no draw on draw-intensifier turn -- primary reason is DOMINATION (pair outs are dominated).",
+                                              "turnLogic":  "7c is a draw-intensifier; villain barrel range expands to include OESDs, gutshots, FDs PLUS Tx value PLUS sets. Hero KQ has 6 overcard outs (3 K + 3 Q) but every K-pair or Q-pair on river loses to AK/AQ (top of villain barrel) and to KQ if villain has it (rare). Pair outs dominated.",
+                                              "rangeContext":  "BB flop call with KQ-offsuit on T-8-4 was thin (two overcards, no FD, no draw). Turn 7 expands villain barrel range AND keeps hero with no draw, no pair, no real equity.",
+                                              "handLogic":  "KsQc has zero made hand, no flush draw, no straight draw. The 6 overcard outs are dominated by villain top-of-range (AK/AQ).",
+                                              "sizingLogic":  "Folding closes action. The reason is specifically DOMINATION (pair outs dominated by AK/AQ), distinct from range-disadvantage-fold (which is about BB range structure rather than hand-specific dominance).",
+                                              "commonMistake":  "Continuing KQ vs draw-intensifier barrels because of \"two overcards\" ignores that the pair outs themselves are dominated.",
+                                              "takeaway":  "Naked dominated overcards on draw-intensifier turn = textbook domination_turn_fold."
+                                          },
+                          "conceptTags":  [
+                                              "turn_domination_fold",
+                                              "turn_range_disadvantage",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ah9d4d_7h_m4_reason_TdTs_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ah",
+                                                          "9d",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "7h",
+                                        "cards":  [
+                                                      "Ah",
+                                                      "9d",
+                                                      "4d",
+                                                      "7h"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "turnCategory":  "draw_intensifier",
+                                        "boardChange":  "draw_added",
+                                        "equityShift":  "improves_bb_draws",
+                                        "drawCompletion":  "gutshot_added",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Td",
+                                           "Ts"
+                                       ],
+                          "handClass":  "underpair",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "backdoor_only",
+                          "showdownValue":  "low",
+                          "blockerNote":  "Underpair to A; Td gives a 4th diamond with board 9d+4d+Td = 3 diamonds, hero needs 1 more for T-high diamond flush (2nd-nut behind nut Ad-of-diamond).",
+                          "recommendedAction":  "mixed",
+                          "actionReason":  "mixed_indifference_turn",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ah 9d 4d; turn 7h. BB plays mixed (call/fold) with Td Ts vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "mixed_indifference_turn",
+                                         "acceptable":  [
+                                                            "bluff_catch_turn",
+                                                            "equity_realization_turn_call"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "blocker_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
+                                                     "range_disadvantage_turn_fold",
+                                                     "domination_turn_fold",
+                                                     "pot_odds_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "TT underpair + backdoor diamond redraw on multi-FD turn -- primary reason is MIXED INDIFFERENCE (frequency depends on villain bluff %).",
+                                              "turnLogic":  "7h adds heart-FD threats AND straight-draw threats to villain barrel range. Hero TT is below A-pair but above 9-pair. Hero Td gives only 1 diamond + board has 9d+4d = 3 diamonds total; hero needs runner-runner spades or runner-runner diamonds for any flush. Pair-of-T improvement is dominated by villain Ax range; set-of-T outs are just 2.",
+                                              "rangeContext":  "BB flop call with TT on A-9-4 was thin (underpair, slim equity vs Ax range). Turn 7 keeps hero underpair AND does not significantly improve the spot.",
+                                              "handLogic":  "TdTs has underpair to A with backdoor diamond redraw (3 diamonds total, need runner-runner). 5 outs to set of T plus pair-of-T-improvements blocked by Ax. ~13% one-card equity.",
+                                              "sizingLogic":  "Pure call vs over-bluffy villain captures the bluff bucket. Pure fold vs nitty villain avoids paying off Ax + made-FD value. Solver mixes ~50/50 vs balanced barrel range. The reason is NOT clean bluff-catch (showdown value too low) and NOT pot-odds-call (no real draw).",
+                                              "commonMistake":  "Marking this as critical-fold or critical-call over-confident; it is a true mixed spot where the optimal frequency depends on opponent tendency.",
+                                              "takeaway":  "Underpair on multi-FD turn vs balanced range = mixed_indifference_turn."
+                                          },
+                          "conceptTags":  [
+                                              "turn_pot_odds",
+                                              "turn_bluff_catcher",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_reason_TdTc_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ts",
+                                                          "8s",
+                                                          "4d"
+                                                      ],
+                                        "turnCard":  "7c",
+                                        "cards":  [
+                                                      "Ts",
+                                                      "8s",
+                                                      "4d",
+                                                      "7c"
+                                                  ],
+                                        "boardKind":  "T_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "T_high",
+                                        "turnCategory":  "draw_intensifier",
+                                        "boardChange":  "draw_added",
+                                        "equityShift":  "improves_bb_draws",
+                                        "drawCompletion":  "oesd_added",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "Td",
+                                           "Tc"
+                                       ],
+                          "handClass":  "set",
+                          "heroHandRole":  "slowplay_trap",
+                          "drawCategory":  "none",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  "Top set of tens; blocks the 2 remaining Tx top-pair combos. Loses only to higher straights (J9) and unlikely sets above (no Tx set possible since hero has both remaining T).",
+                          "recommendedAction":  "call",
+                          "actionReason":  "slowplay_turn_call",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ts 8s 4d; turn 7c. BB calls (slowplay) with Td Tc vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "slowplay_turn_call",
+                                         "acceptable":  [
+                                                            "value_check_raise_turn",
+                                                            "protection_check_raise_turn"
+                                                        ],
+                                         "bad":  [
+                                                     "blocker_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
+                                                     "bluff_catch_turn",
+                                                     "range_disadvantage_turn_fold",
+                                                     "domination_turn_fold",
+                                                     "board_change_fold",
+                                                     "equity_realization_turn_call",
+                                                     "pot_odds_turn_call",
+                                                     "mixed_indifference_turn"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top set of T on draw-intensifier turn -- primary reason is SLOWPLAY (preserve villain bluffs/draws for a bigger river).",
+                                              "turnLogic":  "7c is a draw-intensifier expanding villain barrel range to OESDs/gutshots/FDs/Tx-value plus air. Top set is way ahead of every continuation. Slowplaying lets villain barrel rivers with FD-misses, gutshot-misses, and Tx-improvement combos.",
+                                              "rangeContext":  "BB flop call with TT on T-8-4 made top set on the flop. Turn 7 does not threaten the set; it just expands villain bluff bucket.",
+                                              "handLogic":  "TdTc has top set of Ts. Loses only to J9 made straight (rare combo on flop call -- J9 with T8 board needs J+9 from flop call range; possible but not dense).",
+                                              "sizingLogic":  "Calling slowplays for river value. Small/big check-raise also defensible (charges draws + Tx) but loses bluff-bucket equity. The reason is SLOWPLAY (preserve bluffs), distinct from value_raise (which is the alternative play).",
+                                              "commonMistake":  "Misclassifying as value_raise misses the strategic intent; on a draw-intensifier turn with top set, preserving villain bluff frequency for the river generates more EV than charging draws now.",
+                                              "takeaway":  "Top set on draw-intensifier turn vs polarized barrel = textbook slowplay_turn_call."
+                                          },
+                          "conceptTags":  [
+                                              "turn_slowplay_call",
+                                              "turn_check_raise_value",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_8d6c3s_Qh_m4_reason_8h7d_v430D",
+                          "version":  "v4.3.0D",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_turn_barrel_oop_def",
+                          "moduleName":  "Facing Turn Barrel OOP",
+                          "street":  "turn",
+                          "schemaVersion":  "1.2.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel",
+                                       "street":  "turn",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "flop_check_caller_oop",
+                                       "villainRole":  "turn_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "8d",
+                                                          "6c",
+                                                          "3s"
+                                                      ],
+                                        "turnCard":  "Qh",
+                                        "cards":  [
+                                                      "8d",
+                                                      "6c",
+                                                      "3s",
+                                                      "Qh"
+                                                  ],
+                                        "boardKind":  "low",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "Q_high",
+                                        "turnCategory":  "overcard",
+                                        "boardChange":  "range_shift_bb",
+                                        "equityShift":  "favors_bb",
+                                        "drawCompletion":  "none",
+                                        "pairStatusChange":  "no_change"
+                                    },
+                          "heroHand":  [
+                                           "8h",
+                                           "7d"
+                                       ],
+                          "handClass":  "mid_pair",
+                          "heroHandRole":  "dominated_marginal",
+                          "drawCategory":  "none",
+                          "showdownValue":  "low",
+                          "blockerNote":  null,
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_turn_fold",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop 8d 6c 3s; turn Qh. BB folds with 8h 7d vs BTN\u0027s turn barrel. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_turn_call",
+                                                           "equity_realization_turn_call",
+                                                           "bluff_catch_turn",
+                                                           "board_change_fold",
+                                                           "domination_turn_fold",
+                                                           "range_disadvantage_turn_fold",
+                                                           "value_check_raise_turn",
+                                                           "protection_check_raise_turn",
+                                                           "semi_bluff_check_raise_turn",
+                                                           "blocker_check_raise_turn",
+                                                           "slowplay_turn_call",
+                                                           "mixed_indifference_turn"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "range_disadvantage_turn_fold",
+                                         "acceptable":  [
+                                                            "domination_turn_fold",
+                                                            "board_change_fold"
+                                                        ],
+                                         "bad":  [
+                                                     "value_check_raise_turn",
+                                                     "protection_check_raise_turn",
+                                                     "blocker_check_raise_turn",
+                                                     "semi_bluff_check_raise_turn",
+                                                     "bluff_catch_turn",
+                                                     "equity_realization_turn_call",
+                                                     "pot_odds_turn_call",
+                                                     "mixed_indifference_turn",
+                                                     "slowplay_turn_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "8-pair + 7 kicker on Q-overcard turn -- primary reason is RANGE DISADVANTAGE (pair demoted below villain top range).",
+                                              "turnLogic":  "Qh adds Qx to villain barrel range (some QJ/QT combos that BTN c-bets flop and barrels turn). Hero 8-pair was already weak on flop; Q overcard demotes it further -- now sits below Q-pair, below J-pair (any Jx), below T-pair (any Tx in barrel range), AND has dominated kicker outs vs villain Ax/Kx in barrel.",
+                                              "rangeContext":  "BB flop call with 8-7-offsuit on 8-6-3 was thin (mid pair + slim straight backdoor via 5+4 = 2-card draw). Turn Q kills any backdoor reach AND demotes the 8-pair below villain barrel value range.",
+                                              "handLogic":  "8h7d has mid pair 8 with 7 kicker. ~5 outs to two-pair/trips but vs villain Qx/QJ/QT/overpairs is far behind. Pair-out kicker dominated by Ax/Kx if hits.",
+                                              "sizingLogic":  "Folding closes action. The reason is RANGE DISADVANTAGE (8-pair demoted below villain barrel range) rather than DOMINATION (which would imply specific kicker-out dominance).",
+                                              "commonMistake":  "Stationing weak middle pair after a Q overcard turn vs a polarized barrel is a classic range-disadvantage leak.",
+                                              "takeaway":  "Demoted weak mid-pair on overcard turn = textbook range_disadvantage_turn_fold."
+                                          },
+                          "conceptTags":  [
+                                              "turn_range_disadvantage",
+                                              "turn_board_change",
+                                              "second_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
                       }
                   ]
 }
