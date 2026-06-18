@@ -51,7 +51,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -157,7 +157,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -262,7 +262,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -369,7 +369,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -488,7 +488,7 @@
                                         "boardKind":  "J_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -594,7 +594,7 @@
                                         "boardKind":  "J_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -699,7 +699,7 @@
                                         "boardKind":  "J_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -804,7 +804,7 @@
                                         "boardKind":  "J_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -923,10 +923,10 @@
                                         "boardKind":  "Q_high",
                                         "suitTextureFlop":  "two_tone",
                                         "suitTextureTurn":  "two_tone",
-                                        "suitTextureRiver":  "flush_possible",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "flush_possible"
+                                                            "flushing"
                                                         ],
                                         "highCardClass":  "Q_high",
                                         "riverCategory":  "flush_complete",
@@ -1028,10 +1028,10 @@
                                         "boardKind":  "Q_high",
                                         "suitTextureFlop":  "two_tone",
                                         "suitTextureTurn":  "two_tone",
-                                        "suitTextureRiver":  "flush_possible",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "flush_possible"
+                                                            "flushing"
                                                         ],
                                         "highCardClass":  "Q_high",
                                         "riverCategory":  "flush_complete",
@@ -1133,10 +1133,10 @@
                                         "boardKind":  "Q_high",
                                         "suitTextureFlop":  "two_tone",
                                         "suitTextureTurn":  "two_tone",
-                                        "suitTextureRiver":  "flush_possible",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "flush_possible"
+                                                            "flushing"
                                                         ],
                                         "highCardClass":  "Q_high",
                                         "riverCategory":  "flush_complete",
@@ -1239,10 +1239,10 @@
                                         "boardKind":  "Q_high",
                                         "suitTextureFlop":  "two_tone",
                                         "suitTextureTurn":  "two_tone",
-                                        "suitTextureRiver":  "flush_possible",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "flush_possible"
+                                                            "flushing"
                                                         ],
                                         "highCardClass":  "Q_high",
                                         "riverCategory":  "flush_complete",
@@ -1358,12 +1358,12 @@
                                         "boardKind":  "low",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "straight_possible"
+                                                            "straightening"
                                                         ],
-                                        "highCardClass":  "9_high",
+                                        "highCardClass":  "low",
                                         "riverCategory":  "straight_complete",
                                         "boardChange":  "polarizing",
                                         "runoutTexture":  "straight_possible",
@@ -1463,12 +1463,12 @@
                                         "boardKind":  "low",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "straight_possible"
+                                                            "straightening"
                                                         ],
-                                        "highCardClass":  "9_high",
+                                        "highCardClass":  "low",
                                         "riverCategory":  "straight_complete",
                                         "boardChange":  "polarizing",
                                         "runoutTexture":  "straight_possible",
@@ -1568,12 +1568,12 @@
                                         "boardKind":  "low",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "straight_possible"
+                                                            "straightening"
                                                         ],
-                                        "highCardClass":  "9_high",
+                                        "highCardClass":  "low",
                                         "riverCategory":  "straight_complete",
                                         "boardChange":  "polarizing",
                                         "runoutTexture":  "straight_possible",
@@ -1674,12 +1674,12 @@
                                         "boardKind":  "low",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "wet",
-                                                            "straight_possible"
+                                                            "straightening"
                                                         ],
-                                        "highCardClass":  "9_high",
+                                        "highCardClass":  "low",
                                         "riverCategory":  "straight_complete",
                                         "boardChange":  "polarizing",
                                         "runoutTexture":  "straight_possible",
@@ -1793,7 +1793,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "paired"
@@ -1898,7 +1898,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "paired"
@@ -2003,7 +2003,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "paired"
@@ -2108,7 +2108,7 @@
                                         "boardKind":  "K_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "paired"
@@ -2227,7 +2227,7 @@
                                         "boardKind":  "A_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -2332,7 +2332,7 @@
                                         "boardKind":  "A_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -2437,7 +2437,7 @@
                                         "boardKind":  "A_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"
@@ -2544,7 +2544,7 @@
                                         "boardKind":  "A_high",
                                         "suitTextureFlop":  "rainbow",
                                         "suitTextureTurn":  "rainbow",
-                                        "suitTextureRiver":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
                                         "textureTags":  [
                                                             "dry",
                                                             "disconnected"

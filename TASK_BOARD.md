@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-06-18 (v4.4.0A Module 5 Strategic Seed Review — 24/24 PROMOTE (2 REVISE), planning-only, on top of v4.4.0 `7845dae`. Auto-driving M5 toward runtime.).
+> Last updated: 2026-06-18 (v4.4.1 Module 5 Production Migration — 477 → 501, M5 data-loaded + approved + runtime-verified, NOT yet routed. First production-mutating M5 step. Auto-driving M5 toward runtime.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.4.1 Module 5 Production Migration (PRODUCTION DATA + CACHE BUMP; NO RUNTIME ROUTE)** — first production-mutating M5 step. Migrated the 24 v4.4.0A-reviewed M5 seeds into production `postflop_scenarios.json`: **477 → 501** (251 M1 + 49 M2 + 85 M3 + 92 M4 + **24 M5**), all `auditStatus=approved` / `reviewStatus=v4.4.0A_strategic_reviewed` / `version=v4.4.1` / `street=river` / per-scenario `schemaVersion=1.3.0`. Two-phase idempotent migration via NEW `tools/migrate-module5-v4.4.1.ps1` (review_pending → -FlipApproved → approved; verifies 24 seeds + 477 non-M5 preserved; UTF-8 NO-BOM atomic write). Also refreshed the stale top-level file `description` (was "385 scenarios…/v4.2.3B"; now accurately 501 across M1–M5) in-script for reproducibility. **NEW M5 production-rule block R76–R93 in `tools/audit-postflop-ps.ps1`** (mirrors M4 R55–R75 + M5 seed river rules): river/spot/5-card-board/enum locks, vocab checks, answer-partition, conditional sizingLogic, flush/straight invariants, **busted-draws-never-call HARD (R90)**, no-draw-equity WARN, text-integrity HARD; + M5 stats block. The v4.4.1 pre-fixes ride along: 12 M5 concepts added to `postflop_concepts.json` (51→63); R10/R13 flop-only rules excluded for M5. **Cache bump:** appVersion `4.3.2C → 4.4.1`; SW VERSION `v4.3.2C → v4.4.1` (cache-first `postflop_scenarios.json` 477→501 + `postflop_concepts.json` 51→63 both changed). **Audits all green:** production **501/0/0 PASS** (M5 approved: 24; M1–M4 unchanged 251/49/85/92); M5 seed 24/0/0 PASS. **Runtime smoke-tested in local preview:** `[postflop] loaded 501/501 (schema 1.0.0)`, `App.postflop.ready=true error=null`, pool 251/49/85/92/**24**, M5 inert (no router until v4.4.2), zero console errors. Top-level file `schemaVersion` stays `1.0.0` (matches app `POSTFLOP_SCHEMA_VERSION` gate). **No runtime route / UI / renderer change.** New tool `tools/migrate-module5-v4.4.1.ps1`; new doc `docs/specs/postflop-v4.4.1-module5-production-migration.md`; new snapshot `GPT AUDIT/v4.4.1/`. **Next (auto-drive): v4.4.1A/B M5 expansion (24 → 60–90) → v4.4.2 M5 runtime wire (route + 5-card 320px renderer) → M6 architecture.**
 
 🟢 **v4.4.0A Module 5 Strategic Seed Review (PLANNING-ONLY)** — reviewed the 24 v4.4.0 M5 seeds for river poker correctness. **24/24 PROMOTE (22 as-authored + 2 via REVISE), 0 REJECT.** Fixes: 2.2 AdTh weak-TP-vs-pot `call->mixed`; 6.2 `AcKh two-pair -> 8c8h set` (BB flats 88 unambiguously). Re-audit 24/0/0 PASS. Production untouched 477/0/0. New doc `docs/specs/postflop-v4.4.0A-module5-strategic-review-results.md`. **Next: v4.4.1 production migration (477 -> 501)** + M5 production audit rules + version bump (first production-mutating M5 step; NO runtime yet).
 

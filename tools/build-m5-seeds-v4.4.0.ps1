@@ -131,32 +131,32 @@ function BoardStr($cards) { return ($cards -join ' ') }
 
 # R1: brick river (Ks 9d 4c / 2h / 7s) -- dry, no flush, no straight, unpaired. Sizing medium.
 $r1Flop = @('Ks','9d','4c'); $r1Turn='2h'; $r1River='7s'
-$r1 = New-Board $r1Flop $r1Turn $r1River 'K_high' 'K_high' 'rainbow' 'rainbow' 'rainbow' @('dry','disconnected') 'brick' 'brick' 'dry_unpaired' 'none' 'medium'
+$r1 = New-Board $r1Flop $r1Turn $r1River 'K_high' 'K_high' 'rainbow' 'rainbow' 'two_tone' @('dry','disconnected') 'brick' 'brick' 'dry_unpaired' 'none' 'medium'
 $r1Str = BoardStr $r1Flop
 
 # R2: overcard river (Js 8d 5c / 3h / Ac) -- A overcard arrives; no flush, no straight. Sizing large.
 $r2Flop = @('Js','8d','5c'); $r2Turn='3h'; $r2River='Ac'
-$r2 = New-Board $r2Flop $r2Turn $r2River 'J_high' 'A_high' 'rainbow' 'rainbow' 'rainbow' @('dry','disconnected') 'overcard' 'range_shift_btn' 'dry_unpaired' 'overcard_blank' 'large'
+$r2 = New-Board $r2Flop $r2Turn $r2River 'J_high' 'A_high' 'rainbow' 'rainbow' 'two_tone' @('dry','disconnected') 'overcard' 'range_shift_btn' 'dry_unpaired' 'overcard_blank' 'large'
 $r2Str = BoardStr $r2Flop
 
 # R3: flush-complete river (Qh 9h 4c / 2s / 7h) -- 3rd heart completes a flush. Sizing large.
 $r3Flop = @('Qh','9h','4c'); $r3Turn='2s'; $r3River='7h'
-$r3 = New-Board $r3Flop $r3Turn $r3River 'Q_high' 'Q_high' 'two_tone' 'two_tone' 'flush_possible' @('wet','flush_possible') 'flush_complete' 'draw_resolved' 'flush_possible' 'flush_completed' 'large'
+$r3 = New-Board $r3Flop $r3Turn $r3River 'Q_high' 'Q_high' 'two_tone' 'two_tone' 'two_tone' @('wet','flushing') 'flush_complete' 'draw_resolved' 'flush_possible' 'flush_completed' 'large'
 $r3Str = BoardStr $r3Flop
 
 # R4: straight-complete river (9d 8c 4h / 2s / 7h) -- 7 completes 5-6-7-8-9 / 7-8-9-T-J. Sizing medium.
 $r4Flop = @('9d','8c','4h'); $r4Turn='2s'; $r4River='7h'
-$r4 = New-Board $r4Flop $r4Turn $r4River 'low' '9_high' 'rainbow' 'rainbow' 'rainbow' @('wet','straight_possible') 'straight_complete' 'polarizing' 'straight_possible' 'straight_completed' 'medium'
+$r4 = New-Board $r4Flop $r4Turn $r4River 'low' 'low' 'rainbow' 'rainbow' 'two_tone' @('wet','straightening') 'straight_complete' 'polarizing' 'straight_possible' 'straight_completed' 'medium'
 $r4Str = BoardStr $r4Flop
 
 # R5: board-pair river (Kd 7s 3c / Qh / 7d) -- river pairs the 7. Sizing small.
 $r5Flop = @('Kd','7s','3c'); $r5Turn='Qh'; $r5River='7d'
-$r5 = New-Board $r5Flop $r5Turn $r5River 'K_high' 'K_high' 'rainbow' 'rainbow' 'rainbow' @('dry','paired') 'board_pair' 'counterfeit' 'paired_board' 'board_paired' 'small'
+$r5 = New-Board $r5Flop $r5Turn $r5River 'K_high' 'K_high' 'rainbow' 'rainbow' 'two_tone' @('dry','paired') 'board_pair' 'counterfeit' 'paired_board' 'board_paired' 'small'
 $r5Str = BoardStr $r5Flop
 
 # R6: scare-card river (Ad 8s 5c / 2h / Kd) -- K overcard scare on A-high; villain overbets. Sizing overbet.
 $r6Flop = @('Ad','8s','5c'); $r6Turn='2h'; $r6River='Kd'
-$r6 = New-Board $r6Flop $r6Turn $r6River 'A_high' 'A_high' 'rainbow' 'rainbow' 'rainbow' @('dry','disconnected') 'scare_card' 'range_shift_btn' 'dry_unpaired' 'overcard_blank' 'overbet'
+$r6 = New-Board $r6Flop $r6Turn $r6River 'A_high' 'A_high' 'rainbow' 'rainbow' 'two_tone' @('dry','disconnected') 'scare_card' 'range_shift_btn' 'dry_unpaired' 'overcard_blank' 'overbet'
 $r6Str = BoardStr $r6Flop
 
 

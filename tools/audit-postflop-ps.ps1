@@ -164,7 +164,9 @@ foreach($s in $data.scenarios){
   # M4 (pf_turn_barrel_oop_def) uses turn-board structure with equityShift
   # instead of board.rangeAdvantage / board.nutAdvantage. R10 is scoped to
   # flop modules; M4 has its own R55+ rules for board validation.
-  if($s.board -and $s.module -ne 'pf_turn_barrel_oop_def'){
+  # v4.4.1: M5 (pf_river_barrel_oop_def) also excluded -- river 5-card board uses
+  # riverCategory / runoutTexture / villainRiverSizing, not rangeAdvantage/nutAdvantage.
+  if($s.board -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def'){
     if(-not $validRA.Contains($s.board.rangeAdvantage)){
       Add-Issue $local 'R10' 'error' $sid "Invalid board.rangeAdvantage: `"$($s.board.rangeAdvantage)`"" | Out-Null
     }
@@ -195,7 +197,9 @@ foreach($s in $data.scenarios){
   # M4 board has 4 cards (3 flop + 1 turn) so the flop-only "derive suit
   # texture from board.cards" check does not apply. M4 has its own R55+
   # rules. Scope this rule to flop modules.
-  if($s.board -and $s.board.textureTags -and $s.module -ne 'pf_turn_barrel_oop_def'){
+  # v4.4.1: M5 (pf_river_barrel_oop_def) also excluded -- river board has 5 cards
+  # and uses suitTextureFlop/Turn/River, not a single suitTexture; M5 has its own R76+ rules.
+  if($s.board -and $s.board.textureTags -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def'){
     $tagSet = @{}; foreach($t in $s.board.textureTags){ $tagSet[$t] = $true }
     foreach($pair in $tax.contradictoryPairs){
       if($tagSet.ContainsKey($pair[0]) -and $tagSet.ContainsKey($pair[1])){
@@ -1047,6 +1051,407 @@ foreach($s in $data.scenarios){
     }
   }
 
+  # ========================================================================
+  # R76-R93 -- Module 5 (pf_river_barrel_oop_def) v4.4.1 production rules
+  # Apply only to Module 5 scenarios. Mirror the hard-error subset of the
+  # M5 seed audit (tools/audit-postflop-module5-seed.ps1 rules M5.R01..R58)
+  # and the M5 schema-taxonomy (docs/specs/postflop-v4.4.0-module5-schema-
+  # taxonomy.md). River is showdown-only: no live draws, no equity to realize.
+  # Numbering: R76 onwards (R55-R75 = M4; R29 = card-notation; R30-R41 = M3).
+  # ========================================================================
+  if ($s.module -eq 'pf_river_barrel_oop_def') {
+    $m5ValidActions   = @('fold','call','check_raise_small','check_raise_big','mixed')
+    $m5ValidReasons   = @('pot_odds_river_call','bluff_catch_river','blocker_bluff_catch_river',
+                          'mdf_defense_river','thin_value_call_river','value_raise_river',
+                          'bluff_raise_river','range_disadvantage_river_fold','domination_river_fold',
+                          'board_change_river_fold','missed_draw_give_up','mixed_indifference_river')
+    $m5ValidQTypes    = @('action_choice','reason_choice')
+    $m5ValidHandRoles = @('nutted_value','strong_value','thin_value','bluff_catcher',
+                          'dominated_bluff_catcher','marginal_made_hand','blocker_bluff',
+                          'missed_draw','give_up')
+    $m5ValidHandClass = @('set','top_two_pair','two_pair','overpair','underpair',
+                          'top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker',
+                          'second_pair','third_pair_or_lower','mid_pair','bottom_pair',
+                          'no_pair_no_draw','straight','flush','nut_flush','trips','full_house','quads')
+    $m5ValidDrawCats  = @('none','busted_flush_draw','busted_straight_draw','busted_combo_draw')
+    $m5ValidShowdown  = @('none','low','decent','high','nutted')
+    $m5ValidConcepts  = @('river_bluff_catcher','river_polarization','river_mdf','river_blocker_defense',
+                          'river_value_raise','river_bluff_raise','river_thin_value','river_missed_draw',
+                          'river_range_disadvantage','river_board_change','river_overfold_trap','third_barrel_defense')
+    $m5ValidRiverCats = @('brick','overcard','flush_complete','straight_complete','board_pair',
+                          'scare_card','blank_runout','double_pair','range_shift_card')
+    $m5ValidBoardChg  = @('brick','range_shift_btn','range_shift_bb','polarizing','draw_resolved',
+                          'counterfeit','boat_possible')
+    $m5ValidRunout    = @('dry_unpaired','flush_possible','straight_possible','double_draw_possible',
+                          'paired_board','paired_flush_possible','double_paired','monotone_board')
+    $m5ValidDrawComp  = @('none','flush_completed','straight_completed','board_paired',
+                          'flush_and_straight','overcard_blank')
+    $m5ValidSizing    = @('small','medium','large','overbet')
+    $m5ValidSuitRiver = @('rainbow','two_tone','monotone','four_flush')
+    $m5ValidAuditStat = @('approved','review_pending','planning_only','draft','needs_review','deprecated')
+
+    # R76 -- module id + street + game + schemaVersion lock
+    if ($s.module -ne 'pf_river_barrel_oop_def') {
+      Add-Issue $local 'R76' 'error' $sid ("M5 expects module='pf_river_barrel_oop_def', got '" + $s.module + "'") | Out-Null
+    }
+    if ($s.street -ne 'river') {
+      Add-Issue $local 'R76' 'error' $sid ("M5 expects street=river, got " + $s.street) | Out-Null
+    }
+    if ($s.game -and $s.game -ne 'NLH_MTT') {
+      Add-Issue $local 'R76' 'error' $sid ("M5 expects game=NLH_MTT, got " + $s.game) | Out-Null
+    }
+    if ($s.schemaVersion -and $s.schemaVersion -ne '1.3.0') {
+      Add-Issue $local 'R76' 'error' $sid ("M5 expects schemaVersion=1.3.0, got " + $s.schemaVersion) | Out-Null
+    }
+
+    # R77 -- spot block matches BB-vs-BTN river-defense lock
+    if ($s.spot) {
+      if ($s.spot.format          -and $s.spot.format          -ne 'NLH_MTT')                 { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.format=NLH_MTT, got " + $s.spot.format) | Out-Null }
+      if ($s.spot.stackDepth      -and $s.spot.stackDepth      -ne '100BB')                   { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.stackDepth=100BB, got " + $s.spot.stackDepth) | Out-Null }
+      if ($s.spot.potType         -and $s.spot.potType         -ne 'SRP')                     { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.potType=SRP, got " + $s.spot.potType) | Out-Null }
+      if ($s.spot.heroPosition    -and $s.spot.heroPosition    -ne 'BB')                      { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.heroPosition=BB, got " + $s.spot.heroPosition) | Out-Null }
+      if ($s.spot.villainPosition -and $s.spot.villainPosition -ne 'BTN')                     { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.villainPosition=BTN, got " + $s.spot.villainPosition) | Out-Null }
+      if ($s.spot.heroRole        -and $s.spot.heroRole        -ne 'turn_check_caller_oop')   { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.heroRole=turn_check_caller_oop, got " + $s.spot.heroRole) | Out-Null }
+      if ($s.spot.villainRole     -and $s.spot.villainRole     -ne 'river_barreler_ip')       { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.villainRole=river_barreler_ip, got " + $s.spot.villainRole) | Out-Null }
+      if ($s.spot.street          -and $s.spot.street          -ne 'river')                   { Add-Issue $local 'R77' 'error' $sid ("M5 expects spot.street=river, got " + $s.spot.street) | Out-Null }
+    } else {
+      Add-Issue $local 'R77' 'error' $sid 'M5 spot block missing' | Out-Null
+    }
+
+    # R78 -- 5-card board structure (flopCards + turnCard + riverCard + cards)
+    if (-not $s.board) {
+      Add-Issue $local 'R78' 'error' $sid 'M5 board block missing' | Out-Null
+    } else {
+      $fc = @($s.board.flopCards)
+      if ($fc.Count -ne 3) {
+        Add-Issue $local 'R78' 'error' $sid ("M5 board.flopCards count " + $fc.Count + ", expected 3") | Out-Null
+      }
+      foreach ($cardField in @('turnCard','riverCard')) {
+        $cv = $s.board.$cardField
+        if (-not $cv) {
+          Add-Issue $local 'R78' 'error' $sid ("M5 board." + $cardField + " missing") | Out-Null
+        } elseif ($cv.Length -ne 2) {
+          Add-Issue $local 'R78' 'error' $sid ("M5 board." + $cardField + " '" + $cv + "' invalid format") | Out-Null
+        } else {
+          $r = $cv.Substring(0,1); $u = $cv.Substring(1,1)
+          if ($validRanks -notcontains $r) { Add-Issue $local 'R78' 'error' $sid ("M5 " + $cardField + " rank invalid '" + $r + "'") | Out-Null }
+          if ($validSuits -notcontains $u) { Add-Issue $local 'R78' 'error' $sid ("M5 " + $cardField + " suit invalid '" + $u + "'") | Out-Null }
+        }
+      }
+      $cards = @($s.board.cards)
+      if ($cards.Count -ne 5) {
+        Add-Issue $local 'R78' 'error' $sid ("M5 board.cards count " + $cards.Count + ", expected 5") | Out-Null
+      } else {
+        $expected = @()
+        if ($fc.Count -eq 3 -and $s.board.turnCard -and $s.board.riverCard) { $expected = @($fc) + @($s.board.turnCard) + @($s.board.riverCard) }
+        $expectedJoin = ($expected -join ',')
+        $actualJoin = ($cards -join ',')
+        if ($expected.Count -eq 5 -and $expectedJoin -ne $actualJoin) {
+          Add-Issue $local 'R78' 'error' $sid ("M5 board.cards != flopCards+turnCard+riverCard ('" + $actualJoin + "' vs '" + $expectedJoin + "')") | Out-Null
+        }
+        $u2 = ($cards | Sort-Object -Unique).Count
+        if ($u2 -ne $cards.Count) {
+          Add-Issue $local 'R78' 'error' $sid ("M5 board has duplicate cards: " + ($cards -join ',')) | Out-Null
+        }
+      }
+    }
+
+    # R79 -- M5-specific board enums (villainRiverSizing is the M5-defining field)
+    if ($s.board) {
+      if ($s.board.riverCategory       -and ($m5ValidRiverCats -notcontains $s.board.riverCategory))       { Add-Issue $local 'R79' 'error' $sid ("M5 riverCategory '" + $s.board.riverCategory + "' not in valid set") | Out-Null }
+      if ($s.board.boardChange         -and ($m5ValidBoardChg  -notcontains $s.board.boardChange))         { Add-Issue $local 'R79' 'error' $sid ("M5 boardChange '" + $s.board.boardChange + "' not in valid set") | Out-Null }
+      if ($s.board.runoutTexture       -and ($m5ValidRunout    -notcontains $s.board.runoutTexture))       { Add-Issue $local 'R79' 'error' $sid ("M5 runoutTexture '" + $s.board.runoutTexture + "' not in valid set") | Out-Null }
+      if ($s.board.riverDrawCompletion -and ($m5ValidDrawComp  -notcontains $s.board.riverDrawCompletion)) { Add-Issue $local 'R79' 'error' $sid ("M5 riverDrawCompletion '" + $s.board.riverDrawCompletion + "' not in valid set") | Out-Null }
+      if ($s.board.villainRiverSizing  -and ($m5ValidSizing    -notcontains $s.board.villainRiverSizing))  { Add-Issue $local 'R79' 'error' $sid ("M5 villainRiverSizing '" + $s.board.villainRiverSizing + "' not in valid set") | Out-Null }
+      if ($s.board.suitTextureRiver    -and ($m5ValidSuitRiver -notcontains $s.board.suitTextureRiver))    { Add-Issue $local 'R79' 'error' $sid ("M5 suitTextureRiver '" + $s.board.suitTextureRiver + "' not in valid set") | Out-Null }
+      if (-not $s.board.villainRiverSizing) { Add-Issue $local 'R79' 'error' $sid 'M5 board.villainRiverSizing is required (drives MDF)' | Out-Null }
+    }
+
+    # R80 -- heroHand 2 cards + no hero/board collision
+    if (-not $s.heroHand) {
+      Add-Issue $local 'R80' 'error' $sid 'M5 requires heroHand' | Out-Null
+    } elseif ($s.heroHand.Count -ne 2) {
+      Add-Issue $local 'R80' 'error' $sid ("M5 heroHand has " + $s.heroHand.Count + " cards, expected 2") | Out-Null
+    } else {
+      foreach ($c in $s.heroHand) {
+        if (-not $c -or $c.Length -ne 2) { Add-Issue $local 'R80' 'error' $sid ("M5 invalid hero card '" + $c + "'") | Out-Null; continue }
+        $r = $c.Substring(0,1); $u = $c.Substring(1,1)
+        if ($validRanks -notcontains $r) { Add-Issue $local 'R80' 'error' $sid ("M5 invalid rank in hero card '" + $c + "'") | Out-Null }
+        if ($validSuits -notcontains $u) { Add-Issue $local 'R80' 'error' $sid ("M5 invalid suit in hero card '" + $c + "'") | Out-Null }
+      }
+      if ($s.board -and $s.board.cards) {
+        $boardSet = @{}
+        foreach ($c in $s.board.cards) { $boardSet["$c"] = $true }
+        foreach ($c in $s.heroHand) {
+          if ($boardSet.ContainsKey("$c")) {
+            Add-Issue $local 'R80' 'error' $sid ("M5 hero card '" + $c + "' also on board") | Out-Null
+          }
+        }
+      }
+    }
+
+    # R81 -- handClass / heroHandRole / drawCategory / showdownValue vocab
+    if ($s.handClass     -and ($m5ValidHandClass -notcontains $s.handClass))     { Add-Issue $local 'R81' 'error' $sid ("M5 handClass '" + $s.handClass + "' not in v1.3.0 vocab") | Out-Null }
+    if ($s.heroHandRole  -and ($m5ValidHandRoles -notcontains $s.heroHandRole))  { Add-Issue $local 'R81' 'error' $sid ("M5 heroHandRole '" + $s.heroHandRole + "' not in v1.3.0 vocab") | Out-Null }
+    if ($s.drawCategory  -and ($m5ValidDrawCats  -notcontains $s.drawCategory))  { Add-Issue $local 'R81' 'error' $sid ("M5 drawCategory '" + $s.drawCategory + "' not in river set (none/busted_*)") | Out-Null }
+    if ($s.showdownValue -and ($m5ValidShowdown  -notcontains $s.showdownValue)) { Add-Issue $local 'R81' 'error' $sid ("M5 showdownValue '" + $s.showdownValue + "' not in v1.3.0 vocab") | Out-Null }
+
+    # R82 -- question schema (action_choice) + recommendedAction match + prompt completeness
+    $m5qtype = $null
+    if ($s.question -and $s.question.qtype) { $m5qtype = $s.question.qtype }
+    if ($m5qtype -and ($m5ValidQTypes -notcontains $m5qtype)) {
+      Add-Issue $local 'R82' 'error' $sid ("M5 question.qtype '" + $m5qtype + "' not in valid set") | Out-Null
+    }
+    if ($m5qtype -eq 'action_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R82' 'error' $sid 'M5 action_choice requires question.choices' | Out-Null
+      } else {
+        $m5choices = @($s.question.choices)
+        $missing = @($m5ValidActions | Where-Object { $m5choices -notcontains $_ })
+        $extra   = @($m5choices | Where-Object { $m5ValidActions -notcontains $_ })
+        if ($missing.Count -gt 0) { Add-Issue $local 'R82' 'error' $sid ("M5 action_choice missing required: " + ($missing -join ',')) | Out-Null }
+        if ($extra.Count   -gt 0) { Add-Issue $local 'R82' 'error' $sid ("M5 action_choice has unexpected: " + ($extra -join ',')) | Out-Null }
+      }
+      if ($s.recommendedAction -and ($m5ValidActions -notcontains $s.recommendedAction)) {
+        Add-Issue $local 'R82' 'error' $sid ("M5 recommendedAction '" + $s.recommendedAction + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.recommendedAction -and ($s.answer.best -ne $s.recommendedAction)) {
+        Add-Issue $local 'R82' 'error' $sid ("M5 answer.best '" + $s.answer.best + "' != recommendedAction '" + $s.recommendedAction + "'") | Out-Null
+      }
+      if ($s.question.prompt -match 'with\s*$') {
+        Add-Issue $local 'R82' 'error' $sid "M5 action_choice prompt ends with 'with ' (hero hand lost)" | Out-Null
+      }
+      if ($s.heroHand -and $s.heroHand.Count -eq 2 -and $s.question.prompt) {
+        $promptText = $s.question.prompt
+        $foundBoth = $true
+        foreach ($c in $s.heroHand) {
+          if ($promptText -notmatch [regex]::Escape($c)) { $foundBoth = $false; break }
+        }
+        if (-not $foundBoth) {
+          Add-Issue $local 'R82' 'error' $sid ("M5 action_choice prompt does not contain both hero cards '" + ($s.heroHand -join "','") + "'") | Out-Null
+        }
+      }
+    }
+
+    # R83 -- reason_choice schema + actionReason vocab + match to answer.best
+    if ($m5qtype -eq 'reason_choice') {
+      if (-not $s.question.choices) {
+        Add-Issue $local 'R83' 'error' $sid 'M5 reason_choice requires question.choices' | Out-Null
+      } else {
+        $m5rc = @($s.question.choices)
+        $invalid = @($m5rc | Where-Object { $m5ValidReasons -notcontains $_ })
+        if ($invalid.Count -gt 0) { Add-Issue $local 'R83' 'error' $sid ("M5 reason_choice has invalid: " + ($invalid -join ',')) | Out-Null }
+      }
+      if ($s.actionReason -and ($m5ValidReasons -notcontains $s.actionReason)) {
+        Add-Issue $local 'R83' 'error' $sid ("M5 actionReason '" + $s.actionReason + "' not in valid set") | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -and $s.actionReason -and ($s.answer.best -ne $s.actionReason)) {
+        Add-Issue $local 'R83' 'error' $sid ("M5 answer.best '" + $s.answer.best + "' != actionReason '" + $s.actionReason + "' for reason_choice") | Out-Null
+      }
+    }
+    if ($s.actionReason -and ($m5ValidReasons -notcontains $s.actionReason)) {
+      Add-Issue $local 'R83' 'error' $sid ("M5 actionReason '" + $s.actionReason + "' not in v1.3.0 vocab") | Out-Null
+    }
+
+    # R84 -- answer partition consistency: best/acceptable/bad disjoint; critical subset of bad
+    if ($s.answer) {
+      if ($null -eq $s.answer.best) {
+        Add-Issue $local 'R84' 'error' $sid 'M5 answer.best is required' | Out-Null
+      } elseif ($s.answer.best -isnot [string]) {
+        Add-Issue $local 'R84' 'error' $sid ("M5 answer.best must be a string, got " + $s.answer.best.GetType().Name) | Out-Null
+      }
+      $m5best = $s.answer.best
+      $m5acc  = @(); if ($s.answer.acceptable) { $m5acc  = @($s.answer.acceptable) }
+      $m5bad  = @(); if ($s.answer.bad)        { $m5bad  = @($s.answer.bad) }
+      $m5crit = @(); if ($s.answer.critical)   { $m5crit = @($s.answer.critical) }
+      if ($m5best -and ($m5acc -contains $m5best)) {
+        Add-Issue $local 'R84' 'error' $sid ("M5 answer.best '" + $m5best + "' also appears in acceptable") | Out-Null
+      }
+      if ($m5best -and ($m5bad -contains $m5best)) {
+        Add-Issue $local 'R84' 'error' $sid ("M5 answer.best '" + $m5best + "' also appears in bad") | Out-Null
+      }
+      foreach ($a in $m5acc) {
+        if ($m5bad -contains $a) {
+          Add-Issue $local 'R84' 'error' $sid ("M5 acceptable choice '" + $a + "' also appears in bad") | Out-Null
+        }
+      }
+      foreach ($c in $m5crit) {
+        if (-not ($m5bad -contains $c)) {
+          Add-Issue $local 'R84' 'error' $sid ("M5 critical choice '" + $c + "' must also appear in bad") | Out-Null
+        }
+      }
+      $m5choiceUniverse = if ($m5qtype -eq 'action_choice') { $m5ValidActions } elseif ($m5qtype -eq 'reason_choice') { $m5ValidReasons } else { @() }
+      if ($m5choiceUniverse.Count -gt 0) {
+        $allM5 = @($m5best) + $m5acc + $m5bad + $m5crit | Where-Object { $_ }
+        foreach ($id in $allM5) {
+          if ($m5choiceUniverse -notcontains $id) {
+            Add-Issue $local 'R84' 'error' $sid ("M5 answer references invalid id '" + $id + "' for qtype " + $m5qtype) | Out-Null
+          }
+        }
+      }
+    }
+
+    # R85 -- explanation completeness: short/riverLogic/rangeContext/handLogic/commonMistake/takeaway
+    #        always required; sizingLogic required only when recommendedAction is a check-raise.
+    if ($s.explanation) {
+      foreach ($fld in @('short','riverLogic','rangeContext','handLogic','commonMistake','takeaway')) {
+        $v = $s.explanation.$fld
+        if (-not $v -or ($v -is [string] -and $v.Trim().Length -eq 0)) {
+          Add-Issue $local 'R85' 'error' $sid ("M5 explanation." + $fld + " is required") | Out-Null
+        }
+      }
+      if ($s.recommendedAction -eq 'check_raise_small' -or $s.recommendedAction -eq 'check_raise_big') {
+        $sz = $s.explanation.sizingLogic
+        if (-not $sz -or ($sz -is [string] -and $sz.Trim().Length -eq 0)) {
+          Add-Issue $local 'R85' 'error' $sid 'M5 explanation.sizingLogic is required when recommendedAction is a check-raise' | Out-Null
+        }
+      }
+    } else {
+      Add-Issue $local 'R85' 'error' $sid 'M5 explanation block missing' | Out-Null
+    }
+
+    # R86 -- conceptTags: 1-4 entries, no duplicates, all in M5 concept vocab
+    if (-not $s.conceptTags -or $s.conceptTags.Count -eq 0) {
+      Add-Issue $local 'R86' 'error' $sid 'M5 conceptTags must be non-empty' | Out-Null
+    } else {
+      if ($s.conceptTags.Count -gt 4) {
+        Add-Issue $local 'R86' 'error' $sid ("M5 conceptTags has " + $s.conceptTags.Count + " entries (max 4)") | Out-Null
+      }
+      $tagSeen = @{}
+      foreach ($tg in $s.conceptTags) {
+        if ($m5ValidConcepts -notcontains $tg) {
+          Add-Issue $local 'R86' 'error' $sid ("M5 conceptTag '" + $tg + "' not in M5 concept vocab") | Out-Null
+        }
+        if ($tagSeen.ContainsKey("$tg")) {
+          Add-Issue $local 'R86' 'error' $sid ("M5 duplicate conceptTag '" + $tg + "'") | Out-Null
+        }
+        $tagSeen["$tg"] = $true
+      }
+    }
+
+    # R87 -- auditStatus + sourceConfidence
+    if ($s.auditStatus -and ($m5ValidAuditStat -notcontains $s.auditStatus)) {
+      Add-Issue $local 'R87' 'error' $sid ("M5 auditStatus '" + $s.auditStatus + "' not in valid set") | Out-Null
+    }
+    if ($s.sourceConfidence -eq 'solver_verified' -and -not $s.solverRunRef) {
+      Add-Issue $local 'R87' 'error' $sid 'M5 sourceConfidence=solver_verified requires solverRunRef field' | Out-Null
+    }
+
+    # R88 -- handClass='flush'/'nut_flush' invariant: >=5 of one suit across hero+board
+    if (($s.handClass -eq 'flush' -or $s.handClass -eq 'nut_flush') -and $s.heroHand -and $s.board -and $s.board.cards) {
+      $allFlush = @($s.heroHand) + @($s.board.cards)
+      $foundFlush = $false
+      foreach ($suit in 'cdhs'.ToCharArray()) {
+        $sc = [string]$suit
+        $cnt = (@($allFlush) | Where-Object { $_.Length -eq 2 -and $_.Substring(1,1) -eq $sc }).Count
+        if ($cnt -ge 5) { $foundFlush = $true; break }
+      }
+      if (-not $foundFlush) {
+        Add-Issue $local 'R88' 'error' $sid "M5 handClass=flush but no suit has 5+ cards across hero+board" | Out-Null
+      }
+    }
+
+    # R89 -- handClass='straight' invariant: 5 consecutive ranks (or A-2-3-4-5) in hero+board
+    if ($s.handClass -eq 'straight' -and $s.heroHand -and $s.board -and $s.board.cards) {
+      $allStr = @($s.heroHand) + @($s.board.cards)
+      $rankOrder = @('2','3','4','5','6','7','8','9','T','J','Q','K','A')
+      $rankSet = New-Object System.Collections.Generic.HashSet[int]
+      foreach ($c in $allStr) {
+        if ($c.Length -ge 2) {
+          $r = $c.Substring(0,1)
+          $idx = $rankOrder.IndexOf($r)
+          if ($idx -ge 0) { $null = $rankSet.Add($idx) }
+        }
+      }
+      $foundStraight = $false
+      foreach ($start in 0..8) {
+        $allIn = $true
+        foreach ($k in 0..4) {
+          if (-not $rankSet.Contains($start + $k)) { $allIn = $false; break }
+        }
+        if ($allIn) { $foundStraight = $true; break }
+      }
+      if (-not $foundStraight) {
+        if ($rankSet.Contains(12) -and $rankSet.Contains(0) -and $rankSet.Contains(1) -and $rankSet.Contains(2) -and $rankSet.Contains(3)) {
+          $foundStraight = $true
+        }
+      }
+      if (-not $foundStraight) {
+        Add-Issue $local 'R89' 'error' $sid "M5 handClass=straight but no 5 consecutive ranks (or A-2-3-4-5) in hero+board" | Out-Null
+      }
+    }
+
+    # R90 -- busted-draws-never-call (river is showdown-only; the M5 signature rule)
+    $m5Busted = ($s.heroHandRole -eq 'missed_draw') -or `
+                ($s.drawCategory -eq 'busted_flush_draw') -or `
+                ($s.drawCategory -eq 'busted_straight_draw') -or `
+                ($s.drawCategory -eq 'busted_combo_draw')
+    if ($m5Busted) {
+      if ($s.recommendedAction -eq 'call') {
+        Add-Issue $local 'R90' 'error' $sid "M5 busted draw has recommendedAction='call' -- busted draws never call on the river" | Out-Null
+      }
+      if ($s.answer -and $s.answer.best -eq 'call') {
+        Add-Issue $local 'R90' 'error' $sid "M5 busted draw has answer.best='call' -- busted draws never call" | Out-Null
+      }
+      if ($s.answer -and (@($s.answer.acceptable) -contains 'call')) {
+        Add-Issue $local 'R90' 'error' $sid "M5 busted draw lists 'call' as acceptable -- busted draws never call" | Out-Null
+      }
+      $m5CallReasons = @('pot_odds_river_call','bluff_catch_river','blocker_bluff_catch_river','mdf_defense_river','thin_value_call_river')
+      if ($m5CallReasons -contains $s.actionReason) {
+        Add-Issue $local 'R90' 'error' $sid ("M5 busted draw has a call-flavored actionReason '" + $s.actionReason + "' -- busted draws are fold or bluff-raise only") | Out-Null
+      }
+    }
+
+    # R91 -- blocker_bluff blockerNote claiming nut-<suit> requires hero A of that suit
+    if ($s.heroHandRole -eq 'blocker_bluff' -and $s.blockerNote -and $s.heroHand) {
+      $hh5 = @($s.heroHand)
+      $bn5 = $s.blockerNote
+      $suitMap5 = @{ 'spade'='s'; 'heart'='h'; 'club'='c'; 'diamond'='d' }
+      foreach ($word in $suitMap5.Keys) {
+        if ($bn5 -match "nut[- ]$word") {
+          $sc = $suitMap5[$word]
+          if (-not ($hh5 -contains "A$sc")) {
+            Add-Issue $local 'R91' 'error' $sid ("M5 blockerNote claims 'nut-" + $word + "' blocker but hero does not hold A" + $sc) | Out-Null
+          }
+        }
+      }
+    }
+
+    # R92 -- no draw-equity-realization language in river explanations (WARN)
+    if ($s.explanation) {
+      $m5banPhrases = @('equity realization','realize equity','equity_realization','realize the equity','realise equity')
+      foreach ($f in @('short','riverLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway')) {
+        $v = $s.explanation.$f
+        if ($null -ne $v -and ($v -is [string])) {
+          $vl = $v.ToLowerInvariant()
+          foreach ($p in $m5banPhrases) {
+            if ($vl.Contains($p)) {
+              Add-Issue $local 'R92' 'warning' $sid ("M5 explanation." + $f + " uses draw-equity-realization phrasing '" + $p + "' -- river is showdown-only") | Out-Null
+              break
+            }
+          }
+        }
+      }
+    }
+
+    # R93 -- text-integrity: no unresolved self-correction artifacts (HARD)
+    $m5r93 = @(' wait ', ' wait,', ' wait.', 'wait needs', 'wait need ', 'actually impossible', '... wait', '...wait')
+    if ($s.explanation) {
+      foreach ($f in @('short','riverLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway')) {
+        $v = $s.explanation.$f
+        if ($null -ne $v -and ($v -is [string]) -and $v.Length -gt 0) {
+          $vl = $v.ToLowerInvariant()
+          foreach ($p in $m5r93) {
+            if ($vl.Contains($p.ToLowerInvariant())) {
+              Add-Issue $local 'R93' 'error' $sid ("M5 explanation." + $f + " contains self-correction artifact '" + $p.Trim() + "'") | Out-Null
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
   # Detects suspicious em-dash and collapsed-board patterns inside text fields
   # that suggest a CP874 mojibake cleanup over-normalized suit symbols.
@@ -1203,6 +1608,19 @@ if ($m4.Count -gt 0) {
   $m4 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
   $m4 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
   $m4 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
+}
+
+# v4.4.1 -- Module 5 stats block
+$m5 = @($data.scenarios | Where-Object { $_.module -eq 'pf_river_barrel_oop_def' })
+if ($m5.Count -gt 0) {
+  Write-Output ''
+  Write-Output ('  Module 5 total: ' + $m5.Count)
+  $m5 | Group-Object { $_.question.qtype } | Sort-Object Name | ForEach-Object { Write-Output ('    qtype ' + $_.Name + ': ' + $_.Count) }
+  $m5 | Group-Object { $_.board.riverCategory } | Sort-Object Name | ForEach-Object { Write-Output ('    riverCategory ' + $_.Name + ': ' + $_.Count) }
+  $m5 | Group-Object { $_.board.villainRiverSizing } | Sort-Object Name | ForEach-Object { Write-Output ('    sizing ' + $_.Name + ': ' + $_.Count) }
+  $m5 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
+  $m5 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
+  $m5 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
 }
 
 if($totalErrors -gt 0){ exit 1 } else { exit 0 }
