@@ -277,22 +277,22 @@ $scenarios += New-Scenario `
 $scenarios += New-Scenario `
   -id 'pf_btn_v_bb_srp_100bb_river_Js8d5c_Ac_m5_action_AdTh_v440' `
   -board $r2 -heroHand @('Ad','Th') `
-  -handClass 'top_pair_weak_kicker' -heroHandRole 'bluff_catcher' -drawCategory 'none' -showdownValue 'high' `
-  -blockerNote 'A in hand makes top pair AND blocks villain AA / strong-Ax value combos.' `
-  -recommendedAction 'call' -actionReason 'bluff_catch_river' `
+  -handClass 'top_pair_weak_kicker' -heroHandRole 'marginal_made_hand' -drawCategory 'none' -showdownValue 'high' `
+  -blockerNote 'A in hand makes top pair AND blocks villain AA / strong-Ax value combos, but the weak kicker keeps it borderline vs a pot-sized bet.' `
+  -recommendedAction 'mixed' -actionReason 'mixed_indifference_river' `
   -question (Q-Action 'Ad Th' $r2Str '3h' 'Ac') `
-  -answer (New-Answer 'call' @('mixed') @('fold','check_raise_small','check_raise_big') @()) `
+  -answer (New-Answer 'mixed' @('call') @('fold','check_raise_small','check_raise_big') @()) `
   -explanation (New-Explanation `
-    'The Ace river paired hero (A-high) -- call to bluff-catch; the A is a blocker, not a fold signal.' `
-    'The Ac gives hero a pair of aces on the river. Crucially hero holds an A, which blocks villain AA and reduces his strong-Ax value combos -- so more of his pot-sized betting range is busted bluffs that hero now beats.' `
-    'BB floated ATs two streets (overcard + backdoors) and rivered top pair on the scare card that everyone else fears. The A in hand is the reason this is a call, not a fold.' `
-    'AdTh is top pair (weak kicker) plus the A-blocker. It loses to AK/AQ/AJ and two-pair/sets, but the blocker tilts villain range toward bluffs.' `
+    'The Ace river paired hero (weak-kicker top pair) -- a call/fold mix that leans call; the A-blocker keeps it from being an auto-fold.' `
+    'The Ac gives hero a pair of aces, but with a weak T kicker. Hero holds an A, which blocks villain AA and reduces his strong-Ax value -- pushing his pot-sized range toward busted bluffs that hero beats. Against a value-heavy A-high pot bet, though, weak top pair is right at indifference: solver mixes call and fold.' `
+    'BB floated ATs two streets and rivered weak top pair on the scare card others fear. The A-blocker is what keeps this a mix rather than a clear fold; villain still has plenty of better Ax that bet pot.' `
+    'AdTh is top pair, weak kicker, plus the A-blocker. It loses to AK/AQ/AJ and two-pair/sets, but the blocker tilts villain range toward bluffs enough to make folding too tight.' `
     $null `
-    'Folding the rivered ace because the board looks scary over-folds; the very card that scares others gave hero a pair and a value-blocker.' `
-    'When the scare card pairs YOU and blocks villain value, the bluff-catch gets stronger, not weaker -- call.') `
-  -conceptTags @('river_bluff_catcher','river_blocker_defense','river_overfold_trap') `
+    'Auto-folding the rivered ace because the board looks scary over-folds; auto-calling ignores the value-heavy A-high pot bet. The honest answer is a mix.' `
+    'When the scare card pairs YOU and blocks villain value, weak top pair becomes a call/fold mix -- not an auto-fold.') `
+  -conceptTags @('river_blocker_defense','river_overfold_trap','river_polarization') `
   -difficulty 4 `
-  -uniquenessNote 'Overcard river that HELPS hero (rivers a pair + a value-blocker). Contrasts directly with 2.1 (same river, opposite conclusion) to teach that the overcards effect depends on whether it pairs/blocks for you.'
+  -uniquenessNote 'Overcard river that HELPS hero (rivers a pair + a value-blocker) but only to a MIX. Contrasts with 2.1 (same river, clear fold) to teach that the overcards effect depends on whether it pairs/blocks for you, and that weak top pair vs a pot bet is a genuine mix.'
 
 # 2.3 action -- set of jacks, value raise
 $scenarios += New-Scenario `
@@ -621,26 +621,26 @@ $scenarios += New-Scenario `
   -difficulty 5 `
   -uniquenessNote 'Scare-card overbet mix. The honest mixed_indifference spot: top pair vs an overbet is close, not an auto-fold; the A-blocker is the swing factor. Teaches that overbets do not mean fold everything.'
 
-# 6.2 action -- top two pair vs overbet, call (do not raise)
+# 6.2 action -- set vs overbet, call (do not raise into polarity)
 $scenarios += New-Scenario `
-  -id 'pf_btn_v_bb_srp_100bb_river_Ad8s5c_Kd_m5_action_AcKh_v440' `
-  -board $r6 -heroHand @('Ac','Kh') `
-  -handClass 'two_pair' -heroHandRole 'strong_value' -drawCategory 'none' -showdownValue 'high' `
-  -blockerNote 'Aces and kings (top two pair); the A and K reduce villain AA / KK set combos, the nutted hands an overbet represents.' `
+  -id 'pf_btn_v_bb_srp_100bb_river_Ad8s5c_Kd_m5_action_8c8h_v440' `
+  -board $r6 -heroHand @('8c','8h') `
+  -handClass 'set' -heroHandRole 'strong_value' -drawCategory 'none' -showdownValue 'high' `
+  -blockerNote 'Set of eights; no A/K blocker, so villain keeps full AA/KK combos, but the set still beats every Ax value-bet and all bluffs.' `
   -recommendedAction 'call' -actionReason 'thin_value_call_river' `
-  -question (Q-Action 'Ac Kh' $r6Str '2h' 'Kd') `
+  -question (Q-Action '8c 8h' $r6Str '2h' 'Kd') `
   -answer (New-Answer 'call' @('check_raise_small') @('fold','mixed','check_raise_big') @('fold')) `
   -explanation (New-Explanation `
-    'Top two pair facing a K-scare overbet -- call; the overbet is polar, so do not raise into it.' `
-    'The Kd rivered hero a second pair (aces and kings). Vs a polar overbet, villain holds either the nuts (AA, KK, 88, 55 sets) or busted bluffs. Two pair beats every bluff and every one-pair value-bet, but raising only folds those out and is called by the sets that beat it -- so call.' `
-    'BB called two streets with AK and rivered top two pair on the scare card. Against the polar overbet the hand is a strong bluff-catcher, not a raise.' `
-    'AcKh is top two pair with the A and K blockers that remove some of villain AA/KK. It beats the entire bluff bucket; raising is thin and loses to the only continues.' `
-    'A small check-raise is a thin-value option vs a bluff-heavy overbetter, but the GTO line is call -- a big raise into a polar overbet only gets value-owned by sets.' `
-    'Folding top two pair to the overbet is a severe over-fold; raising big into a polar nutted-or-air range is a punt.' `
-    'Top two pair vs a polar overbet = call (strong bluff-catch); do not raise into nutted-or-air.') `
-  -conceptTags @('river_thin_value','river_bluff_catcher','river_blocker_defense') `
+    'Middle set facing a K-scare overbet -- call; the overbet is polar, so do not raise into it.' `
+    'The Kd is a scare card; vs a polar overbet villain holds either the nuts (AA, KK, or 55/22 sets) or busted bluffs. Set of eights beats every Ax value-bet, every two-pair and all bluffs, but it loses to the over-sets (AA/KK). Raising only folds out the hands it beats and is called by the sets that beat it -- so call.' `
+    'BB flatted 88 preflop, called two streets, and arrives with a set on the scare card. Against the polar overbet the set is a strong bluff-catcher, not a raise.' `
+    '8c8h is a set; it holds no A/K blocker (villain keeps full AA/KK), but it still crushes the entire Ax-value + bluff portion of the overbet range. Calling captures all of that; raising surrenders it.' `
+    'A small check-raise is a thin-value option vs a bluff-heavy overbetter, but the GTO line is call -- raising into a polar overbet only gets value-owned by the over-sets.' `
+    'Folding a set to the overbet is a severe over-fold; raising big into a polar nutted-or-air range is a punt.' `
+    'A set vs a polar overbet = call (strong bluff-catch); do not raise into nutted-or-air.') `
+  -conceptTags @('river_thin_value','river_bluff_catcher','river_polarization') `
   -difficulty 4 `
-  -uniquenessNote 'Scare-card overbet bluff-catch with top two pair. Teaches that vs a polar overbet even a strong made hand calls rather than raises (raising only folds worse, is called by better).'
+  -uniquenessNote 'Scare-card overbet bluff-catch with a set (BB unambiguously flats 88 pre). Teaches that vs a polar overbet even a set calls rather than raises -- raising only folds worse and is called by the over-sets.'
 
 # 6.3 action -- busted backdoor, give up
 $scenarios += New-Scenario `
