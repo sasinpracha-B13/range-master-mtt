@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-06-18 (v4.4.0 Module 5 River Defense OOP Architecture — PLANNING-ONLY on top of v4.3.2D `72f5130`. Owner directed building M5 + M6 full modules, sprint by sprint.).
+> Last updated: 2026-06-18 (v4.4.0A Module 5 Strategic Seed Review — 24/24 PROMOTE (2 REVISE), planning-only, on top of v4.4.0 `7845dae`. Auto-driving M5 toward runtime.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.4.0A Module 5 Strategic Seed Review (PLANNING-ONLY)** — reviewed the 24 v4.4.0 M5 seeds for river poker correctness. **24/24 PROMOTE (22 as-authored + 2 via REVISE), 0 REJECT.** Fixes: 2.2 AdTh weak-TP-vs-pot `call->mixed`; 6.2 `AcKh two-pair -> 8c8h set` (BB flats 88 unambiguously). Re-audit 24/0/0 PASS. Production untouched 477/0/0. New doc `docs/specs/postflop-v4.4.0A-module5-strategic-review-results.md`. **Next: v4.4.1 production migration (477 -> 501)** + M5 production audit rules + version bump (first production-mutating M5 step; NO runtime yet).
 
 🟢 **v4.4.0 Module 5 River Defense OOP Architecture (PLANNING-ONLY)** — Owner pivoted the program to "build M5 + M6 as full modules, sprint by sprint" (M5 = River Defense OOP, M6 = River Betting IP, confirmed via AskUserQuestion). v4.4.0 = M5 architecture/seed-plan sprint mirroring the v4.3.0 M4 pattern. **NO production data / runtime / version change** (appVersion stays 4.3.2C; postflop_scenarios.json byte-identical 477/0/0). Module 5 = BB River Defense OOP: hand tree continues from M4 (BTN 3-barrel vs BB; BB faces the river bet OOP). Defining lesson: **river is showdown-only -- bluff-catch under polarization via MDF + blockers; busted draws bluff-raise-or-fold, never call.** **7 planning artifacts:** architecture doc (16 sections), schema-taxonomy (schemaVersion 1.3.0 with river fields + 12 river reasons + 12 river concepts + `riverLogic`), builder `tools/build-m5-seeds-v4.4.0.ps1`, 24-seed JSON (6 categories x 4; 18 action + 6 reason), audit-plan (M5.R01..R58), auditor `tools/audit-postflop-module5-seed.ps1`, GPT review package. **M5 seed audit 24/0/0 PASS.** **NEW river auditor rules:** R55 busted-draws-never-call (HARD), R56 no-draw-equity-language (WARN), R57 riverLogic-references-runout (WARN), R58 text-integrity (HARD). **Author strategic self-review done:** every made-hand claim verified on the full 5-card runout (flushes 5-of-suit, straights 5-consecutive, set/trips rankings vs unblocked villain combos, nut-flush-blocker calls/raises); 1 critical-flag downgrade + 1 blocker wording fix applied. Sizing coverage spans small/medium/large/overbet so MDF varies; over-fold trap AND station trap both represented. **Production audit unchanged 477/0/0; all M2/M3/M4 seed audits unchanged.** **Forbidden files all byte-identical** (postflop_scenarios.json, all v4.3.x builders/JSONs/migration/hotfix tools, audit-postflop-ps.ps1, M2/M3/M4 seed auditors, ranges, manifest, preflop, gamification, M1/M2/M3 strategy fields, postflop_concepts.json, postflop_taxonomy.json, index.html, service-worker.js). New snapshot `GPT AUDIT/v4.4.0/`. **Migration path:** v4.4.0A strategic review -> v4.4.1 production migration (477 -> 501) -> v4.4.1A/B expansion -> v4.4.2 runtime wire. **Next sprint: v4.4.0A strategic seed review** (NOT migration, NOT M6 yet).
 
