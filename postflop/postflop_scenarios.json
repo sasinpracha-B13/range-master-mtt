@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "1.0.0",
     "generatedAt":  "2026-05-06",
-    "description":  "v4.4.1 - Module 5 (Facing River Barrel OOP) production migration. Total 501 scenarios: 251 M1 (board texture) + 49 M2 (flop c-bet IP) + 85 M3 (flop defense OOP) + 92 M4 (turn defense OOP) + 24 M5 (river defense OOP). M5 = BB river defense vs BTN third barrel, schemaVersion 1.3.0 per-scenario (5-card board, river showdown-only). Data-loaded + approved; M5 runtime-wired in v4.4.2. Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
+    "description":  "v4.4.1A - Module 5 (Facing River Barrel OOP) expansion. Total 509 scenarios: 251 M1 (board texture) + 49 M2 (flop c-bet IP) + 85 M3 (flop defense OOP) + 92 M4 (turn defense OOP) + 32 M5 (river defense OOP). M5 = BB river defense vs BTN third barrel, schemaVersion 1.3.0 per-scenario (5-card board, river showdown-only). Data-loaded + approved; M5 runtime-wired in v4.4.2. Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
     "scenarios":  [
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_AhKd5c_rangeadv_001",
@@ -54262,6 +54262,954 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.4.0A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m5_action_8d8c_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ac",
+                                                          "7d",
+                                                          "4s"
+                                                      ],
+                                        "turnCard":  "9h",
+                                        "riverCard":  "2c",
+                                        "cards":  [
+                                                      "Ac",
+                                                      "7d",
+                                                      "4s",
+                                                      "9h",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "runoutTexture":  "dry_unpaired",
+                                        "riverDrawCompletion":  "none",
+                                        "villainRiverSizing":  "small"
+                                    },
+                          "heroHand":  [
+                                           "8d",
+                                           "8c"
+                                       ],
+                          "handClass":  "underpair",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "none",
+                          "showdownValue":  "low",
+                          "blockerNote":  "No relevant blockers; with a tiny price the underpair only needs to beat the busted-barrel bluffs.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "pot_odds_river_call",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ac 7d 4s; turn 9h; river 2c. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BTN now bets about a third of pot (small) on the river. What is BB best action with 8d 8c?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Underpair vs a tiny river bet -- the price alone makes it a call.",
+                                              "riverLogic":  "The 2c is a double blank: no flush (only two clubs), no straight, no new pair. Ranges are unchanged from the turn. At about a third of pot BTN can bet a wide, bluff-heavy range, so the small price (about 4-to-1) is the whole story.",
+                                              "rangeContext":  "BB arrives capped after calling two streets, but a third-pot bet only asks BB to defend the very bottom of its range; an underpair clears that bar easily.",
+                                              "handLogic":  "88 beats every busted barrel (KQ/KJ/QJ/JT that whiffed) and the occasional thin 7x. It loses to Ax, 9x and sets, but at 4-to-1 it needs to be good only about one time in five.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Folding small pairs to a tiny river bet -- over-folding to cheap sizings hands BTN an automatic profit.",
+                                              "takeaway":  "Small sizing, small required equity: price an underpair in as a pure pot-odds call."
+                                          },
+                          "conceptTags":  [
+                                              "river_bluff_catcher",
+                                              "river_mdf",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m5_reason_Ad6c_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ac",
+                                                          "7d",
+                                                          "4s"
+                                                      ],
+                                        "turnCard":  "9h",
+                                        "riverCard":  "2c",
+                                        "cards":  [
+                                                      "Ac",
+                                                      "7d",
+                                                      "4s",
+                                                      "9h",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "runoutTexture":  "dry_unpaired",
+                                        "riverDrawCompletion":  "none",
+                                        "villainRiverSizing":  "medium"
+                                    },
+                          "heroHand":  [
+                                           "Ad",
+                                           "6c"
+                                       ],
+                          "handClass":  "top_pair_weak_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Holds an ace, so it blocks a little BTN value, but the call is driven by MDF, not by card removal.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "mdf_defense_river",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ac 7d 4s; turn 9h; river 2c. BB calls Ad 6c vs BTN two-thirds-pot river bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_river_call",
+                                                           "bluff_catch_river",
+                                                           "blocker_bluff_catch_river",
+                                                           "mdf_defense_river",
+                                                           "thin_value_call_river",
+                                                           "value_raise_river",
+                                                           "bluff_raise_river",
+                                                           "range_disadvantage_river_fold",
+                                                           "domination_river_fold",
+                                                           "board_change_river_fold",
+                                                           "missed_draw_give_up",
+                                                           "mixed_indifference_river"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "mdf_defense_river",
+                                         "acceptable":  [
+                                                            "bluff_catch_river"
+                                                        ],
+                                         "bad":  [
+                                                     "domination_river_fold",
+                                                     "missed_draw_give_up"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Weak top pair calls a two-thirds barrel to meet minimum defense frequency.",
+                                              "riverLogic":  "The 2c is a blank on Ac 7d 4s 9h: no flush, no straight. Versus two-thirds pot BB must continue with roughly 60% of its range, and its many aces are the backbone of that defense.",
+                                              "rangeContext":  "BB holds a lot of aces by the river. Folding the weak ones would drop BB far below MDF and let BTN barrel any two cards profitably, so the bottom of the Ax class still defends a two-thirds bet.",
+                                              "handLogic":  "A6 beats worse aces, every pair below it and all busted bluffs; it loses to better aces and sets. The smaller size pulls in more bluffs, so defending top pair keeps BB at MDF rather than over-folding a hand this strong.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Folding all your weak aces to a manageable barrel -- that defends well below MDF and prints money for a triple-barreller.",
+                                              "takeaway":  "MDF over hand-love: a weak ace is still top pair, and you cannot fold the top-pair class to a two-thirds bet without over-folding."
+                                          },
+                          "conceptTags":  [
+                                              "river_mdf",
+                                              "river_bluff_catcher",
+                                              "river_overfold_trap"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m5_action_AsQc_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ac",
+                                                          "7d",
+                                                          "4s"
+                                                      ],
+                                        "turnCard":  "9h",
+                                        "riverCard":  "2c",
+                                        "cards":  [
+                                                      "Ac",
+                                                      "7d",
+                                                      "4s",
+                                                      "9h",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "runoutTexture":  "dry_unpaired",
+                                        "riverDrawCompletion":  "none",
+                                        "villainRiverSizing":  "large"
+                                    },
+                          "heroHand":  [
+                                           "As",
+                                           "Qc"
+                                       ],
+                          "handClass":  "top_pair_good_kicker",
+                          "heroHandRole":  "bluff_catcher",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Holds the As (blocks some AK/AQ value) and the Qc; a strong top pair that must not be folded to a polar bet.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_river",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ac 7d 4s; turn 9h; river 2c. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BTN now bets pot (large) on the river. What is BB best action with As Qc?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "call",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed",
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top pair, good kicker is a mandatory call versus a pot-sized third barrel -- folding over-folds.",
+                                              "riverLogic":  "The 2c bricks Ac 7d 4s 9h: no flush, no straight. A pot-sized bet is polar -- strong aces and sets for value, busted broadways and gutshots as bluffs -- and a balanced BTN must bluff enough that a strong ace has to call.",
+                                              "rangeContext":  "BB is capped but holds plenty of aces. AQ sits near the top of that bluff-catching class; if BB folds hands this strong it defends far too little and BTN auto-profits.",
+                                              "handLogic":  "AQ beats AJ, AT, every worse ace BTN might bet thin, and the entire busted-bluff bucket. It loses only to AK and sets, so versus a pot bet that must contain bluffs to stay balanced it is a clear call.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Folding good top pair to a big river bet \"because it looks scary\" -- the classic over-fold leak that makes barrelling free.",
+                                              "takeaway":  "Big bet, strong bluff-catcher: call. Over-folding top pair is exactly what a polar barreller wants."
+                                          },
+                          "conceptTags":  [
+                                              "river_bluff_catcher",
+                                              "river_overfold_trap",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m5_reason_KcQd_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  2,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ac",
+                                                          "7d",
+                                                          "4s"
+                                                      ],
+                                        "turnCard":  "9h",
+                                        "riverCard":  "2c",
+                                        "cards":  [
+                                                      "Ac",
+                                                      "7d",
+                                                      "4s",
+                                                      "9h",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "dry",
+                                                            "disconnected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "runoutTexture":  "dry_unpaired",
+                                        "riverDrawCompletion":  "none",
+                                        "villainRiverSizing":  "large"
+                                    },
+                          "heroHand":  [
+                                           "Kc",
+                                           "Qd"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "give_up",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  "KQ blocks a few BTN value combos (AK/KK/QQ) but holds no pair and beats nothing that bets; it is a pure give-up.",
+                          "recommendedAction":  "fold",
+                          "actionReason":  "range_disadvantage_river_fold",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Ac 7d 4s; turn 9h; river 2c. BB folds Kc Qd vs BTN pot-sized river bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_river_call",
+                                                           "bluff_catch_river",
+                                                           "blocker_bluff_catch_river",
+                                                           "mdf_defense_river",
+                                                           "thin_value_call_river",
+                                                           "value_raise_river",
+                                                           "bluff_raise_river",
+                                                           "range_disadvantage_river_fold",
+                                                           "domination_river_fold",
+                                                           "board_change_river_fold",
+                                                           "missed_draw_give_up",
+                                                           "mixed_indifference_river"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "range_disadvantage_river_fold",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "bluff_catch_river",
+                                                     "pot_odds_river_call"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "King-high air folds to a big barrel -- a capped range cannot manufacture a call here.",
+                                              "riverLogic":  "The 2c bricks the dry board. KQ never made a pair and never had a draw; it is simply the bottom of a capped calling range that arrives with no showdown value.",
+                                              "rangeContext":  "BB called flop and turn with pairs and draws; by the river the missed broadway combos are the worst hands BB holds, and BTN attacks exactly them.",
+                                              "handLogic":  "KQ beats nothing BTN value-bets and only ties or loses to other air. There is nothing to bluff-catch with -- holding the K and Q is a tiny blocker note, not a reason to call.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Talking yourself into a \"blocker\" call with two overcards -- blocking a few value combos does not give a no-pair hand a price to call a pot bet.",
+                                              "takeaway":  "When your range is capped and your hand is air, fold; blockers do not turn no-pair into a call."
+                                          },
+                          "conceptTags":  [
+                                              "river_range_disadvantage",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_action_AhJc_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kh",
+                                                          "9h",
+                                                          "5c"
+                                                      ],
+                                        "turnCard":  "4d",
+                                        "riverCard":  "2h",
+                                        "cards":  [
+                                                      "Kh",
+                                                      "9h",
+                                                      "5c",
+                                                      "4d",
+                                                      "2h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "riverCategory":  "flush_complete",
+                                        "boardChange":  "draw_resolved",
+                                        "runoutTexture":  "flush_possible",
+                                        "riverDrawCompletion":  "flush_completed",
+                                        "villainRiverSizing":  "large"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "Jc"
+                                       ],
+                          "handClass":  "no_pair_no_draw",
+                          "heroHandRole":  "blocker_bluff",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Ah is the nut-flush blocker: BTN is far less likely to hold the nut flush (Ah-x), so a check-raise credibly represents it and folds out one-pair value and weak made hands.",
+                          "recommendedAction":  "check_raise_small",
+                          "actionReason":  "bluff_raise_river",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Kh 9h 5c; turn 4d; river 2h. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BTN now bets pot (large) on the river. What is BB best action with Ah Jc?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_small",
+                                         "acceptable":  [
+                                                            "fold"
+                                                        ],
+                                         "bad":  [
+                                                     "call",
+                                                     "mixed",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+                                                          "call"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "A-high with the nut-flush blocker check-raises the river as a bluff -- or folds; never calls.",
+                                              "riverLogic":  "The 2h puts a third heart out, completing the flush draw. The board now favors whoever can credibly hold a flush; holding the Ah means BTN almost never has the nut flush, so a raise tells a believable story.",
+                                              "rangeContext":  "BTN bets a large polar range: made flushes and strong hands for value, plus busted hearts as bluffs. BB has no showdown value here, so the only ways to win are to raise BTN off the non-flush portion or to give up.",
+                                              "handLogic":  "AhJc has no pair and cannot win at showdown, so calling is pointless. But the Ah removes BTN nut-flush combos, so a check-raise pressures his one-pair value and missed bluffs into folding.",
+                                              "sizingLogic":  "A small check-raise is enough to fold out non-flush value and weak made hands while risking the minimum; a big raise over-invests, since the only hands that continue are the flushes that already beat us.",
+                                              "commonMistake":  "Flatting A-high \"to see a showdown\" -- with zero showdown value the choice is raise-as-a-bluff or fold, and calling just burns a bet.",
+                                              "takeaway":  "Busted hand plus the right blocker: the river is for bluff-raising or folding, never calling."
+                                          },
+                          "conceptTags":  [
+                                              "river_bluff_raise",
+                                              "river_blocker_defense",
+                                              "river_polarization"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_action_Ah3h_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kh",
+                                                          "9h",
+                                                          "5c"
+                                                      ],
+                                        "turnCard":  "4d",
+                                        "riverCard":  "2h",
+                                        "cards":  [
+                                                      "Kh",
+                                                      "9h",
+                                                      "5c",
+                                                      "4d",
+                                                      "2h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "riverCategory":  "flush_complete",
+                                        "boardChange":  "draw_resolved",
+                                        "runoutTexture":  "flush_possible",
+                                        "riverDrawCompletion":  "flush_completed",
+                                        "villainRiverSizing":  "large"
+                                    },
+                          "heroHand":  [
+                                           "Ah",
+                                           "3h"
+                                       ],
+                          "handClass":  "nut_flush",
+                          "heroHandRole":  "nutted_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "nutted",
+                          "blockerNote":  "Holds the Ah with a second heart: this IS the nut flush (Ace-high), unbeatable on an unpaired board -- raise for maximum value.",
+                          "recommendedAction":  "check_raise_big",
+                          "actionReason":  "value_raise_river",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Kh 9h 5c; turn 4d; river 2h. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BTN now bets pot (large) on the river. What is BB best action with Ah 3h?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_raise_big",
+                                         "acceptable":  [
+                                                            "call",
+                                                            "check_raise_small"
+                                                        ],
+                                         "bad":  [
+                                                     "fold",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "fold"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "The nut flush on an unpaired board -- check-raise big for maximum value.",
+                                              "riverLogic":  "The 2h completes a three-flush and gives Ah-x the nut flush. The board is unpaired, so no full house is possible: the nut flush is the effective nuts and nothing beats it.",
+                                              "rangeContext":  "BTN large bet contains lower flushes, two pair and sets that cannot fold easily on this runout; against that calling range a raise is pure value.",
+                                              "handLogic":  "Ah3h is the best possible hand. Flat-calling wins only the one street BTN already bet; check-raising charges the lower flushes and strong made hands that will pay.",
+                                              "sizingLogic":  "Go big: BTN lower flushes and strong hands are inelastic here, so a large check-raise maximizes value; a small raise leaves money on the table against a range that would have called more.",
+                                              "commonMistake":  "Slow-playing the nuts on a wet board -- flat-calling forfeits a full street of value against a range full of second-best flushes.",
+                                              "takeaway":  "With the effective nuts on an unpaired flush board, raise big; the only real mistake is failing to get the money in."
+                                          },
+                          "conceptTags":  [
+                                              "river_value_raise",
+                                              "river_polarization",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_action_KcTd_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kh",
+                                                          "9h",
+                                                          "5c"
+                                                      ],
+                                        "turnCard":  "4d",
+                                        "riverCard":  "2h",
+                                        "cards":  [
+                                                      "Kh",
+                                                      "9h",
+                                                      "5c",
+                                                      "4d",
+                                                      "2h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "riverCategory":  "flush_complete",
+                                        "boardChange":  "draw_resolved",
+                                        "runoutTexture":  "flush_possible",
+                                        "riverDrawCompletion":  "flush_completed",
+                                        "villainRiverSizing":  "large"
+                                    },
+                          "heroHand":  [
+                                           "Kc",
+                                           "Td"
+                                       ],
+                          "handClass":  "top_pair_weak_kicker",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "none",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "No flush blocker (no heart) and a weak kicker; nothing tips the spot off its knife-edge, so the solver mixes.",
+                          "recommendedAction":  "mixed",
+                          "actionReason":  "mixed_indifference_river",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Kh 9h 5c; turn 4d; river 2h. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BTN now bets pot (large) on the river. What is BB best action with Kc Td?",
+                                           "choices":  [
+                                                           "fold",
+                                                           "call",
+                                                           "check_raise_small",
+                                                           "check_raise_big",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "mixed",
+                                         "acceptable":  [
+                                                            "call",
+                                                            "fold"
+                                                        ],
+                                         "bad":  [
+                                                     "check_raise_small",
+                                                     "check_raise_big"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Top pair, weak kicker, no blocker on a flush board versus a big bet -- a genuine call/fold mix.",
+                                              "riverLogic":  "The 2h completes the flush, so BTN large bet is polar: flushes and better for value, busted hearts as bluffs. A bare top pair beats the bluffs and loses to the value, with no blocker to break the tie.",
+                                              "rangeContext":  "BB must defend some top pairs versus the large bet, but not all of them; King-Ten with no heart is right on the indifference line, so it splits between call and fold.",
+                                              "handLogic":  "King-Ten beats every busted heart and worse one-pair, and loses to all flushes plus better kings and two pair. Without a heart to block the nut flush nothing nudges it clearly one way, so both calling and folding are correct at some frequency.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Treating a knife-edge hand as a pure call or pure fold -- and especially raising it, which only folds out worse and gets called by better.",
+                                              "takeaway":  "When a bluff-catcher is genuinely indifferent and holds no relevant blocker, mixing call and fold is the answer; raising is the one clear error."
+                                          },
+                          "conceptTags":  [
+                                              "river_bluff_catcher",
+                                              "river_polarization",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_reason_JhTh_v441a",
+                          "version":  "v4.4.1A",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  3,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Kh",
+                                                          "9h",
+                                                          "5c"
+                                                      ],
+                                        "turnCard":  "4d",
+                                        "riverCard":  "2h",
+                                        "cards":  [
+                                                      "Kh",
+                                                      "9h",
+                                                      "5c",
+                                                      "4d",
+                                                      "2h"
+                                                  ],
+                                        "boardKind":  "K_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "flushing"
+                                                        ],
+                                        "highCardClass":  "K_high",
+                                        "riverCategory":  "flush_complete",
+                                        "boardChange":  "draw_resolved",
+                                        "runoutTexture":  "flush_possible",
+                                        "riverDrawCompletion":  "flush_completed",
+                                        "villainRiverSizing":  "medium"
+                                    },
+                          "heroHand":  [
+                                           "Jh",
+                                           "Th"
+                                       ],
+                          "handClass":  "flush",
+                          "heroHandRole":  "thin_value",
+                          "drawCategory":  "none",
+                          "showdownValue":  "high",
+                          "blockerNote":  "Holds two middle hearts so it blocks some lower flushes, but not the Ah or Qh that beat it; this is a call-for-value hand, not a raise.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "thin_value_call_river",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Kh 9h 5c; turn 4d; river 2h. BB calls (does not raise) Jh Th vs BTN two-thirds-pot river bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_river_call",
+                                                           "bluff_catch_river",
+                                                           "blocker_bluff_catch_river",
+                                                           "mdf_defense_river",
+                                                           "thin_value_call_river",
+                                                           "value_raise_river",
+                                                           "bluff_raise_river",
+                                                           "range_disadvantage_river_fold",
+                                                           "domination_river_fold",
+                                                           "board_change_river_fold",
+                                                           "missed_draw_give_up",
+                                                           "mixed_indifference_river"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "thin_value_call_river",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "value_raise_river",
+                                                     "bluff_catch_river",
+                                                     "missed_draw_give_up"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "A middle flush calls (does not raise) a two-thirds bet -- thin value, since only better flushes continue to a raise.",
+                                              "riverLogic":  "The 2h completes a three-flush. JhTh makes a middling flush: ahead of one-pair value and the busted hearts that bet, but behind the Ah and Qh flushes.",
+                                              "rangeContext":  "Versus a medium bet BB is not capped at the flush level; a made flush is near the top of BB range and wants to get value -- but only from worse.",
+                                              "handLogic":  "JhTh beats every non-flush hand BTN bets plus the few lower flushes, and loses only to the Ah or Qh flushes. Calling collects from all of that; raising would fold out the one-pair value and get called only by the flushes that beat it.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Raising a non-nut flush \"because it is a flush\" -- that turns a value hand into a bluff-catcher by folding out everything it beats.",
+                                              "takeaway":  "Hold a made-but-beatable hand? Call to keep worse hands betting; do not raise into the few hands that have you crushed."
+                                          },
+                          "conceptTags":  [
+                                              "river_thin_value",
+                                              "river_polarization",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
                       }
                   ]
 }
