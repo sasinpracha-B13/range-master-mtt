@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "1.0.0",
     "generatedAt":  "2026-05-06",
-    "description":  "v4.4.1B - Module 5 correction layer on the v4.4.1A 509-scenario base (count unchanged). Fixes: critical-tier reserved for severe punts (one-pair fold/call downgraded to bad); AhQc/AhJc overbet monotonicity (stronger ace = call, weaker = mix) on Ad8s5c2hKd; #12 Ah9c sizing large-\u003emedium with corrected 3-heart-flush combinatorics. Total 509: 251 M1 + 49 M2 + 85 M3 + 92 M4 + 32 M5. M5 = BB river defense vs BTN third barrel, schemaVersion 1.3.0 per-scenario. Data-loaded + approved; M5 runtime-wired in v4.4.2. Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
+    "description":  "v4.4.1C - Module 5 straight-blocker mix (+1). Total 510 scenarios: 251 M1 (board texture) + 49 M2 (flop c-bet IP) + 85 M3 (flop defense OOP) + 92 M4 (turn defense OOP) + 33 M5 (river defense OOP). M5 = BB river defense vs BTN third barrel, schemaVersion 1.3.0 per-scenario (5-card board, river showdown-only). Data-loaded + approved; M5 runtime-wired in v4.4.2. Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
     "scenarios":  [
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_AhKd5c_rangeadv_001",
@@ -55209,6 +55209,136 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Jc9d8s_2c_m5_reason_Th9h_v441c",
+                          "version":  "v4.4.1C",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_barrel_oop_def",
+                          "moduleName":  "Facing River Barrel OOP",
+                          "street":  "river",
+                          "schemaVersion":  "1.3.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BTN bets river",
+                                       "street":  "river",
+                                       "heroPosition":  "BB",
+                                       "villainPosition":  "BTN",
+                                       "heroRole":  "turn_check_caller_oop",
+                                       "villainRole":  "river_barreler_ip"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Jc",
+                                                          "9d",
+                                                          "8s"
+                                                      ],
+                                        "turnCard":  "4h",
+                                        "riverCard":  "2c",
+                                        "cards":  [
+                                                      "Jc",
+                                                      "9d",
+                                                      "8s",
+                                                      "4h",
+                                                      "2c"
+                                                  ],
+                                        "boardKind":  "J_high",
+                                        "suitTextureFlop":  "rainbow",
+                                        "suitTextureTurn":  "rainbow",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "connected",
+                                                            "wet"
+                                                        ],
+                                        "highCardClass":  "J_high",
+                                        "riverCategory":  "brick",
+                                        "boardChange":  "brick",
+                                        "runoutTexture":  "straight_possible",
+                                        "riverDrawCompletion":  "none",
+                                        "villainRiverSizing":  "medium"
+                                    },
+                          "heroHand":  [
+                                           "Th",
+                                           "9h"
+                                       ],
+                          "handClass":  "second_pair",
+                          "heroHandRole":  "marginal_made_hand",
+                          "drawCategory":  "none",
+                          "showdownValue":  "low",
+                          "blockerNote":  "Holds the Th: the only straights on this board (QT, T7) both need a ten, so hero trims each by about a quarter. But the busted open-enders KT and AT use the same tens, so the blocker cuts bluffs too -- a two-sided nudge, unlike the Ah on a flush board.",
+                          "recommendedAction":  "mixed",
+                          "actionReason":  "mixed_indifference_river",
+                          "question":  {
+                                           "qtype":  "reason_choice",
+                                           "prompt":  "Flop Jc 9d 8s; turn 4h; river 2c. BB calls Th 9h vs BTN\u0027s two-thirds-pot river bet. What is the primary reason?",
+                                           "choices":  [
+                                                           "pot_odds_river_call",
+                                                           "bluff_catch_river",
+                                                           "blocker_bluff_catch_river",
+                                                           "mdf_defense_river",
+                                                           "thin_value_call_river",
+                                                           "value_raise_river",
+                                                           "bluff_raise_river",
+                                                           "range_disadvantage_river_fold",
+                                                           "domination_river_fold",
+                                                           "board_change_river_fold",
+                                                           "missed_draw_give_up",
+                                                           "mixed_indifference_river"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "mixed_indifference_river",
+                                         "acceptable":  [
+                                                            "bluff_catch_river"
+                                                        ],
+                                         "bad":  [
+                                                     "pot_odds_river_call",
+                                                     "blocker_bluff_catch_river",
+                                                     "mdf_defense_river",
+                                                     "thin_value_call_river",
+                                                     "value_raise_river",
+                                                     "bluff_raise_river",
+                                                     "range_disadvantage_river_fold",
+                                                     "domination_river_fold",
+                                                     "board_change_river_fold",
+                                                     "missed_draw_give_up"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Second pair with the T straight-blocker vs a medium third barrel -- a genuine call/fold mix; the blocker is a nudge, not the reason.",
+                                              "riverLogic":  "The 2c is a brick: no flush ever existed on this rainbow-flop runout, and the only straights (QT and T7, both live since the J-9-8 flop) need a ten. Hero\u0027s Th removes one of villain\u0027s four tens -- about a quarter of the QT and T7 value -- but the busted open-enders KT and AT use the same tens, so the blocker removes bluffs as well. Value and bluffs shrink together and the ratio barely moves: pair of nines beats every busted draw, loses to every value hand, and sits right at the ~29% price a two-thirds bet sets. That is indifference, not a blocker-driven call.",
+                                              "rangeContext":  "Vs a medium bet BB defends roughly 60% of its range, filled first by straights, two pair, Jx and TT. Pair of nines is below that median, exactly where MDF runs out -- the textbook mixing region.",
+                                              "handLogic":  "T9s arrived as second pair plus an open-ended draw (J-T-9-8 needed a Q or a 7), called flop and turn naturally, and missed. At showdown it is a pure bluff-catcher: it beats KQ, AQ, KT, AT, 76 and every other busted draw, and loses to all Jx, TT, two pair, sets and straights. Compare Q9s: same pair of nines, and its Q still trims the QT nut straight -- both hands end up mixing, which shows that no single straight-card removes enough combos to flip a verdict.",
+                                              "sizingLogic":  null,
+                                              "commonMistake":  "Treating the Th like the Ah on a three-flush board and calling purely because of the blocker. Picking blocker_bluff_catch_river here overrates a two-sided 25% effect: on a flush board the Ah deletes 100% of the nut flush and blocks no bluffs; a straight-blocker cuts a quarter of the straights AND a share of the busted open-enders.",
+                                              "takeaway":  "A straight-blocker is one of four cards and sits on both sides of villain\u0027s range -- a two-sided ~25% nudge that turns close hands into mixes, never the one-sided 100% lock of the nut-flush Ah."
+                                          },
+                          "conceptTags":  [
+                                              "river_blocker_defense",
+                                              "river_bluff_catcher",
+                                              "third_barrel_defense"
+                                          ],
+                          "sourceConfidence":  "expert_judgment",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.4.1C_strategic_reviewed"
                       }
                   ]
 }
