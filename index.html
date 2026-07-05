@@ -10143,6 +10143,30 @@
     }
     .pf-player-strip .pf-pc-xpbar { margin: 0; }
 
+    /* ===== v4.4.5 G2 — Boss / Revenge / Persona ===== */
+    .pf-boss-intro { padding: 14px; }
+    .pf-boss-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+    .pf-boss-rules { margin: 10px 0; padding-left: 18px; font-size: 13px; line-height: 1.7; color: var(--text-secondary); }
+    .pf-boss-record { font-size: 12px; font-family: 'JetBrains Mono', monospace; margin: 8px 0 12px; color: #fbbf24; }
+    .pf-boss-row {
+      display: flex; justify-content: space-between; align-items: center; width: 100%;
+      padding: 12px 14px; margin: 6px 0; border-radius: 10px; font-size: 14px; font-weight: 700;
+      background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.30); color: var(--text);
+    }
+    .pf-boss-row-st { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+    .pf-boss-lock {
+      position: fixed; left: 50%; top: 40%; transform: translateX(-50%);
+      padding: 10px 18px; border-radius: 10px; z-index: 9998;
+      background: rgba(20,20,20,0.92); border: 1px solid rgba(220,38,38,0.5);
+      font-weight: 800; font-size: 14px;
+    }
+    .pf-boss-review-card { margin: 8px 0; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 4px 10px; }
+    .pf-boss-review-card.is-missed { border-color: rgba(248,113,113,0.4); }
+    .pf-boss-review-card > summary { cursor: pointer; font-size: 12px; font-weight: 700; padding: 8px 0; }
+    .pf-boss-review-list { margin-top: 10px; }
+    .pf-persona-line { font-size: 12px; font-style: italic; color: var(--text-secondary); margin: 6px 0; }
+    .pf-persona-quip { margin: 4px 0 8px; }
+
     .postflop-question-prompt {
       font-size: 14px;
       color: var(--text);
@@ -33410,7 +33434,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.4.4',
+    appVersion: '4.4.5',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34433,6 +34457,20 @@ function handlePostflopChoiceById(choiceId, btn) {
     // v4.4.3: game layer (Stack/Score/combo/SFX). Never blocks the answer flow.
     try { _pfGameOnAnswer(d, scenario, choiceId, cls); } catch (eG) { d.lastGameResult = null; }
     d.phase = 'answer';
+    // v4.4.5 G2: BOSS mode = the ONE sanctioned deferred-feedback path.
+    // No answer screen mid-exam: brief "answer locked" flash, then next hand.
+    // Full teaching for every hand renders on the end-of-exam review page.
+    if (d.mode === 'boss') {
+      try {
+        var lockEl = document.createElement('div');
+        lockEl.className = 'pf-boss-lock';
+        lockEl.textContent = '🔒 Answer locked · next hand…';
+        var scrB = document.getElementById('postflopScreen');
+        if (scrB) scrB.appendChild(lockEl);
+      } catch (eL) {}
+      setTimeout(function () { try { advancePostflopDrill(); } catch (eA) {} }, 550);
+      return;
+    }
     // rAF defers the heavy innerHTML swap so the pressed visual paints first
     if (typeof requestAnimationFrame === 'function') {
       requestAnimationFrame(function () {
@@ -34580,9 +34618,11 @@ function _pfGameStatsLoad() {
       lifetimeScore: s.lifetimeScore || 0, lifetimeSavedBB: s.lifetimeSavedBB || 0,
       bestCombo: s.bestCombo || 0, tightTier: s.tightTier || 0,
       // v4.4.4 G1 fields (must round-trip through load/save)
-      xp: s.xp || 0, xpSeeded: !!s.xpSeeded, xpSeed: s.xpSeed || null, badges: s.badges || {}
+      xp: s.xp || 0, xpSeeded: !!s.xpSeeded, xpSeed: s.xpSeed || null, badges: s.badges || {},
+      // v4.4.5 G2 fields
+      trophies: s.trophies || {}, revenge: s.revenge || { cleared: {} }
     };
-  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0, xp: 0, xpSeeded: false, xpSeed: null, badges: {} }; }
+  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0, xp: 0, xpSeeded: false, xpSeed: null, badges: {}, trophies: {}, revenge: { cleared: {} } }; }
 }
 function _pfGameStatsSave(s) {
   try { localStorage.setItem('rmtt_gamestats', JSON.stringify(s)); } catch (e) { /* quota — non-fatal */ }
@@ -34689,9 +34729,23 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
     }
     _pfGameStatsSave(ls);
   } catch (e) { /* stats failure never blocks play */ }
-  if (rankUpTo) { try { setTimeout(function () { _pfRankUpFx(rankUpTo); }, 350); } catch (e2) {} }
-  d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp };
-  // SFX
+  // (boss mode: even rank-up FX waits — no mid-exam signals; it will show on next XP event)
+  if (rankUpTo && d.mode !== 'boss') { try { setTimeout(function () { _pfRankUpFx(rankUpTo); }, 350); } catch (e2) {} }
+  // v4.4.5 G2: Revenge clear-on-best (teaching tier, strict) — persists at once.
+  var avenged = false;
+  if (d.mode === 'revenge' && cls.tier === 'best' && scenario && scenario.id) {
+    try {
+      var lsR = _pfGameStatsLoad();
+      if (!lsR.revenge) lsR.revenge = { cleared: {} };
+      if (!lsR.revenge.cleared) lsR.revenge.cleared = {};
+      if (!lsR.revenge.cleared[scenario.id]) { lsR.revenge.cleared[scenario.id] = Date.now(); avenged = true; }
+      _pfGameStatsSave(lsR);
+    } catch (eR) {}
+  }
+  d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp, avenged: avenged };
+  // SFX — suppressed entirely in boss mode (deferred feedback: no mid-exam
+  // correctness signals of any kind).
+  if (d.mode === 'boss') return;
   if (kind === 'punt') _pfSfx('puntSting');
   else if (kind === 'saved') _pfSfx('foldSwish');
   else if (kind === 'gain' || kind === 'mixed' || kind === 'check') _pfSfx('chipClink');
@@ -35037,19 +35091,28 @@ var _PF_BADGES = [
   { id: 'daily7',  icon: '📅', name: 'Daily Devotee',      target: 7,    src: 'dailyStreak' },
   { id: 'daily30', icon: '⚔️', name: 'Iron Streak',        target: 30,   src: 'dailyStreak' },
   { id: 'reg',     icon: '♟️', name: 'Making It (Reg)',    target: 7500,   src: 'xp' },
-  { id: 'wizard',  icon: '🧙', name: 'The Long Game',      target: 400000, src: 'xp' }
+  { id: 'wizard',  icon: '🧙', name: 'The Long Game',      target: 400000, src: 'xp' },
+  // v4.4.5 G2 additions
+  { id: 'slayer',  icon: '🏆', name: 'Boss Slayer',        target: 5,      src: 'trophiesEarned' },
+  { id: 'avenger', icon: '⚔️', name: 'Avenger',            target: 10,     src: 'revengeCleared' }
 ];
 function _pfBadgeValues() {
   var ls = _pfGameStatsLoad();
   _pfXpSeedIfNeeded(ls);
   var agg = _pfBadgeAgg();
   var daily = (typeof _pfDailyLoad === 'function') ? _pfDailyLoad() : {};
+  // v4.4.5 G2 sources
+  var trophiesEarned = 0;
+  try { var tr = ls.trophies || {}; for (var tk in tr) { if (tr[tk] && tr[tk].earned) trophiesEarned++; } } catch (e) {}
+  var revengeCleared = 0;
+  try { revengeCleared = Object.keys((ls.revenge && ls.revenge.cleared) || {}).length; } catch (e) {}
   return {
     savedBB: ls.lifetimeSavedBB || 0, bestCombo: ls.bestCombo || 0, xp: ls.xp || 0,
     dailyStreak: daily.streak || 0,
     riverBest: agg.riverBest, turnBest: agg.turnBest, readBest: agg.readBest,
     mdfBest: agg.mdfBest, blockerBest: agg.blockerBest,
     cleanSheets: agg.cleanSheets, noPuntSessions: agg.noPuntSessions,
+    trophiesEarned: trophiesEarned, revengeCleared: revengeCleared,
     _ls: ls
   };
 }
@@ -35120,6 +35183,13 @@ function _pfPlayerCardHtml() {
              '<span>🔥 combo ' + (ls.bestCombo || 0) + '</span>' +
              '<span>📅 streak ' + (daily.streak || 0) + '</span>' +
            '</div>' +
+           // v4.4.5 G2: trophy shelf (Boss Exams)
+           '<div class="pf-pc-stats" title="Boss Exam trophies">' +
+             Object.keys(_PF_BOSS_DEFS).map(function (k) {
+               var tr = (ls.trophies || {})[k];
+               return '<span style="opacity:' + (tr && tr.earned ? '1' : '0.35') + '">' + (tr && tr.earned ? '🏆' : '⚔️') + ' ' + k.toUpperCase() + '</span>';
+             }).join('') +
+           '</div>' +
            '<div class="pf-pc-badges">' + badgeCells + '</div>' +
            '<div class="pf-pc-note">XP: retroactive credit from your stored history (postflop ' + seed.postflopBase.toLocaleString() + ' + preflop ' + seed.preflopBase.toLocaleString() + ') + live play since v4.4.4. Exam bonuses count from v4.4.4 onward. Preflop mastery ranks + Chips are separate and unchanged.</div>' +
          '</div>';
@@ -35142,13 +35212,261 @@ function _pfPlayerStripHtml() {
 // END v4.4.4 G1 — PROGRESSION CORE
 // ============================================================================
 
+// ============================================================================
+// v4.4.5 G2 — CHALLENGE LAYER (Boss Exams · Revenge Hands · Villain Personas)
+// Boss = the ONE sanctioned deferred-feedback mode (keyed to mode==='boss'
+// only). End-of-exam review renders the FULL standard teaching block per
+// question + a re-drill link per missed hand (standing policy). +200 XP on
+// FIRST PASS per module only (owner ruling — retakes give normal score only).
+// Revenge = CRITICAL-only queue from real history. Personas = cosmetic copy,
+// zero tendency/strategy claims (each line reviewed in QA).
+// ============================================================================
+var _PF_BOSS_DEFS = {
+  m1: { moduleId: 'pf_board_texture',        name: 'Board Reading Boss',            icon: '🧪' },
+  m2: { moduleId: 'pf_flop_cbet_ip',         name: 'Flop C-bet Boss',               icon: '🎯' },
+  m3: { moduleId: 'pf_flop_cbet_oop_def',    name: 'Flop Defense Boss',             icon: '🛡️' },
+  m4: { moduleId: 'pf_turn_barrel_oop_def',  name: 'Turn Defense Boss',             icon: '🔨' },
+  m5: { moduleId: 'pf_river_barrel_oop_def', name: 'River Defense Boss',            icon: '🌊' }
+};
+// Personas: flavor ONLY. Copy rule (QA-reviewed line by line): may describe the
+// line taken in THIS spot family (it is the scenario definition), never
+// frequencies, ranges, tendencies, or strategy advice.
+var _PF_PERSONAS = {
+  pf_flop_cbet_ip:         { name: 'Big Blind Benny',    icon: '🛡️', intro: 'Big Blind Benny checks to you.',            win: ['Benny taps the table. "Nice hand."', 'Benny mucks and reaches for his coffee.'], lose: ['Benny slides your chips his way.', 'Benny stacks the pot without a word.'] },
+  pf_flop_cbet_oop_def:    { name: 'C-bet Carl',         icon: '🤖', intro: 'C-bet Carl fires a continuation bet.',      win: ['Carl blinks. That one is yours.', 'Carl shrugs and moves on.'],                 lose: ['Carl collects the pot.', 'Carl gives a tiny nod and rakes it in.'] },
+  pf_turn_barrel_oop_def:  { name: 'Barrel Bob',         icon: '🔨', intro: 'Barrel Bob fires the second barrel.',       win: ['Bob puts the barrel away. Well played.', 'Bob exhales. Your pot.'],              lose: ['Bob smiles behind his sunglasses.', 'Bob adds your chips to the fortress.'] },
+  pf_river_barrel_oop_def: { name: 'Triple-Barrel Trey', icon: '🎭', intro: 'Trey fires the third bullet.',              win: ['Trey flicks his cards away. You read it right.', 'Trey stares. Says nothing. Your pot.'], lose: ['Trey drags the pot with a grin.', 'Trey taps his temple as he stacks.'] }
+};
+function _pfPersonaFor(scenario) {
+  try {
+    if (App.state && App.state.settings && App.state.settings.villainPersonas === false) return null;
+    if (!scenario || _pfGameFrame(scenario) !== 'table') return null;
+    return _PF_PERSONAS[scenario.module] || null;
+  } catch (e) { return null; }
+}
+
+// ----- Boss pool: difficulty >=4 first, fill with >=3, then rest. -----
+function _pfBossPool(moduleId) {
+  var all = (App.postflop && App.postflop.scenarios || []).filter(function (s) { return s.module === moduleId && s.auditStatus === 'approved'; });
+  var d45 = all.filter(function (s) { return (s.difficulty || 0) >= 4; });
+  var d3  = all.filter(function (s) { return (s.difficulty || 0) === 3; });
+  var rest = all.filter(function (s) { return (s.difficulty || 0) < 3; });
+  function shuffle(arr) { var a = arr.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var q = shuffle(d45).slice(0, 10);
+  var fromD3 = 0, fromRest = 0;
+  if (q.length < 10) { var need = 10 - q.length; var fill = shuffle(d3).slice(0, need); fromD3 = fill.length; q = q.concat(fill); }
+  if (q.length < 10) { var need2 = 10 - q.length; var fill2 = shuffle(rest).slice(0, need2); fromRest = fill2.length; q = q.concat(fill2); }
+  return { queue: q, comp: { d45: q.length - fromD3 - fromRest, d3: fromD3, rest: fromRest } };
+}
+function _pfBossIntroHtml(bossKey) {
+  var def = _PF_BOSS_DEFS[bossKey];
+  var pool = _pfBossPool(def.moduleId);
+  var ls = _pfGameStatsLoad();
+  var tr = (ls.trophies && ls.trophies[bossKey]) || null;
+  var persona = _PF_PERSONAS[def.moduleId];
+  var compStr = pool.comp.d45 + ' × D4-5' + (pool.comp.d3 ? ' + ' + pool.comp.d3 + ' × D3' : '') + (pool.comp.rest ? ' + ' + pool.comp.rest + ' × D1-2' : '');
+  return '<div class="postflop-context-bar"><span class="postflop-context-label">⚔️ BOSS EXAM · ' + _pfEscape(def.name) + '</span>' +
+           '<button class="postflop-exit-btn" onclick="exitPostflopScreen()">✕ Exit</button></div>' +
+         '<div class="pf-boss-intro">' +
+           '<div class="pf-boss-title">' + def.icon + ' ' + _pfEscape(def.name) + '</div>' +
+           (persona ? '<div class="pf-persona-line">' + persona.icon + ' ' + _pfEscape(persona.name) + ' is waiting at the final seat.</div>' : '') +
+           '<ul class="pf-boss-rules">' +
+             '<li>10 hands · hardest pool (' + _pfEscape(compStr) + ')</li>' +
+             '<li>No hints. No feedback until the end.</li>' +
+             '<li>Full review after — every hand explained, re-drill any miss.</li>' +
+             '<li>Pass at 80%+ to claim the trophy.</li>' +
+             '<li><strong>+200 XP on your FIRST pass only.</strong> Retakes: anytime, normal score, no repeat bonus.</li>' +
+           '</ul>' +
+           (tr ? '<div class="pf-boss-record">' + (tr.earned ? '🏆 Trophy earned' : '— No trophy yet') + ' · best ' + (tr.bestPct || 0) + '% · attempts ' + (tr.attempts || 0) + '</div>' : '') +
+           '<button class="postflop-next-btn" onclick="startPostflopBossExam(\'' + bossKey + '\')">⚔️ Start Boss Exam</button>' +
+           '<button class="postflop-secondary-btn" onclick="renderPostflopBossMenu()">← All bosses</button>' +
+         '</div>';
+}
+function renderPostflopBossIntro(bossKey) {
+  showPostflopScreen();
+  document.getElementById('postflopScreen').innerHTML = _pfBossIntroHtml(bossKey);
+}
+function renderPostflopBossMenu() {
+  showPostflopScreen();
+  var ls = _pfGameStatsLoad();
+  var rows = Object.keys(_PF_BOSS_DEFS).map(function (k) {
+    var def = _PF_BOSS_DEFS[k];
+    var tr = (ls.trophies && ls.trophies[k]) || null;
+    var st = tr && tr.earned ? '🏆' : '—';
+    return '<button class="pf-boss-row" onclick="renderPostflopBossIntro(\'' + k + '\')">' +
+             '<span>' + def.icon + ' ' + _pfEscape(def.name) + '</span>' +
+             '<span class="pf-boss-row-st">' + st + (tr ? ' ' + (tr.bestPct || 0) + '%' : '') + ' →</span>' +
+           '</button>';
+  }).join('');
+  document.getElementById('postflopScreen').innerHTML =
+    '<div class="postflop-context-bar"><span class="postflop-context-label">⚔️ BOSS EXAMS</span>' +
+      '<button class="postflop-exit-btn" onclick="exitPostflopScreen()">✕ Exit</button></div>' +
+    '<div class="pf-boss-intro"><div class="pf-boss-title">Choose your boss</div>' + rows +
+      '<div class="pf-pc-note">Deferred feedback happens ONLY here: answers lock during the exam, then every hand gets its full teaching review at the end.</div></div>';
+}
+function startPostflopBossExam(bossKey) {
+  if (!getPostflopReady() || !App.state.settings.postflopBeta) { if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.'); return; }
+  var def = _PF_BOSS_DEFS[bossKey];
+  var pool = _pfBossPool(def.moduleId);
+  if (pool.queue.length < 10) { if (typeof showToast === 'function') showToast('Boss pool too small for this module.'); return; }
+  App.state.postflopDrill = {
+    active: true, module: def.moduleId, mode: 'boss', bossKey: bossKey,
+    queue: pool.queue, currentIndex: 0, answers: [], startTime: Date.now(),
+    phase: 'question', lastChoiceId: null, lastClassification: null, game: _pfGameNewState()
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+// End-of-exam review: verdict + ALL 10 hands with FULL teaching + re-drill links.
+function renderPostflopBossComplete() {
+  var d = App.state.postflopDrill;
+  var def = _PF_BOSS_DEFS[d.bossKey] || { name: 'Boss', icon: '⚔️' };
+  var totalScore = d.answers.reduce(function (s, a) { return s + (a.score || 0); }, 0);
+  var pct = Math.round((totalScore / d.queue.length) * 100);
+  var passed = pct >= 80;
+  var firstPass = false;
+  // Idempotency guard (QA-caught): finalize side-effects (history record,
+  // attempts, trophy, first-pass XP) exactly once per exam run; re-renders
+  // reuse the stored outcome.
+  if (d._bossFinalized) {
+    firstPass = !!(d._bossOutcome && d._bossOutcome.firstPass);
+  } else {
+    d._bossFinalized = true;
+    // record session (mirrors renderPostflopComplete's recording contract)
+    var counts = { best: 0, acceptable: 0, bad: 0, critical: 0 };
+    d.answers.forEach(function (a) { counts[a.tier] = (counts[a.tier] || 0) + 1; });
+    try { if (typeof _pfHistoryRecordSession === 'function') _pfHistoryRecordSession({ module: d.module, mode: 'boss', queue: d.queue, answers: d.answers, totalScore: totalScore, counts: counts }); } catch (e) {}
+    // trophy + FIRST-PASS-ONLY bonus
+    try {
+      var ls = _pfGameStatsLoad();
+      if (!ls.trophies) ls.trophies = {};
+      var tr = ls.trophies[d.bossKey] || { earned: false, bestPct: 0, attempts: 0 };
+      tr.attempts += 1;
+      if (pct > tr.bestPct) tr.bestPct = pct;
+      if (passed && !tr.earned) { tr.earned = true; firstPass = true; }
+      ls.trophies[d.bossKey] = tr;
+      _pfGameStatsSave(ls);
+    } catch (e) {}
+    if (firstPass) { try { _pfXpAward(200); if (typeof showToast === 'function') showToast('⚔️ Boss defeated — +200 XP (first pass)!'); } catch (e) {} }
+    d._bossOutcome = { firstPass: firstPass, pct: pct };
+  }
+  var byId = {}; d.queue.forEach(function (s) { byId[s.id] = s; });
+  var cards = d.answers.map(function (a, i) {
+    var sc = byId[a.scenarioId]; if (!sc) return '';
+    var teach = '';
+    try {
+      if (sc.module === 'pf_river_barrel_oop_def' && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') teach = _pfM5TeachingFeedbackBlocksHtml(sc);
+      else if (sc.module === 'pf_turn_barrel_oop_def' && typeof _pfM4TeachingFeedbackBlocksHtml === 'function') teach = _pfM4TeachingFeedbackBlocksHtml(sc);
+      else if (sc.module === 'pf_flop_cbet_oop_def' && typeof _pfM3TeachingFeedbackBlocksHtml === 'function') teach = _pfM3TeachingFeedbackBlocksHtml(sc);
+      else if (sc.module === 'pf_flop_cbet_ip' && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') teach = _pfM2TeachingFeedbackBlocksHtml(sc);
+      else if (typeof _pfTeachingFeedbackBlocksHtml === 'function') teach = _pfTeachingFeedbackBlocksHtml(sc);
+    } catch (e) { teach = ''; }
+    var missed = (a.tier === 'bad' || a.tier === 'critical');
+    var boardLine = (sc.board && sc.board.cards) ? sc.board.cards.join(' ') : '';
+    var heroLine = (sc.heroHand || []).join(' ');
+    return '<details class="pf-boss-review-card' + (missed ? ' is-missed' : '') + '"' + (missed ? ' open' : '') + '>' +
+             '<summary>Q' + (i + 1) + ' · ' + _tierLabel(a.tier) + (boardLine ? ' · ' + _pfEscape(boardLine) : '') + (heroLine ? ' · you: ' + _pfEscape(heroLine) : '') + '</summary>' +
+             '<div class="pf-section-body">' +
+               '<div class="postflop-question-prompt" style="margin-bottom:8px;">' + _pfEscape(_pfBuildQuestionPrompt(sc)) + '</div>' +
+               '<div style="font-size:12px;margin-bottom:8px;">Your pick: <strong>' + _pfEscape(_findChoiceLabel(sc, a.choiceId)) + '</strong></div>' +
+               teach +
+               (missed ? '<button class="postflop-next-btn" onclick="startPostflopRedrill([\'' + sc.id + '\'])">↻ Re-drill this hand</button>' : '') +
+             '</div>' +
+           '</details>';
+  }).join('');
+  var missedIds = d.answers.filter(function (a) { return a.tier === 'bad' || a.tier === 'critical'; }).map(function (a) { return a.scenarioId; });
+  var html =
+    '<div class="postflop-context-bar"><span class="postflop-context-label">⚔️ ' + _pfEscape(def.name) + ' · Review</span></div>' +
+    '<div class="postflop-summary-card">' +
+      '<div class="pf-learn-headline">' + (passed ? '🏆 BOSS DEFEATED' : '💀 Boss holds the table') + '</div>' +
+      '<div class="pf-score" style="margin-top:8px">' + totalScore.toFixed(1) + ' / ' + d.queue.length.toFixed(1) + ' (' + pct + '%)</div>' +
+      '<div class="pf-score-label">' + (passed ? (firstPass ? 'First pass — trophy + 200 XP claimed.' : 'Trophy already on the shelf — clean repeat.') : 'Pass at 80%+ · retake anytime (normal score only).') + '</div>' +
+    '</div>' +
+    _pfGameSummaryHtml(d) +
+    '<div class="pf-boss-review-list"><div class="pf-m2-aggr-section-title">Full review — every hand, full teaching</div>' + cards + '</div>' +
+    '<div class="postflop-summary-actions" style="margin-top:14px">' +
+      (missedIds.length ? '<button class="postflop-next-btn pf-weak-btn" onclick="startPostflopRedrill(' + _pfEscape(JSON.stringify(missedIds)).replace(/"/g, '&quot;') + ')">🎯 Drill all misses (' + missedIds.length + ')</button>' : '') +
+      '<button class="postflop-next-btn" onclick="renderPostflopBossIntro(\'' + d.bossKey + '\')">⚔️ Retake</button>' +
+      '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
+    '</div>';
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { if (passed) { _pfSfx('fanfare'); _pfConfettiBurst(document.querySelector('.postflop-summary-card')); } } catch (e) {}
+  try { if (typeof _pfBadgeSync === 'function') _pfBadgeSync(false); } catch (e) {}
+}
+// Re-drill: NORMAL drill (full immediate feedback) over given scenario ids.
+function startPostflopRedrill(ids) {
+  try { if (typeof ids === 'string') ids = JSON.parse(ids); } catch (e) {}
+  if (!ids || !ids.length) return;
+  var byId = {}; (App.postflop.scenarios || []).forEach(function (s) { byId[s.id] = s; });
+  var queue = ids.map(function (id) { return byId[id]; }).filter(Boolean);
+  if (!queue.length) { if (typeof showToast === 'function') showToast('Scenario not found.'); return; }
+  App.state.postflopDrill = {
+    active: true, module: queue[0].module, mode: 'redrill', queue: queue,
+    currentIndex: 0, answers: [], startTime: Date.now(), phase: 'question',
+    lastChoiceId: null, lastClassification: null, game: _pfGameNewState()
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+
+// ----- Revenge Hands (CRITICAL-only, from real history) -----
+function _pfRevengeQueue() {
+  var out = [], seen = {};
+  try {
+    var ls = _pfGameStatsLoad();
+    var cleared = (ls.revenge && ls.revenge.cleared) || {};
+    var byId = {}; (App.postflop && App.postflop.scenarios || []).forEach(function (s) { byId[s.id] = s; });
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && hist.sessions) || [];
+    for (var i = sessions.length - 1; i >= 0 && out.length < 8; i--) {
+      var arr = (sessions[i] && sessions[i].answers) || [];
+      for (var j = arr.length - 1; j >= 0 && out.length < 8; j--) {
+        var a = arr[j];
+        if (!a || a.tier !== 'critical') continue;
+        if (seen[a.scenarioId] || cleared[a.scenarioId] || !byId[a.scenarioId]) continue;
+        seen[a.scenarioId] = true;
+        out.push(byId[a.scenarioId]);
+      }
+    }
+  } catch (e) {}
+  return out;
+}
+function startPostflopRevenge() {
+  if (!getPostflopReady() || !App.state.settings.postflopBeta) { if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.'); return; }
+  var queue = _pfRevengeQueue();
+  if (!queue.length) { if (typeof showToast === 'function') showToast('No punts on record. Keep it that way.'); return; }
+  App.state.postflopDrill = {
+    active: true, module: 'pf_revenge_mix', mode: 'revenge', queue: queue,
+    currentIndex: 0, answers: [], startTime: Date.now(), phase: 'question',
+    lastChoiceId: null, lastClassification: null, game: _pfGameNewState()
+  };
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+function _pfRevengeBlockHtml() {
+  var n = _pfRevengeQueue().length;
+  return '<div class="pf-game-summary" style="margin-top:10px;">' +
+           '<div class="pf-gsum-row"><span class="lbl">⚔️ Revenge Hands</span><span>' + (n ? n + ' punt' + (n === 1 ? '' : 's') + ' await' : 'no punts on record ✨') + '</span></div>' +
+           (n ? '<button class="postflop-next-btn" style="margin-top:6px" onclick="startPostflopRevenge()">⚔️ Make it right</button>' : '') +
+         '</div>';
+}
+function togglePfPersonas(on) { App.state.settings.villainPersonas = !!on; try { App.saveProgress(); } catch (e) {} }
+// ============================================================================
+// END v4.4.5 G2 — CHALLENGE LAYER
+// ============================================================================
+
 function advancePostflopDrill() {
   var d = App.state.postflopDrill;
   if (!d.active) return;
   d.currentIndex++;
   if (d.currentIndex >= d.queue.length) {
     d.phase = 'complete';
-    renderPostflopComplete();
+    // v4.4.5 G2: boss exams route to the dedicated full-review page.
+    if (d.mode === 'boss' && typeof renderPostflopBossComplete === 'function') {
+      renderPostflopBossComplete();
+    } else {
+      renderPostflopComplete();
+    }
   } else {
     d.phase = 'question';
     d.lastChoiceId = null;
@@ -38854,6 +39172,10 @@ function _pfModuleCardHtml(mod, stats) {
   } else {
     actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
   }
+  // v4.4.5 G2: Boss Exam entry on every module card that has a boss (m1-m5).
+  if (typeof _PF_BOSS_DEFS !== 'undefined' && _PF_BOSS_DEFS[mod.key]) {
+    actionsHtml += '<button class="pf-module-action-btn is-secondary" type="button" onclick="renderPostflopBossIntro(\'' + mod.key + '\')">⚔️ Boss Exam</button>';
+  }
   var syllabusHtml = '';
   if (mod.key === 'm2' && mod.syllabus) {
     syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 2 syllabus</summary>' +
@@ -39376,6 +39698,7 @@ function _pfAcademyHomeHtml() {
            _pfAcademySnapshotHtml(stats) +
            _pfPlayerStripHtml() +
            _pfDailyBlockHtml() +
+           _pfRevengeBlockHtml() +
            _pfAcademyRecommendationHtml(stats) +
            _pfCurriculumMapHtml(stats) +
            _pfMasteryProgressHtml(stats) +
@@ -39476,7 +39799,10 @@ var TRAINING_MODES = {
       // practice (not final certification).
       { id: 'm5',        label: 'Module 5 · Facing River Barrel OOP', hint: '33 river-defense scenarios · Limited Beta', icon: '🌊', kind: 'secondary', route: 'postflop:m5', badge: 'BETA' },
       // v4.4.3: Daily Challenge — 5 deterministic hands per day, streak + heatmap.
-      { id: 'daily',     label: 'Daily Challenge', hint: '5 hands · new every day · keep the streak', icon: '📅', kind: 'secondary', route: 'postflop:daily', badge: 'NEW' }
+      { id: 'daily',     label: 'Daily Challenge', hint: '5 hands · new every day · keep the streak', icon: '📅', kind: 'secondary', route: 'postflop:daily', badge: 'NEW' },
+      // v4.4.5 G2: Boss Exams + Revenge Hands.
+      { id: 'boss',      label: 'Boss Exams', hint: '5 bosses · no hints · trophy at 80%+', icon: '⚔️', kind: 'secondary', route: 'postflop:boss', badge: 'NEW' },
+      { id: 'revenge',   label: 'Revenge Hands', hint: 'return to your punts · make them right', icon: '🩹', kind: 'secondary', route: 'postflop:revenge', badge: 'NEW' }
     ]
   }
 };
@@ -39598,6 +39924,23 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopDailyChallenge === 'function') startPostflopDailyChallenge();
+      break;
+    case 'postflop:boss':
+      // v4.4.5 G2: Boss Exams menu (deferred feedback ONLY inside boss mode).
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof renderPostflopBossMenu === 'function') renderPostflopBossMenu();
+      break;
+    case 'postflop:revenge':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopRevenge === 'function') startPostflopRevenge();
       break;
     case 'postflop:concepts':
       if (!betaOn) {
@@ -39870,6 +40213,17 @@ function renderPostflopBetaToggleMount() {
             '<div class="toggle-track"><div class="toggle-thumb"></div></div>' +
           '</label>' +
         '</div>' +
+        // v4.4.5 G2: villain personas (cosmetic flavor copy only)
+        '<div class="settings-row">' +
+          '<div>' +
+            '<div class="settings-label">Villain personas</div>' +
+            '<div class="settings-sublabel">Table characters + quips (flavor only — no strategy claims)</div>' +
+          '</div>' +
+          '<label class="toggle">' +
+            '<input type="checkbox" ' + ((App.state.settings.villainPersonas !== false) ? 'checked' : '') + ' onchange="togglePfPersonas(this.checked)">' +
+            '<div class="toggle-track"><div class="toggle-thumb"></div></div>' +
+          '</label>' +
+        '</div>' +
       '</div>' +
     '</div>';
   host.insertAdjacentHTML('beforeend', html);
@@ -40004,6 +40358,19 @@ function renderPostflopQuestion() {
       '</div>';
   }
   var modeTagHtml = '<span class="pf-teach-mode-tag" title="Hints, pattern labels, and explanations are enabled.">Learn Mode · explanations enabled</span>';
+  // v4.4.5 G2: boss exam strips ALL assistive/feedback surfaces from the
+  // question screen (hints, guide, checklist, pattern label, learn tag) —
+  // the sanctioned deferral; full teaching arrives on the end-of-exam review.
+  // (Declared HERE, before first use — QA caught a hoisted-undefined ordering bug.)
+  var isBossQ = !!(App.state.postflopDrill && App.state.postflopDrill.mode === 'boss');
+  var isRevengeQ = !!(App.state.postflopDrill && App.state.postflopDrill.mode === 'revenge');
+  if (isBossQ) {
+    guideHtml = ''; hintHtml = ''; checklistHtml = ''; patternHtml = '';
+    modeTagHtml = '<span class="pf-teach-mode-tag" title="Answers lock during the exam; every hand gets its full teaching review at the end.">⚔️ Boss Exam · answers locked until the review</span>';
+  }
+  // v4.4.5 G2: villain persona intro (cosmetic copy only; table frames; never in boss).
+  var personaQ = (!isBossQ && typeof _pfPersonaFor === 'function') ? _pfPersonaFor(scenario) : null;
+  var personaHtml = personaQ ? '<div class="pf-persona-line">' + personaQ.icon + ' ' + _pfEscape(personaQ.intro) + '</div>' : '';
   // v4.0.12: Review Mode badge when this is a weak-spot focused session
   // v4.1.1: also handle Concept Drill mode (mutually exclusive with weak_spots)
   var reviewModeBadge = '';
@@ -40012,6 +40379,13 @@ function renderPostflopQuestion() {
       '<div class="pf-review-mode-badge">' +
         '<span class="pf-review-mode-title">🎯 Review Mode · Weak Spots</span>' +
         '<span class="pf-review-mode-subcopy">Focused on concepts and board families missed last session.</span>' +
+      '</div>';
+  } else if (App.state.postflopDrill && App.state.postflopDrill.mode === 'revenge') {
+    // v4.4.5 G2: revenge frame — normal immediate feedback, framed as redemption.
+    reviewModeBadge =
+      '<div class="pf-review-mode-badge">' +
+        '<span class="pf-review-mode-title">⚔️ REVENGE</span>' +
+        '<span class="pf-review-mode-subcopy">You punted this hand before — make it right.</span>' +
       '</div>';
   } else if (App.state.postflopDrill && App.state.postflopDrill.mode === 'concept') {
     var cName = App.state.postflopDrill.conceptDisplayName || _pfConceptDisplayName(App.state.postflopDrill.conceptKey);
@@ -40028,7 +40402,14 @@ function renderPostflopQuestion() {
 
   // v4.1.7/v4.2.4/v4.3.1: per-module context label.
   var contextLabelText;
-  if (isM5) {
+  // v4.4.5 G2: boss / revenge frames take precedence over module labels
+  // (isBossQ / isRevengeQ declared above, before the suppression block).
+  if (isBossQ) {
+    var bossDefQ = _PF_BOSS_DEFS[App.state.postflopDrill.bossKey] || { name: 'Boss Exam' };
+    contextLabelText = '⚔️ BOSS EXAM · ' + bossDefQ.name + ' · Q ' + qNum + '/' + total;
+  } else if (isRevengeQ) {
+    contextLabelText = '⚔️ Revenge Hands · Q ' + qNum + '/' + total;
+  } else if (isM5) {
     contextLabelText = '🌊 Module 5 · Facing River Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM4) {
     contextLabelText = '🎯 Module 4 · Facing Turn Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
@@ -40079,10 +40460,11 @@ function renderPostflopQuestion() {
       '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
     '</div>' +
     '<div class="postflop-progress-bar"><div class="postflop-progress-fill" style="width:' + pct + '%"></div></div>' +
-    _pfGameStripHtml(d, scenario) +
+    (isBossQ ? '' : _pfGameStripHtml(d, scenario)) +
     firstTimeExplainerHtml +
     reviewModeBadge +
     modeTagHtml +
+    personaHtml +
     '<div class="postflop-spot-card">' +
       '<div class="postflop-section-title">📋 Spot</div>' +
       '<div class="postflop-spot-tags">' +
@@ -40229,8 +40611,20 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   }
 
   // v4.2.4/v4.3.1: per-module context label on the answer screen (parallel to question screen).
+  // v4.4.5 G2: persona quip (cosmetic; table frames only) + revenge avenged note.
+  var personaA = (typeof _pfPersonaFor === 'function') ? _pfPersonaFor(scenario) : null;
+  var personaQuipHtml = '';
+  if (personaA) {
+    var quips = (cls.tier === 'best' || cls.tier === 'acceptable') ? personaA.win : personaA.lose;
+    var qpick = quips[(qNum + total) % quips.length];
+    personaQuipHtml = '<div class="pf-persona-line pf-persona-quip">' + personaA.icon + ' ' + _pfEscape(qpick) + '</div>';
+  }
+  var avengedHtml = (d.lastGameResult && d.lastGameResult.avenged)
+    ? '<div class="pf-game-banner kind-saved">✅ Punt avenged! <span class="pf-gb-pts">cleared</span></div>' : '';
   var fbContextLabel;
-  if (isM5) {
+  if (d.mode === 'revenge') {
+    fbContextLabel = '⚔️ Revenge Hands · Q ' + qNum + '/' + total;
+  } else if (isM5) {
     fbContextLabel = '🌊 Module 5 · Facing River Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM4) {
     fbContextLabel = '🎯 Module 4 · Facing Turn Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
@@ -40256,6 +40650,8 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
         '<span class="pf-result-meta">Your pick: ' + _pfEscape(pickedLabel) + '<br>GTO best: ' + _pfEscape(bestLabel) + '</span>' +
       '</div>' +
       _pfGameResultBannerHtml(d) +
+      avengedHtml +
+      personaQuipHtml +
       (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(_pfFixMojibake(explanation.short)) + '</div>' : '') +
       // Blocks B/C/D/E: pattern / reason / takeaway / mistake
       teachingBlocksHtml +
@@ -41425,9 +41821,12 @@ function renderPostflopComplete() {
     : '';
   // v4.4.3: Daily Challenge completion frame
   var isDailyMode = !!(d && d.mode === 'daily');
+  // v4.4.5 G2: Revenge completion frame
+  var isRevengeMode = !!(d && d.mode === 'revenge');
   var moduleLabel;
   var moduleEmoji;
   if (isDailyMode)     { moduleLabel = 'Daily Challenge';                                   moduleEmoji = '📅'; }
+  else if (isRevengeMode) { moduleLabel = 'Revenge Session';                                moduleEmoji = '⚔️'; }
   else if (isM5Module) { moduleLabel = 'Module 5 · Facing River Barrel OOP · Limited Beta'; moduleEmoji = '🌊'; }
   else if (isM4Module) { moduleLabel = 'Module 4 · Facing Turn Barrel OOP · Limited Beta'; moduleEmoji = '🎯'; }
   else if (isM3Module) { moduleLabel = 'Module 3 · BB Defense OOP · Limited Beta';         moduleEmoji = '🛡️'; }
@@ -41446,6 +41845,7 @@ function renderPostflopComplete() {
   } else {
     contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Complete';
     if (isDailyMode) summaryHeadline = 'Daily Challenge Complete';
+    else if (isRevengeMode) summaryHeadline = 'Revenge Session Summary';
     else if (isM5Module) summaryHeadline = 'Module 5 Session Summary (Limited Beta)';
     else if (isM4Module) summaryHeadline = 'Module 4 Session Summary (Limited Beta)';
     else if (isM3Module) summaryHeadline = 'Module 3 Session Summary (Limited Beta)';
@@ -41499,7 +41899,8 @@ function renderPostflopComplete() {
       // v4.0.12: Drill Weak Spots button — only shown if there are weak signals.
       // Falls back to normal Drill again button always.
       // v4.4.3: suppressed in Daily mode (one attempt per day; mixed-module queue).
-      (isDailyMode ? '' : (function () {
+      // v4.4.5: also suppressed in Revenge mode (mixed-module queue; use Next revenge).
+      ((isDailyMode || isRevengeMode) ? '' : (function () {
         var wp = (typeof _pfCurrentSessionWeakProfile === 'function')
           ? (function () {
               try { return _pfCurrentSessionWeakProfile(d.answers, App.postflop && App.postflop.scenarios); }
@@ -41515,7 +41916,11 @@ function renderPostflopComplete() {
       })()) +
       // v4.1.7/v4.2.4/v4.3.1: Drill again routes to the same module the player just played.
       // M4 sessions default to 12, M3 to 10, M2 to 12, M1 to 15.
-      (isDailyMode ? '' : ('<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (
+      (isRevengeMode ? (function () {
+        var left = (typeof _pfRevengeQueue === 'function') ? _pfRevengeQueue().length : 0;
+        return left ? '<button class="postflop-next-btn" onclick="startPostflopRevenge()">⚔️ Next revenge (' + left + ' left)</button>' : '';
+      })() : '') +
+      ((isDailyMode || isRevengeMode) ? '' : ('<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (
         isM5Module ? 'pf_river_barrel_oop_def' :
         (isM4Module ? 'pf_turn_barrel_oop_def' :
         (isM3Module ? 'pf_flop_cbet_oop_def' :

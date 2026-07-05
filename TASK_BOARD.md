@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-05 (v4.4.4 G1 Progression Core — XP/ranks/badges/Player Card live, retroactive credit from real records only, data byte-identical 510/0/0. Next: G2 Challenge Layer spec (v4.4.5).).
+> Last updated: 2026-07-05 (v4.4.5 G2 Challenge Layer — Boss Exams + Revenge Hands + personas live, data byte-identical 510/0/0. Next: G2.5 Juice Minor spec (v4.4.6) incl. m4/m5 card fix.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.4.5 G2 Challenge Layer (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — **Boss Exams** M1–M5 (sanctioned deferral via strict `mode==='boss'`; exam strips all 6 assistive/feedback surfaces — leak-proof QA'd vs normal/revenge/daily; 10 hands D≥4 w/ fill disclosure; 🔒 lock-flash; end-review = FULL teaching ×10 + per-miss re-drill; 80% → trophy; **first-pass-only +200 verified w/ retake case**; idempotent finalize) + **Revenge Hands** (critical-only real-history queue, clear-on-best persists, full cycle QA'd) + **personas** (4 ตัว, line-by-line no-claims ผ่าน, toggle ON) + badges +2 + trophy shelf. 2 QA-caught bugs fixed (isBossQ hoisting, boss idempotency). 320 exact ×4 จอ; 0 console; hash == HEAD; 510/0/0. Cache 4.4.4→4.4.5. Spec `game-g2-v4.4.5-challenge-layer-spec.md`; snapshot `GPT AUDIT/v4.4.5/`. **Next: G2.5 (v4.4.6) spec — All-in Confidence + Shop + Heater + Receipt + m4/m5 card fix.**
 
 🟢 **v4.4.4 G1 Progression Core (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — XP with **retroactive credit from real stored records ONLY** (postflop session tier-counts ×100/40/10 base; preflop dailyHistory correct×25 + rest×5; exam +200 live-only scope-guard, disclosed in UI; idempotent seed; worked example real profile: 3,400 XP → 🎣 Grinder, formulaMatch:true) + live XP hooks both sides (+125 combo-inclusive postflop / +25/+5 preflop via real `updateDailyStats` path) + **8-rank Player Level** (Fish→GTO Wizard 400k) + **16-badge engine** (strict tier=best from real history; 3 unlocked in QA; single-fire FX) + **Player Card** (Progress tab; badge case + integrity note) + Academy strip. Preflop ranks + Chips untouched. QA-caught round-trip loader bug fixed + evidence re-run. 320 clean (card right 304), 0 console errors, data hash == HEAD, 510/0/0. Screenshot tooling timed out (fresh server, clean console) → DOM-assertion fallback per owner approval, noted in MANIFEST. Cache 4.4.3→4.4.4. Spec `docs/specs/game-g1-v4.4.4-progression-core-spec.md`; snapshot `GPT AUDIT/v4.4.4/`. **Next: G2 spec (v4.4.5) — Boss Exams + Revenge Hands + personas.**
 
