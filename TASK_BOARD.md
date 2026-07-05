@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-05 (v4.4.5 G2 Challenge Layer — Boss Exams + Revenge Hands + personas live, data byte-identical 510/0/0. Next: G2.5 Juice Minor spec (v4.4.6) incl. m4/m5 card fix.).
+> Last updated: 2026-07-05 (v4.4.6 G2.5 Juice Minor — All-in (game-tier pin) + Chip Shop (wallet guard) + Heater + Receipt + m4/m5 card fix, data byte-identical 510/0/0. Next: G3 Tournament spec vs 7 advisor criteria.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.4.6 G2.5 Juice Minor (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — All-in Confidence (binding pin proven: mixed KcTd -> teachTier acceptable / gameTier best / **625 = 125x5, Stack 0**; loss = 0 pts + Stack normal -9.75; once/session; absent Boss+Table Read) + Chip Shop (wallet guard proven: xp/lifetimeScore/rank frozen, wallet -1,500; equip persists) + Heater (4/8 static tiers + breathe beat) + Cash-out Receipt (BB/points + study-tool footer, local-only, incl. boss review) + m4/m5 card fix (routes == TCC, Locked gone, syllabi added) + Stone Cold badge + loader round-trip gate passed. 320 exact x3; 0 console; hash == HEAD; 510/0/0. Cache 4.4.5->4.4.6. Spec `game-g25-v4.4.6-juice-minor-spec.md`; snapshot `GPT AUDIT/v4.4.6/`. **Next: G3 Tournament (v4.5.0-game) spec.**
 
 🟢 **v4.4.5 G2 Challenge Layer (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — **Boss Exams** M1–M5 (sanctioned deferral via strict `mode==='boss'`; exam strips all 6 assistive/feedback surfaces — leak-proof QA'd vs normal/revenge/daily; 10 hands D≥4 w/ fill disclosure; 🔒 lock-flash; end-review = FULL teaching ×10 + per-miss re-drill; 80% → trophy; **first-pass-only +200 verified w/ retake case**; idempotent finalize) + **Revenge Hands** (critical-only real-history queue, clear-on-best persists, full cycle QA'd) + **personas** (4 ตัว, line-by-line no-claims ผ่าน, toggle ON) + badges +2 + trophy shelf. 2 QA-caught bugs fixed (isBossQ hoisting, boss idempotency). 320 exact ×4 จอ; 0 console; hash == HEAD; 510/0/0. Cache 4.4.4→4.4.5. Spec `game-g2-v4.4.5-challenge-layer-spec.md`; snapshot `GPT AUDIT/v4.4.5/`. **Next: G2.5 (v4.4.6) spec — All-in Confidence + Shop + Heater + Receipt + m4/m5 card fix.**
 

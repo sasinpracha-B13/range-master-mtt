@@ -10167,6 +10167,52 @@
     .pf-persona-line { font-size: 12px; font-style: italic; color: var(--text-secondary); margin: 6px 0; }
     .pf-persona-quip { margin: 4px 0 8px; }
 
+    /* ===== v4.4.6 G2.5 — All-in / Heater / Shop / Breathe ===== */
+    .pf-allin-btn {
+      width: 100%; padding: 10px 12px; margin: 6px 0 10px; border-radius: 10px;
+      background: rgba(251,191,36,0.10); border: 1px dashed rgba(251,191,36,0.55);
+      color: #fbbf24; font-weight: 800; font-size: 13px; cursor: pointer;
+    }
+    .pf-allin-banner {
+      padding: 9px 12px; margin: 6px 0 10px; border-radius: 10px; font-weight: 800; font-size: 13px;
+      background: rgba(251,191,36,0.16); border: 2px solid rgba(251,191,36,0.6); color: #fbbf24;
+    }
+    .pf-allin-banner.is-win  { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); color: #4ade80; }
+    .pf-allin-banner.is-loss { background: rgba(148,163,184,0.12); border-color: rgba(148,163,184,0.4); color: #94a3b8; }
+    #postflopScreen.pf-heat-1 .postflop-question-card { box-shadow: 0 0 14px rgba(251,146,60,0.18); border-color: rgba(251,146,60,0.35); }
+    #postflopScreen.pf-heat-2 .postflop-question-card { box-shadow: 0 0 22px rgba(239,68,68,0.28); border-color: rgba(239,68,68,0.5); }
+    .pf-breathe-overlay {
+      position: fixed; inset: 0; z-index: 9997; pointer-events: none;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(8,10,10,0.55); animation: pfVignette 1.25s ease-out both;
+    }
+    .pf-breathe-overlay span { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #e5e7eb; }
+    .pf-shop-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .pf-shop-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+    .pf-shop-swatch { width: 26px; height: 26px; border-radius: 6px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,0.2); }
+    .pf-felt-royal-sw   { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+    .pf-felt-crimson-sw { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+    .pf-frame-gold-sw   { background: linear-gradient(135deg, #92700e, #fbbf24); }
+    .pf-frame-neon-sw   { background: linear-gradient(135deg, #0e7490, #22d3ee); }
+    .pf-flame-teal-sw   { background: linear-gradient(135deg, #0f766e, #2dd4bf); }
+    .pf-flame-violet-sw { background: linear-gradient(135deg, #5b21b6, #a78bfa); }
+    .pf-accent-gold-sw  { background: linear-gradient(135deg, #b45309, #fde68a); }
+    .pf-shop-meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+    .pf-shop-name { font-size: 12px; font-weight: 700; }
+    .pf-shop-slot { font-size: 10px; color: var(--text-secondary); }
+    .pf-shop-btn { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text); cursor: pointer; white-space: nowrap; }
+    .pf-shop-btn.is-buy { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.4); color: #fbbf24; }
+    .pf-shop-btn.is-eq  { background: rgba(45,212,191,0.12); border-color: rgba(45,212,191,0.4); color: #2dd4bf; }
+    /* cosmetic effects (subtle, readability-first) */
+    body.pf-felt-royal .postflop-question-card, body.pf-felt-royal .postflop-spot-card, body.pf-felt-royal .postflop-feedback-card { background: linear-gradient(160deg, rgba(30,58,138,0.22), rgba(15,23,42,0.1)); }
+    body.pf-felt-crimson .postflop-question-card, body.pf-felt-crimson .postflop-spot-card, body.pf-felt-crimson .postflop-feedback-card { background: linear-gradient(160deg, rgba(127,29,29,0.22), rgba(15,23,42,0.1)); }
+    body.pf-frame-gold .postflop-board-card { box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 2px rgba(251,191,36,0.75); }
+    body.pf-frame-neon .postflop-board-card { box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 2px rgba(34,211,238,0.75); }
+    body.pf-flame-teal .pf-gs-combo.c3   { text-shadow: 0 0 8px rgba(45,212,191,0.9); }
+    body.pf-flame-violet .pf-gs-combo.c3 { text-shadow: 0 0 8px rgba(167,139,250,0.9); }
+    body.pf-accent-gold .pf-game-strip { border-color: rgba(251,191,36,0.5); background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(180,83,9,0.08)); }
+    body.pf-accent-gold .pf-player-card { border-color: rgba(251,191,36,0.45); }
+
     .postflop-question-prompt {
       font-size: 14px;
       color: var(--text);
@@ -15392,6 +15438,7 @@ function renderProgress() {
 
   document.getElementById('progressContent').innerHTML = `
     ${(typeof _pfPlayerCardHtml === 'function') ? _pfPlayerCardHtml() : ''}
+    ${(typeof _pfShopHtml === 'function') ? _pfShopHtml() : ''}
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value">${weekHands}</div>
@@ -33434,7 +33481,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.4.5',
+    appVersion: '4.4.6',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34620,9 +34667,11 @@ function _pfGameStatsLoad() {
       // v4.4.4 G1 fields (must round-trip through load/save)
       xp: s.xp || 0, xpSeeded: !!s.xpSeeded, xpSeed: s.xpSeed || null, badges: s.badges || {},
       // v4.4.5 G2 fields
-      trophies: s.trophies || {}, revenge: s.revenge || { cleared: {} }
+      trophies: s.trophies || {}, revenge: s.revenge || { cleared: {} },
+      // v4.4.6 G2.5 fields (round-trip build gate)
+      spentScore: s.spentScore || 0, cosmetics: s.cosmetics || { owned: [], equipped: {} }, allInWins: s.allInWins || 0
     };
-  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0, xp: 0, xpSeeded: false, xpSeed: null, badges: {}, trophies: {}, revenge: { cleared: {} } }; }
+  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0, xp: 0, xpSeeded: false, xpSeed: null, badges: {}, trophies: {}, revenge: { cleared: {} }, spentScore: 0, cosmetics: { owned: [], equipped: {} }, allInWins: 0 }; }
 }
 function _pfGameStatsSave(s) {
   try { localStorage.setItem('rmtt_gamestats', JSON.stringify(s)); } catch (e) { /* quota — non-fatal */ }
@@ -34690,6 +34739,22 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
   else if (gameTier !== 'acceptable') { comboBroke = g.combo > 0; g.combo = 0; }
   var mult = Math.min(1 + 0.25 * g.combo, 3);
   var points = Math.round((_PF_GAME_POINTS[gameTier] || 0) * mult);
+  // v4.4.6 G2.5: All-in Confidence — SCORE-ONLY. Judged on the promoted
+  // GAME-TIER (binding pin: either side of a whitelisted indifference pair
+  // pays x5). Stack/EV math below is untouched on both outcomes.
+  var allInResult = null;
+  if (d.allInArmed && d.allInIdx === d.currentIndex && frame === 'table' && d.mode !== 'boss') {
+    d.allInArmed = false;
+    g.allInUsed = true;
+    if (gameTier === 'best') {
+      points = points * 5;
+      allInResult = 'win';
+      try { var lsA = _pfGameStatsLoad(); lsA.allInWins = (lsA.allInWins || 0) + 1; _pfGameStatsSave(lsA); } catch (eA) {}
+    } else {
+      points = 0;
+      allInResult = 'loss';
+    }
+  }
   g.score += points;
   // stack (table frame only)
   var stake = _pfStakeBB(scenario);
@@ -34742,7 +34807,7 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
       _pfGameStatsSave(lsR);
     } catch (eR) {}
   }
-  d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp, avenged: avenged };
+  d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp, avenged: avenged, allIn: allInResult };
   // SFX — suppressed entirely in boss mode (deferred feedback: no mid-exam
   // correctness signals of any kind).
   if (d.mode === 'boss') return;
@@ -34778,9 +34843,13 @@ function _pfGameResultBannerHtml(d) {
   else if (r.kind === 'gain') body = '<span class="pf-chip-fly">🪙</span> ' + r.label + '<span class="pf-gb-est">est. EV (heuristic)</span>';
   else if (r.kind === 'saved' || r.kind === 'check' || r.kind === 'mixed') body = r.label + (r.kind === 'saved' ? '<span class="pf-gb-est">est. EV (heuristic)</span>' : '');
   else body = r.label + '<span class="pf-gb-est">est. EV (heuristic)</span>';
-  var pts = '<span class="pf-gb-pts pf-anim-pop">+' + r.points + (r.mult > 1 ? ' <span style="opacity:0.8">×' + (Math.round(r.mult * 100) / 100) + '</span>' : '') + '</span>';
+  var pts = '<span class="pf-gb-pts pf-anim-pop">+' + r.points + (r.mult > 1 && r.points > 0 ? ' <span style="opacity:0.8">×' + (Math.round(r.mult * 100) / 100) + '</span>' : '') + '</span>';
   var comboNote = r.comboBroke ? '<span style="font-size:10px;opacity:0.7;margin-left:6px;">💨 combo lost</span>' : '';
-  return '<div class="pf-game-banner kind-' + r.kind + '">' + body + comboNote + pts + '</div>';
+  // v4.4.6 G2.5: All-in outcome line (Score-only; Stack row above is untouched)
+  var allInNote = '';
+  if (r.allIn === 'win') allInNote = '<div class="pf-allin-banner is-win">🎲 ALL-IN WINS — ×5 score!</div>';
+  else if (r.allIn === 'loss') allInNote = '<div class="pf-allin-banner is-loss">🎲 All-in missed — 0 points this hand. Stack unaffected.</div>';
+  return allInNote + '<div class="pf-game-banner kind-' + r.kind + '">' + body + comboNote + pts + '</div>';
 }
 function _pfGameSummaryHtml(d) {
   if (!d || !d.game) return '';
@@ -34837,7 +34906,11 @@ function _pfGameAnimateAnswer(d) {
       if (scr) { scr.classList.remove('pf-anim-shake'); void scr.offsetWidth; scr.classList.add('pf-anim-shake'); }
       var v = document.createElement('div'); v.className = 'pf-punt-vignette'; document.body.appendChild(v);
       setTimeout(function () { try { v.remove(); } catch (e) {} }, 700);
+      // v4.4.6 G2.5: heater "breathe" beat after a punt (combo just died).
+      if (typeof _pfBreatheBeat === 'function') setTimeout(_pfBreatheBeat, 750);
     }
+    // v4.4.6 G2.5: all-in win celebration rides the standard pipeline.
+    if (r.allIn === 'win') { _pfSfx('fanfare'); _pfConfettiBurst(document.querySelector('.postflop-feedback-card')); }
     if (r.badgeUp) {
       var card = document.querySelector('.postflop-feedback-card');
       _pfConfettiBurst(card);
@@ -35094,7 +35167,9 @@ var _PF_BADGES = [
   { id: 'wizard',  icon: '🧙', name: 'The Long Game',      target: 400000, src: 'xp' },
   // v4.4.5 G2 additions
   { id: 'slayer',  icon: '🏆', name: 'Boss Slayer',        target: 5,      src: 'trophiesEarned' },
-  { id: 'avenger', icon: '⚔️', name: 'Avenger',            target: 10,     src: 'revengeCleared' }
+  { id: 'avenger', icon: '⚔️', name: 'Avenger',            target: 10,     src: 'revengeCleared' },
+  // v4.4.6 G2.5 addition
+  { id: 'stone',   icon: '🎲', name: 'Stone Cold',         target: 5,      src: 'allInWins' }
 ];
 function _pfBadgeValues() {
   var ls = _pfGameStatsLoad();
@@ -35113,6 +35188,7 @@ function _pfBadgeValues() {
     mdfBest: agg.mdfBest, blockerBest: agg.blockerBest,
     cleanSheets: agg.cleanSheets, noPuntSessions: agg.noPuntSessions,
     trophiesEarned: trophiesEarned, revengeCleared: revengeCleared,
+    allInWins: ls.allInWins || 0,
     _ls: ls
   };
 }
@@ -35387,6 +35463,7 @@ function renderPostflopBossComplete() {
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
       (missedIds.length ? '<button class="postflop-next-btn pf-weak-btn" onclick="startPostflopRedrill(' + _pfEscape(JSON.stringify(missedIds)).replace(/"/g, '&quot;') + ')">🎯 Drill all misses (' + missedIds.length + ')</button>' : '') +
       '<button class="postflop-next-btn" onclick="renderPostflopBossIntro(\'' + d.bossKey + '\')">⚔️ Retake</button>' +
+      ((typeof _pfReceiptBtnHtml === 'function') ? _pfReceiptBtnHtml() : '') +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
     '</div>';
   document.getElementById('postflopScreen').innerHTML = html;
@@ -35453,6 +35530,214 @@ function _pfRevengeBlockHtml() {
 function togglePfPersonas(on) { App.state.settings.villainPersonas = !!on; try { App.saveProgress(); } catch (e) {} }
 // ============================================================================
 // END v4.4.5 G2 — CHALLENGE LAYER
+// ============================================================================
+
+// ============================================================================
+// v4.4.6 G2.5 — JUICE MINOR (All-in Confidence · Chip Shop · Heater · Receipt)
+// Owner-locked guards: All-in is SCORE-ONLY (Stack/EV untouched both outcomes),
+// once per session, judged on the GAME-TIER after whitelist promotion (binding
+// pin — either side of an indifference pair pays x5), hard-disabled in Boss +
+// Table Read. Shop spends a separate Score-wallet (lifetimeScore - spentScore);
+// xp / rank / lifetimeScore NEVER decrease from purchases. Heater is FX-only.
+// Receipt prints BB/points units + study-tool footer, local-only.
+// ============================================================================
+
+// ----- All-in Confidence -----
+function _pfAllInAvailable(d, scenario) {
+  if (!d || !d.game) return false;
+  if (d.game.allInUsed) return false;
+  if (d.mode === 'boss') return false;                       // owner guard
+  if (_pfGameFrame(scenario) !== 'table') return false;      // owner guard (Table Read excluded)
+  return true;
+}
+function _pfGameArmAllIn() {
+  try {
+    var d = App.state.postflopDrill;
+    if (!d || !d.active || d.phase !== 'question') return;
+    var scenario = d.queue[d.currentIndex];
+    if (!d.game) d.game = _pfGameNewState();
+    if (!_pfAllInAvailable(d, scenario)) return;
+    d.allInArmed = true;
+    d.allInIdx = d.currentIndex;
+    _pfSfx('comboRise', 6);
+    renderPostflopQuestion();
+  } catch (e) {}
+}
+function _pfAllInBtnHtml(d, scenario) {
+  if (!d || !d.game) return '';
+  if (d.allInArmed && d.allInIdx === d.currentIndex) {
+    return '<div class="pf-allin-banner">🎲 ALL-IN DECLARED — this hand pays <strong>×5 if BEST</strong>, 0 otherwise. Stack/EV unaffected.</div>';
+  }
+  if (!_pfAllInAvailable(d, scenario)) return '';
+  return '<button type="button" class="pf-allin-btn" onclick="_pfGameArmAllIn()">🎲 ALL-IN — once per session · ×5 if BEST</button>';
+}
+
+// ----- Chip Shop -----
+var _PF_SHOP = [
+  { id: 'felt_royal',   slot: 'felt',   name: 'Royal Blue felt',   price: 1500,  cls: 'pf-felt-royal' },
+  { id: 'felt_crimson', slot: 'felt',   name: 'Crimson Room felt', price: 3000,  cls: 'pf-felt-crimson' },
+  { id: 'frame_gold',   slot: 'frame',  name: 'Gold Trim cards',   price: 2500,  cls: 'pf-frame-gold' },
+  { id: 'frame_neon',   slot: 'frame',  name: 'Neon Edge cards',   price: 5000,  cls: 'pf-frame-neon' },
+  { id: 'flame_teal',   slot: 'flame',  name: 'Teal Blaze flame',  price: 2000,  cls: 'pf-flame-teal' },
+  { id: 'flame_violet', slot: 'flame',  name: 'Violet Inferno',    price: 4000,  cls: 'pf-flame-violet' },
+  { id: 'accent_gold',  slot: 'accent', name: 'Gold Rush theme',   price: 10000, cls: 'pf-accent-gold' }
+];
+function _pfShopWallet(ls) { return Math.max(0, (ls.lifetimeScore || 0) - (ls.spentScore || 0)); }
+function _pfApplyCosmetics() {
+  try {
+    var ls = _pfGameStatsLoad();
+    var eq = (ls.cosmetics && ls.cosmetics.equipped) || {};
+    var body = document.body; if (!body) return;
+    _PF_SHOP.forEach(function (it) { body.classList.remove(it.cls); });
+    Object.keys(eq).forEach(function (slot) {
+      var item = _PF_SHOP.filter(function (it) { return it.id === eq[slot]; })[0];
+      if (item) body.classList.add(item.cls);
+    });
+  } catch (e) {}
+}
+function _pfShopBuy(id) {
+  try {
+    var item = _PF_SHOP.filter(function (it) { return it.id === id; })[0];
+    if (!item) return;
+    var ls = _pfGameStatsLoad();
+    if (!ls.cosmetics) ls.cosmetics = { owned: [], equipped: {} };
+    if (ls.cosmetics.owned.indexOf(id) !== -1) return;
+    if (_pfShopWallet(ls) < item.price) { if (typeof showToast === 'function') showToast('Not enough Score in the wallet yet — keep grinding!'); return; }
+    // WALLET GUARD: only spentScore moves. xp / rank / lifetimeScore untouched.
+    ls.spentScore = (ls.spentScore || 0) + item.price;
+    ls.cosmetics.owned.push(id);
+    ls.cosmetics.equipped[item.slot] = id;
+    _pfGameStatsSave(ls);
+    _pfApplyCosmetics();
+    _pfSfx('fanfare');
+    if (typeof showToast === 'function') showToast('🛍️ ' + item.name + ' — yours!');
+    try { renderProgress(); } catch (e2) {}
+  } catch (e) {}
+}
+function _pfShopEquip(id, slot) {
+  try {
+    var ls = _pfGameStatsLoad();
+    if (!ls.cosmetics) ls.cosmetics = { owned: [], equipped: {} };
+    if (id && ls.cosmetics.owned.indexOf(id) === -1) return;
+    if (id) ls.cosmetics.equipped[slot] = id; else delete ls.cosmetics.equipped[slot];
+    _pfGameStatsSave(ls);
+    _pfApplyCosmetics();
+    try { renderProgress(); } catch (e2) {}
+  } catch (e) {}
+}
+function _pfShopHtml() {
+  try {
+    var ls = _pfGameStatsLoad();
+    var owned = (ls.cosmetics && ls.cosmetics.owned) || [];
+    var eq = (ls.cosmetics && ls.cosmetics.equipped) || {};
+    var wallet = _pfShopWallet(ls);
+    var slots = { felt: 'Table felt', frame: 'Card frame', flame: 'Combo flame', accent: 'App accent' };
+    var rows = _PF_SHOP.map(function (it) {
+      var isOwned = owned.indexOf(it.id) !== -1;
+      var isEq = eq[it.slot] === it.id;
+      var btn;
+      if (isEq) btn = '<button class="pf-shop-btn is-eq" onclick="_pfShopEquip(null, \'' + it.slot + '\')">Equipped ✓ (tap to remove)</button>';
+      else if (isOwned) btn = '<button class="pf-shop-btn" onclick="_pfShopEquip(\'' + it.id + '\', \'' + it.slot + '\')">Equip</button>';
+      else btn = '<button class="pf-shop-btn is-buy" onclick="_pfShopBuy(\'' + it.id + '\')">★ ' + it.price.toLocaleString() + '</button>';
+      return '<div class="pf-shop-item"><span class="pf-shop-swatch ' + it.cls + '-sw"></span>' +
+             '<div class="pf-shop-meta"><span class="pf-shop-name">' + _pfEscape(it.name) + '</span>' +
+             '<span class="pf-shop-slot">' + _pfEscape(slots[it.slot]) + '</span></div>' + btn + '</div>';
+    }).join('');
+    return '<div class="pf-player-card" style="margin-top:10px;">' +
+             '<div class="pf-pc-head"><span class="pf-pc-rankicon">🛍️</span><div class="pf-pc-headtxt">' +
+               '<span class="pf-pc-rank">The Chip Shop</span>' +
+               '<span class="pf-pc-xp">Wallet: ★ ' + wallet.toLocaleString() + ' (lifetime Score − spent · XP/rank never affected)</span>' +
+             '</div></div>' +
+             '<div class="pf-shop-grid">' + rows + '</div>' +
+           '</div>';
+  } catch (e) { return ''; }
+}
+
+// ----- Cash-out Receipt (canvas, local-only, BB/points units) -----
+function _pfCashoutReceipt() {
+  try {
+    var d = App.state.postflopDrill;
+    if (!d || !d.answers || !d.answers.length) { if (typeof showToast === 'function') showToast('No session to print.'); return; }
+    var g = d.game || _pfGameNewState();
+    var counts = { best: 0, acceptable: 0, bad: 0, critical: 0 };
+    d.answers.forEach(function (a) { counts[a.tier] = (counts[a.tier] || 0) + 1; });
+    var ls = _pfGameStatsLoad();
+    var rank = _pfRankFor(ls.xp || 0).cur;
+    var modeLabel = d.mode === 'boss' ? 'BOSS EXAM' : (d.mode === 'daily' ? 'DAILY CHALLENGE' : (d.mode === 'revenge' ? 'REVENGE' : 'TRAINING SESSION'));
+    var c = document.createElement('canvas'); c.width = 400; c.height = 640;
+    var x = c.getContext('2d');
+    x.fillStyle = '#101312'; x.fillRect(0, 0, 400, 640);
+    x.strokeStyle = '#2dd4bf'; x.setLineDash([6, 5]); x.lineWidth = 2; x.strokeRect(12, 12, 376, 616);
+    x.setLineDash([]);
+    x.fillStyle = '#e5e7eb'; x.textAlign = 'center'; x.font = 'bold 22px monospace';
+    x.fillText('RANGE MASTER MTT', 200, 58);
+    x.font = '13px monospace'; x.fillStyle = '#9ca3af';
+    x.fillText('· CASH-OUT RECEIPT ·', 200, 82);
+    x.fillText(new Date().toLocaleString(), 200, 104);
+    x.fillText('MODE: ' + modeLabel, 200, 126);
+    function line(y) { x.strokeStyle = 'rgba(255,255,255,0.18)'; x.beginPath(); x.setLineDash([4, 4]); x.moveTo(36, y); x.lineTo(364, y); x.stroke(); x.setLineDash([]); }
+    function row(label, val, y, color) { x.textAlign = 'left'; x.fillStyle = '#9ca3af'; x.font = '14px monospace'; x.fillText(label, 40, y); x.textAlign = 'right'; x.fillStyle = color || '#e5e7eb'; x.font = 'bold 15px monospace'; x.fillText(val, 360, y); }
+    line(142);
+    row('HANDS', String(d.answers.length), 172);
+    row('BEST / ACC', counts.best + ' / ' + counts.acceptable, 200);
+    row('BAD / PUNT', counts.bad + ' / ' + counts.critical, 228, counts.critical ? '#f87171' : undefined);
+    line(248);
+    var ev = Math.round((g.ev || 0) * 10) / 10;
+    row('SESSION EV (est.)', (ev > 0 ? '+' : '') + ev + ' BB', 278, ev < 0 ? '#f87171' : '#4ade80');
+    row('SAVED BY FOLDS', (Math.round((g.saved || 0) * 10) / 10) + ' BB', 306, '#2dd4bf');
+    row('SCORE', '★ ' + (g.score || 0).toLocaleString(), 334, '#fbbf24');
+    row('BEST COMBO', '🔥 x' + (g.bestCombo || 0), 362);
+    line(382);
+    row('PLAYER LEVEL', rank.icon + ' ' + rank.name, 412);
+    row('LIFETIME XP', (ls.xp || 0).toLocaleString(), 440);
+    line(460);
+    x.textAlign = 'center'; x.fillStyle = '#6b7280'; x.font = '11px monospace';
+    x.fillText('TRAINING SESSION - study tool, not real money', 200, 496);
+    x.fillText('all values in BB / points - local only', 200, 514);
+    x.font = 'bold 15px monospace'; x.fillStyle = '#2dd4bf';
+    x.fillText('~ THANKS FOR GRINDING ~', 200, 560);
+    c.toBlob(function (blob) {
+      if (!blob) { if (typeof showToast === 'function') showToast('Receipt render failed.'); return; }
+      var file = null;
+      try { file = new File([blob], 'rmtt-receipt.png', { type: 'image/png' }); } catch (eF) {}
+      if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'Range Master MTT receipt' }).catch(function () {});
+      } else {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a'); a.href = url; a.download = 'rmtt-receipt.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }
+      if (typeof showToast === 'function') showToast('🧾 Receipt printed.');
+    }, 'image/png');
+  } catch (e) { if (typeof showToast === 'function') showToast('Receipt failed: ' + e.message); }
+}
+function _pfReceiptBtnHtml() { return '<button class="postflop-secondary-btn" onclick="_pfCashoutReceipt()">🧾 Cash-out Receipt</button>'; }
+
+// ----- Heater state (FX-only; static classes, zero gameplay effect) -----
+function _pfHeaterClass(d) {
+  var combo = (d && d.game && d.game.combo) || 0;
+  if (combo >= 8) return 'pf-heat-2';
+  if (combo >= 4) return 'pf-heat-1';
+  return '';
+}
+function _pfBreatheBeat() {
+  if (!_pfMotionOn()) return;
+  try {
+    var v = document.createElement('div');
+    v.className = 'pf-breathe-overlay';
+    v.innerHTML = '<span>Breathe. Run it back.</span>';
+    document.body.appendChild(v);
+    setTimeout(function () { try { v.remove(); } catch (e) {} }, 1300);
+  } catch (e) {}
+}
+// Apply cosmetics on boot (mirrors the delegated-listener boot pattern).
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', _pfApplyCosmetics); }
+  else { setTimeout(_pfApplyCosmetics, 50); }
+}
+// ============================================================================
+// END v4.4.6 G2.5 — JUICE MINOR
 // ============================================================================
 
 function advancePostflopDrill() {
@@ -39169,6 +39454,17 @@ function _pfModuleCardHtml(mod, stats) {
     actionsHtml =
       '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_flop_cbet_oop_def\', 10)">▶ Start Module 3 Limited Beta</button>' +
       '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
+  } else if (mod.key === 'm4') {
+    // v4.4.6 G2.5 fix: m4 was falling to the Locked branch despite Beta status.
+    // Route + queue length identical to the TCC tile (postflop:m4).
+    actionsHtml =
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_turn_barrel_oop_def\', 12)">▶ Start Module 4 Limited Beta</button>' +
+      '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
+  } else if (mod.key === 'm5') {
+    // v4.4.6 G2.5 fix: same for m5 (matches TCC postflop:m5).
+    actionsHtml =
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_river_barrel_oop_def\', 12)">▶ Start Module 5 Limited Beta</button>' +
+      '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
   } else {
     actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
   }
@@ -39190,6 +39486,21 @@ function _pfModuleCardHtml(mod, stats) {
                    '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
                    '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
                    'Limited Beta · Hand-aware OOP rendering, 10 M3 concept drills, M3 weak-spot review, scaled mastery thresholds all enabled in v4.2.4. 85 approved scenarios.' +
+                   '</div></details>';
+  }
+  // v4.4.6 G2.5: m4/m5 syllabi (arrays already in _PF_CURRICULUM since v4.3.1/v4.4.2)
+  if (mod.key === 'm4' && mod.syllabus) {
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 4 syllabus</summary>' +
+                   '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
+                   '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
+                   'Limited Beta · 92 approved turn-defense scenarios · full teaching + weak-spot review wired in v4.3.1.' +
+                   '</div></details>';
+  }
+  if (mod.key === 'm5' && mod.syllabus) {
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 5 syllabus</summary>' +
+                   '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
+                   '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
+                   'Limited Beta · 33 approved river-defense scenarios · showdown-only teaching wired in v4.4.2.' +
                    '</div></details>';
   }
   return '<div class="pf-module-card is-' + status + '">' +
@@ -40523,9 +40834,17 @@ function renderPostflopQuestion() {
     '</div>' +
     guideHtml +
     hintHtml +
+    ((typeof _pfAllInBtnHtml === 'function') ? _pfAllInBtnHtml(d, scenario) : '') +
     '<div class="postflop-choices">' + choicesHtml + '</div>';
 
   document.getElementById('postflopScreen').innerHTML = html;
+  // v4.4.6 G2.5: heater state — static class tiers by combo (FX-only).
+  try {
+    var scrH = document.getElementById('postflopScreen');
+    scrH.classList.remove('pf-heat-1', 'pf-heat-2');
+    var hc = (typeof _pfHeaterClass === 'function') ? _pfHeaterClass(d) : '';
+    if (hc) scrH.classList.add(hc);
+  } catch (eH) {}
   try { _pfGameAnimateQuestion(scenario); } catch (eA) { /* FX never block render */ }
   try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
 }
@@ -41926,6 +42245,7 @@ function renderPostflopComplete() {
         (isM3Module ? 'pf_flop_cbet_oop_def' :
          (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture')))
       ) + '\', ' + (isM5Module ? 12 : (isM4Module ? 12 : (isM3Module ? 10 : (isM2Module ? 12 : 15)))) + ')">▶ Drill again</button>')) +
+      ((typeof _pfReceiptBtnHtml === 'function') ? _pfReceiptBtnHtml() : '') +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
       // Inline note when no weak signals (positive feedback, no nag)
       (function () {
