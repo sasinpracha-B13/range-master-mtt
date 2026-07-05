@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-05 (v4.4.6 G2.5 Juice Minor — All-in (game-tier pin) + Chip Shop (wallet guard) + Heater + Receipt + m4/m5 card fix, data byte-identical 510/0/0. Next: G3 Tournament spec vs 7 advisor criteria.).
+> Last updated: 2026-07-05 (v4.5.0-game G3 Tournament Mode — PIN-1 schedule-invariant floor +15, ladder never scales regret, Range Reveal (negation guard + `_PF_REVEAL_SUPPRESS`, 510 hit-list line-reviewed: 50/2/1/460), ghost + trophies + bust attribution. Data byte-identical 510/0/0. Next: G4 M6 spec/architecture.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.5.0-game G3 Tournament Mode (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — flagship run mode: 8 levels × 5 hands, start 100 BB, deterministic drift ONLY between hands (🎰 beat; schedule on intro screen). **PIN 1 closed by schedule invariant:** 5×Σ(drift) = −85 > −100 ⇒ perfect-play floor **+15 BB every seed incl. all-fold** (spec §(c) + code comment; sim table corrected to deterministic sim: Best WIN 105 / Acceptable bust h34 FT / Bad bust h25 post-bubble); in-engine perfect run WIN h40 @ 139.5 (= 100 + 117.5 − 78 exact). **Ladder ≠ stake inflation** (pool ramp by street/difficulty only; in/out delta equality QdJd −45 asserted). **PIN 2 Range Reveal built + line-reviewed (all 510 rows):** whitelist bands + negation guard (not/n't/never/rarely/no longer, ~40-char window) + flush-dense range|value guard + **`_PF_REVEAL_SUPPRESS` per-scenario list** (line-review: 9c9h continue-vs-raise false positive suppressed; KcJd value-lean upheld by authored "value-weighted" sentence; "polar card" = accepted interpretation, noted in spec). **Final: 50 banded / 2 NEG / 1 LIST-SUPPRESSED / 460 no-chip; runtime↔report cross-checked; chip = tourney M4/M5 only.** Ghost run ≤2 series <1KB SVG; trophies 🥉🥈🏆 + Champion/Regular; first-win +500 once; ΣEV vs Σblinds reconciliation + bust attribution + killer-hand rematch; strict `mode==='tourney'` isolation; loader round-trips `rmtt_tourney`; M6 FT hook no-op (`pf_river_value_ip` @ L≥7). 0 console; hash == HEAD; 510/0/0. Cache 4.4.6→4.5.0. Spec `game-g3-v4.5.0-tournament-mode-spec.md` + `game-g3-range-reveal-hitlist.md`; snapshot `GPT AUDIT/v4.5.0/`. **Next: G4 — M6 River Betting IP spec/architecture (stop at review).**
 
 🟢 **v4.4.6 G2.5 Juice Minor (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — All-in Confidence (binding pin proven: mixed KcTd -> teachTier acceptable / gameTier best / **625 = 125x5, Stack 0**; loss = 0 pts + Stack normal -9.75; once/session; absent Boss+Table Read) + Chip Shop (wallet guard proven: xp/lifetimeScore/rank frozen, wallet -1,500; equip persists) + Heater (4/8 static tiers + breathe beat) + Cash-out Receipt (BB/points + study-tool footer, local-only, incl. boss review) + m4/m5 card fix (routes == TCC, Locked gone, syllabi added) + Stone Cold badge + loader round-trip gate passed. 320 exact x3; 0 console; hash == HEAD; 510/0/0. Cache 4.4.5->4.4.6. Spec `game-g25-v4.4.6-juice-minor-spec.md`; snapshot `GPT AUDIT/v4.4.6/`. **Next: G3 Tournament (v4.5.0-game) spec.**
 

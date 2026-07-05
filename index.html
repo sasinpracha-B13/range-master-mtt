@@ -10213,6 +10213,20 @@
     body.pf-accent-gold .pf-game-strip { border-color: rgba(251,191,36,0.5); background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(180,83,9,0.08)); }
     body.pf-accent-gold .pf-player-card { border-color: rgba(251,191,36,0.45); }
 
+    /* ===== v4.5.0 G3 — Tournament ===== */
+    .pf-tourney-drift {
+      position: sticky; top: 4px; z-index: 50; margin: 4px auto; width: fit-content;
+      padding: 6px 14px; border-radius: 999px; font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 800; animation: pfDealIn 0.3s ease-out both;
+      background: rgba(20,20,20,0.92); border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pf-tourney-drift.is-neg { color: #f87171; border-color: rgba(248,113,113,0.5); }
+    .pf-tourney-drift.is-pos { color: #4ade80; border-color: rgba(74,222,128,0.5); }
+    .pf-reveal-chip {
+      padding: 8px 12px; margin: 6px 0; border-radius: 10px; font-size: 12px; font-weight: 700;
+      background: rgba(96,165,250,0.10); border: 1px solid rgba(96,165,250,0.35); color: #93c5fd;
+    }
+
     .postflop-question-prompt {
       font-size: 14px;
       color: var(--text);
@@ -33481,7 +33495,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.4.6',
+    appVersion: '4.5.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34807,6 +34821,16 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
       _pfGameStatsSave(lsR);
     } catch (eR) {}
   }
+  // v4.5.0 G3: tournament survival stack takes the SAME regret delta at the
+  // decision point (PIN-b: no level scaling anywhere). Elimination checked here;
+  // the answer screen still renders (teaching invariant) and the finish fires
+  // on Next via _pfTourneyAdvance.
+  if (d.mode === 'tourney' && d.tourney && frame === 'table') {
+    var t9 = d.tourney;
+    t9.stack = Math.round((t9.stack + delta) * 10) / 10;
+    t9.evSum = Math.round((t9.evSum + delta) * 10) / 10;
+    if (t9.stack <= 0 && !t9.finished) { t9.pendingBust = true; t9.bustBy = (t9.evSum < t9.driftSum ? 'mistakes' : 'blinds'); }
+  }
   d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp, avenged: avenged, allIn: allInResult };
   // SFX — suppressed entirely in boss mode (deferred feedback: no mid-exam
   // correctness signals of any kind).
@@ -34821,6 +34845,8 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
 // ----- UI: header strip / answer banner / session summary -----
 function _pfGameStripHtml(d, scenario) {
   if (!d) return '';
+  // v4.5.0 G3: tournament replaces the Session-EV strip inside its mode ONLY.
+  if (d.mode === 'tourney' && d.tourney && typeof _pfTourneyStripHtml === 'function') return _pfTourneyStripHtml(d);
   var g = d.game || _pfGameNewState();
   var frame = _pfGameFrame(scenario);
   var ev = Math.round(g.ev * 10) / 10;
@@ -35169,7 +35195,10 @@ var _PF_BADGES = [
   { id: 'slayer',  icon: '🏆', name: 'Boss Slayer',        target: 5,      src: 'trophiesEarned' },
   { id: 'avenger', icon: '⚔️', name: 'Avenger',            target: 10,     src: 'revengeCleared' },
   // v4.4.6 G2.5 addition
-  { id: 'stone',   icon: '🎲', name: 'Stone Cold',         target: 5,      src: 'allInWins' }
+  { id: 'stone',   icon: '🎲', name: 'Stone Cold',         target: 5,      src: 'allInWins' },
+  // v4.5.0 G3 additions
+  { id: 'champ',   icon: '🏆', name: 'Champion',           target: 1,      src: 'tourneyWins' },
+  { id: 'regular', icon: '🎪', name: 'The Regular',        target: 5,      src: 'tourneyCashes' }
 ];
 function _pfBadgeValues() {
   var ls = _pfGameStatsLoad();
@@ -35189,6 +35218,8 @@ function _pfBadgeValues() {
     cleanSheets: agg.cleanSheets, noPuntSessions: agg.noPuntSessions,
     trophiesEarned: trophiesEarned, revengeCleared: revengeCleared,
     allInWins: ls.allInWins || 0,
+    tourneyWins: (function () { try { return _pfTourneyLoad().trophies.win || 0; } catch (e) { return 0; } })(),
+    tourneyCashes: (function () { try { return _pfTourneyLoad().trophies.cash || 0; } catch (e) { return 0; } })(),
     _ls: ls
   };
 }
@@ -35740,9 +35771,263 @@ if (typeof document !== 'undefined') {
 // END v4.4.6 G2.5 — JUICE MINOR
 // ============================================================================
 
+// ============================================================================
+// v4.5.0 G3 — TOURNAMENT MODE (flagship; Range Reveal HELD pending PIN-2 review)
+// PIN-1 invariant: sum(|net drift| over the whole run) = 85 BB < 100 BB start
+// stack, and best-tier decision deltas are always >= 0, so 100%-best play can
+// NEVER bust on any seed (all-fold floor = +15 BB). Any drift-knob change must
+// re-verify: 5 * sum(_PF_TOURNEY_DRIFT) > -_PF_TOURNEY.START.
+// Ladder never scales regret: decision deltas are the v4.4.3 stake table,
+// identical in and out of this mode (QA-asserted). Drift applies ONLY on the
+// between-hands beat. Strict mode==='tourney' gates every surface.
+// ============================================================================
+var _PF_TOURNEY = { START: 100, HANDS_PER_LEVEL: 5, LEVELS: 8 };
+var _PF_TOURNEY_DRIFT = [1.0, 0.5, 0, -1.0, -2.0, -3.5, -5.0, -7.0]; // BB/hand by level (0-based)
+var _PF_TOURNEY_LEVEL_NAMES = ['Early 1', 'Early 2', 'Bubble approach', 'MONEY BUBBLE', 'Deep run 1', 'Deep run 2', 'FINAL TABLE', 'FINAL TABLE — endgame'];
+function _pfTourneyLoad() { try { var r = localStorage.getItem('rmtt_tourney'); var s = r ? JSON.parse(r) : {}; if (!s.trophies) s.trophies = { cash: 0, ft: 0, win: 0 }; return s; } catch (e) { return { trophies: { cash: 0, ft: 0, win: 0 } }; } }
+function _pfTourneySave(s) { try { localStorage.setItem('rmtt_tourney', JSON.stringify(s)); } catch (e) {} }
+function _pfTourneyActPool(mid) {
+  return (App.postflop && App.postflop.scenarios || []).filter(function (s) {
+    var qt = s.question && (s.question.qtype || s.question.type);
+    return s.module === mid && s.auditStatus === 'approved' && qt === 'action_choice';
+  });
+}
+function _pfTourneyPoolForLevel(lv) {
+  var pool;
+  if (lv <= 1) pool = _pfTourneyActPool('pf_flop_cbet_ip').concat(_pfTourneyActPool('pf_flop_cbet_oop_def'));
+  else if (lv <= 3) pool = _pfTourneyActPool('pf_flop_cbet_oop_def').concat(_pfTourneyActPool('pf_turn_barrel_oop_def'));
+  else if (lv <= 5) pool = _pfTourneyActPool('pf_turn_barrel_oop_def').concat(
+    _pfTourneyActPool('pf_river_barrel_oop_def').filter(function (s) { var z = s.board && s.board.villainRiverSizing; return z === 'small' || z === 'medium'; }));
+  else pool = _pfTourneyActPool('pf_river_barrel_oop_def');
+  if (lv >= 6) pool = pool.concat(_pfTourneyActPool('pf_river_value_ip')); // (g) M6 FT content-drop hook — no-op until M6 ships
+  var want = lv >= 4 ? 4 : (lv >= 2 ? 3 : 0);
+  if (want) { var hard = pool.filter(function (s) { return (s.difficulty || 0) >= want; }); if (hard.length >= 5) pool = hard; }
+  return pool;
+}
+function _pfTourneyDeal(d) {
+  var t = d.tourney;
+  var lv = Math.min(Math.floor(t.hand / _PF_TOURNEY.HANDS_PER_LEVEL), _PF_TOURNEY.LEVELS - 1);
+  var pool = _pfTourneyPoolForLevel(lv);
+  var fresh = pool.filter(function (s) { return !t.dealt[s.id]; });
+  if (!fresh.length) { t.dealt = {}; fresh = pool; }
+  var pick = fresh[Math.floor(Math.random() * fresh.length)];
+  t.dealt[pick.id] = true;
+  t.interlude = false;
+  d.queue.push(pick);
+}
+function _pfTourneyDealInterlude(d) {
+  var m1 = (App.postflop.scenarios || []).filter(function (s) { return s.module === 'pf_board_texture' && s.auditStatus === 'approved'; });
+  if (!m1.length) return false;
+  d.tourney.interlude = true;
+  d.queue.push(m1[Math.floor(Math.random() * m1.length)]);
+  return true;
+}
+function startPostflopTournament() {
+  if (!getPostflopReady() || !App.state.settings.postflopBeta) { if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.'); return; }
+  App.state.postflopDrill = {
+    active: true, module: 'pf_tourney_mix', mode: 'tourney', queue: [],
+    currentIndex: 0, answers: [], startTime: Date.now(), phase: 'question',
+    lastChoiceId: null, lastClassification: null, game: _pfGameNewState(),
+    tourney: { stack: _PF_TOURNEY.START, hand: 0, evSum: 0, driftSum: 0, series: [], dealt: {}, interlude: false, finished: false, bustBy: null }
+  };
+  _pfTourneyDeal(App.state.postflopDrill);
+  showPostflopScreen();
+  renderPostflopQuestion();
+}
+function _pfTourneyStripHtml(d) {
+  var t = d.tourney;
+  var lv = Math.min(Math.floor(t.hand / _PF_TOURNEY.HANDS_PER_LEVEL), _PF_TOURNEY.LEVELS - 1);
+  var stk = Math.round(t.stack * 10) / 10;
+  return '<div class="pf-game-strip" title="Stack = start 100 + decision EV (regret math, v4.4.3 table) + blinds drift. Decision deltas are identical to normal drills.">' +
+           '<span class="' + (stk < 25 ? 'pf-gs-ev is-neg' : 'pf-gs-ev') + '">🏆 ' + stk + ' BB</span>' +
+           '<span class="pf-gs-combo">L' + (lv + 1) + ' · ' + _pfTourneyLevelShort(lv) + '</span>' +
+           '<span class="pf-gs-score">hand ' + Math.min(t.hand + 1, 40) + '/40</span>' +
+         '</div>' +
+         (t.interlude ? '<div class="pf-read-ribbon">🔍 Table Read interlude — Score only, blinds paused</div>' : '');
+}
+function _pfTourneyLevelShort(lv) { return ['early', 'early', 'pre-🫧', '🫧', 'deep', 'deep', 'FT', 'FT'][lv] || ''; }
+function _pfTourneyAdvance(d) {
+  var t = d.tourney;
+  if (t.finished) return;
+  var wasInterlude = t.interlude;
+  if (!wasInterlude) {
+    t.hand += 1;
+    // WIN check
+    if (t.hand >= _PF_TOURNEY.HANDS_PER_LEVEL * _PF_TOURNEY.LEVELS) { _pfTourneyFinish(d, 'win'); return; }
+    // drift beat (between hands ONLY; deterministic by level of the hand just played)
+    var lvPlayed = Math.min(Math.floor((t.hand - 1) / _PF_TOURNEY.HANDS_PER_LEVEL), _PF_TOURNEY.LEVELS - 1);
+    var drift = _PF_TOURNEY_DRIFT[lvPlayed];
+    t.stack = Math.round((t.stack + drift) * 10) / 10;
+    t.driftSum = Math.round((t.driftSum + drift) * 10) / 10;
+    t.series.push(t.stack);
+    if (t.stack <= 0) { t.bustBy = (t.evSum < t.driftSum ? 'mistakes' : 'blinds'); _pfTourneyFinish(d, 'bust'); return; }
+    // level-up interlude
+    var lvNow = Math.floor(t.hand / _PF_TOURNEY.HANDS_PER_LEVEL);
+    if (lvNow > lvPlayed && lvNow < _PF_TOURNEY.LEVELS) {
+      try { if (typeof showToast === 'function') showToast('📶 Level up — blinds rise. ' + _PF_TOURNEY_LEVEL_NAMES[lvNow]); _pfSfx('comboRise', lvNow + 2); } catch (e) {}
+      d.phase = 'question'; d.lastChoiceId = null; d.lastClassification = null;
+      if (_pfTourneyDealInterlude(d)) { d.currentIndex = d.queue.length - 1; renderPostflopQuestion(); _pfTourneyDriftToastAfterRender(drift); return; }
+    }
+  }
+  d.phase = 'question'; d.lastChoiceId = null; d.lastClassification = null;
+  _pfTourneyDeal(d);
+  d.currentIndex = d.queue.length - 1;
+  renderPostflopQuestion();
+  if (!wasInterlude) _pfTourneyDriftToastAfterRender(_PF_TOURNEY_DRIFT[Math.min(Math.floor((t.hand - 1) / _PF_TOURNEY.HANDS_PER_LEVEL), 7)]);
+}
+function _pfTourneyDriftToastAfterRender(drift) {
+  // the labeled, separate-beat blinds chip (never merged with a decision delta)
+  try {
+    var el = document.createElement('div');
+    el.className = 'pf-tourney-drift ' + (drift < 0 ? 'is-neg' : 'is-pos');
+    el.textContent = '🎰 Blinds: ' + (drift > 0 ? '+' : '') + drift + ' BB';
+    var scr = document.getElementById('postflopScreen');
+    if (scr) scr.insertBefore(el, scr.firstChild.nextSibling);
+    setTimeout(function () { try { el.remove(); } catch (e) {} }, 1800);
+  } catch (e) {}
+}
+function _pfTourneyGhostSvg(cur, best) {
+  try {
+    var W = 280, H = 60, MAXH = 40;
+    function path(series, maxStack) {
+      if (!series || !series.length) return '';
+      var pts = series.map(function (v, i) {
+        var x = 10 + (i / Math.max(MAXH - 1, 1)) * (W - 20);
+        var y = H - 8 - Math.max(0, Math.min(1, v / maxStack)) * (H - 16);
+        return (i ? 'L' : 'M') + Math.round(x) + ' ' + Math.round(y);
+      }).join(' ');
+      return pts;
+    }
+    var maxStack = 140;
+    var ghost = best && best.series && best.series.length ? '<path d="' + path(best.series, maxStack) + '" fill="none" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.55"/>' : '';
+    var curP = cur && cur.length ? '<path d="' + path(cur, maxStack) + '" fill="none" stroke="#fbbf24" stroke-width="2"/>' : '';
+    return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="max-width:100%">' +
+             '<line x1="10" y1="' + (H - 8 - (100 / maxStack) * (H - 16)) + '" x2="' + (W - 10) + '" y2="' + (H - 8 - (100 / maxStack) * (H - 16)) + '" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>' +
+             ghost + curP + '</svg>';
+  } catch (e) { return ''; }
+}
+function _pfTourneyFinish(d, outcome) {
+  var t = d.tourney; t.finished = true;
+  var counts = { best: 0, acceptable: 0, bad: 0, critical: 0 };
+  d.answers.forEach(function (a) { counts[a.tier] = (counts[a.tier] || 0) + 1; });
+  try { if (typeof _pfHistoryRecordSession === 'function') _pfHistoryRecordSession({ module: d.module, mode: 'tourney', queue: d.queue, answers: d.answers, totalScore: d.answers.reduce(function (s, a) { return s + (a.score || 0); }, 0), counts: counts }); } catch (e) {}
+  var ts = _pfTourneyLoad();
+  var cashed = t.hand >= 20, madeFT = t.hand >= 30, won = outcome === 'win';
+  if (cashed) ts.trophies.cash += 1;
+  if (madeFT) ts.trophies.ft += 1;
+  var firstWin = false;
+  if (won) { ts.trophies.win += 1; if (!ts.firstWinClaimed) { ts.firstWinClaimed = true; firstWin = true; } }
+  var run = { date: new Date().toISOString().slice(0, 10), endedHand: t.hand, finalStack: Math.round(t.stack * 10) / 10, series: t.series.map(function (v) { return Math.round(v * 10) / 10; }) };
+  ts.lastRun = run;
+  if (!ts.bestRun || run.endedHand > ts.bestRun.endedHand || (run.endedHand === ts.bestRun.endedHand && run.finalStack > (ts.bestRun.finalStack || 0))) ts.bestRun = run;
+  _pfTourneySave(ts);
+  if (firstWin) { try { _pfXpAward(500); if (typeof showToast === 'function') showToast('🏆 CHAMPION — first tournament win, +500 XP!'); } catch (e) {} }
+  var ev = Math.round(t.evSum * 10) / 10, dr = Math.round(t.driftSum * 10) / 10;
+  var lastA = d.answers[d.answers.length - 1];
+  var headline = won ? '🏆 TOURNAMENT CHAMPION' : (madeFT ? '💀 Busted at the Final Table' : (cashed ? '💀 Busted in the money' : '💀 Busted — hand ' + t.hand));
+  var bustLine = outcome === 'bust' ? '<div class="pf-score-label">' + (t.bustBy === 'blinds' ? 'Busted by blind pressure — your decisions were nearly break-even.' : 'Busted by mistakes — the blinds only finished the job.') + '</div>' : '';
+  var html =
+    '<div class="postflop-context-bar"><span class="postflop-context-label">🏆 Tournament · ' + (won ? 'Victory' : 'Run over') + '</span></div>' +
+    '<div class="postflop-summary-card">' +
+      '<div class="pf-learn-headline">' + headline + '</div>' +
+      '<div class="pf-score" style="margin-top:8px">' + run.finalStack + ' BB · hand ' + t.hand + '/40</div>' + bustLine +
+      '<div class="pf-gsum-row" style="margin-top:10px"><span class="lbl">Decision EV (regret math)</span><span style="color:' + (ev < 0 ? '#f87171' : '#4ade80') + '">' + (ev > 0 ? '+' : '') + ev + ' BB</span></div>' +
+      '<div class="pf-gsum-row"><span class="lbl">🎰 Blinds drift</span><span style="color:' + (dr < 0 ? '#f87171' : '#4ade80') + '">' + (dr > 0 ? '+' : '') + dr + ' BB</span></div>' +
+      '<div class="pf-gsum-row"><span class="lbl">Reconciles</span><span>100 ' + (ev >= 0 ? '+' : '') + ev + ' ' + (dr >= 0 ? '+' : '') + dr + ' = ' + Math.round((100 + ev + dr) * 10) / 10 + '</span></div>' +
+      '<div style="margin-top:8px">' + _pfTourneyGhostSvg(run.series, ts.bestRun !== run ? ts.bestRun : null) + '</div>' +
+      '<div class="pf-pc-note">Solid = this run · dashed = your best run · gray line = 100 BB start. Decision deltas are the same est.-EV heuristics as normal drills; blinds are the deterministic schedule shown at the start.</div>' +
+    '</div>' +
+    _pfGameSummaryHtml(d) +
+    '<div class="postflop-summary-actions" style="margin-top:14px">' +
+      (outcome === 'bust' && lastA && t.bustBy === 'mistakes' ? '<button class="postflop-next-btn pf-weak-btn" onclick="startPostflopRedrill([\'' + lastA.scenarioId + '\'])">↻ Rematch the killer hand</button>' : '') +
+      '<button class="postflop-next-btn" onclick="startPostflopTournament()">🏆 Run it again</button>' +
+      ((typeof _pfReceiptBtnHtml === 'function') ? _pfReceiptBtnHtml() : '') +
+      '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
+    '</div>';
+  d.phase = 'complete';
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { if (won) { _pfSfx('fanfare'); _pfConfettiBurst(document.querySelector('.postflop-summary-card')); } } catch (e) {}
+  try { if (typeof _pfBadgeSync === 'function') _pfBadgeSync(false); } catch (e) {}
+}
+// ----- Range Reveal (PIN-2 approved whitelist + amendments) -----
+// Qualitative bands ONLY, sourced from authored prose. NEGATION GUARD: a
+// negator within ~40 chars before the match (same sentence) suppresses the
+// band. Negator set: not, n't (isn't/doesn't/don't/won't/aren't...), never,
+// rarely, no longer. flush-dense counts only when its sentence also contains
+// "range" or "value" (villain-range guard, never board texture). No numbers
+// are ever shown or invented; no villain hand exists in the data. Unmatched
+// prose => feature silently absent. Tournament turn/river hands only.
+var _PF_REVEAL_BANDS = [
+  { band: 'bluff-heavy line',        rx: /(bluff-heavy|over-?bluff\w*|toward bluffs|tilting [^.!?]{0,40}toward bluffs|too few value)/i },
+  { band: 'value-heavy line',        rx: /(value-heavy|value-rich|value-weighted|toward (?:his )?value|bluff-light|too few bluffs|flush-dense)/i },
+  { band: 'polarized line',          rx: /(polar(?:ized|izing)?\b|value-or-bluff|nuts?-or-air|maximally polar)/i },
+  { band: 'merged / thin-value line', rx: /(merged|thin value|bets? thin)/i }
+];
+var _PF_REVEAL_NEG = /(?:\bnot\b|n't\b|\bnever\b|\brarely\b|\bno longer\b)/i;
+// Per-scenario suppression list (owner line-review of the full 510 hit-list,
+// 2026-07-05). Same pattern as _PF_MIXED_WHITELIST: explicit ids only, no
+// regex engineering. A listed id NEVER shows a Range Reveal chip.
+// - 9c9h_v440: matched sentence "...villain still has thin value (Kx) that
+//   calls a small raise" describes villain's CONTINUE-vs-raise range, not the
+//   composition of villain's betting line — chip would mislabel the bet.
+var _PF_REVEAL_SUPPRESS = {
+  'pf_btn_v_bb_srp_100bb_river_Ks9d4c_7s_m5_action_9c9h_v440': true
+};
+function _pfRangeRevealBand(scenario) {
+  try {
+    if (!scenario || !scenario.explanation) return null;
+    if (_PF_REVEAL_SUPPRESS[scenario.id]) return null;   // owner line-review suppression
+    var ex = scenario.explanation;
+    // field set: riverLogic (M5) + turnLogic (M4) + shared frames + blockerNote
+    var prose = [ex.riverLogic, ex.turnLogic, ex.rangeContext, ex.handLogic, scenario.blockerNote].filter(Boolean).join(' ');
+    if (!prose) return null;
+    var sentences = prose.split(/(?<=[.!?])\s+|\s--\s/);
+    var polar = null, lean = null, other = null, suppressed = [];
+    for (var si = 0; si < sentences.length; si++) {
+      var sent = sentences[si];
+      for (var bi = 0; bi < _PF_REVEAL_BANDS.length; bi++) {
+        var m = sent.match(_PF_REVEAL_BANDS[bi].rx);
+        if (!m) continue;
+        // flush-dense villain-range guard
+        if (/flush-dense/i.test(m[0]) && !/(range|value)/i.test(sent)) continue;
+        // negation guard: ~40-char window before the match in this sentence
+        var win = sent.slice(Math.max(0, m.index - 40), m.index);
+        if (_PF_REVEAL_NEG.test(win)) { suppressed.push({ band: _PF_REVEAL_BANDS[bi].band, sent: sent.trim() }); continue; }
+        var b = _PF_REVEAL_BANDS[bi].band;
+        if (b === 'polarized line') { if (!polar) polar = { band: b, sent: sent.trim() }; }
+        else if (b === 'bluff-heavy line' || b === 'value-heavy line') { if (!lean) lean = { band: b, sent: sent.trim() }; }
+        else if (!other) other = { band: b, sent: sent.trim() };
+      }
+    }
+    var pick = null;
+    if (polar && lean) pick = { band: 'polarized · ' + (lean.band === 'bluff-heavy line' ? 'bluff-lean' : 'value-lean'), sent: polar.sent };
+    else pick = lean || polar || other;
+    if (!pick) return suppressed.length ? { suppressed: suppressed } : null;
+    pick.suppressedCount = suppressed.length;
+    return pick;
+  } catch (e) { return null; }
+}
+function _pfRangeRevealChipHtml(d, scenario) {
+  if (!d || d.mode !== 'tourney') return '';           // tournament-only drama beat
+  if (scenario.module !== 'pf_turn_barrel_oop_def' && scenario.module !== 'pf_river_barrel_oop_def') return '';
+  var r = _pfRangeRevealBand(scenario);
+  if (!r || !r.band) return '';
+  return '<div class="pf-reveal-chip">📡 Table read: this is a <strong>' + _pfEscape(r.band) + '</strong></div>';
+}
+// ============================================================================
+// END v4.5.0 G3 — TOURNAMENT MODE (core + Range Reveal)
+// ============================================================================
+
 function advancePostflopDrill() {
   var d = App.state.postflopDrill;
   if (!d.active) return;
+  // v4.5.0 G3: tournament has its own continuous flow (deal-per-hand, drift
+  // beat between hands, elimination, win at hand 40). Strict mode gate.
+  if (d.mode === 'tourney' && d.tourney) {
+    if (d.tourney.pendingBust) { _pfTourneyFinish(d, 'bust'); return; }
+    _pfTourneyAdvance(d);
+    return;
+  }
   d.currentIndex++;
   if (d.currentIndex >= d.queue.length) {
     d.phase = 'complete';
@@ -40113,7 +40398,9 @@ var TRAINING_MODES = {
       { id: 'daily',     label: 'Daily Challenge', hint: '5 hands · new every day · keep the streak', icon: '📅', kind: 'secondary', route: 'postflop:daily', badge: 'NEW' },
       // v4.4.5 G2: Boss Exams + Revenge Hands.
       { id: 'boss',      label: 'Boss Exams', hint: '5 bosses · no hints · trophy at 80%+', icon: '⚔️', kind: 'secondary', route: 'postflop:boss', badge: 'NEW' },
-      { id: 'revenge',   label: 'Revenge Hands', hint: 'return to your punts · make them right', icon: '🩹', kind: 'secondary', route: 'postflop:revenge', badge: 'NEW' }
+      { id: 'revenge',   label: 'Revenge Hands', hint: 'return to your punts · make them right', icon: '🩹', kind: 'secondary', route: 'postflop:revenge', badge: 'NEW' },
+      // v4.5.0 G3: the flagship run mode.
+      { id: 'tourney',   label: 'Tournament', hint: '40 hands · rising blinds · survive to the Final Table', icon: '🏆', kind: 'secondary', route: 'postflop:tourney', badge: 'NEW' }
     ]
   }
 };
@@ -40252,6 +40539,14 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopRevenge === 'function') startPostflopRevenge();
+      break;
+    case 'postflop:tourney':
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopTournament === 'function') startPostflopTournament();
       break;
     case 'postflop:concepts':
       if (!betaOn) {
@@ -40969,6 +41264,7 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
         '<span class="pf-result-meta">Your pick: ' + _pfEscape(pickedLabel) + '<br>GTO best: ' + _pfEscape(bestLabel) + '</span>' +
       '</div>' +
       _pfGameResultBannerHtml(d) +
+      ((typeof _pfRangeRevealChipHtml === 'function') ? _pfRangeRevealChipHtml(d, scenario) : '') +
       avengedHtml +
       personaQuipHtml +
       (explanation.short ? '<div class="postflop-short-explain">💡 ' + _pfEscape(_pfFixMojibake(explanation.short)) + '</div>' : '') +
