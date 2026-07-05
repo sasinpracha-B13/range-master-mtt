@@ -10109,6 +10109,40 @@
       .pf-anim-deal, .pf-anim-flip, .pf-chip-fly, .pf-anim-shake, .pf-punt-vignette, .pf-anim-pop, .pf-confetti { animation: none !important; }
     }
 
+    /* ===== v4.4.4 G1 — Player Card / badges / strip ===== */
+    .pf-player-card {
+      padding: 14px; margin-bottom: 14px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(45,212,191,0.10), rgba(167,139,250,0.08));
+      border: 1px solid rgba(45,212,191,0.30);
+    }
+    .pf-pc-head { display: flex; align-items: center; gap: 12px; }
+    .pf-pc-rankicon { font-size: 34px; line-height: 1; }
+    .pf-pc-headtxt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .pf-pc-rank { font-size: 18px; font-weight: 800; }
+    .pf-pc-xp { font-size: 11px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    .pf-pc-xpbar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.08); margin: 10px 0 8px; overflow: hidden; }
+    .pf-pc-xpfill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #2dd4bf, #a78bfa); }
+    .pf-pc-stats { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; margin-bottom: 10px; }
+    .pf-pc-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; }
+    .pf-badge-cell {
+      position: relative; padding: 8px 6px; border-radius: 10px; text-align: center;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      opacity: 0.55; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .pf-badge-cell.is-unlocked { opacity: 1; border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.08); }
+    .pf-badge-icon { font-size: 20px; line-height: 1; }
+    .pf-badge-name { font-size: 9px; font-weight: 700; letter-spacing: 0.2px; line-height: 1.2; }
+    .pf-badge-done { font-size: 10px; color: #fbbf24; font-weight: 800; }
+    .pf-badge-bar { width: 100%; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .pf-badge-fill { height: 100%; background: #2dd4bf; }
+    .pf-pc-note { margin-top: 10px; font-size: 10px; line-height: 1.5; color: var(--text-secondary); opacity: 0.8; }
+    .pf-player-strip {
+      display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin: 8px 0;
+      border-radius: 10px; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
+      font-size: 12px; font-weight: 700;
+    }
+    .pf-player-strip .pf-pc-xpbar { margin: 0; }
+
     .postflop-question-prompt {
       font-size: 14px;
       color: var(--text);
@@ -14804,6 +14838,9 @@ function updateDailyStats(score) {
   // Keep legacy "correct" field meaning full-credit answers only.
   if (score >= 0.7) day.correct++;
   App.state.stats.totalHands++;
+  // v4.4.4 G1: preflop XP (approved mapping 25 correct / 5 otherwise; same
+  // >=0.7 full-credit convention as the stored "correct" field). Never blocks.
+  try { if (typeof _pfXpAward === 'function') _pfXpAward(score >= 0.7 ? 25 : 5); } catch (eXp) {}
 
   // Daily streak
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -15330,6 +15367,7 @@ function renderProgress() {
   const chartData = buildChartData();
 
   document.getElementById('progressContent').innerHTML = `
+    ${(typeof _pfPlayerCardHtml === 'function') ? _pfPlayerCardHtml() : ''}
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value">${weekHands}</div>
@@ -33372,7 +33410,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.4.3',
+    appVersion: '4.4.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34538,8 +34576,13 @@ function _pfGameStatsLoad() {
   try {
     var raw = localStorage.getItem('rmtt_gamestats');
     var s = raw ? JSON.parse(raw) : {};
-    return { lifetimeScore: s.lifetimeScore || 0, lifetimeSavedBB: s.lifetimeSavedBB || 0, bestCombo: s.bestCombo || 0, tightTier: s.tightTier || 0 };
-  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0 }; }
+    return {
+      lifetimeScore: s.lifetimeScore || 0, lifetimeSavedBB: s.lifetimeSavedBB || 0,
+      bestCombo: s.bestCombo || 0, tightTier: s.tightTier || 0,
+      // v4.4.4 G1 fields (must round-trip through load/save)
+      xp: s.xp || 0, xpSeeded: !!s.xpSeeded, xpSeed: s.xpSeed || null, badges: s.badges || {}
+    };
+  } catch (e) { return { lifetimeScore: 0, lifetimeSavedBB: 0, bestCombo: 0, tightTier: 0, xp: 0, xpSeeded: false, xpSeed: null, badges: {} }; }
 }
 function _pfGameStatsSave(s) {
   try { localStorage.setItem('rmtt_gamestats', JSON.stringify(s)); } catch (e) { /* quota — non-fatal */ }
@@ -34629,16 +34672,24 @@ function _pfGameOnAnswer(d, scenario, choiceId, cls) {
   }
   // lifetime stats + Tight-is-Right badge
   var badgeUp = null;
+  var rankUpTo = null;
   try {
     var ls = _pfGameStatsLoad();
     ls.lifetimeScore += points;
     ls.lifetimeSavedBB = Math.round((ls.lifetimeSavedBB + savedNow) * 10) / 10;
     if (g.combo > ls.bestCombo) ls.bestCombo = g.combo;
+    // v4.4.4 G1: XP accrual (= the Score stream) + rank-up detection.
+    _pfXpSeedIfNeeded(ls);
+    var rankBefore = _pfRankFor(ls.xp || 0).idx;
+    ls.xp = (ls.xp || 0) + points;
+    var rankAfter = _pfRankFor(ls.xp).idx;
+    if (rankAfter > rankBefore) rankUpTo = _PF_RANKS[rankAfter];
     for (var bi = 0; bi < _PF_BADGE_TIERS.length; bi++) {
       if (ls.lifetimeSavedBB >= _PF_BADGE_TIERS[bi].at && ls.tightTier < bi + 1) { ls.tightTier = bi + 1; badgeUp = _PF_BADGE_TIERS[bi].name; }
     }
     _pfGameStatsSave(ls);
   } catch (e) { /* stats failure never blocks play */ }
+  if (rankUpTo) { try { setTimeout(function () { _pfRankUpFx(rankUpTo); }, 350); } catch (e2) {} }
   d.lastGameResult = { frame: frame, gameTier: gameTier, teachTier: cls.tier, delta: delta, label: label, kind: kind, points: points, mult: mult, combo: g.combo, comboBroke: comboBroke, stake: stake, savedNow: savedNow, badgeUp: badgeUp };
   // SFX
   if (kind === 'punt') _pfSfx('puntSting');
@@ -34855,6 +34906,240 @@ function togglePfSound(on)  { App.state.settings.pfSoundFx = !!on;  try { App.sa
 function togglePfMotion(on) { App.state.settings.pfMotionFx = !!on; try { App.saveProgress(); } catch (e) {} }
 // ============================================================================
 // END v4.4.3 JUICE PACK — GAME LAYER
+// ============================================================================
+
+// ============================================================================
+// v4.4.4 G1 — PROGRESSION CORE (XP · Player Level · Badges · Player Card)
+// Display/meta layer only. XP ≡ the v4.4.3 Score stream going forward.
+// RETROACTIVE CREDIT INTEGRITY (binding condition): the one-time seed is
+// derived ONLY from real stored records — no estimation, no synthetic backfill:
+//   postflop: rmtt_postflop_history.sessions[].{best,acceptable,bad,critical}
+//             -> sum(best*100 + acceptable*40 + bad*10)   [base points, no
+//             combo: combo was never stored historically — conservative]
+//   preflop:  rmtt_stats.dailyHistory[date].{hands,correct}
+//             -> sum(correct*25 + (hands-correct)*5)      [partial-credit
+//             answers sit on the 5-XP side by stored-"correct" convention]
+//   Exam/boss +200 accrues LIVE from v4.4.4 onward only (no reliable stored
+//   per-exam record for backfill — scope-guard, disclosed in Player Card).
+// The existing preflop mastery ranks (rmtt_profile) and Chips economy
+// (awardChips) are UNTOUCHED — Player Level is a separate overall-grind axis.
+// ============================================================================
+var _PF_RANKS = [
+  { at: 0,      name: 'Fish',       icon: '🐟' },
+  { at: 2500,   name: 'Grinder',    icon: '🎣' },
+  { at: 7500,   name: 'Reg',        icon: '♟️' },
+  { at: 20000,  name: 'Solid Reg',  icon: '🛡️' },
+  { at: 50000,  name: 'Crusher',    icon: '💪' },
+  { at: 100000, name: 'Shark',      icon: '🦈' },
+  { at: 200000, name: 'Elite Pro',  icon: '👑' },
+  { at: 400000, name: 'GTO Wizard', icon: '🧙' }
+];
+function _pfRankFor(xp) {
+  var idx = 0;
+  for (var i = 0; i < _PF_RANKS.length; i++) { if (xp >= _PF_RANKS[i].at) idx = i; }
+  return { idx: idx, cur: _PF_RANKS[idx], next: _PF_RANKS[idx + 1] || null };
+}
+// One-time retroactive seed from real stored records only. Idempotent.
+function _pfXpSeedIfNeeded(ls) {
+  if (ls.xpSeeded) return ls;
+  var pfBase = 0;
+  try {
+    var hist = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    for (var i = 0; i < sessions.length; i++) {
+      var s = sessions[i] || {};
+      pfBase += (s.best || 0) * 100 + (s.acceptable || 0) * 40 + (s.bad || 0) * 10;
+    }
+  } catch (e) {}
+  var preBase = 0;
+  try {
+    var dh = (App.state && App.state.stats && App.state.stats.dailyHistory) || {};
+    for (var k in dh) {
+      var d = dh[k] || {};
+      var hands = d.hands || 0, correct = d.correct || 0;
+      preBase += correct * 25 + Math.max(0, hands - correct) * 5;
+    }
+  } catch (e) {}
+  ls.xp = (ls.xp || 0) + pfBase + preBase;
+  ls.xpSeed = { postflopBase: pfBase, preflopBase: preBase };
+  ls.xpSeeded = true;
+  return ls;
+}
+function _pfRankUpFx(rank) {
+  try {
+    if (typeof showToast === 'function') showToast('🎉 LEVEL UP — ' + rank.icon + ' ' + rank.name + '!');
+    _pfSfx('fanfare');
+    _pfConfettiBurst(document.querySelector('.postflop-feedback-card') || document.querySelector('.pf-player-card') || document.body);
+  } catch (e) {}
+}
+// Central XP award (postflop passes v4.4.3 points; preflop passes 25/5/200).
+function _pfXpAward(points) {
+  if (!points) return;
+  try {
+    var ls = _pfGameStatsLoad();
+    _pfXpSeedIfNeeded(ls);
+    var before = _pfRankFor(ls.xp || 0).idx;
+    ls.xp = (ls.xp || 0) + points;
+    var after = _pfRankFor(ls.xp).idx;
+    _pfGameStatsSave(ls);
+    if (after > before) _pfRankUpFx(_PF_RANKS[after]);
+  } catch (e) {}
+}
+
+// ----- Badge engine: declarative defs computed from REAL stored data only -----
+function _pfBadgeAgg() {
+  // One aggregation pass shared by all badges. "Correct" = teaching tier 'best'
+  // (strict; whitelist promotions are game-layer only and do NOT count here).
+  var agg = { riverBest: 0, turnBest: 0, readBest: 0, mdfBest: 0, blockerBest: 0, cleanSheets: 0, noPuntSessions: 0 };
+  try {
+    var byId = {};
+    var pool = (App.postflop && App.postflop.scenarios) || [];
+    for (var p = 0; p < pool.length; p++) { if (pool[p] && pool[p].id) byId[pool[p].id] = pool[p]; }
+    var hist = (typeof _pfHistoryLoad === 'function') ? _pfHistoryLoad() : null;
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    for (var i = 0; i < sessions.length; i++) {
+      var s = sessions[i] || {};
+      var answered = s.answered || (Array.isArray(s.answers) ? s.answers.length : 0);
+      if (answered >= 10 && (s.bad || 0) === 0 && (s.critical || 0) === 0) agg.cleanSheets++;
+      if ((s.critical || 0) === 0 && answered > 0) agg.noPuntSessions++;
+      var arr = Array.isArray(s.answers) ? s.answers : [];
+      for (var j = 0; j < arr.length; j++) {
+        var a = arr[j];
+        if (!a || a.tier !== 'best') continue;
+        var sc = byId[a.scenarioId];
+        if (!sc) continue;
+        var qt = sc.question && (sc.question.qtype || sc.question.type);
+        var isRead = (sc.module === 'pf_board_texture') || (qt !== 'action_choice');
+        if (isRead) agg.readBest++;
+        if (sc.module === 'pf_river_barrel_oop_def') agg.riverBest++;
+        if (sc.module === 'pf_turn_barrel_oop_def') agg.turnBest++;
+        var rsn = sc.actionReason || '';
+        if (/bluff_catch|mdf|pot_odds/.test(rsn)) agg.mdfBest++;
+        if (/blocker/.test(rsn)) agg.blockerBest++;
+      }
+    }
+  } catch (e) {}
+  return agg;
+}
+var _PF_BADGES = [
+  { id: 'tight1',  icon: '✋', name: 'Tight is Right I',   target: 25,   src: 'savedBB' },
+  { id: 'tight2',  icon: '✋', name: 'Tight is Right II',  target: 100,  src: 'savedBB' },
+  { id: 'tight3',  icon: '✋', name: 'Tight is Right III', target: 300,  src: 'savedBB' },
+  { id: 'tight4',  icon: '✋', name: 'Tight is Right IV',  target: 1000, src: 'savedBB' },
+  { id: 'mdf',     icon: '🛡️', name: 'MDF Defender',       target: 25,   src: 'mdfBest' },
+  { id: 'blocker', icon: '🃏', name: 'Blocker Brain',      target: 15,   src: 'blockerBest' },
+  { id: 'river',   icon: '🌊', name: 'River Rat',          target: 100,  src: 'riverBest' },
+  { id: 'turn',    icon: '🎯', name: 'Turn Guardian',      target: 100,  src: 'turnBest' },
+  { id: 'reader',  icon: '🔍', name: 'Table Reader',       target: 100,  src: 'readBest' },
+  { id: 'clean',   icon: '🧼', name: 'Clean Sheet',        target: 1,    src: 'cleanSheets' },
+  { id: 'nopunt',  icon: '🚫', name: 'No-Punt Grinder',    target: 10,   src: 'noPuntSessions' },
+  { id: 'combo',   icon: '🔥', name: 'Combo King',         target: 12,   src: 'bestCombo' },
+  { id: 'daily7',  icon: '📅', name: 'Daily Devotee',      target: 7,    src: 'dailyStreak' },
+  { id: 'daily30', icon: '⚔️', name: 'Iron Streak',        target: 30,   src: 'dailyStreak' },
+  { id: 'reg',     icon: '♟️', name: 'Making It (Reg)',    target: 7500,   src: 'xp' },
+  { id: 'wizard',  icon: '🧙', name: 'The Long Game',      target: 400000, src: 'xp' }
+];
+function _pfBadgeValues() {
+  var ls = _pfGameStatsLoad();
+  _pfXpSeedIfNeeded(ls);
+  var agg = _pfBadgeAgg();
+  var daily = (typeof _pfDailyLoad === 'function') ? _pfDailyLoad() : {};
+  return {
+    savedBB: ls.lifetimeSavedBB || 0, bestCombo: ls.bestCombo || 0, xp: ls.xp || 0,
+    dailyStreak: daily.streak || 0,
+    riverBest: agg.riverBest, turnBest: agg.turnBest, readBest: agg.readBest,
+    mdfBest: agg.mdfBest, blockerBest: agg.blockerBest,
+    cleanSheets: agg.cleanSheets, noPuntSessions: agg.noPuntSessions,
+    _ls: ls
+  };
+}
+// Recompute all badges; fire unlock FX exactly once per badge; persist.
+function _pfBadgeSync(quiet) {
+  try {
+    var v = _pfBadgeValues();
+    var ls = v._ls;
+    if (!ls.badges) ls.badges = {};
+    var newly = [];
+    for (var i = 0; i < _PF_BADGES.length; i++) {
+      var b = _PF_BADGES[i];
+      var val = v[b.src] || 0;
+      var was = ls.badges[b.id] && ls.badges[b.id].unlocked;
+      var now = val >= b.target;
+      ls.badges[b.id] = { unlocked: !!(was || now), progress: Math.min(val, b.target) };
+      if (now && !was) newly.push(b);
+    }
+    _pfGameStatsSave(ls);
+    if (!quiet) {
+      for (var n = 0; n < newly.length; n++) {
+        (function (b, delay) {
+          setTimeout(function () {
+            try {
+              if (typeof showToast === 'function') showToast('🏅 Badge unlocked — ' + b.icon + ' ' + b.name + '!');
+              _pfSfx('fanfare');
+              _pfConfettiBurst(document.querySelector('.postflop-summary-card') || document.querySelector('.pf-player-card'));
+            } catch (e) {}
+          }, delay);
+        })(newly[n], 400 + n * 900);
+      }
+    }
+    return newly.length;
+  } catch (e) { return 0; }
+}
+
+// ----- Player Card (Progress tab) + mini strip (Academy) -----
+function _pfPlayerCardHtml() {
+  var ls = _pfGameStatsLoad();
+  _pfXpSeedIfNeeded(ls);
+  _pfGameStatsSave(ls);
+  _pfBadgeSync(true); // quiet refresh so the card is current without FX spam
+  ls = _pfGameStatsLoad();
+  var r = _pfRankFor(ls.xp || 0);
+  var pctToNext = r.next ? Math.min(100, Math.round(((ls.xp - r.cur.at) / (r.next.at - r.cur.at)) * 100)) : 100;
+  var daily = (typeof _pfDailyLoad === 'function') ? _pfDailyLoad() : {};
+  var seed = ls.xpSeed || { postflopBase: 0, preflopBase: 0 };
+  var badgeCells = _PF_BADGES.map(function (b) {
+    var st = (ls.badges && ls.badges[b.id]) || { unlocked: false, progress: 0 };
+    var pct = Math.min(100, Math.round((st.progress / b.target) * 100));
+    return '<div class="pf-badge-cell' + (st.unlocked ? ' is-unlocked' : '') + '" title="' + _pfEscape(b.name + ' — ' + st.progress + '/' + b.target) + '">' +
+             '<span class="pf-badge-icon">' + b.icon + '</span>' +
+             '<span class="pf-badge-name">' + _pfEscape(b.name) + '</span>' +
+             (st.unlocked ? '<span class="pf-badge-done">✓</span>' : '<div class="pf-badge-bar"><div class="pf-badge-fill" style="width:' + pct + '%"></div></div>') +
+           '</div>';
+  }).join('');
+  return '<div class="pf-player-card">' +
+           '<div class="pf-pc-head">' +
+             '<span class="pf-pc-rankicon">' + r.cur.icon + '</span>' +
+             '<div class="pf-pc-headtxt">' +
+               '<span class="pf-pc-rank">' + _pfEscape(r.cur.name) + '</span>' +
+               '<span class="pf-pc-xp">' + (ls.xp || 0).toLocaleString() + ' XP' + (r.next ? ' · next: ' + r.next.icon + ' ' + _pfEscape(r.next.name) + ' @ ' + r.next.at.toLocaleString() : ' · MAX') + '</span>' +
+             '</div>' +
+           '</div>' +
+           '<div class="pf-pc-xpbar"><div class="pf-pc-xpfill" style="width:' + pctToNext + '%"></div></div>' +
+           '<div class="pf-pc-stats">' +
+             '<span>✋ ' + (Math.round((ls.lifetimeSavedBB || 0) * 10) / 10) + ' BB saved</span>' +
+             '<span>🔥 combo ' + (ls.bestCombo || 0) + '</span>' +
+             '<span>📅 streak ' + (daily.streak || 0) + '</span>' +
+           '</div>' +
+           '<div class="pf-pc-badges">' + badgeCells + '</div>' +
+           '<div class="pf-pc-note">XP: retroactive credit from your stored history (postflop ' + seed.postflopBase.toLocaleString() + ' + preflop ' + seed.preflopBase.toLocaleString() + ') + live play since v4.4.4. Exam bonuses count from v4.4.4 onward. Preflop mastery ranks + Chips are separate and unchanged.</div>' +
+         '</div>';
+}
+function _pfPlayerStripHtml() {
+  try {
+    var ls = _pfGameStatsLoad();
+    _pfXpSeedIfNeeded(ls);
+    _pfGameStatsSave(ls);
+    var r = _pfRankFor(ls.xp || 0);
+    var pctToNext = r.next ? Math.min(100, Math.round(((ls.xp - r.cur.at) / (r.next.at - r.cur.at)) * 100)) : 100;
+    return '<div class="pf-player-strip">' +
+             '<span>' + r.cur.icon + ' ' + _pfEscape(r.cur.name) + '</span>' +
+             '<div class="pf-pc-xpbar" style="flex:1"><div class="pf-pc-xpfill" style="width:' + pctToNext + '%"></div></div>' +
+             '<span class="pf-pc-xp">' + (ls.xp || 0).toLocaleString() + ' XP</span>' +
+           '</div>';
+  } catch (e) { return ''; }
+}
+// ============================================================================
+// END v4.4.4 G1 — PROGRESSION CORE
 // ============================================================================
 
 function advancePostflopDrill() {
@@ -39089,6 +39374,7 @@ function _pfAcademyHomeHtml() {
              '<span class="pf-academy-subtitle">Learn board texture, advantage, c-bet strategy, and postflop decision-making step by step.</span>' +
            '</div>' +
            _pfAcademySnapshotHtml(stats) +
+           _pfPlayerStripHtml() +
            _pfDailyBlockHtml() +
            _pfAcademyRecommendationHtml(stats) +
            _pfCurriculumMapHtml(stats) +
@@ -41252,6 +41538,8 @@ function renderPostflopComplete() {
       _pfConfettiBurst(document.querySelector('.postflop-summary-card'));
     }
   } catch (eF) { /* FX never block render */ }
+  // v4.4.4 G1: recompute badges after the session lands in history (unlock FX fires here).
+  try { if (typeof _pfBadgeSync === 'function') _pfBadgeSync(false); } catch (eB) {}
   try { var mc = document.getElementById('mainContent'); if (mc && mc.scrollTo) mc.scrollTo(0, 0); } catch(e){}
 }
 

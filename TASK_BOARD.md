@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-05 (v4.4.3 Juice Pack — game layer live (two-account model + Daily Challenge + SFX/FX), data byte-identical 510/0/0. **PROGRAM PIVOT: game program = main track**; roadmap G1→G5 approved (M6 = Tournament content drop at G4). Next: G1 spec (v4.4.4).).
+> Last updated: 2026-07-05 (v4.4.4 G1 Progression Core — XP/ranks/badges/Player Card live, retroactive credit from real records only, data byte-identical 510/0/0. Next: G2 Challenge Layer spec (v4.4.5).).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.4.4 G1 Progression Core (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — XP with **retroactive credit from real stored records ONLY** (postflop session tier-counts ×100/40/10 base; preflop dailyHistory correct×25 + rest×5; exam +200 live-only scope-guard, disclosed in UI; idempotent seed; worked example real profile: 3,400 XP → 🎣 Grinder, formulaMatch:true) + live XP hooks both sides (+125 combo-inclusive postflop / +25/+5 preflop via real `updateDailyStats` path) + **8-rank Player Level** (Fish→GTO Wizard 400k) + **16-badge engine** (strict tier=best from real history; 3 unlocked in QA; single-fire FX) + **Player Card** (Progress tab; badge case + integrity note) + Academy strip. Preflop ranks + Chips untouched. QA-caught round-trip loader bug fixed + evidence re-run. 320 clean (card right 304), 0 console errors, data hash == HEAD, 510/0/0. Screenshot tooling timed out (fresh server, clean console) → DOM-assertion fallback per owner approval, noted in MANIFEST. Cache 4.4.3→4.4.4. Spec `docs/specs/game-g1-v4.4.4-progression-core-spec.md`; snapshot `GPT AUDIT/v4.4.4/`. **Next: G2 spec (v4.4.5) — Boss Exams + Revenge Hands + personas.**
 
 🟢 **v4.4.3 Juice Pack (GAME LAYER; DATA BYTE-IDENTICAL 510/0/0)** — owner-approved spec built + QA'd: **two-account model** (Session-EV Stack regret-based vs authored tiers — best fold "✋ Saved X BB", M2 check "✋ Correct check ✓", crit −1.5×stake; Score/combo = loud game currency ×3 cap), **derived stakes** (M3 2/M2 3/M4 5/M5 7-13-20-30 → river-overbet punt **−45 BB** vs flop bad −1.5), **mixed whitelist** hard-coded (12 scenarios, explicit pairs; AdTh {mixed,call} verified deliberate — prose "leans call"; JsTs proves gating), **frames** (M1+reason = 🔍 Table Read, Score only), **Daily Challenge** (deterministic FNV/xorshift, 1/day, heatmap+streak, TCC tile), **Saved-BB ledger + Tight-is-Right badges** (25/100/300/1000), **6 synthesized SFX + CSS FX** (deal/flip/chip-fly/shake/vignette/fire/confetti; Sound+Motion toggles; reduced-motion honored). QA: perfect-session honest EV + climbing score; whitelist gating proven; Daily deterministic + blocked 2nd attempt + persists; 320×700 clean; 0 console errors; data hash == HEAD (65f0022d…). Cache 4.4.2→4.4.3. **PROGRAM PIVOT: game = main track. Roadmap approved G1 Progression → G2 Challenge (Boss deferred-feedback ONLY in Boss + full end-review + re-drill links) → G3 Tournament → G4 M6-as-content-drop → G5 opt-in Blitz.** New spec doc `docs/specs/postflop-v4.4.3-juice-pack-spec.md`; snapshot `GPT AUDIT/v4.4.3/`. **Next: G1 (v4.4.4) spec → review.**
 
