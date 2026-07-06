@@ -166,7 +166,8 @@ foreach($s in $data.scenarios){
   # flop modules; M4 has its own R55+ rules for board validation.
   # v4.4.1: M5 (pf_river_barrel_oop_def) also excluded -- river 5-card board uses
   # riverCategory / runoutTexture / villainRiverSizing, not rangeAdvantage/nutAdvantage.
-  if($s.board -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def'){
+  # v4.5.2: M6 (pf_river_value_ip) also excluded -- same 5-card river board family; M6 has its own R94+ rules.
+  if($s.board -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def' -and $s.module -ne 'pf_river_value_ip'){
     if(-not $validRA.Contains($s.board.rangeAdvantage)){
       Add-Issue $local 'R10' 'error' $sid "Invalid board.rangeAdvantage: `"$($s.board.rangeAdvantage)`"" | Out-Null
     }
@@ -199,7 +200,8 @@ foreach($s in $data.scenarios){
   # rules. Scope this rule to flop modules.
   # v4.4.1: M5 (pf_river_barrel_oop_def) also excluded -- river board has 5 cards
   # and uses suitTextureFlop/Turn/River, not a single suitTexture; M5 has its own R76+ rules.
-  if($s.board -and $s.board.textureTags -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def'){
+  # v4.5.2: M6 (pf_river_value_ip) also excluded -- same reasoning; M6 has its own R94+ rules.
+  if($s.board -and $s.board.textureTags -and $s.module -ne 'pf_turn_barrel_oop_def' -and $s.module -ne 'pf_river_barrel_oop_def' -and $s.module -ne 'pf_river_value_ip'){
     $tagSet = @{}; foreach($t in $s.board.textureTags){ $tagSet[$t] = $true }
     foreach($pair in $tax.contradictoryPairs){
       if($tagSet.ContainsKey($pair[0]) -and $tagSet.ContainsKey($pair[1])){
@@ -1452,6 +1454,126 @@ foreach($s in $data.scenarios){
     }
   }
 
+  # ========================================================================
+  # R94-R106 -- Module 6 (pf_river_value_ip) v4.5.2 production rules
+  # Bettor-side river (BTN IP after BB checks). Mirror the hard-error subset
+  # of the M6 seed auditor (tools/audit-postflop-module6-seed.ps1 M6.R01-R25)
+  # incl. the owner PINs: verdictBasis (solver_required hard-blocked),
+  # stakeBasis (fixed per scenario), mixed whitelist-in-data, and the
+  # CHECK-BACK-NUTS bounds (R24/R25 mirrors in R103/R104).
+  # ========================================================================
+  if ($s.module -eq 'pf_river_value_ip') {
+    $m6SzMap        = @{ small='bet_small'; medium='bet_medium'; large='bet_big'; overbet='overbet' }
+    $m6ValidActions = @('check_back','bet_small','bet_big','overbet','mixed')
+    $m6ValidReasons = @('value_bet_thick_river','value_bet_thin_river','polar_overbet_nut_river',
+                        'blocker_bluff_river','give_up_no_equity_river','check_back_showdown_river',
+                        'check_back_trap_risk_river','sizing_merge_small_river','sizing_polar_big_river',
+                        'blocker_sidedness_mix_river','unblock_fold_region_river','story_consistency_bluff_river')
+    $m6ValidBasis   = @('clear_direction','mixed_nudge')
+    $m6ValidStake   = @('small','medium','large','overbet')
+    $m6ValidHrs     = @('small','medium','large','overbet','none')
+    $m6ValidPurpose = @('thick_value','thin_value','bluff','give_up','showdown_check','mixed_line')
+
+    # R94 -- module/street/schema/spot lock (bettor side)
+    if ($s.street -ne 'river') { Add-Issue $local 'R94' 'error' $sid ("M6 expects street=river, got " + $s.street) | Out-Null }
+    if ($s.schemaVersion -and $s.schemaVersion -ne '1.4.0') { Add-Issue $local 'R94' 'error' $sid ("M6 expects schemaVersion=1.4.0, got " + $s.schemaVersion) | Out-Null }
+    if ($s.spot) {
+      if ($s.spot.heroPosition -ne 'BTN') { Add-Issue $local 'R94' 'error' $sid 'M6 hero must be BTN (bettor IP)' | Out-Null }
+      if ($s.spot.villainPosition -ne 'BB') { Add-Issue $local 'R94' 'error' $sid 'M6 villain must be BB' | Out-Null }
+      if ($s.spot.riverAction -ne 'BB checks river') { Add-Issue $local 'R94' 'error' $sid 'M6 spot.riverAction must be "BB checks river"' | Out-Null }
+    }
+
+    # R95 -- board integrity: 5 distinct cards, cards[] == flop+turn+river, no hero overlap
+    if ($s.board -and $s.board.cards) {
+      $m6Cards = @($s.board.cards)
+      if ($m6Cards.Count -ne 5) { Add-Issue $local 'R95' 'error' $sid 'M6 board must have 5 cards' | Out-Null }
+      $m6All = $m6Cards + @($s.heroHand)
+      if (($m6All | Select-Object -Unique).Count -ne 7) { Add-Issue $local 'R95' 'error' $sid 'M6 card collision among board+hero' | Out-Null }
+      $m6Exp = @($s.board.flopCards) + @($s.board.turnCard, $s.board.riverCard)
+      if (($m6Exp -join ',') -ne ($m6Cards -join ',')) { Add-Issue $local 'R95' 'error' $sid 'M6 cards[] != flop+turn+river' | Out-Null }
+    }
+
+    # R96 -- qtype + choices enums
+    $m6Qt = if ($s.question) { $s.question.qtype } else { $null }
+    $m6Ch = if ($s.question -and $s.question.choices) { @($s.question.choices) } else { @() }
+    if ($m6Qt -eq 'action_choice') {
+      foreach ($c in $m6Ch) { if ($m6ValidActions -notcontains $c) { Add-Issue $local 'R96' 'error' $sid ("M6 unknown action choice " + $c) | Out-Null } }
+      if ($m6Ch -notcontains 'check_back') { Add-Issue $local 'R96' 'error' $sid 'M6 action rows must offer check_back' | Out-Null }
+    } elseif ($m6Qt -eq 'reason_choice') {
+      foreach ($c in $m6Ch) { if ($m6ValidReasons -notcontains $c) { Add-Issue $local 'R96' 'error' $sid ("M6 unknown reason choice " + $c) | Out-Null } }
+    } else { Add-Issue $local 'R96' 'error' $sid ("M6 qtype must be action_choice|reason_choice, got " + $m6Qt) | Out-Null }
+
+    # R97 -- answer partition exactly covers choices, no overlap
+    if ($s.answer) {
+      $m6Ans = @($s.answer.best) + @($s.answer.acceptable) + @($s.answer.bad) + @($s.answer.critical)
+      if ((($m6Ans | Sort-Object) -join ',') -ne (($m6Ch | Sort-Object) -join ',')) { Add-Issue $local 'R97' 'error' $sid 'M6 answer arrays must exactly partition choices' | Out-Null }
+      if (($m6Ans | Select-Object -Unique).Count -ne $m6Ans.Count) { Add-Issue $local 'R97' 'error' $sid 'M6 tier overlap' | Out-Null }
+      if ($m6Qt -eq 'action_choice' -and $s.answer.best -ne $s.recommendedAction) { Add-Issue $local 'R97' 'error' $sid 'M6 answer.best != recommendedAction' | Out-Null }
+      if ($m6Qt -eq 'reason_choice' -and $s.answer.best -ne $s.actionReason) { Add-Issue $local 'R97' 'error' $sid 'M6 reason rows: answer.best must equal actionReason' | Out-Null }
+    }
+    if ($m6ValidReasons -notcontains $s.actionReason) { Add-Issue $local 'R98' 'error' $sid ("M6 actionReason not in vocab: " + $s.actionReason) | Out-Null }
+
+    # R99 -- verdictBasis: solver_required (or anything else) hard-blocked in production
+    if ($m6ValidBasis -notcontains $s.verdictBasis) { Add-Issue $local 'R99' 'error' $sid ("M6 verdictBasis '" + $s.verdictBasis + "' not approvable (solver_required is hard-blocked)") | Out-Null }
+
+    # R100 -- stakeBasis PIN: mandatory concrete enum + coherence with best line
+    if ($m6ValidStake -notcontains $s.stakeBasis) { Add-Issue $local 'R100' 'error' $sid 'M6 stakeBasis must be small|medium|large|overbet (never none)' | Out-Null }
+    if ($m6ValidHrs -notcontains $s.heroRiverSizing) { Add-Issue $local 'R100' 'error' $sid 'M6 heroRiverSizing invalid' | Out-Null }
+    if ($m6ValidPurpose -notcontains $s.betPurpose) { Add-Issue $local 'R100' 'error' $sid 'M6 betPurpose invalid' | Out-Null }
+    $m6Rec = $s.recommendedAction
+    if ($m6Rec -in @('bet_small','bet_big','overbet')) {
+      if ($m6SzMap[$s.stakeBasis] -ne $m6Rec) { Add-Issue $local 'R100' 'error' $sid 'M6 bet-best rows: stakeBasis must match best line sizing' | Out-Null }
+      if ($m6SzMap[$s.heroRiverSizing] -ne $m6Rec) { Add-Issue $local 'R100' 'error' $sid 'M6 heroRiverSizing must equal best bet size' | Out-Null }
+    } elseif ($m6Rec -eq 'check_back') {
+      if ($s.heroRiverSizing -ne 'none') { Add-Issue $local 'R100' 'error' $sid 'M6 check-best rows: heroRiverSizing must be none' | Out-Null }
+      if ($m6Qt -eq 'action_choice' -and $s.answer) {
+        $m6Temp = $m6SzMap[$s.stakeBasis]
+        $m6Pun = @($s.answer.bad) + @($s.answer.critical)
+        if ($m6Pun -notcontains $m6Temp) { Add-Issue $local 'R100' 'error' $sid ('M6 temptation bet ' + $m6Temp + ' must be graded bad or critical') | Out-Null }
+      }
+    } elseif ($m6Rec -eq 'mixed') {
+      # R101 -- mixed rows: mixed_nudge + primary member + in-data whitelist
+      if ($s.verdictBasis -ne 'mixed_nudge') { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows must be verdictBasis=mixed_nudge' | Out-Null }
+      $m6Acc = if ($s.answer) { @($s.answer.acceptable) } else { @() }
+      if ($m6Acc.Count -ne 2) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows: exactly 2 acceptable members' | Out-Null }
+      elseif ($m6Acc[0] -eq 'check_back') { Add-Issue $local 'R101' 'error' $sid 'M6 mixed primary (first acceptable) must be the bet member' | Out-Null }
+      elseif ($m6SzMap[$s.stakeBasis] -ne $m6Acc[0]) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed stakeBasis must match primary member' | Out-Null }
+      $m6Wl = @($s.mixedWhitelistChoices)
+      if ($m6Wl.Count -eq 0) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows must carry mixedWhitelistChoices (ships with migration)' | Out-Null }
+      elseif ($m6Acc.Count -eq 2 -and ((($m6Wl | Sort-Object) -join ',') -ne (($m6Acc | Sort-Object) -join ','))) { Add-Issue $local 'R101' 'error' $sid 'M6 mixedWhitelistChoices must equal acceptable set' | Out-Null }
+    } else {
+      Add-Issue $local 'R100' 'error' $sid ('M6 unexpected recommendedAction ' + $m6Rec) | Out-Null
+    }
+    if ($m6Rec -ne 'mixed' -and $null -ne $s.mixedWhitelistChoices) { Add-Issue $local 'R101' 'error' $sid 'M6 non-mixed rows must not carry mixedWhitelistChoices' | Out-Null }
+
+    # R102 -- bluff rows require a substantive blockerNote
+    if ($s.betPurpose -eq 'bluff' -and (-not $s.blockerNote -or $s.blockerNote.Length -lt 40)) { Add-Issue $local 'R102' 'error' $sid 'M6 bluff rows require a substantive blockerNote' | Out-Null }
+
+    # R103 -- CHECK-BACK-NUTS forward bound: critical check_back only on nutted rows
+    if ($s.answer -and (@($s.answer.critical) -contains 'check_back')) {
+      if ($s.heroHandRole -ne 'nutted_value' -or $s.showdownValue -ne 'nutted') { Add-Issue $local 'R103' 'error' $sid 'M6 critical check_back allowed only when heroHandRole=nutted_value AND showdownValue=nutted' | Out-Null }
+    }
+    # R104 -- reverse-lint: nutted rows besting a bet must grade check_back critical
+    if ($s.heroHandRole -eq 'nutted_value' -and $m6Qt -eq 'action_choice' -and
+        $m6Rec -in @('bet_small','bet_big','overbet') -and $m6Ch -contains 'check_back' -and $s.answer) {
+      if (@($s.answer.critical) -notcontains 'check_back') { Add-Issue $local 'R104' 'error' $sid 'M6 nutted_value row with non-critical check_back (zero-combos-beaten bound)' | Out-Null }
+    }
+
+    # R105 -- text integrity: self-correction artifacts + doubled apostrophes
+    $m6r105 = @(' wait ', ' wait,', ' wait.', '... wait', '...wait', 'actually impossible')
+    $m6Prose = @()
+    if ($s.explanation) { foreach ($f in @('short','riverLogic','rangeContext','handLogic','sizingLogic','commonMistake','takeaway')) { if ($s.explanation.$f) { $m6Prose += $s.explanation.$f } } }
+    if ($s.blockerNote) { $m6Prose += $s.blockerNote }
+    foreach ($v in $m6Prose) {
+      $vl = $v.ToLowerInvariant()
+      foreach ($p in $m6r105) { if ($vl.Contains($p)) { Add-Issue $local 'R105' 'error' $sid ("M6 prose contains self-correction artifact '" + $p.Trim() + "'") | Out-Null ; break } }
+      if ($v.Contains("''")) { Add-Issue $local 'R105' 'error' $sid 'M6 prose contains doubled-apostrophe artifact' | Out-Null }
+    }
+
+    # R106 -- flush-dense ban (Range Reveal texture-leak guard, M6 authoring rule)
+    foreach ($v in $m6Prose) { if ($v -match 'flush-dense') { Add-Issue $local 'R106' 'error' $sid 'M6 prose may not use flush-dense (texture-leak risk)' | Out-Null ; break } }
+  }
+
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
   # Detects suspicious em-dash and collapsed-board patterns inside text fields
   # that suggest a CP874 mojibake cleanup over-normalized suit symbols.
@@ -1621,6 +1743,20 @@ if ($m5.Count -gt 0) {
   $m5 | Group-Object { $_.board.highCardClass } | Sort-Object Name | ForEach-Object { Write-Output ('    hcc ' + $_.Name + ': ' + $_.Count) }
   $m5 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
   $m5 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
+}
+
+# v4.5.2 -- Module 6 stats block (bettor-side river; owner-PIN fields surfaced)
+$m6 = @($data.scenarios | Where-Object { $_.module -eq 'pf_river_value_ip' })
+if ($m6.Count -gt 0) {
+  Write-Output ''
+  Write-Output ('  Module 6 total: ' + $m6.Count)
+  $m6 | Group-Object { $_.question.qtype } | Sort-Object Name | ForEach-Object { Write-Output ('    qtype ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object verdictBasis | Sort-Object Name | ForEach-Object { Write-Output ('    verdictBasis ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object stakeBasis | Sort-Object Name | ForEach-Object { Write-Output ('    stakeBasis ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object betPurpose | Sort-Object Name | ForEach-Object { Write-Output ('    betPurpose ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object recommendedAction | Sort-Object Name | ForEach-Object { Write-Output ('    action ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object difficulty | Sort-Object Name | ForEach-Object { Write-Output ('    diff ' + $_.Name + ': ' + $_.Count) }
+  $m6 | Group-Object auditStatus | Sort-Object Name | ForEach-Object { Write-Output ('    status ' + $_.Name + ': ' + $_.Count) }
 }
 
 if($totalErrors -gt 0){ exit 1 } else { exit 0 }

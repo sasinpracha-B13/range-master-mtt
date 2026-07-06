@@ -1,0 +1,22 @@
+{
+  "description": "M6 solver_required parking lot (G4 schema ruling): spots rejected during v4.5.1 seed design because the verdict hinges on an exact ratio that cannot be derived from visible combos. HARD-BLOCKED from production until a real solver run exists (would then carry sourceConfidence=consensus_gto + solverRunRef).",
+  "seedVersion": "v4.5.1",
+  "count": 3,
+  "spots": [
+    {
+      "sketch": "KQ top pair K-kicker on Kh 7c 2d / 9s / 4h, thin-value bet vs check",
+      "whySolverRequired": "The turn 9 promotes K9 (a real BB defend) to two pair while KJ/KT remain the dominated callers; the verdict flips on the exact ratio of promoted-K9-that-check-calls vs dominated-Kx-that-calls, and no blocker or line argument settles it qualitatively.",
+      "rejectedFrom": "Category B draft 2"
+    },
+    {
+      "sketch": "A-high with meaningful showdown value on low, draw-light runouts, bluff vs check",
+      "whySolverRequired": "When villain's check-call range keeps enough unpaired floats, ace-high's showdown weight is nontrivial and bluff-vs-check becomes a pure frequency split; unlike the shipped C rows (zero-SDV heroes) no dominance argument exists.",
+      "rejectedFrom": "Category C screening rule"
+    },
+    {
+      "sketch": "Scare-card overbet bluff on Ts 6s 2d / 3c / Ad with busted spade QsJs",
+      "whySolverRequired": "The river A simultaneously improves villain's A-float region and unlocks hero's AK/AQ rep; whether the bluff prints depends on the exact density of A-high floats that peeled two streets -- a ratio question, not a combo question.",
+      "rejectedFrom": "Category C draft 3"
+    }
+  ]
+}

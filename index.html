@@ -33495,7 +33495,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.5.0',
+    appVersion: '4.5.2',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34218,7 +34218,12 @@ var _PF_M3_ACTION_LABELS = {
   'call':              'Call',
   'check_raise_small': 'Check-raise small',
   'check_raise_big':   'Check-raise big',
-  'mixed':             'Mixed / close'
+  'mixed':             'Mixed / close',
+  // v4.5.2 M6 (River Betting IP) bettor-side menu — map stays module-agnostic.
+  'check_back':        'Check back',
+  'bet_small':         'Bet small (~33%)',
+  'bet_big':           'Bet big (~75%)',
+  'overbet':           'Overbet (~150%)'
 };
 var _PF_M3_REASON_LABELS = {
   'value_raise':              'Value raise',
@@ -34269,6 +34274,22 @@ var _PF_M5_REASON_LABELS = {
   'missed_draw_give_up':           'Missed draw — give up',
   'mixed_indifference_river':      'Mixed indifference (river)'
 };
+// v4.5.2: M6 (River Betting IP) reason labels — bettor-side river decision.
+// 12 reasons per the G4 architecture spec; actions map via _PF_M3_ACTION_LABELS.
+var _PF_M6_REASON_LABELS = {
+  'value_bet_thick_river':        'Thick value bet (river)',
+  'value_bet_thin_river':         'Thin value bet (river)',
+  'polar_overbet_nut_river':      'Polar overbet — nut hand (river)',
+  'blocker_bluff_river':          'Blocker bluff (river)',
+  'give_up_no_equity_river':      'Give up — no equity (river)',
+  'check_back_showdown_river':    'Check back — showdown value (river)',
+  'check_back_trap_risk_river':   'Check back — trap risk (river)',
+  'sizing_merge_small_river':     'Merged small sizing (river)',
+  'sizing_polar_big_river':       'Polar big sizing (river)',
+  'blocker_sidedness_mix_river':  'Blocker-sidedness mix (river)',
+  'unblock_fold_region_river':    'Unblock the fold region (river)',
+  'story_consistency_bluff_river':'Story-consistency bluff (river)'
+};
 
 // _pfNormalizePostflopChoices(scenario) → [{id, label}, ...]
 // Returns an array of {id,label} objects regardless of source schema. Returns
@@ -34286,6 +34307,7 @@ function _pfNormalizePostflopChoices(scenario) {
       // M3 reason map, then humanized fallback.
       var id = c;
       var label = _PF_M3_ACTION_LABELS[id]
+                  || _PF_M6_REASON_LABELS[id]
                   || _PF_M5_REASON_LABELS[id]
                   || _PF_M4_REASON_LABELS[id]
                   || _PF_M3_REASON_LABELS[id]
@@ -34626,6 +34648,11 @@ function _pfStakeBB(scenario) {
     var sz = scenario.board && scenario.board.villainRiverSizing;
     return _PF_GAME_STAKE_RIVER[sz] || 13;
   }
+  // v4.5.2 M6: stake is FIXED per scenario via authored stakeBasis (owner PIN:
+  // never derived from the player's chosen sizing — same-scenario-same-delta).
+  if (scenario.module === 'pf_river_value_ip') {
+    return _PF_GAME_STAKE_RIVER[scenario.stakeBasis] || 13;
+  }
   return _PF_GAME_STAKE_MOD[scenario.module] || 0;
 }
 
@@ -34645,7 +34672,13 @@ var _PF_MIXED_WHITELIST = {
   'pf_btn_v_bb_srp_100bb_river_Js8d5c_Ac_m5_action_AdTh_v440':  ['mixed', 'call'],
   'pf_btn_v_bb_srp_100bb_river_Ad8s5c_Kd_m5_reason_AhJc_v440':  ['mixed_indifference_river', 'bluff_catch_river'],
   'pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_action_KcTd_v441a': ['mixed', 'call', 'fold'],
-  'pf_btn_v_bb_srp_100bb_river_Jc9d8s_2c_m5_reason_Th9h_v441c': ['mixed_indifference_river', 'bluff_catch_river']
+  'pf_btn_v_bb_srp_100bb_river_Jc9d8s_2c_m5_reason_Th9h_v441c': ['mixed_indifference_river', 'bluff_catch_river'],
+  // v4.5.2 M6 (River Betting IP) — every mixed_nudge row ships WITH its
+  // whitelist entry in the same migration (owner G4 ruling; never retrofitted).
+  'pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m6_action_AhJh_v451':  ['mixed', 'bet_small', 'check_back'],
+  'pf_btn_v_bb_srp_100bb_river_Qd7c4h_2d_m6_action_AhTd_v451':  ['mixed', 'bet_small', 'check_back'],
+  'pf_btn_v_bb_srp_100bb_river_AhJd6s_7h_m6_action_AsKs_v451':  ['mixed', 'bet_big', 'bet_small'],
+  'pf_btn_v_bb_srp_100bb_river_Th7d2s_2h_m6_action_TsTc_v451':  ['mixed', 'overbet', 'bet_big']
 };
 
 // ----- Frames: 'table' (Stack+Score) vs 'read' (Score only) -----
@@ -36707,10 +36740,13 @@ function _pfM5TeachingFeedbackBlocksHtml(scenario) {
   var actionReason = scenario.actionReason || '';
   var recLabel = (_PF_M3_ACTION_LABELS && _PF_M3_ACTION_LABELS[recAction]) || recAction.replace(/_/g, ' ');
   var reasonLabel = (_PF_M5_REASON_LABELS && _PF_M5_REASON_LABELS[actionReason])
+                    || (_PF_M6_REASON_LABELS && _PF_M6_REASON_LABELS[actionReason])
                     || (actionReason ? actionReason.replace(/_/g, ' ') : '');
+  // v4.5.2: M6 reuses this river teaching renderer from the bettor's seat.
+  var isM6Teach = (scenario && scenario.module === 'pf_river_value_ip');
   if (recAction || reasonLabel) {
     html += '<div class="pf-teach-fb-block pf-fb-m2-action">' +
-              '<span class="pf-fb-block-title">🛡️ Recommended Action (BB OOP, river)</span>' +
+              '<span class="pf-fb-block-title">' + (isM6Teach ? '🗡️ Recommended Action (BTN IP, river)' : '🛡️ Recommended Action (BB OOP, river)') + '</span>' +
               '<div class="pf-fb-block-body">' +
                 (recLabel ? '<span class="pf-m2-rec-action">' + _pfEscape(recLabel) + '</span>' : '') +
                 (reasonLabel ? '<span class="pf-m2-action-reason">Reason: ' + _pfEscape(reasonLabel) + '</span>' : '') +
@@ -37193,6 +37229,15 @@ function _pfBuildQuestionPrompt(scenario) {
     }
     // Unknown M5 qtype — fall through to general fix-and-return.
     return _pfFixMojibake(question.prompt) || ('On ' + boardLine5 + ', BB defends OOP on the river.');
+  }
+  // v4.5.2: M6 (River Betting IP) — every seed ships an authored prompt;
+  // pass it through, with a seat-correct fallback (hero = BTN, BB checked).
+  if (scenario.module === 'pf_river_value_ip') {
+    if (question.prompt && question.prompt.trim().length > 30) {
+      return _pfFixMojibake(question.prompt);
+    }
+    var boardLine6 = (scenario.board && scenario.board.cards) ? scenario.board.cards.join(' ') : 'the board';
+    return 'On ' + boardLine6 + ', BB checks the river. What is BTN best action?';
   }
   switch (qtype) {
     case 'range_advantage':
@@ -40874,7 +40919,7 @@ function renderPostflopQuestion() {
   // pill; index 4 gets the river pill (.is-river-card). The 5-card row gets a
   // .is-five-card container class so CSS can shrink cards to fit 320px mobile.
   var isM4Board = (scenario.module === 'pf_turn_barrel_oop_def');
-  var isM5Board = (scenario.module === 'pf_river_barrel_oop_def');
+  var isM5Board = (scenario.module === 'pf_river_barrel_oop_def' || scenario.module === 'pf_river_value_ip'); // v4.5.2: M6 shares the 5-card renderer
   var boardHtml = (board.cards || []).map(function (card, idx) {
     var rank = card.charAt(0);
     var suit = card.charAt(1);
@@ -40897,7 +40942,8 @@ function renderPostflopQuestion() {
   var isM4 = (scenario.module === 'pf_turn_barrel_oop_def');
   // v4.4.2: Module 5 (pf_river_barrel_oop_def) is hand-aware (BB river-defense OOP).
   var isM5 = (scenario.module === 'pf_river_barrel_oop_def');
-  var isHandAware = isM2 || isM3 || isM4 || isM5;
+  var isM6 = (scenario.module === 'pf_river_value_ip'); // v4.5.2: FT content drop — tournament deals these
+  var isHandAware = isM2 || isM3 || isM4 || isM5 || isM6;
   var heroHandHtml = '';
   var heroLine;
   if (isHandAware && scenario.heroHand && scenario.heroHand.length === 2) {
@@ -40955,7 +41001,7 @@ function renderPostflopQuestion() {
     var hrLabel = scenario.heroHandRole ? _pfEscape(scenario.heroHandRole.replace(/_/g, ' ')) : '';
     var dcLabel = ((isM3 || isM4 || isM5) && scenario.drawCategory && scenario.drawCategory !== 'none')
                   ? _pfEscape(scenario.drawCategory.replace(/_/g, ' ')) : '';
-    var svLabel = ((isM3 || isM4 || isM5) && scenario.showdownValue) ? _pfEscape(scenario.showdownValue) : '';
+    var svLabel = ((isM3 || isM4 || isM5 || isM6) && scenario.showdownValue) ? _pfEscape(scenario.showdownValue) : '';
     handChipHtml = '<div class="pf-m2-hand-chips">' +
       (hcLabel ? '<span class="pf-m2-hand-chip pf-m2-handclass-chip" title="Mechanical hand class">🃏 ' + hcLabel + '</span>' : '') +
       (hrLabel ? '<span class="pf-m2-hand-chip pf-m2-handrole-chip" title="Strategic role on this board">🎯 ' + hrLabel + '</span>' : '') +
@@ -41015,6 +41061,8 @@ function renderPostflopQuestion() {
     contextLabelText = '⚔️ BOSS EXAM · ' + bossDefQ.name + ' · Q ' + qNum + '/' + total;
   } else if (isRevengeQ) {
     contextLabelText = '⚔️ Revenge Hands · Q ' + qNum + '/' + total;
+  } else if (isM6) {
+    contextLabelText = '🗡️ Module 6 · River Betting IP · FT Drop · Q ' + qNum + '/' + total;
   } else if (isM5) {
     contextLabelText = '🌊 Module 5 · Facing River Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM4) {
@@ -41031,7 +41079,7 @@ function renderPostflopQuestion() {
   // M3 + M4 label the section "Your Hand (BB)" to keep BB-OOP framing explicit.
   var heroHandSection = '';
   if (isHandAware && heroHandHtml) {
-    var heroSectionTitle = (isM3 || isM4 || isM5) ? '🃏 Your Hand (BB)' : '🃏 Hero Hand';
+    var heroSectionTitle = isM6 ? '🃏 Your Hand (BTN)' : ((isM3 || isM4 || isM5) ? '🃏 Your Hand (BB)' : '🃏 Hero Hand');
     heroHandSection =
       '<div class="postflop-question-card">' +
         '<div class="postflop-section-title">' + heroSectionTitle + '</div>' +
@@ -41076,7 +41124,7 @@ function renderPostflopQuestion() {
       '<div class="postflop-spot-tags">' +
         // v4.2.4/v4.3.1: M3 + M4 use spot.stackDepth ("100BB"); M1/M2 use spot.effectiveStackBB (100).
         '<span class="postflop-spot-tag tag-stack">' + _pfEscape(
-          (isM3 || isM4 || isM5) ? (spot.stackDepth || '100BB')
+          (isM3 || isM4 || isM5 || isM6) ? (spot.stackDepth || '100BB')
                          : ((spot.effectiveStackBB ? spot.effectiveStackBB : '?') + 'BB')
         ) + '</span>' +
         // v4.2.4: M3 framing — BB defends OOP; M1/M2 framing — BTN opens.
@@ -41084,7 +41132,17 @@ function renderPostflopQuestion() {
         // The 5-step flow (BTN open / BB call / BTN c-bet small / BB call /
         // BTN barrels turn) is rendered as 5 distinct chips so the learner can
         // see the full action history at a glance.
-        (isM5
+        (isM6
+          // v4.5.2: M6 framing — the SEAT FLIP. Hero is the BTN bettor IP;
+          // BB check-called two streets and now checks the river to hero.
+          ? '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.heroPosition || 'BTN') + ' (hero, IP)</span>' +
+            '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || 'BB') + ' (villain, OOP)</span>' +
+            '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || 'SRP') + '</span>' +
+            '<span class="postflop-spot-tag tag-action">BTN open 2.5x · BB call</span>' +
+            '<span class="postflop-spot-tag tag-action">BTN cbet small · BB call</span>' +
+            '<span class="postflop-spot-tag tag-action">BTN barrels turn · BB call</span>' +
+            '<span class="postflop-spot-tag tag-action">BB checks river · you act</span>'
+          : (isM5
           // v4.4.2: M5 framing — BB defends OOP on the river after flop + turn
           // check-calls. Full 3-barrel history as distinct chips; the river
           // sizing chip surfaces villainRiverSizing (the MDF driver).
@@ -41112,14 +41170,14 @@ function renderPostflopQuestion() {
               '<span class="postflop-spot-tag tag-pos">' + _pfEscape(spot.villainPosition || '?') + ' call</span>' +
               '<span class="postflop-spot-tag tag-action">' + _pfEscape(spot.potType || '?') + '</span>'
           )
-        )) +
+        ))) +
       '</div>' +
       (heroLine ? '<div class="postflop-spot-hero">' + _pfEscape(heroLine) + '</div>' : '') +
     '</div>' +
     heroHandSection +
     '<div class="postflop-question-card">' +
       '<div class="postflop-section-title">🎴 Board</div>' +
-      '<div class="postflop-board-row' + (isM5 ? ' is-five-card' : '') + '">' + boardHtml + '</div>' +
+      '<div class="postflop-board-row' + ((isM5 || isM6) ? ' is-five-card' : '') + '">' + boardHtml + '</div>' +
       patternHtml +
       checklistHtml +
     '</div>' +
@@ -41172,6 +41230,7 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var isM3 = (scenario.module === 'pf_flop_cbet_oop_def');
   var isM4 = (scenario.module === 'pf_turn_barrel_oop_def');
   var isM5 = (scenario.module === 'pf_river_barrel_oop_def');
+  var isM6 = (scenario.module === 'pf_river_value_ip'); // v4.5.2 FT drop
 
   // Build expandable sections (only for non-null fields)
   var isMobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 720;
@@ -41208,9 +41267,11 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   // v4.3.1: Module 4 routes through _pfM4TeachingFeedbackBlocksHtml — turn-defense focused
   //         (Recommended Action / Turn Logic [PROMINENT] / Hand Logic / Sizing / Blocker / Range / Takeaway / Common Mistake).
   var teachingBlocksHtml;
-  if (isM5 && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') {
+  if ((isM5 || isM6) && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') {
     // v4.4.2: Module 5 routes through _pfM5TeachingFeedbackBlocksHtml — river-defense
     // focused (Recommended Action / River Logic [PROMINENT] / Hand / Sizing / Blocker / Range / Takeaway / Mistake).
+    // v4.5.2: M6 reuses the same river renderer (identical explanation shape);
+    // the block itself flips the seat header to BTN IP for M6.
     teachingBlocksHtml = _pfM5TeachingFeedbackBlocksHtml(scenario);
   } else if (isM4 && typeof _pfM4TeachingFeedbackBlocksHtml === 'function') {
     teachingBlocksHtml = _pfM4TeachingFeedbackBlocksHtml(scenario);
@@ -41238,6 +41299,8 @@ function renderPostflopAnswer(scenario, choiceId, cls) {
   var fbContextLabel;
   if (d.mode === 'revenge') {
     fbContextLabel = '⚔️ Revenge Hands · Q ' + qNum + '/' + total;
+  } else if (isM6) {
+    fbContextLabel = '🗡️ Module 6 · River Betting IP · FT Drop · Q ' + qNum + '/' + total;
   } else if (isM5) {
     fbContextLabel = '🌊 Module 5 · Facing River Barrel OOP · Limited Beta · Q ' + qNum + '/' + total;
   } else if (isM4) {
