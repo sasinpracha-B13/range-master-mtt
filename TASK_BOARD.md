@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-07 (v4.5.2A M6 Expansion +8 — 534→542 zero-drift, M6 32, F5 quad-jacks-impossible fix (CHECK-BACK-NUTS), recompute lints R29/R107, check-primary mixed rule §10.8, validator 542/0/0, FT pool M6 15. Cache 4.5.2→4.5.2A. M4-audit ARRIVAL LEGITIMACY ruling recorded in PROJECT_STATE §1. Next: v4.5.3 wire spec.).
+> Last updated: 2026-07-07 (v4.5.3 M6 Curriculum Wire — CURRICULUM M1–M6 COMPLETE. Runtime-only: TCC tile/route/card/concepts/mastery(8-of-12 coverage-allowance)/BetaQA/boss m6(10×D4-5 no fill, no persona)/explainer; QA-caught boss end-review router bug fixed. Data byte-identical 542, validator 542/0/0. Cache 4.5.2A→4.5.3. Post-launch sequence approved (ledger below). Next: item (1) chip-on-M6 copy validation — spec-first.).
 
 ---
 
@@ -14,6 +14,16 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.5.3 M6 Curriculum Wire (RUNTIME-ONLY; DATA BYTE-IDENTICAL 542; CACHE 4.5.2A→4.5.3) — CURRICULUM M1–M6 COMPLETE** — M6 program finale (v4.4.2 M5 wire mirror, bettor's seat): TCC tile 🗡️ + route `postflop:m6` (12q) + curriculum card (placeholder replaced; routes == TCC) + 12 concept entries/M6 library group/M6-only concept-drill + mastery checklist (**8-of-12 = COVERAGE allowance for the 5 single-exemplar reasons, NOT a distractor carve-out; PIN copy verbatim in UI**) + BetaQA (overbet-spew habit) + Copy M6 Snapshot + boss m6 (**10×D4-5, 19-deep pool, no fill, NO persona** per knob) + seat-flip first-time explainer + complete-screen. **QA-caught + fixed:** boss end-review teaching router skipped M6 (0 blocks) → fixed (m6→river renderer); re-verified 10/10 teaching blocks + BTN-IP headers, idempotent finalize (attempts 1→2), trophy persists reload. Range-Reveal chip M6 stays OFF (pending copy-variant); deferral boss-only. blob `54f134f5…` byte-identical; 542/0/0; 320×700 maxRight 304; 0 console errors. Spec `postflop-v4.5.3-module6-curriculum-wire-spec.md` + QA `…-wire-qa.md`; snapshot `GPT AUDIT/v4.5.3/`. **M6 program CLOSES. Next: post-launch sequence item (1) chip-on-M6 copy validation — spec-first.**
+
+## Post-Launch Sequence (owner-approved 2026-07-07; execute in order, each spec-first, stop at review)
+
+1. 🔜 **chip-on-M6 copy validation** — smallest unblocking item; game-layer only. "Your line reads" copy variant + M6-rows hit-list rerun → ON/OFF ruling. **Follow-up knob folded into this sprint's spec (accepted):** Daily Challenge wildcard slot M2–M5 → M2–M6 (M6 now exists; 5-slot formula stays locked). Zero data risk. **Begin ONLY after v4.5.3 ship is confirmed pushed.**
+2. ⏳ **M4 full audit under ARRIVAL LEGITIMACY** (82/92 unchecked; **V1 AKo = the class's first confirmed rework**). Criterion (PROJECT_STATE §1): (a) preflop-range membership under locked baseline — mechanizable per the R29/R107 recompute precedent; (b) every prior-street continue ≥ acceptable; (c) no missed check-raise node. "Arrived correctly, correct river answer is fold" = NOT a violation (MDF lesson).
+3. ⏳ **Single consolidated solver session** — covers V2/V3 solver-gated verifications + M4-audit solver needs + promotion assessment of the 3 parked M6 `solver_required` spots (would enter as `consensus_gto` + solverRunRef).
+4. ⏳ **M3 v423a apostrophe cosmetics** — ride the next data-touching migration (never ships alone; avoids a cosmetics-only cache bump).
+5. ⏳ **G5 opt-in Blitz** — roadmap finale; after correctness debts clear.
 
 🟢 **v4.5.2A M6 Expansion +8 (PRODUCTION 534→542; CACHE 4.5.2→4.5.2A)** — owner review 7/8 PASS + F5 grading fix (quad jacks impossible: Js + board Jh/Jd ⇒ zero-combos-beaten ⇒ CHECK-BACK-NUTS critical + nutted metadata + self-verifying enumeration). **Label-trust gap closed: M6.R29/R107 recompute lints** (990-combo enumeration vs authored labels, AA/KK/QQ baseline exclusions; reproduced-pre-fix / clean-post-fix / F4 control). Check-primary mixed rule recorded (§10.8, R14+R101 amended). Migration zero-drift on all 534; idempotent; **validator 542/0/0 (R107 live)**; FT pool L7 M6 = 15 (+4 D4 action rows; D6 = reason row, drill-only by design). QA fresh-SW 542/542, 0 console. Docs `postflop-v4.5.2A-module6-expansion.md`; snapshot `GPT AUDIT/v4.5.2A/`. **Next: v4.5.3 curriculum wire — SPEC first (M6 program finale; M1–M6 complete after ship).**
 

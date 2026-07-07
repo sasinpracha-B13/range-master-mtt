@@ -33495,7 +33495,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.5.2A',
+    appVersion: '4.5.3',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34200,6 +34200,14 @@ function getModule5Scenarios() {
   });
 }
 
+// v4.5.3: Module 6 (River Betting IP) — 32 approved (24 v4.5.1 + 8 v4.5.2A).
+function getModule6Scenarios() {
+  if (!getPostflopReady()) return [];
+  return App.postflop.scenarios.filter(function (s) {
+    return s.module === 'pf_river_value_ip' && s.auditStatus === 'approved';
+  });
+}
+
 // ============================================================================
 // v4.2.4 — Schema normalization helpers (M3 string-form vs M1/M2 object/array)
 // ----------------------------------------------------------------------------
@@ -34423,6 +34431,9 @@ function startPostflopDrill(moduleId, sessionLength) {
   } else if (moduleId === 'pf_river_barrel_oop_def') {
     // v4.4.2: Module 5 = river_barrel_oop_def (Limited Beta · 33 approved scenarios).
     pool = getModule5Scenarios();
+  } else if (moduleId === 'pf_river_value_ip') {
+    // v4.5.3: Module 6 = river_value_ip (Limited Beta · 32 approved scenarios).
+    pool = getModule6Scenarios();
   } else {
     pool = [];
   }
@@ -34440,6 +34451,7 @@ function startPostflopDrill(moduleId, sessionLength) {
   else if (moduleId === 'pf_flop_cbet_oop_def') defaultLen = 10;
   else if (moduleId === 'pf_turn_barrel_oop_def') defaultLen = 12;
   else if (moduleId === 'pf_river_barrel_oop_def') defaultLen = 12;
+  else if (moduleId === 'pf_river_value_ip')    defaultLen = 12;   // v4.5.3 M6 (owner knob: 12, M5 mirror)
   else                                          defaultLen = 15;
   var queue = buildPostflopQueue(pool, sessionLength || defaultLen);
   App.state.postflopDrill = {
@@ -35366,7 +35378,12 @@ var _PF_BOSS_DEFS = {
   m2: { moduleId: 'pf_flop_cbet_ip',         name: 'Flop C-bet Boss',               icon: '🎯' },
   m3: { moduleId: 'pf_flop_cbet_oop_def',    name: 'Flop Defense Boss',             icon: '🛡️' },
   m4: { moduleId: 'pf_turn_barrel_oop_def',  name: 'Turn Defense Boss',             icon: '🔨' },
-  m5: { moduleId: 'pf_river_barrel_oop_def', name: 'River Defense Boss',            icon: '🌊' }
+  m5: { moduleId: 'pf_river_barrel_oop_def', name: 'River Defense Boss',            icon: '🌊' },
+  // v4.5.3: M6 boss — 10 hands from a 19-deep D>=4 pool (no fill needed; the
+  // engine's fill logic stays as safety net). NO persona for m6 (owner knob:
+  // the villain line is passive check-check-check — a quipping opponent would
+  // fake an active adversary and fight the seat-flip lesson).
+  m6: { moduleId: 'pf_river_value_ip',       name: 'River Betting Boss',            icon: '🗡️' }
 };
 // Personas: flavor ONLY. Copy rule (QA-reviewed line by line): may describe the
 // line taken in THIS spot family (it is the scenario definition), never
@@ -35495,7 +35512,8 @@ function renderPostflopBossComplete() {
     var sc = byId[a.scenarioId]; if (!sc) return '';
     var teach = '';
     try {
-      if (sc.module === 'pf_river_barrel_oop_def' && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') teach = _pfM5TeachingFeedbackBlocksHtml(sc);
+      if (sc.module === 'pf_river_value_ip' && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') teach = _pfM5TeachingFeedbackBlocksHtml(sc); // v4.5.3: M6 boss review — same river renderer, seat-aware header flips inside
+      else if (sc.module === 'pf_river_barrel_oop_def' && typeof _pfM5TeachingFeedbackBlocksHtml === 'function') teach = _pfM5TeachingFeedbackBlocksHtml(sc);
       else if (sc.module === 'pf_turn_barrel_oop_def' && typeof _pfM4TeachingFeedbackBlocksHtml === 'function') teach = _pfM4TeachingFeedbackBlocksHtml(sc);
       else if (sc.module === 'pf_flop_cbet_oop_def' && typeof _pfM3TeachingFeedbackBlocksHtml === 'function') teach = _pfM3TeachingFeedbackBlocksHtml(sc);
       else if (sc.module === 'pf_flop_cbet_ip' && typeof _pfM2TeachingFeedbackBlocksHtml === 'function') teach = _pfM2TeachingFeedbackBlocksHtml(sc);
@@ -36887,6 +36905,35 @@ function _pfM5SessionCount() {
 function _pfM5IsFirstTime() {
   return _pfM5SessionCount() === 0;
 }
+// v4.5.3: Module 6 first-time explainer (Q1, first session only) — the SEAT FLIP.
+function _pfM6SessionCount() {
+  try {
+    var sessions = _pfHistoryLoad().sessions || [];
+    var n = 0;
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i] && sessions[i].module === 'pf_river_value_ip') n++;
+    }
+    return n;
+  } catch (e) { return 0; }
+}
+function _pfM6IsFirstTime() {
+  return _pfM6SessionCount() === 0;
+}
+function _pfM6FirstTimeExplainerHtml() {
+  return '<details class="pf-m3-first-time-explainer" open>' +
+           '<summary>About Module 6 — River Betting IP (Limited Beta)</summary>' +
+           '<div class="pf-m3-explainer-body">' +
+             '<p><strong>The seat flips: you are now the BTN, in position, with the betting decision.</strong> Pre-flop: you opened 2.5x, BB called. Flop: you c-bet small, BB called. Turn: you barrelled, BB called. River: BB checks — the last decision of the hand tree is yours.</p>' +
+             '<ul>' +
+               '<li><strong>Value is defined by who calls</strong> — bet only when worse hands call more often than better hands. Count the callers, not your hand strength.</li>' +
+               '<li><strong>Thin value wants a small price</strong>; near-nut hands size up into capped ranges. Match the size to the hand class.</li>' +
+               '<li><strong>Bluffs are picked by blockers</strong> — zero-showdown-value hands that block villain\'s calls and unblock his folds fire first; the rest go to the give-up pile.</li>' +
+               '<li><strong>Checking back is a weapon</strong> — hands that beat all the folds and lose to all the calls must take the free showdown.</li>' +
+               '<li><strong>Limited Beta — 32 scenarios.</strong> Good for structured practice, not final certification.</li>' +
+             '</ul>' +
+           '</div>' +
+         '</details>';
+}
 function _pfM5FirstTimeExplainerHtml() {
   return '<details class="pf-m3-first-time-explainer" open>' +
            '<summary>About Module 5 — Facing River Barrel OOP (Limited Beta)</summary>' +
@@ -37439,10 +37486,24 @@ var _PF_CURRICULUM = [
     ]
   },
   {
-    key: 'm6', name: 'Module 6 — Postflop Boss Exams',
-    focus: ['mixed board families', 'pressure tests', 'mastery certification'],
-    scenarioCount: 0,
-    masteryNote: 'Future module.'
+    // v4.5.3: the old "Boss Exams" placeholder is superseded — Boss Exams
+    // shipped as their own G2 feature (v4.4.5) on every module card. M6 is
+    // the real final module: the bettor's seat (curriculum M1–M6 complete).
+    key: 'm6', name: 'Module 6 — River Betting IP',
+    focus: ['bettor-side river decisions', 'value thresholds', 'blocker-driven bluff selection', 'sizing polarity', 'give-up discipline'],
+    scenarioCount: 32,
+    masteryNote: 'Limited Beta · 32 scenarios · ALL 12 actionReasons masterable (8-of-12 = coverage allowance, not a distractor carve-out).',
+    syllabus: [
+      'THE SEAT FLIP: you are BTN in position — BB check-called flop + turn and now checks the river; the last decision of the hand tree is yours',
+      '5-action menu: check back / bet small (~33%) / bet big (~75%) / overbet (~150%) / mixed',
+      '12 actionReasons (bettor-side): thick / thin value bets; polar overbet with the nuts; blocker bluff, unblock-the-folds, story-consistency; give-up discipline; showdown and trap-risk check-backs; merged small vs polar big sizing; blocker-sidedness mixes',
+      'Value is defined by who calls — count the callers, not your hand strength',
+      'Thin value wants a small price; near-nut hands size up into capped ranges',
+      'Bluffs are picked by blockers: block the calls, unblock the folds, tell a consistent story',
+      'Check-back showdown value: hands that beat all the folds and lose to all the calls must not bet',
+      'CHECK-BACK-NUTS is a full punt: zero combos beat you + IP check closes the action = forfeit at zero risk',
+      'Stake is fixed per scenario (authored stakeBasis) — regret never depends on which size you clicked'
+    ]
   }
 ];
 
@@ -37954,6 +38015,131 @@ var _PF_CONCEPT_LIBRARY = [
     relatedTags: ['river_bluff_catcher', 'river_mdf'],
     questionTypes: ['action_choice', 'reason_choice'],
     suitTextures: [],
+    textureTags: [] },
+  // ============================================================================
+  // v4.5.3 — Module 6 concepts (River Betting IP — the bettor's seat)
+  // 12 bettor-side concepts; source metadata lives in postflop_concepts.json
+  // (category: module6, shipped v4.5.2). tags = scenario conceptTags keys.
+  // ============================================================================
+  { key: 'river_value_threshold',
+    name: 'River Value Threshold',
+    def: 'A river bet is value only if worse hands call more often than better hands. Count the callers, not your hand strength — the calling range defines value.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['river_value_threshold'],
+    relatedTags: ['thin_value_discipline', 'sizing_polarity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'thin_value_discipline',
+    name: 'Thin Value Discipline',
+    def: 'Thin value targets a narrow dominated ladder and dies the moment the size folds it out. Bet small enough that every dominated hand still pays; recount the ladder after connecting rivers.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['thin_value_discipline'],
+    relatedTags: ['river_value_threshold', 'merged_sizing'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'bluff_candidate_selection',
+    name: 'Bluff Candidate Selection',
+    def: 'Not every missed draw bluffs. Rank candidates by blockers and showdown value: zero-showdown hands that block the calls and unblock the folds fire first; the rest go to the give-up pile.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['bluff_candidate_selection'],
+    relatedTags: ['nut_blocker_leverage', 'unblock_fold_region', 'give_up_discipline'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'nut_blocker_leverage',
+    name: 'Nut Blocker Leverage',
+    def: 'Holding the key card of villain\'s strongest class removes it from his continue range and licenses maximum pressure. Nut-blocker bluffs size polar because the represented hand would.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['nut_blocker_leverage'],
+    relatedTags: ['bluff_candidate_selection', 'sizing_polarity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: ['two_tone', 'monotone'],
+    textureTags: [] },
+  { key: 'unblock_fold_region',
+    name: 'Unblock the Fold Region',
+    def: 'A bluff profits from villain\'s folds — so the best bluffs do NOT hold the cards villain folds. Holding his busted-draw cards shrinks the folding region and hurts the bluff.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['unblock_fold_region'],
+    relatedTags: ['bluff_candidate_selection', 'give_up_discipline'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'give_up_discipline',
+    name: 'Give-Up Discipline',
+    def: 'When the range is uncapped, the folds are blocked, or the story fails, the professional line is check and lose the minimum. Zero showdown value never forces a bluff.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['give_up_discipline'],
+    relatedTags: ['story_consistency', 'unblock_fold_region'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'story_consistency',
+    name: 'Story Consistency',
+    def: 'Every sizing tells a story, and a river bet must represent a hand that would have played all three streets this way. Check whose range the river card helped before repping it.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['story_consistency'],
+    relatedTags: ['give_up_discipline', 'sizing_polarity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'sizing_polarity',
+    name: 'Sizing Polarity',
+    def: 'Polar sizes (big/overbet) pair nut hands with bluffs; merged sizes (small) fit thin value. Mis-pairing hand class and size is the core bettor-side river error.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['sizing_polarity'],
+    relatedTags: ['merged_sizing', 'river_value_threshold', 'nut_blocker_leverage'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'merged_sizing',
+    name: 'Merged Sizing',
+    def: 'The small-bet region that welcomes calls from many worse hands — the natural home of thin value. When the pool of worse callers narrows, the merge loses its market and the hand checks.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['merged_sizing'],
+    relatedTags: ['thin_value_discipline', 'sizing_polarity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'checkback_showdown',
+    name: 'Check-Back Showdown Value',
+    def: 'Hands that beat all the folds and lose to all the calls must check: betting converts a winning showdown hand into a losing bluff. The two-question test ends most river mistakes.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['checkback_showdown'],
+    relatedTags: ['river_value_threshold', 'trap_risk_paired_river'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'trap_risk_paired_river',
+    name: 'Paired-River Trap Risk',
+    def: 'A river that pairs a middle card promotes villain\'s sticky mid-pairs to trips and deletes thin-value markets. Recount the callers on every paired runout — pairing the TURN card is the worst version.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['trap_risk_paired_river'],
+    relatedTags: ['checkback_showdown', 'thin_value_discipline'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
+    textureTags: [] },
+  { key: 'mixed_indifference_ip',
+    name: 'Mixed Indifference (IP River)',
+    def: 'Genuine bettor-side indifference: two lines print the same, and only a countable removal or kicker argument nudges the split — never a percentage. Both members are professional; the big-size error is not.',
+    module: 'm6',
+    previewOnly: false,
+    tags: ['mixed_indifference_ip'],
+    relatedTags: ['thin_value_discipline', 'sizing_polarity'],
+    questionTypes: ['action_choice', 'reason_choice'],
+    suitTextures: [],
     textureTags: [] }
 ];
 
@@ -38086,6 +38272,13 @@ function _pfModuleStatus(moduleKey, stats) {
     // 9 boards, 11-of-12 actionReasons covered (domination_river_fold is a
     // distractor-only token by design), 5-card river rendering, M5 concept
     // drills, M5 weak-spot review, M5 mastery checklist all wired.
+    return 'beta';
+  }
+  if (moduleKey === 'm6') {
+    // v4.5.3: Module 6 ships as Limited Beta — 32 approved bettor-side river
+    // scenarios; ALL 12 actionReasons have best-exemplars (no distractor-only
+    // token, unlike M5); seat-flip rendering shipped in v4.5.2; M6 concept
+    // drills, boss, mastery checklist wired here. Curriculum M1–M6 complete.
     return 'beta';
   }
   return 'future';
@@ -39372,6 +39565,383 @@ function _pfM5MasteryProgressHtml(m5Stats) {
          '</div>';
 }
 
+// ============================================================================
+// v4.5.3 — MODULE 6 LIMITED BETA MASTERY CHECKLIST + BETA QA HELPERS
+// Mirrors M5; thresholds tuned for the 32-scenario v4.5.2A corpus.
+// MASTERY CONVENTION (owner PIN — differs from M5 and the UI copy says so):
+//   M5: 8-of-12 because domination_river_fold is distractor-only BY DESIGN
+//       (masterable set = 8).
+//   M6: masterable set = ALL 12 (every reason has >=1 best-exemplar);
+//       8-of-12 is a COVERAGE allowance for the FIVE single-exemplar reasons
+//       (check_back_trap_risk E2 / sizing_merge_small F2 / sizing_polar_big F1
+//        / unblock_fold_region C4 / story_consistency_bluff D4),
+//       NOT a distractor carve-out.
+// ============================================================================
+function _pfM6MasteryStats() {
+  var history = null;
+  try { if (typeof _pfHistoryLoad === 'function') history = _pfHistoryLoad(); } catch (e) { history = null; }
+  var allSessions = (history && Array.isArray(history.sessions)) ? history.sessions : [];
+  var sessions = allSessions.filter(function (s) { return s && s.module === 'pf_river_value_ip'; });
+  var sessionCount = sessions.length;
+  var latestSession = sessionCount > 0 ? sessions[sessionCount - 1] : null;
+
+  var qualitySessionCount = 0;
+  for (var i = 0; i < sessions.length; i++) {
+    var sess = sessions[i];
+    var ans = sess.answered || 0;
+    var max = ans * 1.0;
+    var pct = max > 0 ? ((sess.score || 0) / max) * 100 : 0;
+    if (pct >= 75) qualitySessionCount += 1;
+  }
+
+  var latestNoCritical = !!(latestSession && (latestSession.critical || 0) === 0);
+
+  var REQUIRED_M6_REASONS = [
+    'value_bet_thick_river', 'value_bet_thin_river', 'polar_overbet_nut_river',
+    'blocker_bluff_river', 'give_up_no_equity_river', 'check_back_showdown_river',
+    'check_back_trap_risk_river', 'sizing_merge_small_river', 'sizing_polar_big_river',
+    'blocker_sidedness_mix_river', 'unblock_fold_region_river', 'story_consistency_bluff_river'
+  ];
+  var seenReasons = {};
+  var scenIdMap = {};
+  if (App && App.postflop && App.postflop.scenarios) {
+    for (var ai = 0; ai < App.postflop.scenarios.length; ai++) {
+      var sc = App.postflop.scenarios[ai];
+      if (sc && sc.id) scenIdMap[sc.id] = sc;
+    }
+  }
+  for (var si = 0; si < sessions.length; si++) {
+    var sObj = sessions[si];
+    var ansArr = (sObj && Array.isArray(sObj.answers)) ? sObj.answers : [];
+    for (var aj = 0; aj < ansArr.length; aj++) {
+      var aRec = ansArr[aj];
+      var sid = aRec && aRec.scenarioId;
+      if (sid && scenIdMap[sid] && scenIdMap[sid].actionReason) {
+        seenReasons[scenIdMap[sid].actionReason] = true;
+      }
+    }
+  }
+  var reasonCoverage = {};
+  for (var ri = 0; ri < REQUIRED_M6_REASONS.length; ri++) {
+    reasonCoverage[REQUIRED_M6_REASONS[ri]] = !!seenReasons[REQUIRED_M6_REASONS[ri]];
+  }
+  var reasonsSeenCount = 0;
+  for (var rk in reasonCoverage) { if (reasonCoverage[rk]) reasonsSeenCount++; }
+
+  var hasWeakSignal = false;
+  for (var j = 0; j < sessions.length; j++) {
+    var sj = sessions[j];
+    if ((sj.bad || 0) + (sj.critical || 0) > 0) { hasWeakSignal = true; break; }
+  }
+  var hasUsedWeakReview = hasWeakSignal && sessionCount >= 2;
+
+  return {
+    sessionCount: sessionCount,
+    latestSession: latestSession,
+    qualitySessionCount: qualitySessionCount,
+    latestNoCritical: latestNoCritical,
+    reasonCoverage: reasonCoverage,
+    reasonsSeenCount: reasonsSeenCount,
+    hasUsedWeakReview: hasUsedWeakReview,
+    masteryCriteriaMet: {
+      fourSessions:         sessionCount >= 4,
+      twoQualitySessions:   qualitySessionCount >= 2,
+      latestNoCritical:     latestNoCritical,
+      weakReviewUsed:       hasUsedWeakReview,
+      reasonCoverage:       reasonsSeenCount >= 8 // 8-of-12 COVERAGE allowance (all 12 masterable; five ship 1 exemplar each)
+    }
+  };
+}
+
+function _pfM6MasteryProgress(m6Stats) {
+  if (!m6Stats) m6Stats = _pfM6MasteryStats();
+  var m = m6Stats.masteryCriteriaMet || {};
+  return [
+    { key: 'fourSessions',        label: 'Complete 4 Module 6 sessions',                    met: !!m.fourSessions,        detail: m6Stats.sessionCount + ' / 4' },
+    { key: 'twoQualitySessions',  label: 'Hit 75%+ quality in 2 M6 sessions',               met: !!m.twoQualitySessions,  detail: m6Stats.qualitySessionCount + ' / 2' },
+    { key: 'reasonCoverage',      label: 'See at least 8 of 12 M6 actionReasons',           met: !!m.reasonCoverage,      detail: m6Stats.reasonsSeenCount + ' / 12 reasons seen' },
+    { key: 'weakReviewUsed',      label: 'Engage with M6 weak-spot review',                 met: !!m.weakReviewUsed,      detail: m.weakReviewUsed ? 'engaged' : 'not yet' },
+    { key: 'latestNoCritical',    label: 'No critical leaks in latest M6 session',          met: !!m.latestNoCritical,    detail: m6Stats.latestSession ? (m.latestNoCritical ? 'clean' : 'critical fired') : '—' }
+  ];
+}
+
+function _pfM6MasteryProgressHtml(m6Stats) {
+  if (!m6Stats) m6Stats = _pfM6MasteryStats();
+  var items = _pfM6MasteryProgress(m6Stats);
+  var rows = items.map(function (it) {
+    var icon = it.met ? '✅' : '○';
+    var cls = it.met ? 'is-met' : 'is-not-met';
+    return '<li class="' + cls + '"><span class="pf-mastery-icon">' + icon + '</span><span>' + _pfEscape(it.label) +
+           ' <span style="opacity:0.7;font-size:11px">(' + _pfEscape(it.detail) + ')</span></span></li>';
+  }).join('');
+  var progressionHintHtml = '';
+  if (m6Stats.sessionCount >= 4) {
+    progressionHintHtml = '<span class="pf-m3-progression-hint">📈 Beta progress unlocked — now review your weakest river-betting reasons.</span>';
+  }
+  // Owner PIN (binding copy): an M5-trained reader must NOT infer M6 has
+  // distractor-only tokens — state the coverage-allowance rationale in the UI.
+  var conventionNote =
+    '<span class="pf-m3-qa-detail" style="display:block;margin-top:4px;">' +
+      'All 12 river-betting reasons are masterable — each has at least one best-play scenario. ' +
+      'The 8-of-12 bar is a coverage allowance for the five single-scenario reasons ' +
+      '(trap-risk check, merged small, polar big, unblock-the-folds, story-consistency), ' +
+      'NOT a distractor carve-out like Module 5\'s domination token.' +
+    '</span>';
+  return '<div class="pf-mastery-section pf-mastery-section-m2">' +
+           '<span class="pf-mastery-title">🗡️ Module 6 Limited Beta progress (display only · 32 scenarios · more scenarios coming)</span>' +
+           '<ul class="pf-mastery-list">' + rows + '</ul>' +
+           conventionNote +
+           progressionHintHtml +
+         '</div>';
+}
+
+// v4.5.3: M6 Beta QA wrappers — reuse the module-agnostic helpers.
+function _pfM6BetaQAStats() { return _pfBetaQAStatsForModule('pf_river_value_ip'); }
+
+function _pfM6BetaQAWeakSpotPreview(stats) {
+  if (!stats || !stats.lastWeakProfile) return [];
+  var profile = stats.lastWeakProfile;
+  var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+  var m6 = pool.filter(function (s) { return s && s.module === 'pf_river_value_ip' && s.auditStatus === 'approved'; });
+  var reasonCandidateCounts = {};
+  for (var ri = 0; ri < (profile.targetActionReasons || []).length; ri++) {
+    var rsn = profile.targetActionReasons[ri];
+    reasonCandidateCounts[rsn] = m6.filter(function (s) { return s.actionReason === rsn; }).length;
+  }
+  var rowsAR = stats.rowsByActionReason || [];
+  var rsnMissMap = {};
+  for (var li = 0; li < rowsAR.length; li++) {
+    rsnMissMap[rowsAR[li].key] = (rowsAR[li].badCount || 0) + (rowsAR[li].critCount || 0);
+  }
+  var out = (profile.targetActionReasons || []).map(function (rsn) {
+    return {
+      reason: rsn,
+      lifetimeMisses: rsnMissMap[rsn] || 0,
+      candidates: reasonCandidateCounts[rsn] || 0
+    };
+  }).sort(function (a, b) {
+    if (b.lifetimeMisses !== a.lifetimeMisses) return b.lifetimeMisses - a.lifetimeMisses;
+    return b.candidates - a.candidates;
+  });
+  return out.slice(0, 3);
+}
+
+function _pfM6BetaQACriticalMonitor(stats) {
+  // M6 habit metric: overbet-spew (bettor-side mirror of M5's check-raise-big habit).
+  var out = {
+    totalCritical: stats.criticalCount,
+    bySelectedAction: {},
+    byScenarioReason: {},
+    obHabitCount: 0,
+    latestCritIds: stats.criticalScenarioIds || []
+  };
+  try {
+    if (typeof _pfHistoryLoad !== 'function') return out;
+    var hist = _pfHistoryLoad();
+    var sessions = (hist && Array.isArray(hist.sessions)) ? hist.sessions : [];
+    var modSessions = sessions.filter(function (s) { return s && s.module === 'pf_river_value_ip'; });
+    var pool = (window.App && App.postflop && App.postflop.scenarios) ? App.postflop.scenarios : [];
+    var byId = {};
+    for (var pi = 0; pi < pool.length; pi++) { if (pool[pi] && pool[pi].id) byId[pool[pi].id] = pool[pi]; }
+    for (var i = 0; i < modSessions.length; i++) {
+      var aArr = (modSessions[i] && modSessions[i].answers) || [];
+      for (var j = 0; j < aArr.length; j++) {
+        var a = aArr[j];
+        if (!a || a.tier !== 'critical') continue;
+        var picked = a.choiceId || 'unknown';
+        out.bySelectedAction[picked] = (out.bySelectedAction[picked] || 0) + 1;
+        if (picked === 'overbet') out.obHabitCount++;
+        var sc = byId[a.scenarioId];
+        if (sc && sc.actionReason) {
+          out.byScenarioReason[sc.actionReason] = (out.byScenarioReason[sc.actionReason] || 0) + 1;
+        }
+      }
+    }
+  } catch (e) { /* swallow */ }
+  return out;
+}
+
+function _pfM6BetaQADashboardHtml() {
+  var stats = _pfM6BetaQAStats();
+  if (stats.sessionCount === 0) {
+    return '<details class="pf-m3-qa-dashboard">' +
+             '<summary>🗡️ Module 6 Beta QA dashboard (project-owner view)</summary>' +
+             '<div class="pf-m3-qa-empty">Play Module 6 sessions to generate beta feedback.</div>' +
+           '</details>';
+  }
+  var weakSpotPreview = _pfM6BetaQAWeakSpotPreview(stats);
+  var critMon = _pfM6BetaQACriticalMonitor(stats);
+  var sampleBanner = '';
+  if (stats.sessionCount < 4 || stats.questionCount < 36) {
+    sampleBanner = '<div class="pf-m3-qa-sample-warn">⚠ Early signal — ' +
+                     stats.sessionCount + ' session' + (stats.sessionCount === 1 ? '' : 's') + ', ' +
+                     stats.questionCount + ' answer' + (stats.questionCount === 1 ? '' : 's') +
+                     '. Needs more sessions for confident readings.' +
+                   '</div>';
+  }
+  var topMetrics =
+    '<div class="pf-m3-qa-grid">' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.sessionCount + '</span><span class="pf-m3-qa-lbl">sessions</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.questionCount + '</span><span class="pf-m3-qa-lbl">answers</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.latestPctScore != null ? stats.latestPctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">latest</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + (stats.averagePctScore != null ? stats.averagePctScore + '%' : '—') + '</span><span class="pf-m3-qa-lbl">avg</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalCount + '</span><span class="pf-m3-qa-lbl">critical</span></div>' +
+      '<div class="pf-m3-qa-metric"><span class="pf-m3-qa-num">' + stats.criticalRate + '%</span><span class="pf-m3-qa-lbl">crit rate</span></div>' +
+    '</div>';
+  function rowsHtml6(rows, title, icon) {
+    if (!rows || rows.length === 0) return '';
+    var topRows = rows.slice(0, 6);
+    return '<div class="pf-m3-qa-block">' +
+             '<div class="pf-m3-qa-block-title">' + icon + ' ' + title + '</div>' +
+             '<ul class="pf-m3-qa-list">' +
+               topRows.map(function (r) {
+                 var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                 var miss = r.critCount > 0 ? '⚡' + r.critCount : '';
+                 return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                        ' <span class="pf-m3-qa-detail">(' + r.pct + '% over ' + r.seen + (miss ? ' · ' + miss + ' crit' : '') + ')</span></li>';
+               }).join('') +
+             '</ul>' +
+           '</div>';
+  }
+  var byAxisHtml =
+    rowsHtml6(stats.rowsByActionReason, 'By actionReason', '🎯') +
+    rowsHtml6(stats.rowsByRecommendedAction, 'By recommendedAction', '🗡️') +
+    rowsHtml6(stats.rowsByHeroHandRole, 'By heroHandRole', '🃏') +
+    rowsHtml6(stats.rowsByHandClass, 'By handClass', '🪜');
+  var weakSpotHtml = '';
+  if (weakSpotPreview.length > 0) {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target (top 3 reasons)</div>' +
+                     '<ul class="pf-m3-qa-list">' +
+                       weakSpotPreview.map(function (w) {
+                         return '<li>' + _pfEscape(_pfM2PrettyLabel(w.reason)) +
+                                ' <span class="pf-m3-qa-detail">(' + w.lifetimeMisses + ' miss' + (w.lifetimeMisses === 1 ? '' : 'es') +
+                                ', ' + w.candidates + ' candidate scenario' + (w.candidates === 1 ? '' : 's') + ')</span></li>';
+                       }).join('') +
+                     '</ul>' +
+                   '</div>';
+  } else {
+    weakSpotHtml = '<div class="pf-m3-qa-block">' +
+                     '<div class="pf-m3-qa-block-title">🔍 Weak-spot review would target</div>' +
+                     '<div class="pf-m3-qa-empty-mini">No weak signals detected this session — clean read.</div>' +
+                   '</div>';
+  }
+  var critMonHtml = '<div class="pf-m3-qa-block">' +
+                      '<div class="pf-m3-qa-block-title">⚡ Critical-mistake monitor</div>' +
+                      '<div class="pf-m3-qa-detail" style="margin-bottom:6px">' +
+                        'Total critical: ' + critMon.totalCritical +
+                        ' · overbet-spew habit: ' + critMon.obHabitCount +
+                      '</div>';
+  var bySelected = Object.keys(critMon.bySelectedAction);
+  if (bySelected.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail">By selected action:</div><ul class="pf-m3-qa-list">' +
+      bySelected.sort(function (a, b) { return critMon.bySelectedAction[b] - critMon.bySelectedAction[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.bySelectedAction[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  var byReason = Object.keys(critMon.byScenarioReason);
+  if (byReason.length > 0) {
+    critMonHtml += '<div class="pf-m3-qa-detail" style="margin-top:6px">By scenario actionReason:</div><ul class="pf-m3-qa-list">' +
+      byReason.sort(function (a, b) { return critMon.byScenarioReason[b] - critMon.byScenarioReason[a]; })
+        .map(function (k) { return '<li>' + _pfEscape(_pfM2PrettyLabel(k)) + ' <span class="pf-m3-qa-detail">×' + critMon.byScenarioReason[k] + '</span></li>'; }).join('') +
+      '</ul>';
+  }
+  critMonHtml += '</div>';
+  var sessHtml = '';
+  if (stats.last3Sessions.length > 0) {
+    sessHtml = '<div class="pf-m3-qa-block">' +
+                 '<div class="pf-m3-qa-block-title">🕘 Last 3 sessions</div>' +
+                 '<ul class="pf-m3-qa-list">' +
+                   stats.last3Sessions.map(function (s, i) {
+                     return '<li>#' + (stats.sessionCount - stats.last3Sessions.length + i + 1) + ' · ' +
+                            (s.pct != null ? s.pct + '%' : '—') + ' (' + s.answered + 'q · best ' + s.best + ' / acc ' + s.acceptable + ' / bad ' + s.bad + ' / crit ' + s.critical + ') · mode ' + s.mode + '</li>';
+                   }).join('') +
+                 '</ul>' +
+               '</div>';
+  }
+  var privacy = '<div class="pf-m3-qa-privacy">' +
+                  '<button type="button" class="pf-m3-qa-copy-btn" onclick="_pfM6BetaQACopySnapshotClick(this)">📋 Copy M6 Beta QA Snapshot</button>' +
+                  '<div class="pf-m3-qa-privacy-note">Local only · browser history · no server upload · no tracking. Snapshot is JSON copied to clipboard for offline review.</div>' +
+                '</div>';
+  return '<details class="pf-m3-qa-dashboard">' +
+           '<summary>🗡️ Module 6 Beta QA dashboard (project-owner view)</summary>' +
+           sampleBanner +
+           topMetrics +
+           weakSpotHtml +
+           critMonHtml +
+           byAxisHtml +
+           sessHtml +
+           privacy +
+         '</details>';
+}
+
+function _pfM6BetaQACopySnapshotClick(btn) {
+  try {
+    var stats = _pfM6BetaQAStats();
+    var weakSpotPreview = _pfM6BetaQAWeakSpotPreview(stats);
+    var critMon = _pfM6BetaQACriticalMonitor(stats);
+    var snapshot = {
+      kind: 'rmtt-m6-beta-qa-snapshot',
+      schema: '1.0.0',
+      appVersion: (function () { try { return buildBackupPayload().appVersion; } catch (e) { return 'unknown'; } })(),
+      moduleId: 'pf_river_value_ip',
+      timestampISO: new Date().toISOString(),
+      sessionCount: stats.sessionCount,
+      questionCount: stats.questionCount,
+      latestPctScore: stats.latestPctScore,
+      averagePctScore: stats.averagePctScore,
+      criticalCount: stats.criticalCount,
+      criticalRatePct: stats.criticalRate,
+      weakReviewUsed: stats.weakReviewUsed,
+      weakActionReasons: (stats.weakActionReasons || []).slice(0, 5).map(function (r) {
+        return { reason: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakHeroHandRoles: (stats.weakHeroHandRoles || []).slice(0, 5).map(function (r) {
+        return { role: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakRecommendedActions: (stats.weakRecommendedActions || []).slice(0, 5).map(function (r) {
+        return { action: r.key, seen: r.seen, badCount: r.badCount, critCount: r.critCount, pct: r.pct };
+      }),
+      weakConcepts: (stats.weakConcepts || []).slice(0, 5),
+      weakSpotReviewWouldTarget: weakSpotPreview,
+      criticalMonitor: {
+        totalCritical: critMon.totalCritical,
+        obHabitCount: critMon.obHabitCount,
+        bySelectedAction: critMon.bySelectedAction,
+        byScenarioReason: critMon.byScenarioReason,
+        latestCritIds: critMon.latestCritIds
+      },
+      betaMastery: (function () {
+        try {
+          var m = (typeof _pfM6MasteryStats === 'function') ? _pfM6MasteryStats() : null;
+          return m ? m.masteryCriteriaMet : null;
+        } catch (e) { return null; }
+      })(),
+      last3Sessions: stats.last3Sessions,
+      _privacy: 'Local-only snapshot. Generated from browser localStorage M6 session history. No network upload.'
+    };
+    var json = JSON.stringify(snapshot, null, 2);
+    function showOk6() {
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied to clipboard';
+        btn.disabled = true;
+        setTimeout(function () { if (btn) { btn.textContent = orig; btn.disabled = false; } }, 1800);
+      }
+      if (typeof showToast === 'function') showToast('M6 Beta QA snapshot copied to clipboard.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).then(showOk6, function () {
+        window.prompt('Copy the M6 snapshot JSON below:', json);
+      });
+    } else {
+      window.prompt('Copy the M6 snapshot JSON below:', json);
+    }
+  } catch (e) {
+    if (typeof showToast === 'function') showToast('Snapshot failed: ' + e.message);
+  }
+}
+
 // v4.4.2: M5 Beta QA wrappers — reuse the module-agnostic helpers.
 function _pfM5BetaQAStats() { return _pfBetaQAStatsForModule('pf_river_barrel_oop_def'); }
 
@@ -39795,6 +40365,12 @@ function _pfModuleCardHtml(mod, stats) {
     actionsHtml =
       '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_river_barrel_oop_def\', 12)">▶ Start Module 5 Limited Beta</button>' +
       '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
+  } else if (mod.key === 'm6') {
+    // v4.5.3: Future -> Limited Beta. Route + queue length identical to the
+    // TCC tile (postflop:m6) per the m4/m5 card-fix precedent — no Locked path.
+    actionsHtml =
+      '<button class="pf-module-action-btn is-primary" onclick="startPostflopDrill(\'pf_river_value_ip\', 12)">▶ Start Module 6 Limited Beta</button>' +
+      '<button class="pf-module-action-btn is-secondary" type="button" onclick="(function(){ var d=this.closest(\'.pf-module-card\').querySelector(\'.pf-module-syllabus\'); if(d){ d.open=!d.open; } }).call(this)">📖 Syllabus</button>';
   } else {
     actionsHtml = '<button class="pf-module-action-btn is-disabled" type="button" disabled>🔒 Locked until foundation is stronger</button>';
   }
@@ -39824,6 +40400,14 @@ function _pfModuleCardHtml(mod, stats) {
                    '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
                    '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
                    'Limited Beta · 92 approved turn-defense scenarios · full teaching + weak-spot review wired in v4.3.1.' +
+                   '</div></details>';
+  }
+  // v4.5.3: M6 syllabus (curriculum finale — the bettor's seat)
+  if (mod.key === 'm6' && mod.syllabus) {
+    syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 6 syllabus</summary>' +
+                   '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
+                   '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
+                   'Limited Beta · 32 approved bettor-side river scenarios · seat-flip rendering shipped v4.5.2, curriculum wire v4.5.3. Curriculum M1–M6 complete.' +
                    '</div></details>';
   }
   if (mod.key === 'm5' && mod.syllabus) {
@@ -40151,6 +40735,10 @@ function startPostflopConceptDrill(conceptKey) {
     // v4.4.2: M5 concept drills draw only from approved M5 scenarios.
     pool = (typeof getModule5Scenarios === 'function') ? getModule5Scenarios() : [];
     moduleId = 'pf_river_barrel_oop_def';
+  } else if (moduleForConcept === 'm6') {
+    // v4.5.3: M6 concept drills draw only from approved M6 scenarios.
+    pool = (typeof getModule6Scenarios === 'function') ? getModule6Scenarios() : [];
+    moduleId = 'pf_river_value_ip';
   } else {
     pool = (typeof getModule1Scenarios === 'function') ? getModule1Scenarios() : [];
     moduleId = 'pf_board_texture';
@@ -40250,11 +40838,14 @@ function _pfConceptLibraryHtml() {
   var m4List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm4'; });
   // v4.4.2: include Module 5 group.
   var m5List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm5'; });
+  // v4.5.3: include Module 6 group (curriculum finale — the bettor's seat).
+  var m6List = _PF_CONCEPT_LIBRARY.filter(function (c) { return c.module === 'm6'; });
   var m1Cards = m1List.map(renderCard).join('');
   var m2Cards = m2List.map(renderCard).join('');
   var m3Cards = m3List.map(renderCard).join('');
   var m4Cards = m4List.map(renderCard).join('');
   var m5Cards = m5List.map(renderCard).join('');
+  var m6Cards = m6List.map(renderCard).join('');
 
   var m1Section = '<div class="pf-concept-group-header">Module 1 — Board Reading <span class="pf-concept-group-count">(' + m1List.length + ')</span></div>' + m1Cards;
   var m2Section = m2List.length > 0
@@ -40269,10 +40860,13 @@ function _pfConceptLibraryHtml() {
   var m5Section = m5List.length > 0
     ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 5 — River Defense OOP <span class="pf-concept-group-count">(' + m5List.length + ' · Limited Beta)</span></div>' + m5Cards)
     : '';
+  var m6Section = m6List.length > 0
+    ? ('<div class="pf-concept-group-header pf-concept-group-header-m2">Module 6 — River Betting IP <span class="pf-concept-group-count">(' + m6List.length + ' · Limited Beta)</span></div>' + m6Cards)
+    : '';
 
   return '<details class="pf-concept-library">' +
-           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 + ' + m3List.length + ' M3 + ' + m4List.length + ' M4 + ' + m5List.length + ' M5) · tap to drill</summary>' +
-           '<div class="pf-concept-grid">' + m1Section + m2Section + m3Section + m4Section + m5Section + '</div>' +
+           '<summary>📖 Concept Library (' + _PF_CONCEPT_LIBRARY.length + ' concepts · ' + m1List.length + ' M1 + ' + m2List.length + ' M2 + ' + m3List.length + ' M3 + ' + m4List.length + ' M4 + ' + m5List.length + ' M5 + ' + m6List.length + ' M6) · tap to drill</summary>' +
+           '<div class="pf-concept-grid">' + m1Section + m2Section + m3Section + m4Section + m5Section + m6Section + '</div>' +
          '</details>';
 }
 
@@ -40331,6 +40925,19 @@ function _pfAcademyHomeHtml() {
       m5BetaQAHtml = _pfM5BetaQADashboardHtml();
     }
   } catch (e) { /* swallow — never block Academy render */ }
+  // v4.5.3: M6 mastery + Beta QA dashboard — curriculum finale.
+  var m6MasteryHtml = '';
+  try {
+    if (typeof _pfM6MasteryProgressHtml === 'function') {
+      m6MasteryHtml = _pfM6MasteryProgressHtml();
+    }
+  } catch (e) { /* swallow — never block Academy render */ }
+  var m6BetaQAHtml = '';
+  try {
+    if (typeof _pfM6BetaQADashboardHtml === 'function') {
+      m6BetaQAHtml = _pfM6BetaQADashboardHtml();
+    }
+  } catch (e) { /* swallow — never block Academy render */ }
   return '<div class="pf-academy-section">' +
            '<div class="pf-academy-header">' +
              '<span class="pf-academy-title">🎓 Postflop Academy</span>' +
@@ -40347,9 +40954,11 @@ function _pfAcademyHomeHtml() {
            m3MasteryHtml +
            m4MasteryHtml +
            m5MasteryHtml +
+           m6MasteryHtml +
            m3BetaQAHtml +
            m4BetaQAHtml +
            m5BetaQAHtml +
+           m6BetaQAHtml +
            _pfConceptLibraryHtml() +
            '<div class="postflop-local-note" style="margin-top:10px;">Progress is saved locally on this device.</div>' +
          '</div>';
@@ -40439,10 +41048,13 @@ var TRAINING_MODES = {
       // approved scenarios. Honest copy: more scenarios coming, structured
       // practice (not final certification).
       { id: 'm5',        label: 'Module 5 · Facing River Barrel OOP', hint: '33 river-defense scenarios · Limited Beta', icon: '🌊', kind: 'secondary', route: 'postflop:m5', badge: 'BETA' },
+      // v4.5.3: Module 6 — the curriculum finale (bettor's seat). Limited Beta ·
+      // 32 approved scenarios. Honest copy: structured practice, not certification.
+      { id: 'm6',        label: 'Module 6 · River Betting IP', hint: '32 bettor-side river scenarios · Limited Beta', icon: '🗡️', kind: 'secondary', route: 'postflop:m6', badge: 'BETA' },
       // v4.4.3: Daily Challenge — 5 deterministic hands per day, streak + heatmap.
       { id: 'daily',     label: 'Daily Challenge', hint: '5 hands · new every day · keep the streak', icon: '📅', kind: 'secondary', route: 'postflop:daily', badge: 'NEW' },
       // v4.4.5 G2: Boss Exams + Revenge Hands.
-      { id: 'boss',      label: 'Boss Exams', hint: '5 bosses · no hints · trophy at 80%+', icon: '⚔️', kind: 'secondary', route: 'postflop:boss', badge: 'NEW' },
+      { id: 'boss',      label: 'Boss Exams', hint: '6 bosses · no hints · trophy at 80%+', icon: '⚔️', kind: 'secondary', route: 'postflop:boss', badge: 'NEW' },
       { id: 'revenge',   label: 'Revenge Hands', hint: 'return to your punts · make them right', icon: '🩹', kind: 'secondary', route: 'postflop:revenge', badge: 'NEW' },
       // v4.5.0 G3: the flagship run mode.
       { id: 'tourney',   label: 'Tournament', hint: '40 hands · rising blinds · survive to the Final Table', icon: '🏆', kind: 'secondary', route: 'postflop:tourney', badge: 'NEW' }
@@ -40558,6 +41170,16 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_river_barrel_oop_def', 12);
+      break;
+    case 'postflop:m6':
+      // v4.5.3: Module 6 (River Betting IP) — queue length 12 (owner knob,
+      // M5 mirror). Same Postflop Beta gating as M1-M5.
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_river_value_ip', 12);
       break;
     case 'postflop:daily':
       // v4.4.3: Daily Challenge — same beta gating; one attempt per day enforced inside.
@@ -41093,7 +41715,12 @@ function renderPostflopQuestion() {
   // missing helpers (e.g., during early bootstrap).
   // v4.3.1: same first-time pattern for M4.
   var firstTimeExplainerHtml = '';
-  if (isM5 && d.currentIndex === 0
+  if (isM6 && d.currentIndex === 0
+      && typeof _pfM6IsFirstTime === 'function' && _pfM6IsFirstTime()
+      && typeof _pfM6FirstTimeExplainerHtml === 'function') {
+    // v4.5.3: same first-time pattern for M6 (the seat-flip explainer).
+    firstTimeExplainerHtml = _pfM6FirstTimeExplainerHtml();
+  } else if (isM5 && d.currentIndex === 0
       && typeof _pfM5IsFirstTime === 'function' && _pfM5IsFirstTime()
       && typeof _pfM5FirstTimeExplainerHtml === 'function') {
     // v4.4.2: same first-time pattern for M5.
@@ -42019,6 +42646,135 @@ function _pfM5RenderSessionAggregations(d, scenarios, counts, total) {
 // ============================================================================
 
 // ============================================================================
+// v4.5.3 — MODULE 6 SESSION SUMMARY AGGREGATION (bettor's seat)
+// Same grouping helper as M2-M5; river-betting copy.
+// ============================================================================
+function _pfM6RenderSessionAggregations(d, scenarios, counts, total) {
+  if (!d || d.module !== 'pf_river_value_ip') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var html = '';
+
+  var hcRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'handClass');
+  var hcWeak = hcRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  var hcStrong = hcRows.filter(function (r) { return r.seen >= 2 && r.pct >= 80; });
+  if (hcStrong.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-strong pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">💪 Strongest hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcStrong.slice(0, 4).map(function (r) {
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hcWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand classes</span>' +
+              '<ul class="pf-learn-list">' +
+                hcWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  var hrRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'heroHandRole');
+  var hrWeak = hrRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  if (hrRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Hand role coverage</span>' +
+              '<ul class="pf-learn-list">' +
+                hrRows.slice(0, 6).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (hrWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak hand roles</span>' +
+              '<ul class="pf-learn-list">' +
+                hrWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  // ActionReason aggregation — M6 has 12 bettor-side reasons, ALL masterable.
+  var arRows = _pfM2GroupAnswersBy(d.answers, scenarios, 'actionReason');
+  var arWeak = arRows.filter(function (r) { return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50); });
+  if (arRows.length > 0) {
+    html += '<div class="pf-learn-block pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🎯 Action reason coverage (river betting)</span>' +
+              '<ul class="pf-learn-list">' +
+                arRows.slice(0, 12).map(function (r) {
+                  var emoji = r.pct >= 80 ? '✅' : (r.pct >= 50 ? '≈' : '❌');
+                  return '<li>' + emoji + ' ' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + r.pct + '% over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+  if (arWeak.length > 0) {
+    html += '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+              '<span class="pf-learn-title">🔍 Weak action reasons (river betting)</span>' +
+              '<ul class="pf-learn-list">' +
+                arWeak.slice(0, 4).map(function (r) {
+                  var detail = r.critCount > 0 ? r.critCount + ' critical' : (r.badCount > 0 ? r.badCount + ' bad' : r.pct + '%');
+                  return '<li>' + _pfEscape(_pfM2PrettyLabel(r.key)) +
+                         ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + r.seen + ')</span></li>';
+                }).join('') +
+              '</ul></div>';
+  }
+
+  if (html) {
+    html = '<div class="pf-m2-aggr-section">' +
+             '<div class="pf-m2-aggr-section-title">Module 6 · river betting breakdown (Limited Beta)</div>' +
+             html +
+           '</div>';
+  }
+  return html;
+}
+function _pfM6BetaSessionLeakHtml(d, scenarios) {
+  if (!d || d.module !== 'pf_river_value_ip') return '';
+  if (!d.answers || d.answers.length === 0) return '';
+  var pool = scenarios || [];
+  var rowsAR = _pfM2GroupAnswersBy(d.answers, pool, 'actionReason');
+  var weakAR = rowsAR.filter(function (r) {
+    return r.critCount > 0 || r.badCount >= 2 || (r.seen >= 2 && r.pct < 50);
+  });
+  if (weakAR.length === 0) return '';
+  weakAR.sort(function (a, b) {
+    if (b.critCount !== a.critCount) return b.critCount - a.critCount;
+    if (b.badCount !== a.badCount) return b.badCount - a.badCount;
+    return a.pct - b.pct;
+  });
+  var top = weakAR[0];
+  var detail = top.critCount > 0 ? top.critCount + ' critical' : (top.badCount > 0 ? top.badCount + ' bad' : top.pct + '%');
+  var sampleHonest = (d.answers.length < 5)
+    ? ' <span class="pf-m3-qa-detail" style="opacity:0.75">(early signal — small sample)</span>'
+    : '';
+  return '<div class="pf-learn-block pf-learn-weak pf-m2-aggr-block">' +
+           '<span class="pf-learn-title">🔥 Biggest leak this session</span>' +
+           '<ul class="pf-learn-list">' +
+             '<li><strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong>' +
+             ' <span style="opacity:0.7;font-size:11px">(' + detail + ' over ' + top.seen + ')</span>' +
+             sampleHonest + '</li>' +
+           '</ul>' +
+           '<div class="pf-m3-qa-detail" style="margin-top:6px;font-size:11px;opacity:0.85;">' +
+             'Best next review: <strong>' + _pfEscape(_pfM2PrettyLabel(top.key)) + '</strong> — ' +
+             'open Module 6 Weak-Spot Review to drill it.' +
+           '</div>' +
+         '</div>';
+}
+// ============================================================================
+// END v4.5.3 — MODULE 6 SESSION SUMMARY AGGREGATION
+// ============================================================================
+
+// ============================================================================
 // v4.0.12 — POSTFLOP WEAK-SPOT REVIEW
 // Helpers + entry point for a focused review session derived from the just-
 // completed session's mistakes. Local-only, in-memory profile (no persistent
@@ -42481,6 +43237,19 @@ function renderPostflopComplete() {
       m5LeakHtml = _pfM5BetaSessionLeakHtml(d, App.postflop && App.postflop.scenarios);
     }
   } catch (e) { /* swallow */ }
+  // v4.5.3: same aggregation + leak-hint pattern wired for M6.
+  var m6AggrHtml = '';
+  try {
+    if (typeof _pfM6RenderSessionAggregations === 'function') {
+      m6AggrHtml = _pfM6RenderSessionAggregations(d, App.postflop && App.postflop.scenarios, counts, total);
+    }
+  } catch (e) { /* swallow */ }
+  var m6LeakHtml = '';
+  try {
+    if (typeof _pfM6BetaSessionLeakHtml === 'function') {
+      m6LeakHtml = _pfM6BetaSessionLeakHtml(d, App.postflop && App.postflop.scenarios);
+    }
+  } catch (e) { /* swallow */ }
 
   // v4.0.12: differentiate header copy when this was a weak-spot review session
   // v4.1.1: also differentiate when this was a concept-focused drill
@@ -42494,6 +43263,8 @@ function renderPostflopComplete() {
   var isM4Module = !!(d && d.module === 'pf_turn_barrel_oop_def');
   // v4.4.2: also differentiate when this was a Module 5 session (Limited Beta)
   var isM5Module = !!(d && d.module === 'pf_river_barrel_oop_def');
+  // v4.5.3: Module 6 session (Limited Beta — bettor's seat)
+  var isM6Module = !!(d && d.module === 'pf_river_value_ip');
   var conceptName = isConceptDrill
     ? (d.conceptDisplayName || _pfConceptDisplayName(d.conceptKey) || 'Concept')
     : '';
@@ -42505,6 +43276,7 @@ function renderPostflopComplete() {
   var moduleEmoji;
   if (isDailyMode)     { moduleLabel = 'Daily Challenge';                                   moduleEmoji = '📅'; }
   else if (isRevengeMode) { moduleLabel = 'Revenge Session';                                moduleEmoji = '⚔️'; }
+  else if (isM6Module) { moduleLabel = 'Module 6 · River Betting IP · Limited Beta';        moduleEmoji = '🗡️'; }
   else if (isM5Module) { moduleLabel = 'Module 5 · Facing River Barrel OOP · Limited Beta'; moduleEmoji = '🌊'; }
   else if (isM4Module) { moduleLabel = 'Module 4 · Facing Turn Barrel OOP · Limited Beta'; moduleEmoji = '🎯'; }
   else if (isM3Module) { moduleLabel = 'Module 3 · BB Defense OOP · Limited Beta';         moduleEmoji = '🛡️'; }
@@ -42524,6 +43296,7 @@ function renderPostflopComplete() {
     contextLabel = moduleEmoji + ' ' + moduleLabel + ' · Complete';
     if (isDailyMode) summaryHeadline = 'Daily Challenge Complete';
     else if (isRevengeMode) summaryHeadline = 'Revenge Session Summary';
+    else if (isM6Module) summaryHeadline = 'Module 6 Session Summary (Limited Beta)';
     else if (isM5Module) summaryHeadline = 'Module 5 Session Summary (Limited Beta)';
     else if (isM4Module) summaryHeadline = 'Module 4 Session Summary (Limited Beta)';
     else if (isM3Module) summaryHeadline = 'Module 3 Session Summary (Limited Beta)';
@@ -42568,9 +43341,11 @@ function renderPostflopComplete() {
     m3AggrHtml +
     m4AggrHtml +
     m5AggrHtml +
+    m6AggrHtml +
     m3LeakHtml +
     m4LeakHtml +
     m5LeakHtml +
+    m6LeakHtml +
     (conceptRows ? '<details class="postflop-explanation-section"><summary>Concept mastery — full breakdown</summary><div class="pf-section-body">' + conceptRows + '</div></details>' : '') +
     leaksHtml +
     '<div class="postflop-summary-actions" style="margin-top:14px">' +
@@ -42599,11 +43374,12 @@ function renderPostflopComplete() {
         return left ? '<button class="postflop-next-btn" onclick="startPostflopRevenge()">⚔️ Next revenge (' + left + ' left)</button>' : '';
       })() : '') +
       ((isDailyMode || isRevengeMode) ? '' : ('<button class="postflop-next-btn" onclick="startPostflopDrill(\'' + (
-        isM5Module ? 'pf_river_barrel_oop_def' :
+        isM6Module ? 'pf_river_value_ip' :
+        (isM5Module ? 'pf_river_barrel_oop_def' :
         (isM4Module ? 'pf_turn_barrel_oop_def' :
         (isM3Module ? 'pf_flop_cbet_oop_def' :
-         (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture')))
-      ) + '\', ' + (isM5Module ? 12 : (isM4Module ? 12 : (isM3Module ? 10 : (isM2Module ? 12 : 15)))) + ')">▶ Drill again</button>')) +
+         (isM2Module ? 'pf_flop_cbet_ip' : 'pf_board_texture'))))
+      ) + '\', ' + (isM6Module ? 12 : (isM5Module ? 12 : (isM4Module ? 12 : (isM3Module ? 10 : (isM2Module ? 12 : 15))))) + ')">▶ Drill again</button>')) +
       ((typeof _pfReceiptBtnHtml === 'function') ? _pfReceiptBtnHtml() : '') +
       '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
       // Inline note when no weak signals (positive feedback, no nag)
