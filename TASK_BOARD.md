@@ -1,7 +1,7 @@
 # Task Board — Range Master MTT
 
 > Active workstream tracker. Updated by Orchestrator + subagents (each role updates their own rows).
-> Last updated: 2026-07-06 (v4.5.2 M6 Production Migration + FT Debut — 510→534 zero-drift, concepts 75, validator 534/0/0 w/ R94–R106, stakeBasis PIN + whitelist +4 in game layer, FT debut via existing hook. Cache 4.5.0→4.5.2. Next: v4.5.2A expansion → v4.5.3 wire.).
+> Last updated: 2026-07-07 (v4.5.2A M6 Expansion +8 — 534→542 zero-drift, M6 32, F5 quad-jacks-impossible fix (CHECK-BACK-NUTS), recompute lints R29/R107, check-primary mixed rule §10.8, validator 542/0/0, FT pool M6 15. Cache 4.5.2→4.5.2A. M4-audit ARRIVAL LEGITIMACY ruling recorded in PROJECT_STATE §1. Next: v4.5.3 wire spec.).
 
 ---
 
@@ -14,6 +14,8 @@ First visible postflop UI surface. Consumes `App.postflop` namespace shipped in 
 ---
 
 ## Current Status
+
+🟢 **v4.5.2A M6 Expansion +8 (PRODUCTION 534→542; CACHE 4.5.2→4.5.2A)** — owner review 7/8 PASS + F5 grading fix (quad jacks impossible: Js + board Jh/Jd ⇒ zero-combos-beaten ⇒ CHECK-BACK-NUTS critical + nutted metadata + self-verifying enumeration). **Label-trust gap closed: M6.R29/R107 recompute lints** (990-combo enumeration vs authored labels, AA/KK/QQ baseline exclusions; reproduced-pre-fix / clean-post-fix / F4 control). Check-primary mixed rule recorded (§10.8, R14+R101 amended). Migration zero-drift on all 534; idempotent; **validator 542/0/0 (R107 live)**; FT pool L7 M6 = 15 (+4 D4 action rows; D6 = reason row, drill-only by design). QA fresh-SW 542/542, 0 console. Docs `postflop-v4.5.2A-module6-expansion.md`; snapshot `GPT AUDIT/v4.5.2A/`. **Next: v4.5.3 curriculum wire — SPEC first (M6 program finale; M1–M6 complete after ship).**
 
 🟢 **v4.5.2 M6 Production Migration + FT Debut (PRODUCTION 510→534 + GAME LAYER; CACHE 4.5.0→4.5.2)** — G4's first data drop: 24 line-reviewed M6 seeds (River Betting IP, seat mirror of M5) migrated with **zero-drift verification on all 510 non-M6 rows**; concepts 63→75; validator **534/0/0** incl. NEW **R94–R106** (stakeBasis PIN / solver_required hard-block / mixed whitelist-equality / CHECK-BACK-NUTS R103+R104); `_pfStakeBB` reads authored `stakeBasis` (7/13/20/30, constant across choices); `_PF_MIXED_WHITELIST` +4 rows (8 pairs, shipped WITH migration per ruling); labels (+4 actions, +12 M6 reasons); renderers seat-flip (BTN IP). **FT debut live via the v4.5.0 hook — zero engine rework** (QA: L7 deals 11 M6 D≥4 action rows, 0 reason rows; temptation-stake row = 7; promotion best/best/bad-stays; 0 console errors). Metadata-lint round disclosed + fixed at builder w/ R26–R28 recurrence guards (accepted as standard process). Docs: architecture spec §10 (all rulings), seeds JSON + builder, strategic review (24/24), migration doc; snapshot `GPT AUDIT/v4.5.2/`. **Next: v4.5.2A expansion (same regime, chat-paste gate, stop at review) → v4.5.3 curriculum wire.**
 

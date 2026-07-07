@@ -16,9 +16,21 @@
 #   R20-R22 Range Reveal prose lints (WARN): negator within 40 chars before a
 #       band phrase; the word flush-dense anywhere; band phrase inventory log.
 
+param(
+  # v4.5.2A: parameterized so the SAME rule set audits every M6 seed batch.
+  # Defaults = the v4.5.1 24-row batch. Expansion batches override these and
+  # enable the production duplicate-id check.
+  [string]$SeedFile = 'docs\specs\postflop-v4.5.1-module6-seeds.json',
+  [int]$ExpectCount = 24,
+  [int]$ExpectReason = 6,
+  [int]$ExpectMixed = 4,
+  [int]$MinD45 = 8,
+  [int]$MinOverbetStake = 2,
+  [switch]$CheckProductionDups
+)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$path = Join-Path $root 'docs\specs\postflop-v4.5.1-module6-seeds.json'
+$path = Join-Path $root $SeedFile
 $doc = [System.IO.File]::ReadAllText($path, [System.Text.UTF8Encoding]::new($false)) | ConvertFrom-Json
 $ALLROWS = @($doc.scenarios)
 $errors = @(); $warns = @()
@@ -36,8 +48,12 @@ $negRx = "(?:\bnot\b|n't\b|\bnever\b|\brarely\b|\bno longer\b)"
 $bandRx = '(bluff-heavy|over-?bluff\w*|toward bluffs|too few value|value-heavy|value-rich|value-weighted|toward (?:his )?value|bluff-light|too few bluffs|flush-dense|polar(?:ized|izing)?\b|value-or-bluff|nuts?-or-air|maximally polar|merged|thin value|bets? thin)'
 
 # R01 count / R02 unique ids / module constants
-if ($ALLROWS.Count -ne 24) { Err '-' 'M6.R01' ('expected 24 scenarios, got ' + $ALLROWS.Count) }
+if ($ALLROWS.Count -ne $ExpectCount) { Err '-' 'M6.R01' ('expected ' + $ExpectCount + ' scenarios, got ' + $ALLROWS.Count) }
 $ids = @{}
+if ($CheckProductionDups) {
+  $prodM6 = ([System.IO.File]::ReadAllText((Join-Path $root 'postflop\postflop_scenarios.json'), [System.Text.UTF8Encoding]::new($false)) | ConvertFrom-Json).scenarios
+  foreach ($p in $prodM6) { $ids[$p.id] = $true }   # seeds must not collide with ANY production id
+}
 $rankMap = @{ '2'=2;'3'=3;'4'=4;'5'=5;'6'=6;'7'=7;'8'=8;'9'=9;'T'=10;'J'=11;'Q'=12;'K'=13;'A'=14 }
 
 foreach ($row in $ALLROWS) {
@@ -117,9 +133,18 @@ foreach ($row in $ALLROWS) {
     $acc = @($row.answer.acceptable)
     if ($acc.Count -ne 2) { Err $id 'M6.R14' 'mixed rows: exactly 2 acceptable members' }
     $primary = $acc[0]
-    if ($primary -eq 'check_back') { Err $id 'M6.R14' 'primary (first) member must be the bet member/nudged side' }
-    if ($szMap[$row.stakeBasis] -ne $primary) { Err $id 'M6.R14' ('stakeBasis must match primary member ' + $primary) }
-    if ($szMap[$row.heroRiverSizing] -ne $primary) { Err $id 'M6.R14' 'heroRiverSizing must match primary member' }
+    if ($primary -eq 'check_back') {
+      # Owner v4.5.2A rule clarification: check-primary mixes are ALLOWED
+      # (nudge points to check). stakeBasis then = the BET member's sizing
+      # (temptation-style fallback); heroRiverSizing = none.
+      $betMember = $acc[1]
+      if ($betMember -eq 'check_back' -or $actEnum -notcontains $betMember) { Err $id 'M6.R14' 'check-primary mix: second member must be a bet action' }
+      elseif ($szMap[$row.stakeBasis] -ne $betMember) { Err $id 'M6.R14' ('check-primary mix: stakeBasis must match the bet member ' + $betMember) }
+      if ($row.heroRiverSizing -ne 'none') { Err $id 'M6.R14' 'check-primary mix: heroRiverSizing must be none' }
+    } else {
+      if ($szMap[$row.stakeBasis] -ne $primary) { Err $id 'M6.R14' ('stakeBasis must match primary member ' + $primary) }
+      if ($szMap[$row.heroRiverSizing] -ne $primary) { Err $id 'M6.R14' 'heroRiverSizing must match primary member' }
+    }
     $wl = @($row.mixedWhitelistChoices)
     if ($wl.Count -eq 0) { Err $id 'M6.R14' 'mixed rows must carry mixedWhitelistChoices' }
     elseif ((($wl | Sort-Object) -join ',') -ne (($acc | Sort-Object) -join ',')) { Err $id 'M6.R14' 'mixedWhitelistChoices must equal acceptable set' }
@@ -156,6 +181,73 @@ foreach ($row in $ALLROWS) {
     if (@($row.answer.critical) -notcontains 'check_back') {
       Err $id 'M6.R25' 'nutted_value row with non-critical check_back -- zero-combos-beaten rows must grade the check-back as a full punt (or the row is not nutted_value)'
     }
+  }
+
+  # R29 (owner v4.5.2A review, gap-closure): R25 trusts AUTHORED labels, which
+  # let a mislabeled zero-combos-beaten boat (F5) slip. For any BOAT-OR-BETTER
+  # hero hand, RECOMPUTE combos-beating-hero from actual board + hole cards
+  # (990-combo enumeration) minus the range exclusions (AA/KK/QQ three-bet
+  # preflop in the baseline), and cross-check the authored nutted labels.
+  $r29Cards7 = @($row.board.cards) + @($row.heroHand)
+  function _R29Tuple($seven) {
+    # returns @(cat,a,b) for straight-flush(8)/quads(7)/boat(6); else @(0,0,0)
+    $rk = @{}; $su = @{}
+    foreach ($c in $seven) {
+      $r = $rankMap[$c.Substring(0, $c.Length - 1)]; $s = $c.Substring($c.Length - 1)
+      if (-not $rk.ContainsKey($r)) { $rk[$r] = 0 }; $rk[$r]++
+      if (-not $su.ContainsKey($s)) { $su[$s] = @() }; $su[$s] += $r
+    }
+    foreach ($s in $su.Keys) {
+      $sr = @($su[$s] | Select-Object -Unique)
+      if ($sr.Count -ge 5) {
+        $aug = @($sr); if ($sr -contains 14) { $aug += 1 }
+        for ($hi = 14; $hi -ge 5; $hi--) {
+          $need = @($hi, ($hi-1), ($hi-2), ($hi-3), ($hi-4)); $ok = $true
+          foreach ($n in $need) { if ($aug -notcontains $n) { $ok = $false; break } }
+          if ($ok) { return @(8, $hi, 0) }
+        }
+      }
+    }
+    $quad = 0; $trips = @(); $pairs = @()
+    foreach ($r in $rk.Keys) {
+      if ($rk[$r] -ge 4 -and $r -gt $quad) { $quad = $r }
+      if ($rk[$r] -eq 3) { $trips += $r }
+      if ($rk[$r] -eq 2) { $pairs += $r }
+    }
+    if ($quad -gt 0) {
+      $kick = 0; foreach ($r in $rk.Keys) { if ($r -ne $quad -and $r -gt $kick) { $kick = $r } }
+      return @(7, $quad, $kick)
+    }
+    $trips = @($trips | Sort-Object -Descending)
+    if ($trips.Count -ge 1) {
+      $bestPair = 0
+      if ($trips.Count -ge 2) { $bestPair = $trips[1] }
+      foreach ($p in $pairs) { if ($p -gt $bestPair) { $bestPair = $p } }
+      if ($bestPair -gt 0) { return @(6, $trips[0], $bestPair) }
+    }
+    return @(0, 0, 0)
+  }
+  $heroT = _R29Tuple $r29Cards7
+  if ($heroT[0] -ge 6) {
+    $deck = @()
+    foreach ($r in @('2','3','4','5','6','7','8','9','T','J','Q','K','A')) { foreach ($s in @('h','d','c','s')) { $deck += ($r + $s) } }
+    $used = @{}; foreach ($c in $r29Cards7) { $used[$c] = $true }
+    $avail = @($deck | Where-Object { -not $used.ContainsKey($_) })
+    $beats = 0; $beatExample = ''
+    for ($i = 0; $i -lt $avail.Count - 1; $i++) {
+      for ($j = $i + 1; $j -lt $avail.Count; $j++) {
+        $v1 = $avail[$i]; $v2 = $avail[$j]
+        $vr1 = $v1.Substring(0, $v1.Length - 1); $vr2 = $v2.Substring(0, $v2.Length - 1)
+        if ($vr1 -eq $vr2 -and @('A','K','Q') -contains $vr1) { continue }   # 3-bet baseline exclusion
+        $vT = _R29Tuple (@($row.board.cards) + @($v1, $v2))
+        if (($vT[0] -gt $heroT[0]) -or ($vT[0] -eq $heroT[0] -and $vT[1] -gt $heroT[1]) -or ($vT[0] -eq $heroT[0] -and $vT[1] -eq $heroT[1] -and $vT[2] -gt $heroT[2])) {
+          $beats++; if ($beatExample -eq '') { $beatExample = $v1 + ' ' + $v2 }
+        }
+      }
+    }
+    $authNut = ($row.heroHandRole -eq 'nutted_value' -and $row.showdownValue -eq 'nutted')
+    if ($beats -eq 0 -and -not $authNut) { Err $id 'M6.R29' 'recompute: ZERO combos beat this boat-or-better hero (after AA/KK/QQ exclusions) but row is not labeled nutted_value/nutted -- check-back grading likely wrong' }
+    if ($beats -gt 0 -and $authNut) { Err $id 'M6.R29' ('recompute: ' + $beats + ' combo(s) beat hero (e.g. ' + $beatExample + ') but row is labeled nutted_value/nutted') }
   }
 
   # R26-R28 production-convention guards (added after v4.5.2 first-merge lint):
@@ -226,13 +318,13 @@ foreach ($row in $ALLROWS) {
 
 # R23 batch-level distribution checks
 $mixedRows = @($ALLROWS | Where-Object { $_.recommendedAction -eq 'mixed' })
-if ($mixedRows.Count -ne 4) { Err '-' 'M6.R23' ('mixed_nudge rows must be exactly 4, got ' + $mixedRows.Count) }
+if ($mixedRows.Count -ne $ExpectMixed) { Err '-' 'M6.R23' ('mixed_nudge rows must be exactly ' + $ExpectMixed + ', got ' + $mixedRows.Count) }
 $reasonRows = @($ALLROWS | Where-Object { $_.question.qtype -eq 'reason_choice' })
-if ($reasonRows.Count -ne 6) { Err '-' 'M6.R23' ('reason rows must be 6, got ' + $reasonRows.Count) }
+if ($reasonRows.Count -ne $ExpectReason) { Err '-' 'M6.R23' ('reason rows must be ' + $ExpectReason + ', got ' + $reasonRows.Count) }
 $obStake = @($ALLROWS | Where-Object { $_.stakeBasis -eq 'overbet' })
-if ($obStake.Count -lt 2) { Err '-' 'M6.R23' 'need >= 2 overbet-stake rows (owner ruling)' }
+if ($obStake.Count -lt $MinOverbetStake) { Err '-' 'M6.R23' ('need >= ' + $MinOverbetStake + ' overbet-stake rows (owner ruling)') }
 $d45 = @($ALLROWS | Where-Object { $_.difficulty -ge 4 })
-if ($d45.Count -lt 8) { Err '-' 'M6.R23' ('need >= 8 rows at difficulty 4-5 for FT, got ' + $d45.Count) }
+if ($d45.Count -lt $MinD45) { Err '-' 'M6.R23' ('need >= ' + $MinD45 + ' rows at difficulty 4-5 for FT, got ' + $d45.Count) }
 $reasonsUsed = @($ALLROWS | ForEach-Object { $_.actionReason } | Select-Object -Unique)
 $unused = @($reasonEnum | Where-Object { $reasonsUsed -notcontains $_ })
 if ($unused.Count -gt 0) { Warn '-' 'M6.R23' ('unused actionReason vocab: ' + ($unused -join ', ')) }

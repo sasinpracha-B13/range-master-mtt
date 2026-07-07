@@ -1536,7 +1536,12 @@ foreach($s in $data.scenarios){
       if ($s.verdictBasis -ne 'mixed_nudge') { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows must be verdictBasis=mixed_nudge' | Out-Null }
       $m6Acc = if ($s.answer) { @($s.answer.acceptable) } else { @() }
       if ($m6Acc.Count -ne 2) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows: exactly 2 acceptable members' | Out-Null }
-      elseif ($m6Acc[0] -eq 'check_back') { Add-Issue $local 'R101' 'error' $sid 'M6 mixed primary (first acceptable) must be the bet member' | Out-Null }
+      elseif ($m6Acc[0] -eq 'check_back') {
+        # v4.5.2A owner clarification: check-primary mixes allowed; stakeBasis
+        # = the BET member's sizing (temptation-style fallback); hrs = none.
+        if ($m6SzMap[$s.stakeBasis] -ne $m6Acc[1]) { Add-Issue $local 'R101' 'error' $sid 'M6 check-primary mix: stakeBasis must match the bet member' | Out-Null }
+        if ($s.heroRiverSizing -ne 'none') { Add-Issue $local 'R101' 'error' $sid 'M6 check-primary mix: heroRiverSizing must be none' | Out-Null }
+      }
       elseif ($m6SzMap[$s.stakeBasis] -ne $m6Acc[0]) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed stakeBasis must match primary member' | Out-Null }
       $m6Wl = @($s.mixedWhitelistChoices)
       if ($m6Wl.Count -eq 0) { Add-Issue $local 'R101' 'error' $sid 'M6 mixed rows must carry mixedWhitelistChoices (ships with migration)' | Out-Null }
@@ -1572,6 +1577,74 @@ foreach($s in $data.scenarios){
 
     # R106 -- flush-dense ban (Range Reveal texture-leak guard, M6 authoring rule)
     foreach ($v in $m6Prose) { if ($v -match 'flush-dense') { Add-Issue $local 'R106' 'error' $sid 'M6 prose may not use flush-dense (texture-leak risk)' | Out-Null ; break } }
+
+    # R107 -- CHECK-BACK-NUTS recompute lint (owner v4.5.2A gap-closure; R29
+    # mirror). R103/R104 trust authored labels; R107 RECOMPUTES combos beating
+    # any BOAT-OR-BETTER hero from board + hole cards (990-combo enumeration,
+    # AA/KK/QQ three-bet-baseline exclusion) and cross-checks the labels.
+    $r107Rank = @{ '2'=2;'3'=3;'4'=4;'5'=5;'6'=6;'7'=7;'8'=8;'9'=9;'T'=10;'J'=11;'Q'=12;'K'=13;'A'=14 }
+    function _R107Tuple($seven) {
+      $rk = @{}; $su = @{}
+      foreach ($c in $seven) {
+        $r = $r107Rank[$c.Substring(0, $c.Length - 1)]; $sx = $c.Substring($c.Length - 1)
+        if (-not $rk.ContainsKey($r)) { $rk[$r] = 0 }; $rk[$r]++
+        if (-not $su.ContainsKey($sx)) { $su[$sx] = @() }; $su[$sx] += $r
+      }
+      foreach ($sx in $su.Keys) {
+        $sr = @($su[$sx] | Select-Object -Unique)
+        if ($sr.Count -ge 5) {
+          $aug = @($sr); if ($sr -contains 14) { $aug += 1 }
+          for ($hi = 14; $hi -ge 5; $hi--) {
+            $ok = $true
+            foreach ($n in @($hi,($hi-1),($hi-2),($hi-3),($hi-4))) { if ($aug -notcontains $n) { $ok = $false; break } }
+            if ($ok) { return @(8, $hi, 0) }
+          }
+        }
+      }
+      $quad = 0; $trips = @(); $pairs = @()
+      foreach ($r in $rk.Keys) {
+        if ($rk[$r] -ge 4 -and $r -gt $quad) { $quad = $r }
+        if ($rk[$r] -eq 3) { $trips += $r }
+        if ($rk[$r] -eq 2) { $pairs += $r }
+      }
+      if ($quad -gt 0) {
+        $kick = 0; foreach ($r in $rk.Keys) { if ($r -ne $quad -and $r -gt $kick) { $kick = $r } }
+        return @(7, $quad, $kick)
+      }
+      $trips = @($trips | Sort-Object -Descending)
+      if ($trips.Count -ge 1) {
+        $bp = 0
+        if ($trips.Count -ge 2) { $bp = $trips[1] }
+        foreach ($p in $pairs) { if ($p -gt $bp) { $bp = $p } }
+        if ($bp -gt 0) { return @(6, $trips[0], $bp) }
+      }
+      return @(0, 0, 0)
+    }
+    if ($s.board -and $s.board.cards -and $s.heroHand) {
+      $r107HeroT = _R107Tuple (@($s.board.cards) + @($s.heroHand))
+      if ($r107HeroT[0] -ge 6) {
+        $r107Deck = @()
+        foreach ($rr in @('2','3','4','5','6','7','8','9','T','J','Q','K','A')) { foreach ($ss in @('h','d','c','s')) { $r107Deck += ($rr + $ss) } }
+        $r107Used = @{}
+        foreach ($c in (@($s.board.cards) + @($s.heroHand))) { $r107Used[$c] = $true }
+        $r107Avail = @($r107Deck | Where-Object { -not $r107Used.ContainsKey($_) })
+        $r107Beats = 0; $r107Ex = ''
+        for ($i = 0; $i -lt $r107Avail.Count - 1; $i++) {
+          for ($j = $i + 1; $j -lt $r107Avail.Count; $j++) {
+            $v1 = $r107Avail[$i]; $v2 = $r107Avail[$j]
+            $vr1 = $v1.Substring(0, $v1.Length - 1); $vr2 = $v2.Substring(0, $v2.Length - 1)
+            if ($vr1 -eq $vr2 -and @('A','K','Q') -contains $vr1) { continue }
+            $vT = _R107Tuple (@($s.board.cards) + @($v1, $v2))
+            if (($vT[0] -gt $r107HeroT[0]) -or ($vT[0] -eq $r107HeroT[0] -and $vT[1] -gt $r107HeroT[1]) -or ($vT[0] -eq $r107HeroT[0] -and $vT[1] -eq $r107HeroT[1] -and $vT[2] -gt $r107HeroT[2])) {
+              $r107Beats++; if ($r107Ex -eq '') { $r107Ex = $v1 + ' ' + $v2 }
+            }
+          }
+        }
+        $r107Nut = ($s.heroHandRole -eq 'nutted_value' -and $s.showdownValue -eq 'nutted')
+        if ($r107Beats -eq 0 -and -not $r107Nut) { Add-Issue $local 'R107' 'error' $sid 'M6 recompute: ZERO combos beat this boat-or-better hero (after AA/KK/QQ exclusions) but row is not labeled nutted_value/nutted' | Out-Null }
+        if ($r107Beats -gt 0 -and $r107Nut) { Add-Issue $local 'R107' 'error' $sid ('M6 recompute: ' + $r107Beats + ' combo(s) beat hero (e.g. ' + $r107Ex + ') but row is labeled nutted_value/nutted') | Out-Null }
+      }
+    }
   }
 
   # R29 (v4.2.2D + v4.2.2E hardening) — Card/suit notation guard. Warning-only.
