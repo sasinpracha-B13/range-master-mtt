@@ -33495,7 +33495,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.5.3',
+    appVersion: '4.5.4',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -35020,7 +35020,10 @@ function _pfDailyPickQueue(dateStr) {
   var m3 = sortById(actionOnly(getModule3Scenarios()));
   var m4 = sortById(actionOnly(getModule4Scenarios()));
   var m5 = sortById(actionOnly(getModule5Scenarios()));
-  var wild = sortById(actionOnly(getModule2Scenarios()).concat(actionOnly(getModule3Scenarios()), actionOnly(getModule4Scenarios()), actionOnly(getModule5Scenarios())));
+  // v4.5.4: wildcard pool gains M6 (M2-M6). The 5-slot formula stays locked
+  // (owner knob); only the wild pool widens now that M6 exists. Deterministic
+  // selection unchanged — same date still yields the same queue.
+  var wild = sortById(actionOnly(getModule2Scenarios()).concat(actionOnly(getModule3Scenarios()), actionOnly(getModule4Scenarios()), actionOnly(getModule5Scenarios()), actionOnly(getModule6Scenarios())));
   var slots = [m1, m3, m4, m5, wild];
   var rng = _pfDailyRng(_pfDailyHash(dateStr));
   var queue = [], seen = {};
@@ -36060,6 +36063,14 @@ function _pfRangeRevealBand(scenario) {
 }
 function _pfRangeRevealChipHtml(d, scenario) {
   if (!d || d.mode !== 'tourney') return '';           // tournament-only drama beat
+  // M4/M5 ONLY — the band reads VILLAIN's range on the defender seat.
+  // M6 (pf_river_value_ip) is DELIBERATELY excluded (owner ruling v4.5.4,
+  // Option C): M6 prose describes HERO's own line, so the band regexes
+  // mislabel via semantic-negation false positives ("the thin-value story
+  // fails", "any polar size trades them away") the token negation guard
+  // cannot catch — a structural seat-flip mismatch, not row-level slips.
+  // Do NOT add pf_river_value_ip here without re-review. A true M6 chip would
+  // need new authored prose for BB's CHECKING range (parked expansion idea).
   if (scenario.module !== 'pf_turn_barrel_oop_def' && scenario.module !== 'pf_river_barrel_oop_def') return '';
   var r = _pfRangeRevealBand(scenario);
   if (!r || !r.band) return '';
