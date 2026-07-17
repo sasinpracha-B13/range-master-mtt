@@ -1,4 +1,4 @@
-const VERSION = 'v4.5.4';
+const VERSION = 'v4.6.0';
 const CACHE_NAME = `range-master-${VERSION}`;
 
 const STATIC_ASSETS = [
@@ -9,7 +9,9 @@ const STATIC_ASSETS = [
   // v4.0.1 — postflop data files (read-only at runtime; loaded by index.html)
   '/postflop/postflop_scenarios.json',
   '/postflop/postflop_taxonomy.json',
-  '/postflop/postflop_concepts.json'
+  '/postflop/postflop_concepts.json',
+  // v4.6.0 G6 -- Continuous Hand trees (read-only, loaded by index.html)
+  '/postflop/postflop_trees.json'
 ];
 
 const NETWORK_FIRST = ['/index.html', '/ranges.json', '/'];

@@ -11126,7 +11126,9 @@
       margin-bottom: 8px;
       flex-wrap: wrap;
     }
-    .pf-module-meta .pf-meta-item { white-space: nowrap; }
+    /* v4.6.0 QA fix: long mastery notes (e.g. the m6 coverage-allowance note
+       shipped in v4.5.3) overflowed 320px under nowrap — allow wrapping. */
+    .pf-module-meta .pf-meta-item { white-space: normal; overflow-wrap: anywhere; }
     .pf-module-actions {
       display: flex;
       gap: 6px;
@@ -11928,6 +11930,43 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin-top: 12px;
+    }
+    /* v4.6.0 G6 — Play/Learn/Profile shell */
+    .pf-shell-tabs {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+      margin-top: 12px;
+    }
+    .pf-shell-tab {
+      appearance: none; cursor: pointer; border-radius: 10px;
+      padding: 9px 4px; font-size: 12.5px; font-weight: 700;
+      background: rgba(255,255,255,0.04); color: var(--text-secondary, #9fb0c6);
+      border: 1px solid rgba(255,255,255,0.10); transition: all .15s ease;
+    }
+    .pf-shell-tab.is-on {
+      color: #eab308; border-color: #eab308;
+      background: rgba(234,179,8,0.10);
+    }
+    .pf-shell-tab:focus-visible { outline: 2px solid #eab308; outline-offset: 2px; }
+    .pf-shell-pane { margin-top: 4px; }
+    .pf-shell-group-label {
+      margin: 14px 2px 0; font-size: 11px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-secondary, #9fb0c6); opacity: .85;
+    }
+    /* v4.6.0 G6 — Continuous Hand deal animation (tap-to-skip + reduced-motion) */
+    @keyframes pfTreeDealIn {
+      from { opacity: 0; transform: translateY(-16px) rotate(-5deg) scale(.88); }
+      to   { opacity: 1; transform: none; }
+    }
+    .postflop-board-card.pf-tree-deal { animation: pfTreeDealIn .42s cubic-bezier(.2,.75,.25,1) both; }
+    .pf-skip-anim .postflop-board-card.pf-tree-deal { animation: none; }
+    .pf-tree-preflop-row { display: flex; gap: 8px; justify-content: center; }
+    .pf-tree-facedown {
+      width: 48px; height: 70px; border-radius: 8px;
+      border: 1.5px dashed rgba(255,255,255,0.22); opacity: .5;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .postflop-board-card.pf-tree-deal { animation: none !important; }
     }
     .tcc-action {
       display: flex;
@@ -33495,7 +33534,7 @@ function buildBackupPayload() {
   };
   return {
     schema: BACKUP_SCHEMA_VERSION,
-    appVersion: '4.5.4',
+    appVersion: '4.6.0',
     exportDate: new Date().toISOString(),
     data: {
       progress:      safeParse('rmtt_progress', {}),
@@ -34119,6 +34158,21 @@ async function loadPostflopData() {
     });
     console.log('[postflop] loaded ' + approved.length + '/' + data.scenarios.length +
                 ' scenarios (schema ' + data.schemaVersion + ')');
+    // v4.6.0 G6: Continuous Hand trees — separate namespace, non-blocking:
+    // a trees fetch failure must never break the scenario corpus.
+    try {
+      const treesRes = await fetch('postflop/postflop_trees.json');
+      if (treesRes.ok) {
+        const treeDoc = await treesRes.json();
+        const okTrees = (treeDoc.trees || []).filter(function (t) { return t.auditStatus === 'approved'; });
+        App.postflopTrees = Object.freeze({ ready: true, schemaVersion: treeDoc.schemaVersion, trees: Object.freeze(okTrees) });
+        console.log('[postflop] loaded ' + okTrees.length + ' hand-trees (schema ' + treeDoc.schemaVersion + ')');
+      } else {
+        App.postflopTrees = { ready: false, error: 'fetch ' + treesRes.status };
+      }
+    } catch (eTrees) {
+      App.postflopTrees = { ready: false, error: eTrees.message };
+    }
     // v4.0.3: re-render Home if user is on it and beta is on, so the
     // "loading…" placeholder swaps to the ready card without manual action.
     try {
@@ -34231,7 +34285,17 @@ var _PF_M3_ACTION_LABELS = {
   'check_back':        'Check back',
   'bet_small':         'Bet small (~33%)',
   'bet_big':           'Bet big (~75%)',
-  'overbet':           'Overbet (~150%)'
+  'overbet':           'Overbet (~150%)',
+  // v4.6.0 G6: Continuous Hand preflop menu.
+  'threebet':          '3-Bet',
+  'open25':            'Raise 2.5×'
+};
+// v4.6.0 G6: tree-node reasons not already covered by the module vocabs.
+var _PF_TREE_REASON_LABELS = {
+  'preflop_chart_flat':          'Chart defend (preflop)',
+  'preflop_chart_open':          'Chart open (preflop)',
+  'cbet_value_range_ip':         'Range c-bet — value (IP)',
+  'barrel_value_protection_ip':  'Barrel — value + protection (IP)'
 };
 var _PF_M3_REASON_LABELS = {
   'value_raise':              'Value raise',
@@ -34315,6 +34379,7 @@ function _pfNormalizePostflopChoices(scenario) {
       // M3 reason map, then humanized fallback.
       var id = c;
       var label = _PF_M3_ACTION_LABELS[id]
+                  || _PF_TREE_REASON_LABELS[id]
                   || _PF_M6_REASON_LABELS[id]
                   || _PF_M5_REASON_LABELS[id]
                   || _PF_M4_REASON_LABELS[id]
@@ -34656,6 +34721,9 @@ var _PF_GAME_STAKE_MOD = { pf_flop_cbet_ip: 3, pf_flop_cbet_oop_def: 2, pf_turn_
 var _PF_GAME_STAKE_RIVER = { small: 7, medium: 13, large: 20, overbet: 30 };
 function _pfStakeBB(scenario) {
   if (!scenario) return 0;
+  // v4.6.0 G6: tree nodes carry their ladder value directly (street stake
+  // 2/3/5 pre-river; river by sizing 7/13/20/30 — same locked v4.4.3 table).
+  if (typeof scenario.stakeBB === 'number') return scenario.stakeBB;
   if (scenario.module === 'pf_river_barrel_oop_def') {
     var sz = scenario.board && scenario.board.villainRiverSizing;
     return _PF_GAME_STAKE_RIVER[sz] || 13;
@@ -36078,6 +36146,321 @@ function _pfRangeRevealChipHtml(d, scenario) {
 }
 // ============================================================================
 // END v4.5.0 G3 — TOURNAMENT MODE (core + Range Reveal)
+// ============================================================================
+
+// ============================================================================
+// v4.6.0 G6 — CONTINUOUS HAND (node player over authored trees)
+// One hand, every street: preflop → flop → turn → river on a single board,
+// each node owner-line-reviewed through the tree pipeline (T.R01–T.R19).
+// Data: postflop/postflop_trees.json (read-only; separate namespace
+// App.postflopTrees — a trees failure never touches the scenario corpus).
+// Grading reuses the two-account game layer verbatim via a per-node shim
+// (stakeBB from the locked street ladder; answer carried so best-fold fires
+// the Saved-BB banner). Strict mode === 'tree' isolation, house pattern.
+// Honest UI (PIN 4): tier badges + est. EV only — zero fabricated %.
+// ============================================================================
+function _pfTreesReady() {
+  return !!(App.postflopTrees && App.postflopTrees.ready && App.postflopTrees.trees && App.postflopTrees.trees.length);
+}
+function _pfTreeById(id) {
+  if (!_pfTreesReady()) return null;
+  var ts = App.postflopTrees.trees;
+  for (var i = 0; i < ts.length; i++) { if (ts[i].id === id) return ts[i]; }
+  return null;
+}
+// ----- progress storage (loader round-trip gate: every field re-emitted) ---
+function _pfTreeProgLoad() {
+  try {
+    var raw = localStorage.getItem('rmtt_trees');
+    var s = raw ? JSON.parse(raw) : {};
+    if (!s.perTree) s.perTree = {};
+    return s;
+  } catch (e) { return { perTree: {} }; }
+}
+function _pfTreeProgSave(s) { try { localStorage.setItem('rmtt_trees', JSON.stringify(s)); } catch (e) {} }
+
+// Per-node shim: everything the game layer reads, nothing it doesn't.
+function _pfTreeShim(tree, node) {
+  return {
+    id: tree.id + '__' + node.street,
+    module: 'pf_tree',
+    stakeBB: node.stakeBB,
+    question: { qtype: 'action_choice', choices: node.choices },
+    answer: node.answer,
+    recommendedAction: node.answer.best
+  };
+}
+function _pfTreeStreetTitle(street) {
+  return { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River' }[street] || street;
+}
+// Board row for the current street; cards dealt this street animate in.
+function _pfTreeBoardHtml(tree, street, animate) {
+  var b = tree.board;
+  var upTo = { preflop: 0, flop: 3, turn: 4, river: 5 }[street] || 0;
+  if (upTo === 0) {
+    return '<div class="postflop-board-row pf-tree-preflop-row">' +
+             '<div class="pf-tree-facedown"></div><div class="pf-tree-facedown"></div><div class="pf-tree-facedown"></div>' +
+           '</div>';
+  }
+  var cards = [].concat(b.flopCards).concat([b.turnCard, b.riverCard]).slice(0, upTo);
+  var newFrom = { flop: 0, turn: 3, river: 4 }[street];
+  var html = cards.map(function (card, idx) {
+    var rank = card.charAt(0), suit = card.charAt(1);
+    var turnCls = (idx === 3) ? ' is-turn-card' : '';
+    var riverCls = (idx === 4) ? ' is-river-card' : '';
+    var dealCls = (animate && _pfMotionOn() && idx >= newFrom) ? ' pf-tree-deal' : '';
+    var delay = (animate && _pfMotionOn() && idx >= newFrom) ? ' style="animation-delay:' + ((idx - newFrom) * 0.12) + 's"' : '';
+    return '<div class="postflop-board-card ' + _pfSuitClass(suit) + turnCls + riverCls + dealCls + '"' + delay + '>' +
+      (idx === 3 ? '<span class="pf-turn-pill">Turn</span>' : '') +
+      (idx === 4 ? '<span class="pf-river-pill">River</span>' : '') +
+      '<span class="pf-rank">' + _pfEscape(rank) + '</span>' +
+      '<span class="pf-suit">' + _pfSuitChar(suit) + '</span>' +
+      '</div>';
+  }).join('');
+  return '<div class="postflop-board-row' + (upTo === 5 ? ' is-five-card' : '') + '" onclick="_pfTreeSkipDeal(this)">' + html + '</div>';
+}
+function _pfTreeSkipDeal(row) {
+  // PIN 4: tap-to-skip the deal animation.
+  try { row.classList.add('pf-skip-anim'); } catch (e) {}
+}
+function _pfTreeHeroHtml(tree) {
+  return (tree.heroHand || []).map(function (card) {
+    var rank = card.charAt(0), suit = card.charAt(1);
+    return '<div class="postflop-hero-card ' + _pfSuitClass(suit) + '">' +
+      '<span class="pf-rank">' + _pfEscape(rank) + '</span>' +
+      '<span class="pf-suit">' + _pfSuitChar(suit) + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+// ----- entry: picker (no id) or player (id) -----
+function startPostflopTree(treeId) {
+  if (!getPostflopReady() || !App.state.settings.postflopBeta) {
+    if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+    return;
+  }
+  if (!_pfTreesReady()) {
+    if (typeof showToast === 'function') showToast('Hand-trees not loaded. Try again.');
+    return;
+  }
+  if (!treeId) { renderPostflopTreePicker(); return; }
+  var tree = _pfTreeById(treeId);
+  if (!tree) { renderPostflopTreePicker(); return; }
+  App.state.postflopDrill = {
+    active: true, module: 'pf_tree', mode: 'tree', treeId: treeId,
+    nodeIndex: 0, currentIndex: 0, answers: [], startTime: Date.now(),
+    phase: 'question', game: _pfGameNewState()
+  };
+  showPostflopScreen();
+  renderPostflopTreeNode(true);
+}
+function renderPostflopTreePicker() {
+  showPostflopScreen();
+  var prog = _pfTreeProgLoad();
+  var rows = App.postflopTrees.trees.map(function (t) {
+    var p = prog.perTree[t.id];
+    var played = p && p.runs ? ('▶ played ' + p.runs + '× · best ' + (p.bestTiers || []).filter(function (x) { return x === 'best'; }).length + '/4 best') : 'not played yet';
+    var bd = t.board.flopCards.join(' ') + ' · ' + t.board.turnCard + ' · ' + t.board.riverCard;
+    return '<button class="pf-boss-row" onclick="startPostflopTree(\'' + t.id + '\')">' +
+             '<span>🃏 ' + _pfEscape(t.name) + ' <span class="pf-m3-qa-detail">(' + _pfEscape(t.seat) + ' · ' + _pfEscape(bd) + ')</span></span>' +
+             '<span class="pf-boss-row-st">' + _pfEscape(played) + ' →</span>' +
+           '</button>';
+  }).join('');
+  document.getElementById('postflopScreen').innerHTML =
+    '<div class="postflop-context-bar"><span class="postflop-context-label">🃏 FULL HAND</span>' +
+      '<button class="postflop-exit-btn" onclick="exitPostflopScreen()">✕ Exit</button></div>' +
+    '<div class="pf-boss-intro"><div class="pf-boss-title">One hand. Every street.</div>' +
+      '<div class="pf-pc-note" style="margin-bottom:10px">Play a single authored hand from preflop to river — the same graded feedback, one continuous decision. No invented frequencies, ever: tier verdicts and est. EV only.</div>' +
+      rows +
+      '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button></div>';
+}
+function renderPostflopTreeNode(animate) {
+  var d = App.state.postflopDrill;
+  if (!d || d.mode !== 'tree') return;
+  var tree = _pfTreeById(d.treeId); if (!tree) return;
+  var node = tree.nodes[d.nodeIndex];
+  d.currentIndex = d.nodeIndex;
+  var shim = _pfTreeShim(tree, node);
+  var choices = _pfNormalizePostflopChoices(shim);
+  var seatLine = (tree.seat === 'BB')
+    ? '<span class="postflop-spot-tag tag-pos">You · BB (OOP)</span><span class="postflop-spot-tag tag-pos">BTN · villain (IP)</span>'
+    : '<span class="postflop-spot-tag tag-pos">You · BTN (IP)</span><span class="postflop-spot-tag tag-pos">BB · villain (OOP)</span>';
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🃏 FULL HAND · ' + _pfEscape(tree.name) + ' · ' + _pfTreeStreetTitle(node.street) + ' (' + (d.nodeIndex + 1) + '/4)</span>' +
+      '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
+    '</div>' +
+    _pfGameStripHtml(d, shim) +
+    '<div class="postflop-spot-card">' +
+      '<div class="postflop-section-title">📋 The hand so far</div>' +
+      '<div class="postflop-spot-tags">' +
+        '<span class="postflop-spot-tag tag-stack">100BB</span>' + seatLine +
+        '<span class="postflop-spot-tag tag-action">' + _pfEscape(node.facing) + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">🎴 Board</div>' +
+      _pfTreeBoardHtml(tree, node.street, !!animate) +
+    '</div>' +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">🃏 Your Hand (' + _pfEscape(tree.seat) + ')</div>' +
+      '<div class="postflop-hero-row">' + _pfTreeHeroHtml(tree) + '</div>' +
+    '</div>' +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">❓ Decision</div>' +
+      '<div class="postflop-question-prompt">' + _pfEscape(node.prompt) + '</div>' +
+    '</div>' +
+    '<div class="postflop-choices">' +
+      choices.map(function (c) {
+        return '<button class="postflop-choice-btn" onclick="_pfTreeAnswer(\'' + c.id + '\')">' + _pfEscape(c.label) + '</button>';
+      }).join('') +
+    '</div>';
+  d.phase = 'question';
+  document.getElementById('postflopScreen').innerHTML = html;
+}
+function _pfTreeAnswer(choiceId) {
+  var d = App.state.postflopDrill;
+  if (!d || d.mode !== 'tree' || d.phase !== 'question') return;
+  var tree = _pfTreeById(d.treeId); if (!tree) return;
+  var node = tree.nodes[d.nodeIndex];
+  var a = node.answer, tier;
+  if (a.best === choiceId) tier = 'best';
+  else if ((a.acceptable || []).indexOf(choiceId) !== -1) tier = 'acceptable';
+  else if ((a.critical || []).indexOf(choiceId) !== -1) tier = 'critical';
+  else tier = 'bad';
+  var shim = _pfTreeShim(tree, node);
+  try { _pfGameOnAnswer(d, shim, choiceId, { tier: tier }); } catch (e) {}
+  d.answers.push({ street: node.street, scenarioId: shim.id, choiceId: choiceId, tier: tier, stakeBB: node.stakeBB });
+  d.phase = 'answer';
+  renderPostflopTreeAnswer(choiceId, tier);
+}
+function _pfTreeTeachingBlocksHtml(tree, node) {
+  var ex = node.explanation || {};
+  var fix = (typeof _pfFixMojibake === 'function') ? _pfFixMojibake : function (x) { return x; };
+  var shim = { question: { choices: node.choices } };
+  var lbl = _pfNormalizePostflopChoices({ question: { choices: [node.answer.best, node.actionReason] } });
+  var recLabel = lbl[0] ? lbl[0].label : node.answer.best;
+  var reasonLabel = lbl[1] ? lbl[1].label : node.actionReason;
+  var html =
+    '<div class="pf-teach-fb-block pf-fb-m2-action">' +
+      '<span class="pf-fb-block-title">' + (tree.seat === 'BTN' ? '🗡️' : '🛡️') + ' Recommended Action (' + _pfEscape(tree.seat) + ', ' + _pfEscape(node.street) + ')</span>' +
+      '<div class="pf-fb-block-body">' +
+        '<span class="pf-m2-rec-action">' + _pfEscape(recLabel) + '</span>' +
+        '<span class="pf-m2-action-reason">Reason: ' + _pfEscape(reasonLabel) + '</span>' +
+      '</div>' +
+    '</div>';
+  if (ex.streetLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason"><span class="pf-fb-block-title">🎯 ' + _pfTreeStreetTitle(node.street) + ' Logic</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(fix(ex.streetLogic)) + '</div></div>';
+  }
+  if (ex.handLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason"><span class="pf-fb-block-title">Hand Logic</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(fix(ex.handLogic)) + '</div></div>';
+  }
+  if (ex.sizingLogic) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason"><span class="pf-fb-block-title">Sizing Logic</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(fix(ex.sizingLogic)) + '</div></div>';
+  }
+  if (node.blockerNote) {
+    html += '<div class="pf-teach-fb-block pf-fb-reason"><span class="pf-fb-block-title">🃏 Blocker note</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(fix(node.blockerNote)) + '</div></div>';
+  }
+  if (ex.rangeContext) {
+    html += '<details class="postflop-explanation-section" style="margin-top:6px;margin-bottom:10px;"><summary>Range / Board Context</summary>' +
+            '<div class="pf-section-body">' + _pfEscape(fix(ex.rangeContext)) + '</div></details>';
+  }
+  if (ex.commonMistake) {
+    html += '<details class="postflop-explanation-section pf-common-mistake"><summary>Common Mistake</summary>' +
+            '<div class="pf-section-body">' + _pfEscape(fix(ex.commonMistake)) + '</div></details>';
+  }
+  if (ex.takeaway) {
+    html += '<div class="pf-teach-fb-block pf-fb-takeaway"><span class="pf-fb-block-title">💡 Takeaway</span>' +
+            '<div class="pf-fb-block-body">' + _pfEscape(fix(ex.takeaway)) + '</div></div>';
+  }
+  return html;
+}
+function renderPostflopTreeAnswer(choiceId, tier) {
+  var d = App.state.postflopDrill;
+  var tree = _pfTreeById(d.treeId);
+  var node = tree.nodes[d.nodeIndex];
+  var shim = _pfTreeShim(tree, node);
+  var isLast = d.nodeIndex >= tree.nodes.length - 1;
+  var nextLabel = isLast ? 'See the hand summary →'
+    : 'Deal the ' + _pfTreeStreetTitle(tree.nodes[d.nodeIndex + 1].street).toLowerCase() + ' →';
+  var pickedLbl = _pfNormalizePostflopChoices({ question: { choices: [choiceId] } })[0];
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🃏 FULL HAND · ' + _pfEscape(tree.name) + ' · ' + _pfTreeStreetTitle(node.street) + ' (' + (d.nodeIndex + 1) + '/4)</span>' +
+      '<button class="postflop-exit-btn" onclick="confirmExitPostflop()">✕ Exit</button>' +
+    '</div>' +
+    _pfGameStripHtml(d, shim) +
+    (typeof _pfGameResultBannerHtml === 'function' ? _pfGameResultBannerHtml(d) : '') +
+    '<div class="postflop-question-card">' +
+      '<div class="postflop-section-title">🎴 Board</div>' +
+      _pfTreeBoardHtml(tree, node.street, false) +
+      '<div class="pf-m3-qa-detail" style="margin-top:6px">You chose: <strong>' + _pfEscape(pickedLbl ? pickedLbl.label : choiceId) + '</strong></div>' +
+    '</div>' +
+    _pfTreeTeachingBlocksHtml(tree, node) +
+    '<div class="postflop-summary-actions" style="margin-top:12px">' +
+      '<button class="postflop-next-btn" onclick="_pfTreeNext()">' + nextLabel + '</button>' +
+    '</div>';
+  document.getElementById('postflopScreen').innerHTML = html;
+}
+function _pfTreeNext() {
+  var d = App.state.postflopDrill;
+  if (!d || d.mode !== 'tree') return;
+  var tree = _pfTreeById(d.treeId);
+  if (d.nodeIndex < tree.nodes.length - 1) {
+    d.nodeIndex += 1;
+    d.phase = 'question';
+    renderPostflopTreeNode(true);
+  } else {
+    renderPostflopTreeComplete();
+  }
+}
+function renderPostflopTreeComplete() {
+  var d = App.state.postflopDrill;
+  var tree = _pfTreeById(d.treeId);
+  var tiersIcon = { best: '✅', acceptable: '≈', bad: '❌', critical: '🚨' };
+  var strip = d.answers.map(function (a) {
+    return '<div class="pf-tier-cell tier-' + a.tier + '"><div class="pf-tier-num">' + (tiersIcon[a.tier] || '') + '</div>' +
+           '<div class="pf-tier-label">' + _pfEscape(_pfTreeStreetTitle(a.street)) + '</div></div>';
+  }).join('');
+  var bestCount = d.answers.filter(function (a) { return a.tier === 'best'; }).length;
+  // progress save (loader round-trip gate: re-emit every field we own)
+  try {
+    var prog = _pfTreeProgLoad();
+    var p = prog.perTree[tree.id] || { runs: 0, bestTiers: [], lastTiers: [] };
+    p.runs = (p.runs || 0) + 1;
+    p.lastTiers = d.answers.map(function (a) { return a.tier; });
+    var prevBest = (p.bestTiers || []).filter(function (x) { return x === 'best'; }).length;
+    if (bestCount >= prevBest) p.bestTiers = p.lastTiers.slice();
+    prog.perTree[tree.id] = p;
+    _pfTreeProgSave(prog);
+  } catch (e) {}
+  d.phase = 'complete';
+  var html =
+    '<div class="postflop-context-bar">' +
+      '<span class="postflop-context-label">🃏 FULL HAND · ' + _pfEscape(tree.name) + ' · Complete</span>' +
+    '</div>' +
+    '<div class="postflop-summary-card">' +
+      '<div class="pf-learn-headline">One hand, four decisions</div>' +
+      '<div class="pf-score" style="margin-top:8px">' + bestCount + ' / 4 best</div>' +
+      '<hr class="pf-divider">' +
+      '<div class="postflop-tier-counts">' + strip + '</div>' +
+    '</div>' +
+    _pfGameSummaryHtml(d) +
+    '<div class="postflop-summary-actions" style="margin-top:14px">' +
+      '<button class="postflop-next-btn" onclick="startPostflopTree(\'' + tree.id + '\')">↺ Replay this hand</button>' +
+      '<button class="postflop-next-btn" onclick="startPostflopTree()">🃏 All hands</button>' +
+      ((typeof _pfReceiptBtnHtml === 'function') ? _pfReceiptBtnHtml() : '') +
+      '<button class="postflop-secondary-btn" onclick="exitPostflopScreen()">← Back to Home</button>' +
+    '</div>';
+  document.getElementById('postflopScreen').innerHTML = html;
+  try { if (typeof _pfBadgeSync === 'function') _pfBadgeSync(false); } catch (e) {}
+}
+// ============================================================================
+// END v4.6.0 G6 — CONTINUOUS HAND
 // ============================================================================
 
 function advancePostflopDrill() {
@@ -41068,7 +41451,9 @@ var TRAINING_MODES = {
       { id: 'boss',      label: 'Boss Exams', hint: '6 bosses · no hints · trophy at 80%+', icon: '⚔️', kind: 'secondary', route: 'postflop:boss', badge: 'NEW' },
       { id: 'revenge',   label: 'Revenge Hands', hint: 'return to your punts · make them right', icon: '🩹', kind: 'secondary', route: 'postflop:revenge', badge: 'NEW' },
       // v4.5.0 G3: the flagship run mode.
-      { id: 'tourney',   label: 'Tournament', hint: '40 hands · rising blinds · survive to the Final Table', icon: '🏆', kind: 'secondary', route: 'postflop:tourney', badge: 'NEW' }
+      { id: 'tourney',   label: 'Tournament', hint: '40 hands · rising blinds · survive to the Final Table', icon: '🏆', kind: 'secondary', route: 'postflop:tourney', badge: 'NEW' },
+      // v4.6.0 G6: Continuous Hand — one hand, every street, on authored trees.
+      { id: 'tree',      label: 'Full Hand', hint: 'one hand, every street · 3 authored trees', icon: '🃏', kind: 'secondary', route: 'postflop:tree', badge: 'NEW' }
     ]
   }
 };
@@ -41191,6 +41576,15 @@ function runTrainingModeAction(mode, actionId) {
         break;
       }
       if (typeof startPostflopDrill === 'function') startPostflopDrill('pf_river_value_ip', 12);
+      break;
+    case 'postflop:tree':
+      // v4.6.0 G6: Continuous Hand — tree picker, then the node player.
+      if (!betaOn) {
+        if (typeof showToast === 'function') showToast('Enable Postflop Beta in Settings first.');
+        switchTab('settings');
+        break;
+      }
+      if (typeof startPostflopTree === 'function') startPostflopTree();
       break;
     case 'postflop:daily':
       // v4.4.3: Daily Challenge — same beta gating; one attempt per day enforced inside.
@@ -41331,10 +41725,69 @@ function _tccBuildPanelStatusHtml(mode) {
   return '<div class="tcc-panel-status">' + inner + '</div>';
 }
 
+// v4.6.0 G6: Play / Learn / Profile shell for the postflop panel.
+// LOSSLESS (PIN 5): every pre-shell surface stays reachable in <= 2 taps;
+// route ids unchanged — the shell re-homes launchers, not routes.
+function _pfShellSetTab(t) {
+  if (App.state) App.state.pfShellTab = t;
+  try { renderHomeCommandCenterMount(); } catch (e) {}
+}
+function _pfShellTab() {
+  return (App.state && App.state.pfShellTab) || 'play';   // owner knob: default = Play
+}
+function _pfShellPlayPaneHtml(meta) {
+  var dealIds = ['tree', 'tourney', 'daily', 'boss', 'revenge'];
+  var practiceIds = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+  var byId = {};
+  (meta.actions || []).forEach(function (a) { byId[a.id] = a; });
+  var deal = dealIds.map(function (id) { return byId[id] ? _tccBuildActionTileHtml('postflop', byId[id]) : ''; }).join('');
+  var practice = practiceIds.map(function (id) { return byId[id] ? _tccBuildActionTileHtml('postflop', byId[id]) : ''; }).join('');
+  var rest = (meta.actions || []).filter(function (a) {
+    return dealIds.indexOf(a.id) === -1 && practiceIds.indexOf(a.id) === -1;
+  }).map(function (a) { return _tccBuildActionTileHtml('postflop', a); }).join('');
+  return '<div class="pf-shell-group-label">🎲 Deal</div>' +
+         '<div class="tcc-action-grid">' + deal + '</div>' +
+         '<div class="pf-shell-group-label">🎯 Practice a street</div>' +
+         '<div class="tcc-action-grid">' + practice + '</div>' +
+         (rest ? '<div class="tcc-action-grid" style="margin-top:8px">' + rest + '</div>' : '');
+}
+function _pfShellLearnPaneHtml() {
+  try {
+    if (typeof getPostflopReady === 'function' && getPostflopReady() && typeof _pfAcademyHomeHtml === 'function') {
+      return _pfAcademyHomeHtml();
+    }
+  } catch (e) { /* swallow */ }
+  return '<div class="postflop-local-note" style="margin-top:10px">Postflop data is still loading — the Academy appears here once it is ready.</div>';
+}
+function _pfShellProfilePaneHtml() {
+  var html = '';
+  try { if (typeof _pfPlayerCardHtml === 'function') html += _pfPlayerCardHtml(); } catch (e) {}
+  try { if (typeof _pfShopHtml === 'function') html += _pfShopHtml(); } catch (e) {}
+  try { if (typeof _pfReceiptBtnHtml === 'function') html += '<div class="postflop-summary-actions" style="margin-top:10px">' + _pfReceiptBtnHtml() + '</div>'; } catch (e) {}
+  html += '<div class="postflop-local-note" style="margin-top:10px">Sound, motion, personas and Postflop Beta toggles live in Settings.</div>';
+  return html || '<div class="postflop-local-note">Profile loads once postflop data is ready.</div>';
+}
 function _tccBuildPanelHtml(mode) {
   var meta = getTrainingModeMeta(mode);
-  var actionsHtml = (meta.actions || []).map(function (a) { return _tccBuildActionTileHtml(mode, a); }).join('');
   var statusHtml = _tccBuildPanelStatusHtml(mode);
+  var bodyHtml;
+  if (mode === 'postflop') {
+    var tab = _pfShellTab();
+    var tabsHtml =
+      '<div class="pf-shell-tabs" role="tablist">' +
+        ['play', 'learn', 'profile'].map(function (t) {
+          var lbl = { play: '♠ Play', learn: '📖 Learn', profile: '🏅 Profile' }[t];
+          return '<button class="pf-shell-tab' + (tab === t ? ' is-on' : '') + '" role="tab" aria-selected="' + (tab === t) + '" onclick="_pfShellSetTab(\'' + t + '\')">' + lbl + '</button>';
+        }).join('') +
+      '</div>';
+    var pane = (tab === 'learn') ? _pfShellLearnPaneHtml()
+             : (tab === 'profile') ? _pfShellProfilePaneHtml()
+             : _pfShellPlayPaneHtml(meta);
+    bodyHtml = tabsHtml + '<div class="pf-shell-pane">' + pane + '</div>';
+  } else {
+    var actionsHtml = (meta.actions || []).map(function (a) { return _tccBuildActionTileHtml(mode, a); }).join('');
+    bodyHtml = '<div class="tcc-action-grid">' + actionsHtml + '</div>';
+  }
   return '<div class="tcc-panel is-' + meta.id + '">' +
            '<div class="tcc-panel-hero">' +
              '<div class="tcc-panel-hero-text">' +
@@ -41344,7 +41797,7 @@ function _tccBuildPanelHtml(mode) {
              '</div>' +
            '</div>' +
            statusHtml +
-           '<div class="tcc-action-grid">' + actionsHtml + '</div>' +
+           bodyHtml +
          '</div>';
 }
 
@@ -41390,6 +41843,12 @@ function renderPostflopHomeCardMount() {
   // Remove any existing Beta Lab section to avoid duplicates on re-render
   var existing = host.querySelector('.postflop-betalab-section');
   if (existing) existing.remove();
+  // v4.6.0 G6 shell: the Academy / Beta Lab body now lives inside the
+  // postflop panel's LEARN tab (_pfShellLearnPaneHtml) — the standalone
+  // below-the-TCC mount is retired to avoid double-rendering the same
+  // content. Lossless: identical HTML, reachable in <=2 taps (PIN 5).
+  return;
+  /* eslint-disable no-unreachable */
   if (!App.state.settings.postflopBeta) return;  // beta off → nothing rendered
 
   var ready = getPostflopReady();

@@ -44,6 +44,19 @@ Consequences, mechanically applied when the audit runs:
 
 **Banked result: 18 of 92 rows are definite leg-(a) violations** (AA 4 + KK 3 + QQ 1 + AKo 6 + AKs 2 + AQs 2) → REWORK-(a) when the audit sprint runs. The remaining 74 rows pass leg (a) and get full legs (b)/(c) strategic review. A2s–A5s flatting rows (if any) are members per the ruling's "part three-bet" wording.
 
+**Banked legs-(b)/(c) findings from the G6 chain scan (owner-accepted 2026-07-07; SELF-INCONSISTENCY — the corpus's own M3 verdict contradicts the M4 row's assumed check-call line; zero judgment required):**
+
+| M4 row (assumes flop check-call) | Same hero's M3 row says best = | Leg |
+|---|---|---|
+| `…turn_As8d3h_2c_m4_reason_8c8h_v430` (set of 8s) | `check_raise_small` (`…flop_As8d3h_m3_action_8c8h_v420`) | (c) missed check-raise |
+| `…turn_9d8c6h_Kc_m4_action_9c9s_v430` (set of 9s) | `check_raise_small` (`…flop_9d8c6h_m3_action_9c9s_v423a`) | (c) |
+| `…turn_9d8c6h_Kc_m4_reason_Tc7c_v430` | `check_raise_small` (`…flop_9d8c6h_m3_reason_Tc7c_v423a`) | (c) |
+| `…turn_Ts9s5d_6h_m4_action_TcTd_v430` (top set) | `check_raise_small` (`…flop_Ts9s5d_m3_action_TcTd_v423b`) | (c) |
+| `…turn_Ts9s5d_6h_m4_action_As6s_v430` | `check_raise_small` (`…flop_Ts9s5d_m3_action_As6s_v423b`) | (c) |
+| `…turn_QsTs6d_Jc_m4_action_5h4d_v430` | `fold` (`…flop_QsTs6d_m3_action_5h4d_v423a`) | (b) should have folded flop |
+
+These six enter the audit's results report pre-verdicted (REWORK-(c) ×5, REWORK-(b) ×1) alongside the 18 leg-(a) rows — **24 of 92 rows are already decided before the audit sprint begins.**
+
 ## 4. Method — per row
 
 - **Leg (a) — MECHANIZED** (new audit rule `M4.ARRIVAL`, R29/R107-precedent deterministic): canonicalize hero's two cards → 169-hand class (e.g. `Ac Kh → AKo`), look up membership in the locked baseline SET. Non-member → `REWORK-(a)`. Runs over all 92 in one pass; reproducible.
