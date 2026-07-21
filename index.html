@@ -34743,10 +34743,10 @@ function _pfStakeBB(scenario) {
 var _PF_MIXED_WHITELIST = {
   'pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m2_action_KhQd_v412':      ['mixed', 'bet_small', 'check'],
   'pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_action_9c9d_v430C':  ['mixed', 'call', 'fold'],
-  'pf_btn_v_bb_srp_100bb_turn_9s8d4c_7h_m4_action_AhAd_v430C':  ['mixed', 'call', 'fold'],
+  'pf_btn_v_bb_srp_100bb_turn_9s8d4c_7h_m4_action_JcJh_v461':  ['mixed', 'call', 'fold'],
   'pf_btn_v_bb_srp_100bb_turn_JdTd5s_2c_m4_action_9c9d_v430C':  ['mixed', 'call', 'fold'],
   'pf_btn_v_bb_srp_100bb_turn_Ah9d4d_7h_m4_reason_TdTs_v430D':  ['mixed_indifference_turn', 'bluff_catch_turn', 'equity_realization_turn_call'],
-  'pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_reason_AhAd_v432':   ['mixed_indifference_turn'],
+  'pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_reason_JhJd_v461':   ['mixed_indifference_turn'],
   'pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_action_JsTs_v432':   ['mixed', 'fold'],
   'pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_8d8c_v432':   ['mixed', 'fold', 'call'],
   'pf_btn_v_bb_srp_100bb_river_Js8d5c_Ac_m5_action_AdTh_v440':  ['mixed', 'call'],
@@ -37277,7 +37277,7 @@ function _pfM4FirstTimeExplainerHtml() {
                '<li>Your <strong>5-action menu</strong> is the same as M3: fold / call / check-raise small / check-raise big / mixed.</li>' +
                '<li>Your <strong>12 actionReasons</strong> are turn-specific (pot odds, equity realization, bluff-catch, board-change fold, domination fold, range-disadvantage fold, value/protection/semi-bluff/blocker check-raise, slowplay, mixed indifference).</li>' +
                '<li>Hand classes use the <strong>full 4-card board</strong> — verify draws against flop+turn together, not flop alone.</li>' +
-               '<li><strong>Limited Beta — 72 scenarios.</strong> Good for structured practice, not final certification.</li>' +
+               '<li><strong>Limited Beta — 92 scenarios.</strong> Good for structured practice, not final certification.</li>' +
              '</ul>' +
            '</div>' +
          '</details>';
@@ -37851,7 +37851,7 @@ var _PF_CURRICULUM = [
     key: 'm4', name: 'Module 4 — Facing Turn Barrel OOP',
     focus: ['turn equity shift', 'pot odds + equity realization OOP', 'turn bluff-catch', 'blocker check-raise', 'turn slowplay', 'critical turn folds'],
     scenarioCount: 72,
-    masteryNote: 'Limited Beta · 72 scenarios · 12 actionReasons · 16 boards.',
+    masteryNote: 'Limited Beta · 92 scenarios · 12 actionReasons · 23 boards.',
     syllabus: [
       'BB defending OOP vs BTN turn barrel after flop check-call',
       '5-action menu: fold / call / check-raise small / check-raise big / mixed',
@@ -39049,7 +39049,7 @@ function _pfM4MasteryProgressHtml(m4Stats) {
     progressionHintHtml = '<span class="pf-m3-progression-hint">📈 Beta progress unlocked — now review your weakest turn-defense reasons.</span>';
   }
   return '<div class="pf-mastery-section pf-mastery-section-m2">' +
-           '<span class="pf-mastery-title">🎯 Module 4 Limited Beta progress (display only · 72 scenarios · more scenarios coming)</span>' +
+           '<span class="pf-mastery-title">🎯 Module 4 Limited Beta progress (display only · 92 scenarios · more scenarios coming)</span>' +
            '<ul class="pf-mastery-list">' + rows + '</ul>' +
            progressionHintHtml +
          '</div>';

@@ -5,6 +5,23 @@
 
 ---
 
+## SLOWPLAY-FAMILY TEACHING FRAME (owner-approved curriculum language, gate-2 2026-07-21)
+
+Slowplay is licensed by **absence of danger, not hand strength**. The v4.6.1 family teaches the license spectrum:
+
+1. **Dead-board license with expiry** — nut straight on a four-suit runout (`9s8d4c_7h` JcTd): nothing current beats it; the license expires on board-pairing rivers (a slowplayed set boats past) — the trap is priced one street at a time.
+2. **Inversion license** — flopped boat on a draw-live board (`8s5s5d_2h` 8h8d): every draw that arrives improves villain into a second-best hand; draws are income, not threats — the opposite pole of the set rule (sets fast-play precisely because live draws beat them).
+3. **Absolute license (recognition)** — quads (`Qh8s8d_4h` 8h8c): zero outs against, villain pair-capped forever; the slowplay is free and the skill is recognizing that freedom (difficulty drops to recognition level, D2).
+4. **Bluff-stream license with expiry** — nut trips on a paired board (`TsTc4d_7h` AhTh): the barrel range is air-rich, the beats are countable (six boat combos), the trap prices that trade; the license expires on straight-completing rivers.
+
+Fast-play remains the corpus standard for SETS (live draws beat them); trips/boats slowplay per M3's own class verdicts (trips call-best 3/3, full_house call-best 1/1).
+
+## CAUSAL FINDING — R64 was the systemic cause of the M4 partition defect (owner-recorded, dry-run 2026-07-21)
+
+The validator's legacy clause **"M4 critical choice must also appear in bad" (R64) MANDATED dual-listing** — the 64 overlap rows were *rule-compliant*, not sloppy authoring. The v4.6.1 migration flips R64 to exact-partition semantics (M4 scope). Consequence for the banked corpus diagnostic: **M3 (59 rows) and M5 (12 rows) remediations must flip their sibling rules R34/R84 in the same migration as their data fixes** — a data-only fix would go red against the very rule that caused the defect. M1 (168 rows) follows the dual-listing convention *without* a mandating rule — data-fix only. M2 and M6 were born clean (R108 already guards M6, and extends per module as remediation lands).
+
+---
+
 ## 1. The criterion (owner ruling, restated verbatim from PROJECT_STATE §1)
 
 Every hero hand must satisfy all three, per its full line:
@@ -23,6 +40,8 @@ Consequences, mechanically applied when the audit runs:
 - **Categorical membership, no frequency threshold needed for the named hands.** The ruling is a SET ruling: **AA, KK, QQ, AKs, AKo, AQs = non-members** of BB's flat range → any M4 row with these as the flatting hero is a **definite leg-(a) violation** (the earlier §2 threshold proposal is superseded for these hands).
 - **A2s–A5s:** "part three-bet" → these hands retain flat membership at the remaining frequency; A2s–A5s flatting rows are **members** (legitimate arrivals) unless legs (b)/(c) fail.
 - **Everything not named** (JJ and below, AQo, AJ-, KQ, suited connectors, etc.) remains in the flat range → leg (a) PASS; still receives full legs (b)/(c) review.
+- **AJo — RULED MEMBER** (owner, batch-1 review): not in the 3-bet set, and it dominates the explicit-member ATo — recorded as the standing interpretation for swap targets (rows 5/7/14/17 proposals stand on it).
+- **AQo — DO NOT USE AS A SWAP TARGET**: its membership is **V3's open solver question** (ledger item 3). Until that session rules, AQo is neither confirmed member nor non-member for authoring purposes; batch-1 row 4 re-targeted to KQo accordingly.
 - No new range artifact is required: the ruling above IS the leg-(a) reference; the mechanized `M4.ARRIVAL` rule encodes the non-member set `{AA, KK, QQ, AKs, AKo, AQs}` directly, with this section cited as the source of truth.
 
 ## 3. Scope from real data (runtime enumeration, 2026-07-07)

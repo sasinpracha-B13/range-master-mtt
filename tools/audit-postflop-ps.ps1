@@ -677,7 +677,8 @@ foreach($s in $data.scenarios){
                           'top_pair_top_kicker','top_pair_good_kicker','top_pair_weak_kicker',
                           'second_pair','third_pair_or_lower','mid_pair','bottom_pair',
                           'combo_draw','oesd','gutshot','flush_draw','nut_flush_draw',
-                          'backdoor_only','no_pair_no_draw','straight','flush','nut_flush','trips','full_house')
+                          'backdoor_only','no_pair_no_draw','straight','flush','nut_flush','trips','full_house',
+                          'quads')  # v4.6.1: F2 quad-eights conversion row (owner gate-2 approval)
     $m4ValidDrawCats  = @('none','backdoor_only','gutshot','oesd','flush_draw','combo_draw','nut_flush_draw',
                           'straight_draw_added','flush_draw_added','oesd_added','gutshot_added','multi_draw_added')
     $m4ValidShowdown  = @('none','low','decent','high','nutted')
@@ -872,9 +873,14 @@ foreach($s in $data.scenarios){
           Add-Issue $local 'R64' 'error' $sid ("M4 acceptable choice '" + $a + "' also appears in bad") | Out-Null
         }
       }
+      # v4.6.1: the legacy critical-subset-of-bad clause is RETIRED for M4.
+      # It encoded the old dual-listing convention; the owner-ruled corpus
+      # standard is the EXACT partition (critical and bad disjoint), enforced
+      # by R108 below. M3/M5 siblings (R34/R84) keep legacy semantics until
+      # their own remediations land (banked corpus diagnostic).
       foreach ($c in $m4crit) {
-        if (-not ($m4bad -contains $c)) {
-          Add-Issue $local 'R64' 'error' $sid ("M4 critical choice '" + $c + "' must also appear in bad") | Out-Null
+        if ($m4bad -contains $c) {
+          Add-Issue $local 'R64' 'error' $sid ("M4 critical choice '" + $c + "' duplicated in bad (exact-partition standard)") | Out-Null
         }
       }
       $m4choiceUniverse = if ($m4qtype -eq 'action_choice') { $m4ValidActions } elseif ($m4qtype -eq 'reason_choice') { $m4ValidReasons } else { @() }
@@ -1643,6 +1649,20 @@ foreach($s in $data.scenarios){
         $r107Nut = ($s.heroHandRole -eq 'nutted_value' -and $s.showdownValue -eq 'nutted')
         if ($r107Beats -eq 0 -and -not $r107Nut) { Add-Issue $local 'R107' 'error' $sid 'M6 recompute: ZERO combos beat this boat-or-better hero (after AA/KK/QQ exclusions) but row is not labeled nutted_value/nutted' | Out-Null }
         if ($r107Beats -gt 0 -and $r107Nut) { Add-Issue $local 'R107' 'error' $sid ('M6 recompute: ' + $r107Beats + ' combo(s) beat hero (e.g. ' + $r107Ex + ') but row is labeled nutted_value/nutted') | Out-Null }
+      }
+    }
+  }
+
+  # R108 -- EXACT-PARTITION (corpus standard adopted from M6; owner ruling
+  # 2026-07-07). An action id may appear in exactly ONE tier array. Scoped to
+  # M4 + M6 now; extends per module as remediation lands (diagnostic exposure:
+  # M1 168/251, M3 59/85, M5 12/33 -- queued). The 64 pre-v4.6.1 M4 rows fire
+  # this rule BY DESIGN until the partition-fix migration ships.
+  if ($s.module -eq 'pf_turn_barrel_oop_def' -or $s.module -eq 'pf_river_value_ip') {
+    if ($s.answer) {
+      $r108 = @($s.answer.best) + @($s.answer.acceptable) + @($s.answer.bad) + @($s.answer.critical)
+      if (($r108 | Select-Object -Unique).Count -ne $r108.Count) {
+        Add-Issue $local 'R108' 'error' $sid 'tier arrays overlap -- exact partition required (ARR.P; pending the v4.6.1 partition-fix migration)' | Out-Null
       }
     }
   }
