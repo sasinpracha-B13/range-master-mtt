@@ -1,19 +1,17 @@
-# audit-m4-arrival-v4.6.1.ps1 -- M4 ARRIVAL LEGITIMACY lint (92 rows).
+# audit-m4-arrival-v4.6.1.ps1 -- M4 ARRIVAL LEGITIMACY lint.
 # Deterministic, reproducible, zero judgment (R29/R107 precedent).
-# READS production postflop_scenarios.json; writes the results table to
-# docs/specs/postflop-v4.6.1-m4-arrival-lint-results.md. Never mutates data.
-#
-# Rules:
-#   ARR.A  -- leg-(a) membership: hero 169-class vs the RULED non-member set
-#             {AA, KK, QQ, AKs, AKo, AQs}. Must reproduce the banked class
-#             counts {AA:4, KK:3, QQ:1, AKo:6, AKs:2, AQs:2} = 18 or ABORT.
-#   ARR.C1 -- self-inconsistency: an M3 row with the SAME hero + SAME flop
-#             whose recommendedAction is check_raise_* => REWORK-(c); fold =>
-#             REWORK-(b). Must reproduce the 6 banked pairs or ABORT.
-#   ARR.P  -- answer-array partition/overlap scan (defect class found live on
-#             the V1 row: fold + check_raise_big graded in BOTH bad and
-#             critical). Informational column; feeds the rework batches.
-#   ARR.MAP-- review scaffold rows for the manual legs-(b)/(c) passes.
+# v4.6.1: the audit's mechanical pass (reproduced the banked pre-migration
+# state: 18 leg-(a) rows, 6 C1 pairs -- see the committed
+# postflop-v4.6.1-m4-arrival-lint-results.md).
+# v4.6.2 CONVERSION (migration A): the audit closed 92/92, so the banked-state
+# reproduction gates can never hold again -- the lint is now the STANDING
+# REGRESSION GUARD asserting the post-audit invariants:
+#   ARR.A  -- ZERO non-member arrivals. Non-member set gains AQo per the V3
+#             solver closure (owner, 2026-07-21): {AA,KK,QQ,AKs,AKo,AQs,AQo}.
+#   ARR.C1 -- ZERO self-inconsistency pairs (M4 hero+flop whose M3 twin
+#             verdict is check_raise_*/fold).
+#   ARR.P  -- answer-array partition/overlap scan (informational column).
+# Writes docs/specs/postflop-m4-arrival-regression-lint.md. Never mutates data.
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -38,12 +36,10 @@ function FlopKey($s) {
   return $null
 }
 
-$NONMEMBER = @('AA','KK','QQ','AKs','AKo','AQs')
-$EXPECT_A = @{ 'AA'=4; 'KK'=3; 'QQ'=1; 'AKo'=6; 'AKs'=2; 'AQs'=2 }
-# Banked C1 pairs keyed (sortedHero|flop|kind) -- version-agnostic tuples.
-$EXPECT_C1 = @(
-  '8c8h|As8d3h|c', '9c9s|9d8c6h|c', '7cTc|9d8c6h|c', 'TcTd|Ts9s5d|c', '6sAs|Ts9s5d|c', '4d5h|QsTs6d|b'
-)
+$NONMEMBER = @('AA','KK','QQ','AKs','AKo','AQs','AQo')
+# Post-audit invariants (v4.6.2): zero non-member arrivals, zero C1 pairs.
+# (Historical pre-migration state: 18 leg-(a) rows / 6 pairs -- committed
+# in postflop-v4.6.1-m4-arrival-lint-results.md.)
 
 # index M3 by hero+flop
 $m3Idx = @{}
@@ -84,40 +80,34 @@ foreach ($s in $m4) {
   }
 }
 
-# ---- reproduce-or-abort gates ----
+# ---- regression gates (post-audit invariants) ----
 $aTotal = 0; foreach ($k in $legA.Keys) { $aTotal += $legA[$k] }
-$aOk = ($aTotal -eq 18)
-foreach ($k in $EXPECT_A.Keys) { if ($legA[$k] -ne $EXPECT_A[$k]) { $aOk = $false } }
-if (-not $aOk) {
-  Write-Output ('ARR.A REPRODUCTION FAILED: found ' + (($legA.GetEnumerator() | ForEach-Object { $_.Key + ':' + $_.Value }) -join ' '))
-  throw 'ABORT: leg-(a) lint does not reproduce the banked 18 -- lint bug or data drift.'
+if ($aTotal -ne 0) {
+  Write-Output ('ARR.A REGRESSION: non-member arrivals found: ' + (($legA.GetEnumerator() | ForEach-Object { $_.Key + ':' + $_.Value }) -join ' '))
+  throw 'ABORT: post-audit invariant broken -- non-member hero arrived in an M4 row.'
 }
-$c1Sorted = @($c1Found | Sort-Object)
-$e1Sorted = @($EXPECT_C1 | Sort-Object)
-if (($c1Sorted -join ';') -ne ($e1Sorted -join ';')) {
-  Write-Output ('ARR.C1 found: ' + ($c1Sorted -join ' | '))
-  Write-Output ('ARR.C1 expected: ' + ($e1Sorted -join ' | '))
-  throw 'ABORT: self-inconsistency lint does not reproduce the banked 6 pairs.'
+if (@($c1Found).Count -ne 0) {
+  Write-Output ('ARR.C1 REGRESSION: self-inconsistency pairs found: ' + (@($c1Found | Sort-Object) -join ' | '))
+  throw 'ABORT: post-audit invariant broken -- M4 row contradicts its M3 twin verdict.'
 }
 
 # ---- emit results ----
 $overlapCount = @($rows | Where-Object { $_.overlap -eq 'OVERLAP' }).Count
 $md = @()
-$md += '# v4.6.1 M4 Arrival Lint Results (mechanical pass)'
+$md += '# M4 Arrival Regression Lint (standing post-audit guard)'
 $md += ''
-$md += ('Generated from production (542, blob 54f134f5). ARR.A reproduced 18/18 banked leg-(a) rows; ARR.C1 reproduced 6/6 banked pairs. ARR.P found **' + $overlapCount + ' rows with tier-array OVERLAP** (defect class discovered on the V1 row).')
+$md += ('Generated from production (' + @($S).Count + ' scenarios). ARR.A: 0 non-member arrivals (set incl. AQo per V3 closure). ARR.C1: 0 self-inconsistency pairs. ARR.P tier-array OVERLAP rows: **' + $overlapCount + '**.')
 $md += ''
 $md += '| id | class | board | reason | best | D | verdict | overlap | M3 twin |'
 $md += '|---|---|---|---|---|---|---|---|---|'
 foreach ($r in ($rows | Sort-Object verdict, id)) {
   $md += ('| `' + $r.id.Replace('pf_btn_v_bb_srp_100bb_turn_','') + '` | ' + $r.cls + ' | ' + $r.board + ' | ' + $r.reason + ' | ' + $r.best + ' | ' + $r.diff + ' | ' + $r.verdict + ' | ' + $r.overlap + ' | ' + $(if ($r.twin) { '`' + $r.twin.Replace('pf_btn_v_bb_srp_100bb_flop_','') + '`' } else { '' }) + ' |')
 }
-[System.IO.File]::WriteAllLines((Join-Path $root 'docs\specs\postflop-v4.6.1-m4-arrival-lint-results.md'), $md, [System.Text.UTF8Encoding]::new($false))
+[System.IO.File]::WriteAllLines((Join-Path $root 'docs\specs\postflop-m4-arrival-regression-lint.md'), $md, [System.Text.UTF8Encoding]::new($false))
 
-Write-Output '=== M4 ARRIVAL LINT ==='
+Write-Output '=== M4 ARRIVAL REGRESSION LINT ==='
 Write-Output ('Rows: ' + $m4.Count)
-Write-Output ('ARR.A leg-(a): ' + $aTotal + ' (reproduced banked 18 exactly: ' + (($legA.GetEnumerator() | Sort-Object Key | ForEach-Object { $_.Key + ':' + $_.Value }) -join ' ') + ')')
-Write-Output ('ARR.C1 pairs: ' + $c1Found.Count + ' (reproduced banked 6 exactly: 5x REWORK-(c) + 1x REWORK-(b))')
+Write-Output ('ARR.A non-member arrivals: ' + $aTotal + ' (invariant 0; set = AA,KK,QQ,AKs,AKo,AQs,AQo)')
+Write-Output ('ARR.C1 self-inconsistency pairs: ' + @($c1Found).Count + ' (invariant 0)')
 Write-Output ('ARR.P tier-overlap rows: ' + $overlapCount)
-Write-Output ('REVIEW rows remaining for manual legs-(b)/(c): ' + @($rows | Where-Object { $_.verdict -eq 'REVIEW' }).Count)
-Write-Output 'RESULT: PASS (reproduction gates held)'
+Write-Output 'RESULT: PASS (post-audit invariants hold)'

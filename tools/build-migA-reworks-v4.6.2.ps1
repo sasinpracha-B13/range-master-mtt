@@ -1,0 +1,175 @@
+# build-migA-reworks-v4.6.2.ps1 -- Migration A (v4.6.2) rework seeds.
+# PLANNING-ONLY: writes docs/specs/postflop-v4.6.2-migA-rework-seeds.json.
+# Production is NEVER touched by this script.
+# 5 rows (owner spec approval 2026-07-21):
+#   S1/S2: leg-(a) hero swaps (AQo ruled NON-MEMBER by solver: 3bet 100%)
+#   S3:    leg-(b) hero swap Tc9c -> Td9d (the suit-binary self-fix;
+#          arrival solver-verified: Td9d continues 99.9 vs the 2.1 c-bet)
+#   S4/S5: EV-REDERIVE (heroes stay; mixed-indifference claims falsified
+#          at 10x threshold: call +1.87bb / +2.63bb vs fold) -- prose must
+#          teach WHY call wins outright (owner condition), WL entries are
+#          WITHDRAWN by the migration (cross-checked by the auditor).
+
+$ErrorActionPreference = 'Stop'
+$root = Split-Path -Parent $PSScriptRoot
+$outPath = Join-Path $root 'docs\specs\postflop-v4.6.2-migA-rework-seeds.json'
+$prodAll = ([System.IO.File]::ReadAllText((Join-Path $root 'postflop\postflop_scenarios.json'), [System.Text.UTF8Encoding]::new($false)) | ConvertFrom-Json).scenarios
+$rows = New-Object System.Collections.ArrayList
+$PFX = 'pf_btn_v_bb_srp_100bb_turn_'
+$SREF = 'GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C'
+
+function NewRework($o) {
+  $old = $prodAll | Where-Object { $_.id -eq ($PFX + $o.replaces) } | Select-Object -First 1
+  if (-not $old) { throw ('replaced row not found: ' + $o.replaces) }
+  $c = $old | ConvertTo-Json -Depth 12 | ConvertFrom-Json
+  $c.id = $PFX + $o.id
+  $c.version = 'v4.6.2'
+  $c.schemaVersion = '1.2.0'
+  $c.heroHand = @($o.hero)
+  $c.handClass = $o.cls
+  $c.heroHandRole = $o.role
+  $c.drawCategory = $o.draw
+  $c.showdownValue = $o.sdv
+  $c.blockerNote = $o.blocker
+  $c.recommendedAction = $o.rec
+  if ($o.reason) { $c.actionReason = $o.reason }
+  $c.question.prompt = $o.prompt
+  $c.answer.best = $o.best
+  $c.answer.acceptable = @($o.acc)
+  $c.answer.critical = @($o.crit)
+  $c.answer.bad = @(@($c.question.choices) | Where-Object { $_ -ne $o.best -and (@($o.acc) -notcontains $_) -and (@($o.crit) -notcontains $_) })
+  foreach ($k in $o.expl.Keys) { $c.explanation.$k = $o.expl[$k] }
+  if ($o.tags) { $c.conceptTags = @($o.tags) }
+  $c.auditStatus = 'review_pending'
+  $c.reviewStatus = 'v4.6.2_seed'
+  $c | Add-Member -NotePropertyName replaces -NotePropertyValue ($PFX + $o.replaces) -Force
+  $c | Add-Member -NotePropertyName reworkClass -NotePropertyValue $o.rw -Force
+  $c | Add-Member -NotePropertyName arrivalDerivation -NotePropertyValue $o.arrival -Force
+  if ($o.sref) { $c | Add-Member -NotePropertyName solverRunRef -NotePropertyValue $o.sref -Force }
+  if ($o.snote) { $c | Add-Member -NotePropertyName solverNote -NotePropertyValue $o.snote -Force }
+  [void]$script:rows.Add($c)
+}
+
+# --- S1: AQo -> KQo | value_CR | 8d6c3s/Qh D4 ---
+NewRework @{
+  replaces = '8d6c3s_Qh_m4_action_AhQc_v430C'; id = '8d6c3s_Qh_m4_action_KhQd_v462'; rw = 'REWORK-(a)'
+  hero = @('Kh','Qd'); cls = 'top_pair_good_kicker'; role = 'strong_value'; draw = 'none'; sdv = 'high'
+  rec = 'check_raise_small'; best = 'check_raise_small'; acc = @('call'); crit = @()
+  sref = ($SREF + ' -- AQo membership node: 3bet 100 / flat 0 / fold 0 (leg-(a) driver)')
+  prompt = 'Flop 8d 6c 3s; turn Qh. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Kh Qd?'
+  blocker = 'Kh Qd carries mixed removal: the K trims KQ ties and AK floats, while the Q halves the QJ and QT floats hero wants paying. The raise leans on the range shift the turn card produced, not on blockers. No suit story on this runout.'
+  arrival = 'Preflop: KQo defends the BB vs the 2.5x open -- a member (AQo is ruled OUT by the solver session: it three-bets 100%). Flop 8d 6c 3s vs the small c-bet: two live overcards continue as a standard priced float under the MDF-core standard; no raise node was missed. The turn Qh pairs hero -- this scenario.'
+  expl = [ordered]@{
+    short = 'The float turns top pair on the overcard the barrel range hates -- a small value raise, one kicker thinner than the AQ it replaces.'
+    turnLogic = 'The Qh is the classic range-shift card: BB floats hold exactly the broadways that just paired, while villain keeps barreling 8x, gutters like 75 and 97, and overcard air. Top pair with the K kicker values all of it now.'
+    rangeContext = 'Villain read the flop as his -- 8-high boards favor the opener -- and the barrel assumes that world still exists. The Q turn flipped it: hero range holds more Qx than the barreling range, and the raise cashes the flip.'
+    handLogic = 'KQ beats QJ and QT floats that continue, every 8x and 7x pair, and all gutters; it loses to AQ, the rare sets, and nothing else that keeps going. The dominated-Qx pool pays the small raise at full width.'
+    sizingLogic = 'Small keeps the dominated floats and pairs in while risking little against the set region; big folds the pay region out. Calling is acceptable pot control that leaves river guesswork; folding top pair on the best turn card in the deck for this range is a plain over-fold.'
+    commonMistake = 'Flatting the turned top pair because the flop float felt weak -- the float was priced for exactly this card; not raising it wastes the plan.'
+    takeaway = 'When the turn pairs the float, raise it: range-shift cards are value cards for the caller, and small sizing collects from every dominated continue.'
+  }
+}
+
+# --- S2: AQo -> QJs | value_CR | Qs7d3c/3h D3 (KQo is taken on this board by
+# the v4.6.1 KhQc row -- class-dup guard) ---
+NewRework @{
+  replaces = 'Qs7d3c_3h_m4_action_AhQc_v430D'; id = 'Qs7d3c_3h_m4_action_QhJh_v462'; rw = 'REWORK-(a)'
+  hero = @('Qh','Jh'); cls = 'top_pair_good_kicker'; role = 'strong_value'; draw = 'none'; sdv = 'high'
+  rec = 'check_raise_small'; best = 'check_raise_small'; acc = @('call'); crit = @()
+  sref = ($SREF + ' -- AQo membership node: 3bet 100 / flat 0 / fold 0 (leg-(a) driver)')
+  prompt = 'Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Qh Jh?'
+  blocker = 'Qh Jh: the Q in hand halves the worse-Qx pool the raise targets -- a real minus priced into the small sizing -- while the J blocks QJ ties. Hearts in hand are decoration: no flush is possible by the river on this four-suit runout.'
+  arrival = 'Preflop: QJs is a chart flat -- a member (AQo is ruled OUT by the solver session: it three-bets 100%). Flop Qs 7d 3c vs the small c-bet: top pair with the J kicker calls as the street best line; raising is thin and no check-raise node was missed. The paired 3h turn is this scenario.'
+  expl = [ordered]@{
+    short = 'Top pair J kicker on the paired brick -- the value raise one rung below the KQ protection raise on this same board.'
+    turnLogic = 'The 3 pairing changes no range: nobody barrels 3x for value. Villain keeps firing worse Qx, 7x, the 45 and 64 gutters, and overcard air -- a continue region QJ beats almost entirely.'
+    rangeContext = 'Static paired turns keep the flop map alive: BB top pair remains top of the practical ranges, and the barrel range is wide enough that thin value prints. This board also hosts the KQ raise -- the kicker ladder, not the board, decides the frame.'
+    handLogic = 'QJ beats QT, Q9s, all 7x and every gutter; it loses to KQ, AQ-class hands villain occasionally holds, and the rare trips. Against a small raise the worse region continues wide enough to fund it.'
+    sizingLogic = 'Small is the price the dominated hands will pay; big folds them and isolates against the top of the range. Calling is acceptable pot control; folding top pair to a single barrel on a blank pairing is a plain over-fold.'
+    commonMistake = 'Treating the J kicker as a calling hand on a board where the barrel range is stuffed with worse Qx and air -- the kicker is good enough here, and the board is static enough.'
+    takeaway = 'On paired-brick turns, top pair good kicker raises small for value -- the pairing card that helps nobody helps the hand that was already ahead.'
+  }
+}
+
+# --- S3: Tc9c -> Td9d | board_change_fold | Ks8s3d/2s D2 (the suit-binary
+# self-fix: same ranks, backdoor suit corrected; arrival solver-verified) ---
+NewRework @{
+  replaces = 'Ks8s3d_2s_m4_action_Tc9c_v430'; id = 'Ks8s3d_2s_m4_action_Td9d_v462'; rw = 'REWORK-(b)'
+  hero = @('Td','9d'); cls = 'no_pair_no_draw'; role = 'give_up'; draw = 'none'; sdv = 'none'
+  rec = 'fold'; best = 'fold'; acc = @(); crit = @('call')
+  sref = ($SREF + ' -- flop node board Ks8s3d flop X-R2.1: Td9d raise 60.3 / call 39.6 / fold 0.1 (continue 99.9); Tc9c folds 99.4 (the replaced arrival)')
+  snote = 'Suit-binary finding (Phase-2/Q2 sweep): the diamond backdoor is the entire flop continue; the club version of the same ranks is a pure fold. The 2s turn deletes the diamond plan -- the fold lesson is unchanged.'
+  prompt = 'Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Td 9d?'
+  blocker = 'Td 9d holds no spade: zero removal of the completed flushes and zero blocker credit for continuing. The diamonds that justified the flop peel are dead cards on this turn -- two more diamonds cannot arrive by the river. The fold is removal-blind and price-driven.'
+  arrival = 'Preflop: T9s is a chart flat -- a member. Flop Ks 8s 3d vs the small c-bet: Td9d continues at 99.9% in the solver (raise 60.3 / call 39.6) -- the diamond backdoor carries the whole continue, and the club twin of these ranks folds 99.4%, which is why the club version could not stand. The continue is legitimate and priced; no raise node was missed as a pure requirement. The turn 2s is this scenario: the third spade arrives and the diamond plan dies the same moment.'
+  expl = [ordered]@{
+    short = 'The peel was built on a backdoor that just died while the board grew a flush -- no pair, no draw, no reason to stay.'
+    turnLogic = 'The 2s completes every flopped spade draw and kills the diamond runout in one card. Villain barrels flushes, Kx that no longer fears much, and blocker bluffs holding one spade; hero holds none of the above and beats none of the value.'
+    rangeContext = 'Float hands live and die by their forward cards. The flop continue was real -- the solver plays these diamonds almost pure -- but a float whose suit dies on the turn has no second plan, and the range-level answer is to release as a bloc.'
+    handLogic = 'Ten-high with no pair, no draw, and no spade beats only the barrels that were already giving up. Every value combo continues comfortably against a call, and the one-card straights the ranks pretend to keep need two more cards that will not come.'
+    sizingLogic = 'Folding is the entire decision. Calling with zero showdown value and dead suits is the enumerated punt -- money in with no way to win the pot at showdown. Raising either size bluffs into the region the turn card just completed.'
+    commonMistake = 'Continuing because the flop call was correct: the same maths that priced the peel prices the release when the card that justified it cannot arrive.'
+    takeaway = 'Backdoor floats are one-street plans: when the turn kills the suit and arms the board, the correct fold is the same discipline that made the correct call.'
+  }
+}
+
+# --- S4: EV-REDERIVE | 9c9d stays | Ac7d2s/4h D4 | mixed_indifference ->
+# bluff_catch (EV-lens: call +1.87bb, falsified at 10x threshold) ---
+NewRework @{
+  replaces = 'Ac7d2s_4h_m4_action_9c9d_v430C'; id = 'Ac7d2s_4h_m4_action_9c9d_v462'; rw = 'EV-REDERIVE'
+  hero = @('9c','9d'); cls = 'underpair'; role = 'bluff_catcher'; draw = 'none'; sdv = 'decent'
+  reason = 'bluff_catch_turn'
+  rec = 'call'; best = 'call'; acc = @(); crit = @('check_raise_big')
+  sref = ($SREF + ' -- board Ac7d2s4h flop X-R2.1-C turn X-R7.2, stratab strategy_ev')
+  snote = 'EV-lens (owner rule 2026-07-21): call +1.87bb vs fold 0; raise -1.2 to -1.5bb; strategy pure call 100. The authored mixed-indifference claim is falsified at 10x the 0.15bb threshold. WL entry withdrawn by the v4.6.2 migration; XP forward-only.'
+  prompt = 'Flop Ac 7d 2s; turn 4h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with 9c 9d?'
+  blocker = 'Two nines trim the 98 and 97 gutter-airs villain keeps barreling -- a small pro-catch removal, dwarfed by the sheer width of the air region that funds the call. No suit story: four suits on board mean no flush is possible by the river.'
+  arrival = 'Preflop: 99 is a chart flat -- a member. Flop Ac 7d 2s vs the small c-bet: the underpair calls as the standard priced peel on a range-bet flop; folding is far too tight and no raise node exists for a pocket pair under the ace. The turn 4h barrel is this scenario. The hero and arrival are unchanged from the original row -- this rework re-derives the ANSWER layer only, per the EV-lens ruling.'
+  expl = [ordered]@{
+    short = 'Pocket 9s under the ace: not a coin-flip. The barrel range is too air-heavy for the fold to be close -- the call is worth nearly two big blinds.'
+    turnLogic = 'The 4h completes nothing and shifts no range. Villain range-bet the A-high flop for a third pot -- every broadway float, every gutter, every give-up came along -- and the brick barrel still carries that whole air share. Nines sit above all of it and below only the aces.'
+    rangeContext = 'A-high flops let the opener c-bet near range, and that is exactly why the barrel proves so little: too many missed hands must keep firing. The solver prices the consequence -- calling earns +1.87bb where folding earns zero. That gap is ten times the indifference threshold: this spot is not a mix, and teaching it as one taught a leak.'
+    handLogic = 'The call beats every unpaired barrel, the smaller pockets, and the gutters that missed; it loses to Ax and the rare sets. The winning region is wide because the flop bet was wide -- air density, not hand strength, decides this street, and the density is decisive.'
+    sizingLogic = 'Calling is the whole line. Folding surrenders a clear +1.87bb -- an over-fold leak, not a defensible option. The small raise burns about a blind and a half turning a catcher into a bluff, and the big raise is the raise-into-crush punt: only the aces continue, and they never fold.'
+    commonMistake = 'Labelling every underpair-below-the-ace a mix: indifference is a numeric claim, and here the numbers say the air share pays the call outright. When the flop was a range-bet, the brick-turn barrel is cheap to catch.'
+    takeaway = 'Indifference must be earned by the numbers, not assumed from the hand class -- against range-bet-then-barrel lines, pockets under the ace are clear calls.'
+  }
+  tags = @('turn_bluff_catcher','second_barrel_defense','turn_pot_odds')
+}
+
+# --- S5: EV-REDERIVE | 8d8c stays | Qs7d3c/3h D5 | mixed_indifference ->
+# bluff_catch (EV-lens: call +2.63bb) ---
+NewRework @{
+  replaces = 'Qs7d3c_3h_m4_action_8d8c_v432'; id = 'Qs7d3c_3h_m4_action_8d8c_v462'; rw = 'EV-REDERIVE'
+  hero = @('8d','8c'); cls = 'underpair'; role = 'bluff_catcher'; draw = 'none'; sdv = 'decent'
+  reason = 'bluff_catch_turn'
+  rec = 'call'; best = 'call'; acc = @(); crit = @('check_raise_big')
+  sref = ($SREF + ' -- board Qs7d3c3h flop X-R2.1-C turn X-R7.2, stratab strategy_ev')
+  snote = 'EV-lens (owner rule 2026-07-21): call +2.63bb vs fold 0; raise -0.24 to -0.68bb; strategy pure call 100. Mixed-indifference claim falsified at 10x threshold. WL entry withdrawn by the v4.6.2 migration; XP forward-only.'
+  prompt = 'Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with 8d 8c?'
+  blocker = 'Two eights sit above every seven and shade the 86 and 85 gutter-airs; removal is a footnote here -- the call rests on air-density arithmetic, not blockers. No suit story: four suits on board mean no flush is possible by the river.'
+  arrival = 'Preflop: 88 is a chart flat -- a member. Flop Qs 7d 3c vs the small c-bet: the pocket pair above the 7 calls as the standard priced peel; no raise node exists for it. The turn 3h barrel is this scenario. Hero and arrival unchanged from the original row -- the rework re-derives the ANSWER layer only, per the EV-lens ruling.'
+  expl = [ordered]@{
+    short = 'Eights above the sevens on a turn that pairs nobody: the barrel range gained nothing, so the catch got MORE clear, not less -- worth +2.63bb.'
+    turnLogic = 'The 3h is the emptiest card in the deck: no draw completes, and no one barrels 3x for value -- the board paired UNDER both ranges. Villain fires the same Qx he already had plus the same air that missed the flop; nothing about the range improved.'
+    rangeContext = 'The deceptive difficulty -- and why this row is a five -- is that a pairing card FEELS like it should reopen the fold question. It does not: indifference would require villain value to thicken, and a card outside both ranges thickens nothing. The solver prices the call at +2.63bb over folding -- even further from a mix than the ace-board version of this lesson.'
+    handLogic = 'Eights beat all six gutter families, every missed broadway, and the sevens; they lose to Qx, 77, 33 and the odd overpair above. The pay region is the air that must keep bluffing on a static runout -- and it is enormous.'
+    sizingLogic = 'Calling is the whole line: +2.63bb versus zero is a value call, not a coin flip. Folding is the over-fold leak the old label licensed. The small raise loses about two-thirds of a blind repping nothing; the big raise isolates against exactly Qx-plus -- the raise-into-crush punt.'
+    commonMistake = 'Re-litigating the hand every time the board pairs: pairing cards only matter when a range holds them. Here neither does -- the correct read is that nothing changed, so the profitable call stands.'
+    takeaway = 'A board pairing outside both ranges changes nothing: the catch that was right on the flop map stays right -- and the numbers say it was never close to a mix.'
+  }
+  tags = @('turn_bluff_catcher','second_barrel_defense','turn_pot_odds')
+}
+
+$doc = [ordered]@{
+  description = 'Migration A (v4.6.2) rework seeds -- 5 rows: 2 leg-(a) AQo swaps (solver: AQo 3bets 100%), 1 leg-(b) suit-binary self-fix (Tc9c -> Td9d), 2 EV-REDERIVEs (mixed-indifference falsified at 10x threshold; WL entries withdrawn by the migration). Production untouched by this script.'
+  generatedBy = 'tools/build-migA-reworks-v4.6.2.ps1'
+  seedVersion = 'v4.6.2'
+  count = $rows.Count
+  reworks = @($rows.ToArray())
+}
+$json = $doc | ConvertTo-Json -Depth 12
+$tmp = $outPath + '.tmp'
+[System.IO.File]::WriteAllText($tmp, $json, [System.Text.UTF8Encoding]::new($false))
+Move-Item -Force $tmp $outPath
+Write-Output ('WROTE ' + $outPath + ' reworks=' + $rows.Count)

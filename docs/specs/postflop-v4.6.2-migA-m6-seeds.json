@@ -1,0 +1,250 @@
+{
+    "description":  "Migration A (v4.6.2) M6 additions -- the P3 suit-selection pair (2 rows, one node, cross-referenced; A5/C5/D5 precedent). consensus_gto + solverRunRef. P2 re-parked (canonical-line arrival ~0 for A-high-with-SDV -- tree-shape class, P1 precedent) pending owner ruling. Production untouched by this script.",
+    "generatedBy":  "tools/build-migA-m6-v4.6.2.ps1",
+    "seedVersion":  "v4.6.2",
+    "count":  2,
+    "reworks":  [
+                    {
+                        "id":  "pf_btn_v_bb_srp_100bb_river_Ts6s2d_Ad_m6_action_QsJs_v462",
+                        "version":  "v4.6.2",
+                        "game":  "NLH_MTT",
+                        "module":  "pf_river_value_ip",
+                        "moduleName":  "River Betting IP",
+                        "street":  "river",
+                        "schemaVersion":  "1.4.0",
+                        "actionHistory":  [
+
+                                          ],
+                        "scoring":  {
+                                        "best":  1,
+                                        "acceptable":  0.5,
+                                        "bad":  0,
+                                        "critical":  0
+                                    },
+                        "difficulty":  4,
+                        "spot":  {
+                                     "format":  "NLH_MTT",
+                                     "stackDepth":  "100BB",
+                                     "potType":  "SRP",
+                                     "preflopAction":  "BTN open 2.5x, BB call",
+                                     "flopAction":  "BTN cbet small (~33%), BB call",
+                                     "turnAction":  "BTN barrel (~50-66%), BB call",
+                                     "riverAction":  "BB checks river",
+                                     "street":  "river",
+                                     "heroPosition":  "BTN",
+                                     "villainPosition":  "BB",
+                                     "heroRole":  "river_bettor_ip",
+                                     "villainRole":  "river_check_caller_oop"
+                                 },
+                        "board":  {
+                                      "flopCards":  [
+                                                        "Ts",
+                                                        "6s",
+                                                        "2d"
+                                                    ],
+                                      "turnCard":  "3c",
+                                      "riverCard":  "Ad",
+                                      "cards":  [
+                                                    "Ts",
+                                                    "6s",
+                                                    "2d",
+                                                    "3c",
+                                                    "Ad"
+                                                ],
+                                      "boardKind":  "A_high",
+                                      "suitTextureFlop":  "two_tone",
+                                      "suitTextureTurn":  "two_tone",
+                                      "suitTextureRiver":  "two_tone",
+                                      "textureTags":  [
+                                                          "wet",
+                                                          "semi_connected"
+                                                      ],
+                                      "highCardClass":  "A_high",
+                                      "riverCategory":  "overcard",
+                                      "boardChange":  "range_shift_btn",
+                                      "runoutTexture":  "straight_possible",
+                                      "riverDrawCompletion":  "none"
+                                  },
+                        "heroHand":  [
+                                         "Qs",
+                                         "Js"
+                                     ],
+                        "handClass":  "queen_high",
+                        "heroHandRole":  "air_give_up",
+                        "drawCategory":  "none",
+                        "showdownValue":  "none",
+                        "blockerNote":  "Qs Js removes two of the busted spade draws that populate the BB folding region -- the exact hands an overbet needs villain to still hold. Blocking the folds kills the bluff; the showdown share of checking beats the priced-out jam.",
+                        "recommendedAction":  "check_back",
+                        "actionReason":  "give_up_no_equity_river",
+                        "verdictBasis":  "clear_direction",
+                        "stakeBasis":  "overbet",
+                        "heroRiverSizing":  "none",
+                        "betPurpose":  "give_up",
+                        "question":  {
+                                         "qtype":  "action_choice",
+                                         "prompt":  "Flop Ts 6s 2d; turn 3c; river Ad. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BB now checks the river. What is BTN best action with Qs Js?",
+                                         "choices":  [
+                                                         "check_back",
+                                                         "bet_small",
+                                                         "bet_big",
+                                                         "overbet",
+                                                         "mixed"
+                                                     ]
+                                     },
+                        "answer":  {
+                                       "best":  "check_back",
+                                       "acceptable":  [
+
+                                                      ],
+                                       "bad":  [
+                                                   "bet_small",
+                                                   "bet_big",
+                                                   "mixed"
+                                               ],
+                                       "critical":  [
+                                                        "overbet"
+                                                    ]
+                                   },
+                        "explanation":  {
+                                            "short":  "The busted flush draw looks like the natural bluff -- and is the single worst one: your spades sit in the folding half of the villain range.",
+                                            "riverLogic":  "The Ad closes the board with every draw dead. The BB check range is stuffed with exactly the hands that missed: spade draws that peeled twice and broadways that never paired. An overbet folds those out -- but Qs Js holds two of the spades that make up that folding region, so the bluff removes its own customers. The solver jams this combo 1.4 percent and checks 98.6.",
+                                            "rangeContext":  "Bluff selection on blocked rivers is a subtraction exercise: every fold you need is a combo villain must be able to hold. The no-spade QJ -- the twin row on this exact node -- jams at full frequency because it leaves the folding region intact. Same ranks, opposite verdict: the suits are the entire decision.",
+                                            "handLogic":  "Queen-high never wins at showdown against a range that called two streets, so checking wins only the pots where BB gave up too -- a small but real share. Jamming wins nothing extra: the hands that fold are the ones these spades block, and the hands that call all beat queen-high.",
+                                            "sizingLogic":  "No size fixes a blocked bluff: small gets called by every pair, big folds the same nothing, and the overbet is the expensive version of the mistake -- the punt tier here. Check, collect the give-up pots, and leave the bluffing to the twin combo with the right suits.",
+                                            "commonMistake":  "Bluffing BECAUSE the draw missed: a busted draw is not a bluffing licence -- it is a removal profile, and this one points the wrong way.",
+                                            "takeaway":  "Pick bluffs by what they unblock, not by what they missed: the busted-spade QJ checks while its no-spade twin jams -- suits, not ranks, decide."
+                                        },
+                        "conceptTags":  [
+                                            "give_up_discipline",
+                                            "unblock_fold_region",
+                                            "bluff_candidate_selection"
+                                        ],
+                        "sourceConfidence":  "consensus_gto",
+                        "auditStatus":  "review_pending",
+                        "reviewStatus":  "v4.6.2_seed",
+                        "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Ts6s2d3cAd, line flop X-R7-C turn X-R21.9-C river X (library sizes; canonical 33/50-66 unpriceable on this texture)",
+                        "solverNote":  "P3 pair, row 1 of 2 (suit-selection lesson; cross-ref the QhJh row on this same node). Solver at library sizes: QsJs overbet-jam 1.4 / check 98.6 -- the busted spades BLOCK the folded-FD region the bluff needs. Direction is combo logic and sizing-robust (owner ruling 2026-07-21); stakeBasis = designated temptation (the jam this combo must not make)."
+                    },
+                    {
+                        "id":  "pf_btn_v_bb_srp_100bb_river_Ts6s2d_Ad_m6_action_QhJh_v462",
+                        "version":  "v4.6.2",
+                        "game":  "NLH_MTT",
+                        "module":  "pf_river_value_ip",
+                        "moduleName":  "River Betting IP",
+                        "street":  "river",
+                        "schemaVersion":  "1.4.0",
+                        "actionHistory":  [
+
+                                          ],
+                        "scoring":  {
+                                        "best":  1,
+                                        "acceptable":  0.5,
+                                        "bad":  0,
+                                        "critical":  0
+                                    },
+                        "difficulty":  4,
+                        "spot":  {
+                                     "format":  "NLH_MTT",
+                                     "stackDepth":  "100BB",
+                                     "potType":  "SRP",
+                                     "preflopAction":  "BTN open 2.5x, BB call",
+                                     "flopAction":  "BTN cbet small (~33%), BB call",
+                                     "turnAction":  "BTN barrel (~50-66%), BB call",
+                                     "riverAction":  "BB checks river",
+                                     "street":  "river",
+                                     "heroPosition":  "BTN",
+                                     "villainPosition":  "BB",
+                                     "heroRole":  "river_bettor_ip",
+                                     "villainRole":  "river_check_caller_oop"
+                                 },
+                        "board":  {
+                                      "flopCards":  [
+                                                        "Ts",
+                                                        "6s",
+                                                        "2d"
+                                                    ],
+                                      "turnCard":  "3c",
+                                      "riverCard":  "Ad",
+                                      "cards":  [
+                                                    "Ts",
+                                                    "6s",
+                                                    "2d",
+                                                    "3c",
+                                                    "Ad"
+                                                ],
+                                      "boardKind":  "A_high",
+                                      "suitTextureFlop":  "two_tone",
+                                      "suitTextureTurn":  "two_tone",
+                                      "suitTextureRiver":  "two_tone",
+                                      "textureTags":  [
+                                                          "wet",
+                                                          "semi_connected"
+                                                      ],
+                                      "highCardClass":  "A_high",
+                                      "riverCategory":  "overcard",
+                                      "boardChange":  "range_shift_btn",
+                                      "runoutTexture":  "straight_possible",
+                                      "riverDrawCompletion":  "none"
+                                  },
+                        "heroHand":  [
+                                         "Qh",
+                                         "Jh"
+                                     ],
+                        "handClass":  "queen_high",
+                        "heroHandRole":  "air_bluff_candidate",
+                        "drawCategory":  "none",
+                        "showdownValue":  "none",
+                        "blockerNote":  "Qh Jh holds no spade: the busted-FD region of the BB range keeps all its combos, and every one of them folds to the jam. Zero removal of the fold region -- the ideal bluff profile on this runout.",
+                        "recommendedAction":  "overbet",
+                        "actionReason":  "unblock_fold_region_river",
+                        "verdictBasis":  "clear_direction",
+                        "stakeBasis":  "overbet",
+                        "heroRiverSizing":  "overbet",
+                        "betPurpose":  "bluff",
+                        "question":  {
+                                         "qtype":  "action_choice",
+                                         "prompt":  "Flop Ts 6s 2d; turn 3c; river Ad. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BB now checks the river. What is BTN best action with Qh Jh?",
+                                         "choices":  [
+                                                         "check_back",
+                                                         "bet_small",
+                                                         "bet_big",
+                                                         "overbet",
+                                                         "mixed"
+                                                     ]
+                                     },
+                        "answer":  {
+                                       "best":  "overbet",
+                                       "acceptable":  [
+                                                          "bet_big"
+                                                      ],
+                                       "bad":  [
+                                                   "check_back",
+                                                   "bet_small",
+                                                   "mixed"
+                                               ],
+                                       "critical":  [
+
+                                                    ]
+                                   },
+                        "explanation":  {
+                                            "short":  "Same ranks, no spade: this queen-high holds the perfect removal profile, and the solver turns it into a full-frequency overbet bluff.",
+                                            "riverLogic":  "The Ad river lets BTN rep the ace after barrelling twice, and the BB check range is dense with busted spades and unpaired broadways that cannot continue. Qh Jh blocks none of that folding region -- every fold the jam needs remains in the villain range -- so the overbet prints at full frequency in the solver.",
+                                            "rangeContext":  "This node runs a strict suit test: the spade version of these exact ranks checks back 98.6 percent -- the twin row -- because it blocks the folds. Unblocked, the same queen-high becomes the range bluff of choice. Nothing about hand strength changed; only the removal did.",
+                                            "handLogic":  "Queen-high has zero showdown value against two streets of calls, which makes it a perfect bluff candidate: no value is wasted by jamming, the A-high story is credible from the barrel line, and the fold-out region -- pairs under pressure plus every busted draw -- stays fully populated.",
+                                            "sizingLogic":  "The overbet is the point: maximum pressure on a capped check range that just watched the scare card land. The big bet is the acceptable smaller version; the small bet invites hero-calls, and checking back surrenders a bluff the solver plays at full frequency -- a plain leak with a hand that can never win otherwise.",
+                                            "commonMistake":  "Checking the twin of a good bluff: after learning the spade combo checks, over-applying the lesson -- the discipline is per-suit, not per-rank.",
+                                            "takeaway":  "When the scare card lands and your suits unblock the folds, air with the right removal jams -- selection by suit is the whole edge."
+                                        },
+                        "conceptTags":  [
+                                            "unblock_fold_region",
+                                            "bluff_candidate_selection",
+                                            "sizing_polarity"
+                                        ],
+                        "sourceConfidence":  "consensus_gto",
+                        "auditStatus":  "review_pending",
+                        "reviewStatus":  "v4.6.2_seed",
+                        "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Ts6s2d3cAd, line flop X-R7-C turn X-R21.9-C river X (library sizes; canonical 33/50-66 unpriceable on this texture)",
+                        "solverNote":  "P3 pair, row 2 of 2 (suit-selection lesson; cross-ref the QsJs row on this same node). Solver at library sizes: no-spade QJ overbet-jams 99.7-100 (QhJh 100 / QdJd 99.7 / QcJc 100) while QsJs checks 98.6. Holding no spade leaves the BB folded-FD region fully intact. Direction is combo logic and sizing-robust (owner ruling 2026-07-21); stakeBasis = best-line sizing."
+                    }
+                ]
+}

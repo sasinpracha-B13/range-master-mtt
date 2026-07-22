@@ -34254,7 +34254,7 @@ function getModule5Scenarios() {
   });
 }
 
-// v4.5.3: Module 6 (River Betting IP) — 32 approved (24 v4.5.1 + 8 v4.5.2A).
+// v4.5.3: Module 6 (River Betting IP) — 34 approved (24 v4.5.1 + 8 v4.5.2A + 2 v4.6.2).
 function getModule6Scenarios() {
   if (!getPostflopReady()) return [];
   return App.postflop.scenarios.filter(function (s) {
@@ -34497,7 +34497,7 @@ function startPostflopDrill(moduleId, sessionLength) {
     // v4.4.2: Module 5 = river_barrel_oop_def (Limited Beta · 33 approved scenarios).
     pool = getModule5Scenarios();
   } else if (moduleId === 'pf_river_value_ip') {
-    // v4.5.3: Module 6 = river_value_ip (Limited Beta · 32 approved scenarios).
+    // v4.5.3: Module 6 = river_value_ip (Limited Beta · 34 approved scenarios).
     pool = getModule6Scenarios();
   } else {
     pool = [];
@@ -34742,13 +34742,16 @@ function _pfStakeBB(scenario) {
 // set. Promotion NEVER inferred from tier alone: a chosen id must appear here.
 var _PF_MIXED_WHITELIST = {
   'pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m2_action_KhQd_v412':      ['mixed', 'bet_small', 'check'],
-  'pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_action_9c9d_v430C':  ['mixed', 'call', 'fold'],
+  // v4.6.2 EV-lens (owner ruling 2026-07-21): the M4 9c9d_v430C and 8d8c_v432
+  // entries are WITHDRAWN - solver EV shows call is clear value (+1.87bb /
+  // +2.63bb vs fold), not indifference; both rows re-authored as _v462 best=call.
+  // Surviving-row solver statuses recorded in-row (solverNote); KhQd mix is
+  // solver-CONFIRMED (consensus_gto).
   'pf_btn_v_bb_srp_100bb_turn_9s8d4c_7h_m4_action_JcJh_v461':  ['mixed', 'call', 'fold'],
   'pf_btn_v_bb_srp_100bb_turn_JdTd5s_2c_m4_action_9c9d_v430C':  ['mixed', 'call', 'fold'],
   'pf_btn_v_bb_srp_100bb_turn_Ah9d4d_7h_m4_reason_TdTs_v430D':  ['mixed_indifference_turn', 'bluff_catch_turn', 'equity_realization_turn_call'],
   'pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_reason_JhJd_v461':   ['mixed_indifference_turn'],
   'pf_btn_v_bb_srp_100bb_turn_7s5d3h_4c_m4_action_JsTs_v432':   ['mixed', 'fold'],
-  'pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_8d8c_v432':   ['mixed', 'fold', 'call'],
   'pf_btn_v_bb_srp_100bb_river_Js8d5c_Ac_m5_action_AdTh_v440':  ['mixed', 'call'],
   'pf_btn_v_bb_srp_100bb_river_Ad8s5c_Kd_m5_reason_AhJc_v440':  ['mixed_indifference_river', 'bluff_catch_river'],
   'pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_action_KcTd_v441a': ['mixed', 'call', 'fold'],
@@ -37323,7 +37326,7 @@ function _pfM6FirstTimeExplainerHtml() {
                '<li><strong>Thin value wants a small price</strong>; near-nut hands size up into capped ranges. Match the size to the hand class.</li>' +
                '<li><strong>Bluffs are picked by blockers</strong> — zero-showdown-value hands that block villain\'s calls and unblock his folds fire first; the rest go to the give-up pile.</li>' +
                '<li><strong>Checking back is a weapon</strong> — hands that beat all the folds and lose to all the calls must take the free showdown.</li>' +
-               '<li><strong>Limited Beta — 32 scenarios.</strong> Good for structured practice, not final certification.</li>' +
+               '<li><strong>Limited Beta — 34 scenarios.</strong> Good for structured practice, not final certification.</li>' +
              '</ul>' +
            '</div>' +
          '</details>';
@@ -37819,7 +37822,7 @@ var _PF_CURRICULUM = [
   {
     key: 'm2', name: 'Module 2 — Flop C-bet IP',
     focus: ['when BTN should bet', 'when BTN should check', 'hand-class decisions', 'value / bluff / protection logic'],
-    scenarioCount: 35,
+    scenarioCount: 49,
     masteryNote: 'Beta · 35 scenarios · all 5 M2 concepts drillable.',
     syllabus: [
       'Hero hand context (vs board-only reads)',
@@ -37850,7 +37853,7 @@ var _PF_CURRICULUM = [
   {
     key: 'm4', name: 'Module 4 — Facing Turn Barrel OOP',
     focus: ['turn equity shift', 'pot odds + equity realization OOP', 'turn bluff-catch', 'blocker check-raise', 'turn slowplay', 'critical turn folds'],
-    scenarioCount: 72,
+    scenarioCount: 92,
     masteryNote: 'Limited Beta · 92 scenarios · 12 actionReasons · 23 boards.',
     syllabus: [
       'BB defending OOP vs BTN turn barrel after flop check-call',
@@ -37885,8 +37888,8 @@ var _PF_CURRICULUM = [
     // the real final module: the bettor's seat (curriculum M1–M6 complete).
     key: 'm6', name: 'Module 6 — River Betting IP',
     focus: ['bettor-side river decisions', 'value thresholds', 'blocker-driven bluff selection', 'sizing polarity', 'give-up discipline'],
-    scenarioCount: 32,
-    masteryNote: 'Limited Beta · 32 scenarios · ALL 12 actionReasons masterable (8-of-12 = coverage allowance, not a distractor carve-out).',
+    scenarioCount: 34,
+    masteryNote: 'Limited Beta · 34 scenarios · ALL 12 actionReasons masterable (8-of-12 = coverage allowance, not a distractor carve-out).',
     syllabus: [
       'THE SEAT FLIP: you are BTN in position — BB check-called flop + turn and now checks the river; the last decision of the hand tree is yours',
       '5-action menu: check back / bet small (~33%) / bet big (~75%) / overbet (~150%) / mixed',
@@ -38669,7 +38672,7 @@ function _pfModuleStatus(moduleKey, stats) {
     return 'beta';
   }
   if (moduleKey === 'm6') {
-    // v4.5.3: Module 6 ships as Limited Beta — 32 approved bettor-side river
+    // v4.5.3: Module 6 ships as Limited Beta — 34 approved bettor-side river
     // scenarios; ALL 12 actionReasons have best-exemplars (no distractor-only
     // token, unlike M5); seat-flip rendering shipped in v4.5.2; M6 concept
     // drills, boss, mastery checklist wired here. Curriculum M1–M6 complete.
@@ -40082,7 +40085,7 @@ function _pfM6MasteryProgressHtml(m6Stats) {
       'NOT a distractor carve-out like Module 5\'s domination token.' +
     '</span>';
   return '<div class="pf-mastery-section pf-mastery-section-m2">' +
-           '<span class="pf-mastery-title">🗡️ Module 6 Limited Beta progress (display only · 32 scenarios · more scenarios coming)</span>' +
+           '<span class="pf-mastery-title">🗡️ Module 6 Limited Beta progress (display only · 34 scenarios · more scenarios coming)</span>' +
            '<ul class="pf-mastery-list">' + rows + '</ul>' +
            conventionNote +
            progressionHintHtml +
@@ -40801,7 +40804,7 @@ function _pfModuleCardHtml(mod, stats) {
     syllabusHtml = '<details class="pf-module-syllabus"><summary>Module 6 syllabus</summary>' +
                    '<ul>' + mod.syllabus.map(function (line) { return '<li>' + _pfEscape(line) + '</li>'; }).join('') + '</ul>' +
                    '<div style="margin-top:6px;color:var(--text-secondary);font-size:11px;font-style:italic;">' +
-                   'Limited Beta · 32 approved bettor-side river scenarios · seat-flip rendering shipped v4.5.2, curriculum wire v4.5.3. Curriculum M1–M6 complete.' +
+                   'Limited Beta · 34 approved bettor-side river scenarios · seat-flip rendering shipped v4.5.2, curriculum wire v4.5.3. Curriculum M1–M6 complete.' +
                    '</div></details>';
   }
   if (mod.key === 'm5' && mod.syllabus) {
@@ -41443,8 +41446,8 @@ var TRAINING_MODES = {
       // practice (not final certification).
       { id: 'm5',        label: 'Module 5 · Facing River Barrel OOP', hint: '33 river-defense scenarios · Limited Beta', icon: '🌊', kind: 'secondary', route: 'postflop:m5', badge: 'BETA' },
       // v4.5.3: Module 6 — the curriculum finale (bettor's seat). Limited Beta ·
-      // 32 approved scenarios. Honest copy: structured practice, not certification.
-      { id: 'm6',        label: 'Module 6 · River Betting IP', hint: '32 bettor-side river scenarios · Limited Beta', icon: '🗡️', kind: 'secondary', route: 'postflop:m6', badge: 'BETA' },
+      // 34 approved scenarios. Honest copy: structured practice, not certification.
+      { id: 'm6',        label: 'Module 6 · River Betting IP', hint: '34 bettor-side river scenarios · Limited Beta', icon: '🗡️', kind: 'secondary', route: 'postflop:m6', badge: 'BETA' },
       // v4.4.3: Daily Challenge — 5 deterministic hands per day, streak + heatmap.
       { id: 'daily',     label: 'Daily Challenge', hint: '5 hands · new every day · keep the streak', icon: '📅', kind: 'secondary', route: 'postflop:daily', badge: 'NEW' },
       // v4.4.5 G2: Boss Exams + Revenge Hands.

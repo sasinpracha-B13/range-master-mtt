@@ -1,7 +1,7 @@
 {
     "schemaVersion":  "1.0.0",
-    "generatedAt":  "2026-07-21",
-    "description":  "v4.6.1 - M4 Arrival-Legitimacy rework. Total 542 scenarios: 251 M1 + 49 M2 + 85 M3 + 92 M4 (turn defense OOP; 31 rows re-authored under the locked BB-vs-BTN arrival baseline: 17 leg-(a) hero swaps incl. the V1 AhJh pilot, 1 leg-(b), 7 leg-(c), the #18 content re-derive, and the 4-row BOARD-CHANGED slowplay family incl. the quads recognition row) + 33 M5 + 32 M6. Remaining 40 M4 overlap rows partition-fixed mechanically (exact-partition corpus standard, 54 instances -\u003e 39 bad / 15 critical after 4 nutted-tag retags per the within-category principle). Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
+    "generatedAt":  "2026-07-22",
+    "description":  "v4.6.2 - Migration A solver outcomes. Total 544 scenarios: 251 M1 + 49 M2 + 85 M3 + 92 M4 + 33 M5 + 34 M6. M4: 5 solver-driven reworks under the locked arrival baseline extended by the V3 AQo non-member closure (2 leg-(a) hero swaps AhQc-\u003eKhQd/QhJh, 1 leg-(b) suit fix Tc9c-\u003eTd9d, 2 EV-REDERIVE rows 9c9d/8d8c re-authored best=call per the EV-lens ruling; their mixed-whitelist entries withdrawn). M6: +2 suit-selection pair rows on Ts6s2d-3c-Ad (QsJs check_back vs QhJh overbet, consensus_gto + solverRunRef). 14 whitelist rows annotated with Phase-2 solver evidence status. Spot context: BTN open 2.5x vs BB call, 100BB SRP, NLH MTT chipEV.",
     "scenarios":  [
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_AhKd5c_rangeadv_001",
@@ -30173,10 +30173,12 @@
                                               "check_strategy"
                                           ],
                           "difficulty":  4,
-                          "sourceConfidence":  "expert_judgment",
+                          "sourceConfidence":  "consensus_gto",
                           "auditStatus":  "approved",
                           "recommendedAction":  "mixed",
-                          "actionReason":  "equity_realization"
+                          "actionReason":  "equity_realization",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Jh8h4h, line flop X-R2.1 (exact 32 percent node)",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: mix CONFIRMED at the exact corpus node - Bet2.1 68.2 / Check 31.8. First solver-verified indifference in the corpus; WL entry stands."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_flop_Jh8h4h_m2_action_9d9c_v412",
@@ -39204,8 +39206,8 @@
                                               "short":  "Naked T-high flush draw on K-high monotone -- call to realize cheap FD equity.",
                                               "rangeContext":  "BTN c-bets monotone polarized (made flushes + air); Th gives 9 outs to a flush but ranks behind A/K/Q-high flushes.",
                                               "defenseLogic":  "Pure FD with no pair and no blocker; calling realizes 9 FD outs at minimum cost.",
-                                              "handLogic":  "Th9d has 1-card flush draw to T-high flush + 9 doesnt pair the board.",
-                                              "sizingLogic":  "Calling captures FD equity cheaply; raising as semi-bluff bloats vs nut-flush combos that wont fold.",
+                                              "handLogic":  "Th9d has 1-card flush draw to T-high flush + 9 doesn\u0027t pair the board.",
+                                              "sizingLogic":  "Calling captures FD equity cheaply; raising as semi-bluff bloats vs nut-flush combos that won\u0027t fold.",
                                               "commonMistake":  "Folding mid-FD on monotone over-folds vs the air portion of villains range that pays off.",
                                               "takeaway":  "Mid-strength flush draw on monotone without overcards or blocker = call (raise rare)."
                                           },
@@ -42055,8 +42057,8 @@
                           "reviewStatus":  "v4.3.0A_strategic_reviewed"
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_Tc9c_v430",
-                          "version":  "v4.3.0B",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ks8s3d_2s_m4_action_Td9d_v462",
+                          "version":  "v4.6.2",
                           "game":  "NLH_MTT",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
@@ -42113,19 +42115,19 @@
                                         "pairStatusChange":  "no_change"
                                     },
                           "heroHand":  [
-                                           "Tc",
-                                           "9c"
+                                           "Td",
+                                           "9d"
                                        ],
                           "handClass":  "no_pair_no_draw",
                           "heroHandRole":  "give_up",
                           "drawCategory":  "none",
                           "showdownValue":  "none",
-                          "blockerNote":  null,
+                          "blockerNote":  "Td 9d holds no spade: zero removal of the completed flushes and zero blocker credit for continuing. The diamonds that justified the flop peel are dead cards on this turn -- two more diamonds cannot arrive by the river. The fold is removal-blind and price-driven.",
                           "recommendedAction":  "fold",
                           "actionReason":  "board_change_fold",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Tc 9c?",
+                                           "prompt":  "Flop Ks 8s 3d; turn 2s. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Td 9d?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -42140,22 +42142,22 @@
 
                                                         ],
                                          "bad":  [
-                                                     "mixed",
                                                      "check_raise_small",
-                                                     "check_raise_big"
+                                                     "check_raise_big",
+                                                     "mixed"
                                                  ],
                                          "critical":  [
                                                           "call"
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "No spade no draw on flush-complete turn -- fold; zero flush equity and dominated overcards.",
-                                              "turnLogic":  "2s completes flush; without a spade, hero has no flush threat and faces a polarized barrel range (flushes + air-with-no-spade).",
-                                              "rangeContext":  "BB flop call with T9 on K-high two-tone was already thin (overcards + backdoor potential only). Turn 2s eliminates the runner-runner equity and adds a flush hero cannot make.",
-                                              "handLogic":  "Tc9c has no spade, no pair, no current draw. Any straight would require Q+J on the runout (5-card 9-T-J-Q-K needs both Q and J), but only one card remains, so no straight is achievable. Pure give-up.",
-                                              "sizingLogic":  "Folding closes action; calling on flush turn with zero flush equity is uniquely worst.",
-                                              "commonMistake":  "Continuing turn with no spade on flush-completing turns is the prototypical leak.",
-                                              "takeaway":  "No spade + no draw on flush turn = fold."
+                                              "short":  "The peel was built on a backdoor that just died while the board grew a flush -- no pair, no draw, no reason to stay.",
+                                              "turnLogic":  "The 2s completes every flopped spade draw and kills the diamond runout in one card. Villain barrels flushes, Kx that no longer fears much, and blocker bluffs holding one spade; hero holds none of the above and beats none of the value.",
+                                              "rangeContext":  "Float hands live and die by their forward cards. The flop continue was real -- the solver plays these diamonds almost pure -- but a float whose suit dies on the turn has no second plan, and the range-level answer is to release as a bloc.",
+                                              "handLogic":  "Ten-high with no pair, no draw, and no spade beats only the barrels that were already giving up. Every value combo continues comfortably against a call, and the one-card straights the ranks pretend to keep need two more cards that will not come.",
+                                              "sizingLogic":  "Folding is the entire decision. Calling with zero showdown value and dead suits is the enumerated punt -- money in with no way to win the pot at showdown. Raising either size bluffs into the region the turn card just completed.",
+                                              "commonMistake":  "Continuing because the flop call was correct: the same maths that priced the peel prices the release when the card that justified it cannot arrive.",
+                                              "takeaway":  "Backdoor floats are one-street plans: when the turn kills the suit and arms the board, the correct fold is the same discipline that made the correct call."
                                           },
                           "conceptTags":  [
                                               "turn_board_change",
@@ -42164,7 +42166,10 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0A_strategic_reviewed"
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "arrivalDerivation":  "Preflop: T9s is a chart flat -- a member. Flop Ks 8s 3d vs the small c-bet: Td9d continues at 99.9% in the solver (raise 60.3 / call 39.6) -- the diamond backdoor carries the whole continue, and the club twin of these ranks folds 99.4%, which is why the club version could not stand. The continue is legitimate and priced; no raise node was missed as a pure requirement. The turn 2s is this scenario: the third spade arrives and the diamond plan dies the same moment.",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C -- flop node board Ks8s3d flop X-R2.1: Td9d raise 60.3 / call 39.6 / fold 0.1 (continue 99.9); Tc9c folds 99.4 (the replaced arrival)",
+                          "solverNote":  "Suit-binary finding (Phase-2/Q2 sweep): the diamond backdoor is the entire flop continue; the club version of the same ranks is a pure fold. The 2s turn deletes the diamond plan -- the fold lesson is unchanged."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_QsTs6d_Jc_m4_action_9c8h_v430",
@@ -43781,8 +43786,8 @@
                           "reviewStatus":  "v4.3.0C_strategic_reviewed"
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_action_9c9d_v430C",
-                          "version":  "v4.3.0C",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_action_9c9d_v462",
+                          "version":  "v4.6.2",
                           "game":  "NLH_MTT",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
@@ -43843,15 +43848,15 @@
                                            "9d"
                                        ],
                           "handClass":  "underpair",
-                          "heroHandRole":  "marginal_made_hand",
+                          "heroHandRole":  "bluff_catcher",
                           "drawCategory":  "none",
-                          "showdownValue":  "low",
-                          "blockerNote":  null,
-                          "recommendedAction":  "mixed",
-                          "actionReason":  "mixed_indifference_turn",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Two nines trim the 98 and 97 gutter-airs villain keeps barreling -- a small pro-catch removal, dwarfed by the sheer width of the air region that funds the call. No suit story: four suits on board mean no flush is possible by the river.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Ac 7d 2s; turn 4h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 9c 9d?",
+                                           "prompt":  "Flop Ac 7d 2s; turn 4h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with 9c 9d?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -43861,35 +43866,39 @@
                                                        ]
                                        },
                           "answer":  {
-                                         "best":  "mixed",
+                                         "best":  "call",
                                          "acceptable":  [
-                                                            "call",
-                                                            "fold"
+
                                                         ],
                                          "bad":  [
-                                                     "check_raise_small"
+                                                     "fold",
+                                                     "check_raise_small",
+                                                     "mixed"
                                                  ],
                                          "critical":  [
                                                           "check_raise_big"
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "Pocket 9s as underpair on A-high brick turn -- mixed call/fold (genuine indifference vs bluff frequency).",
-                                              "turnLogic":  "4h does not change ranges meaningfully: hero remains underpair to A and 7. Vs villain barrel range (Ax value + air), pocket 9s is bluff catcher BUT below the threshold for many sizing/villain combos.",
-                                              "rangeContext":  "BB flop call with 99 vs BTN small c-bet on A-7-2 was bluff-catch territory. Turn 4 brick keeps the spot exactly the same -- a marginal pair vs a polarized barrel.",
-                                              "handLogic":  "99 has 5 outs to set + beats villain air. Calling captures bluffs; folding avoids paying off Ax. Frequency depends on villain bluff %.",
-                                              "sizingLogic":  "Pure call vs over-bluffy villain; pure fold vs nitty villain. Solver mixes ~50/50 vs balanced barrel range.",
-                                              "commonMistake":  "Marking this as critical-fold or critical-call over-confident; it is a true mixed spot.",
-                                              "takeaway":  "Underpair on brick turn vs balanced range = mixed call/fold."
+                                              "short":  "Pocket 9s under the ace: not a coin-flip. The barrel range is too air-heavy for the fold to be close -- the call is worth nearly two big blinds.",
+                                              "turnLogic":  "The 4h completes nothing and shifts no range. Villain range-bet the A-high flop for a third pot -- every broadway float, every gutter, every give-up came along -- and the brick barrel still carries that whole air share. Nines sit above all of it and below only the aces.",
+                                              "rangeContext":  "A-high flops let the opener c-bet near range, and that is exactly why the barrel proves so little: too many missed hands must keep firing. The solver prices the consequence -- calling earns +1.87bb where folding earns zero. That gap is ten times the indifference threshold: this spot is not a mix, and teaching it as one taught a leak.",
+                                              "handLogic":  "The call beats every unpaired barrel, the smaller pockets, and the gutters that missed; it loses to Ax and the rare sets. The winning region is wide because the flop bet was wide -- air density, not hand strength, decides this street, and the density is decisive.",
+                                              "sizingLogic":  "Calling is the whole line. Folding surrenders a clear +1.87bb -- an over-fold leak, not a defensible option. The small raise burns about a blind and a half turning a catcher into a bluff, and the big raise is the raise-into-crush punt: only the aces continue, and they never fold.",
+                                              "commonMistake":  "Labelling every underpair-below-the-ace a mix: indifference is a numeric claim, and here the numbers say the air share pays the call outright. When the flop was a range-bet, the brick-turn barrel is cheap to catch.",
+                                              "takeaway":  "Indifference must be earned by the numbers, not assumed from the hand class -- against range-bet-then-barrel lines, pockets under the ace are clear calls."
                                           },
                           "conceptTags":  [
-                                              "turn_pot_odds",
                                               "turn_bluff_catcher",
-                                              "second_barrel_defense"
+                                              "second_barrel_defense",
+                                              "turn_pot_odds"
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0C_strategic_reviewed"
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "arrivalDerivation":  "Preflop: 99 is a chart flat -- a member. Flop Ac 7d 2s vs the small c-bet: the underpair calls as the standard priced peel on a range-bet flop; folding is far too tight and no raise node exists for a pocket pair under the ace. The turn 4h barrel is this scenario. The hero and arrival are unchanged from the original row -- this rework re-derives the ANSWER layer only, per the EV-lens ruling.",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C -- board Ac7d2s4h flop X-R2.1-C turn X-R7.2, stratab strategy_ev",
+                          "solverNote":  "EV-lens (owner rule 2026-07-21): call +1.87bb vs fold 0; raise -1.2 to -1.5bb; strategy pure call 100. The authored mixed-indifference claim is falsified at 10x the 0.15bb threshold. WL entry withdrawn by the v4.6.2 migration; XP forward-only."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ac7d2s_4h_m4_action_KdJc_v430C",
@@ -44004,8 +44013,8 @@
                           "reviewStatus":  "v4.3.0C_strategic_reviewed"
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_8d6c3s_Qh_m4_action_AhQc_v430C",
-                          "version":  "v4.3.0C",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_8d6c3s_Qh_m4_action_KhQd_v462",
+                          "version":  "v4.6.2",
                           "game":  "NLH_MTT",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
@@ -44062,19 +44071,19 @@
                                         "pairStatusChange":  "no_change"
                                     },
                           "heroHand":  [
-                                           "Ah",
-                                           "Qc"
+                                           "Kh",
+                                           "Qd"
                                        ],
-                          "handClass":  "top_pair_top_kicker",
+                          "handClass":  "top_pair_good_kicker",
                           "heroHandRole":  "strong_value",
                           "drawCategory":  "none",
                           "showdownValue":  "high",
-                          "blockerNote":  "A-blocker reduces villain AA value combos; Qc avoids board-turn Qh collision.",
+                          "blockerNote":  "Kh Qd carries mixed removal: the K trims KQ ties and AK floats, while the Q halves the QJ and QT floats hero wants paying. The raise leans on the range shift the turn card produced, not on blockers. No suit story on this runout.",
                           "recommendedAction":  "check_raise_small",
                           "actionReason":  "value_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop 8d 6c 3s; turn Qh. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ah Qc?",
+                                           "prompt":  "Flop 8d 6c 3s; turn Qh. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Kh Qd?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -44090,21 +44099,21 @@
                                                         ],
                                          "bad":  [
                                                      "fold",
-                                                     "mixed",
-                                                     "check_raise_big"
+                                                     "check_raise_big",
+                                                     "mixed"
                                                  ],
                                          "critical":  [
 
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "TPTK on BB-favored Q overcard turn -- check-raise small for value.",
-                                              "turnLogic":  "Qh on 8-6-3 favors BB: BTN with Q-high range typically 3-bets preflop (AQ/KQ/QQ), so BTN barrel range is short on Qx value. BB call range has more Qx (suited Qx, KQs, AQs sometimes flat). Hero AhQh = TPTK and BB is value-favored on this turn.",
-                                              "rangeContext":  "BB flop call with AhQh on 8-6-3 with backdoor heart was natural. Turn Q makes TPTK; range advantage swings to BB.",
-                                              "handLogic":  "AhQh has TPTK with A kicker. Loses only to QQ (rare since BTN often 3-bets), 88/66/33 sets (rare flop call combos).",
-                                              "sizingLogic":  "Small check-raise charges weaker Qx (KQ, JQ if any), overpairs (TT-99 turning into bluff catcher), and air bluffs that fold. Big raise risks too much vs sets.",
-                                              "commonMistake":  "Slowplaying TPTK on BB-favored overcard turn surrenders value vs villain Qx call-down.",
-                                              "takeaway":  "TPTK on BB-favored overcard turn = check-raise small for value."
+                                              "short":  "The float turns top pair on the overcard the barrel range hates -- a small value raise, one kicker thinner than the AQ it replaces.",
+                                              "turnLogic":  "The Qh is the classic range-shift card: BB floats hold exactly the broadways that just paired, while villain keeps barreling 8x, gutters like 75 and 97, and overcard air. Top pair with the K kicker values all of it now.",
+                                              "rangeContext":  "Villain read the flop as his -- 8-high boards favor the opener -- and the barrel assumes that world still exists. The Q turn flipped it: hero range holds more Qx than the barreling range, and the raise cashes the flip.",
+                                              "handLogic":  "KQ beats QJ and QT floats that continue, every 8x and 7x pair, and all gutters; it loses to AQ, the rare sets, and nothing else that keeps going. The dominated-Qx pool pays the small raise at full width.",
+                                              "sizingLogic":  "Small keeps the dominated floats and pairs in while risking little against the set region; big folds the pay region out. Calling is acceptable pot control that leaves river guesswork; folding top pair on the best turn card in the deck for this range is a plain over-fold.",
+                                              "commonMistake":  "Flatting the turned top pair because the flop float felt weak -- the float was priced for exactly this card; not raising it wastes the plan.",
+                                              "takeaway":  "When the turn pairs the float, raise it: range-shift cards are value cards for the caller, and small sizing collects from every dominated continue."
                                           },
                           "conceptTags":  [
                                               "turn_check_raise_value",
@@ -44113,7 +44122,9 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0C_strategic_reviewed"
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "arrivalDerivation":  "Preflop: KQo defends the BB vs the 2.5x open -- a member (AQo is ruled OUT by the solver session: it three-bets 100%). Flop 8d 6c 3s vs the small c-bet: two live overcards continue as a standard priced float under the MDF-core standard; no raise node was missed. The turn Qh pairs hero -- this scenario.",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C -- AQo membership node: 3bet 100 / flat 0 / fold 0 (leg-(a) driver)"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_8d6c3s_Qh_m4_action_JdTd_v430C",
@@ -45233,7 +45244,8 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.6.1_strategic_reviewed",
-                          "arrivalDerivation":  "Preflop: JJ is a chart flat from the BB -- a member outside the locked 3-bet set. Flop 9s 8d 4c vs the small c-bet: the overpair calls as the clear best line; raising OOP folds out worse and bloats against better, and no check-raise node was missed. The turn node is this scenario."
+                          "arrivalDerivation":  "Preflop: JJ is a chart flat from the BB -- a member outside the locked 3-bet set. Flop 9s 8d 4c vs the small c-bet: the overpair calls as the clear best line; raising OOP folds out worse and bloats against better, and no check-raise node was missed. The turn node is this scenario.",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_9s8d4c_7h_m4_action_KdJd_v430C",
@@ -46805,7 +46817,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0C_strategic_reviewed"
+                          "reviewStatus":  "v4.3.0C_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Qs8s4d_2s_m4_action_KsQc_v430D",
@@ -47258,8 +47271,8 @@
                           "arrivalDerivation":  "Preflop: KJo defends the BB vs the 2.5x open -- a member. Flop Kd 8s 3c vs the small c-bet: top pair calls as the street best line; no check-raise node was missed. The turn node is this scenario."
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_AhQc_v430D",
-                          "version":  "v4.3.0D",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_QhJh_v462",
+                          "version":  "v4.6.2",
                           "game":  "NLH_MTT",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
@@ -47316,19 +47329,19 @@
                                         "pairStatusChange":  "flop_card_paired"
                                     },
                           "heroHand":  [
-                                           "Ah",
-                                           "Qc"
+                                           "Qh",
+                                           "Jh"
                                        ],
-                          "handClass":  "top_pair_top_kicker",
+                          "handClass":  "top_pair_good_kicker",
                           "heroHandRole":  "strong_value",
                           "drawCategory":  "none",
                           "showdownValue":  "high",
-                          "blockerNote":  "A-heart blocker reduces villain AA combos; TPTK with the absolute top kicker on Q-high paired-low turn.",
+                          "blockerNote":  "Qh Jh: the Q in hand halves the worse-Qx pool the raise targets -- a real minus priced into the small sizing -- while the J blocks QJ ties. Hearts in hand are decoration: no flush is possible by the river on this four-suit runout.",
                           "recommendedAction":  "check_raise_small",
                           "actionReason":  "value_check_raise_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with Ah Qc?",
+                                           "prompt":  "Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with Qh Jh?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -47344,21 +47357,21 @@
                                                         ],
                                          "bad":  [
                                                      "fold",
-                                                     "mixed",
-                                                     "check_raise_big"
+                                                     "check_raise_big",
+                                                     "mixed"
                                                  ],
                                          "critical":  [
 
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "TPTK + A-blocker on board-paired low turn -- check-raise small for value.",
-                                              "turnLogic":  "3h pairs the flop 3 but the second-pair is below TPTK and irrelevant to hero hand strength. Villain barrel range is Q-x-and-down value plus air; hero has TPTK with the absolute top kicker (A) plus A-heart blocker reducing AA combos. Only 33 (set), 77 (set), 7-x trips, QQ (overpair) beat hero.",
-                                              "rangeContext":  "BB flop call with AQ-offsuit on Q-7-3 was natural (TPTK). Turn 3 doubles up the second board card but does not threaten TPTK seriously.",
-                                              "handLogic":  "AhQc has TPTK with A kicker plus A-blocker reducing AA combos. Beats Q-weak-kicker, all underpairs, air, and turned trips of 3 (very rare combo for villain). Loses to 33/77/7-x trips/QQ overpair.",
-                                              "sizingLogic":  "Small check-raise charges Qx weaker kickers and turns villain bluffs into folding equity. Big raise risks too much vs the rare set/trips. Calling preserves bluffs but surrenders value.",
-                                              "commonMistake":  "Slowplaying TPTK with the absolute top kicker on a paired-low turn surrenders chips that worse Qx pays off.",
-                                              "takeaway":  "TPTK with A kicker on second-paired low turn = check-raise small for value."
+                                              "short":  "Top pair J kicker on the paired brick -- the value raise one rung below the KQ protection raise on this same board.",
+                                              "turnLogic":  "The 3 pairing changes no range: nobody barrels 3x for value. Villain keeps firing worse Qx, 7x, the 45 and 64 gutters, and overcard air -- a continue region QJ beats almost entirely.",
+                                              "rangeContext":  "Static paired turns keep the flop map alive: BB top pair remains top of the practical ranges, and the barrel range is wide enough that thin value prints. This board also hosts the KQ raise -- the kicker ladder, not the board, decides the frame.",
+                                              "handLogic":  "QJ beats QT, Q9s, all 7x and every gutter; it loses to KQ, AQ-class hands villain occasionally holds, and the rare trips. Against a small raise the worse region continues wide enough to fund it.",
+                                              "sizingLogic":  "Small is the price the dominated hands will pay; big folds them and isolates against the top of the range. Calling is acceptable pot control; folding top pair to a single barrel on a blank pairing is a plain over-fold.",
+                                              "commonMistake":  "Treating the J kicker as a calling hand on a board where the barrel range is stuffed with worse Qx and air -- the kicker is good enough here, and the board is static enough.",
+                                              "takeaway":  "On paired-brick turns, top pair good kicker raises small for value -- the pairing card that helps nobody helps the hand that was already ahead."
                                           },
                           "conceptTags":  [
                                               "turn_check_raise_value",
@@ -47367,7 +47380,9 @@
                                           ],
                           "sourceConfidence":  "consensus_gto",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "arrivalDerivation":  "Preflop: QJs is a chart flat -- a member (AQo is ruled OUT by the solver session: it three-bets 100%). Flop Qs 7d 3c vs the small c-bet: top pair with the J kicker calls as the street best line; raising is thin and no check-raise node was missed. The paired 3h turn is this scenario.",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C -- AQo membership node: 3bet 100 / flat 0 / fold 0 (leg-(a) driver)"
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ts8s4d_7c_m4_action_JsJh_v430D",
@@ -48765,7 +48780,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.0D_strategic_reviewed"
+                          "reviewStatus":  "v4.3.0D_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_TsTc4d_7h_m4_reason_AhTh_v461",
@@ -50030,7 +50046,8 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.6.1_strategic_reviewed",
-                          "arrivalDerivation":  "Preflop: JJ is a chart flat from the BB vs the 2.5x open -- a member outside the locked 3-bet set. Flop 7s 5d 3h vs the small c-bet: the overpair calls as the clear best line; raising folds out everything worse and opens a shove node OOP, and no check-raise was missed on the static low flop. The turn node is this scenario."
+                          "arrivalDerivation":  "Preflop: JJ is a chart flat from the BB vs the 2.5x open -- a member outside the locked 3-bet set. Flop 7s 5d 3h vs the small c-bet: the overpair calls as the clear best line; raising folds out everything worse and opens a shove node OOP, and no check-raise was missed on the static low flop. The turn node is this scenario.",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Qs8s4d_2s_m4_action_As8d_v432",
@@ -50930,11 +50947,12 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.2_strategic_reviewed"
+                          "reviewStatus":  "v4.3.2_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
-                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_8d8c_v432",
-                          "version":  "v4.3.2",
+                          "id":  "pf_btn_v_bb_srp_100bb_turn_Qs7d3c_3h_m4_action_8d8c_v462",
+                          "version":  "v4.6.2",
                           "game":  "NLH_MTT",
                           "module":  "pf_turn_barrel_oop_def",
                           "moduleName":  "Facing Turn Barrel OOP",
@@ -50995,15 +51013,15 @@
                                            "8c"
                                        ],
                           "handClass":  "underpair",
-                          "heroHandRole":  "marginal_made_hand",
+                          "heroHandRole":  "bluff_catcher",
                           "drawCategory":  "none",
-                          "showdownValue":  "low",
-                          "blockerNote":  "Underpair 88 below Q with no draw. Second-pair (3) on the board does not interact with hero pair.",
-                          "recommendedAction":  "mixed",
-                          "actionReason":  "mixed_indifference_turn",
+                          "showdownValue":  "decent",
+                          "blockerNote":  "Two eights sit above every seven and shade the 86 and 85 gutter-airs; removal is a footnote here -- the call rests on air-density arithmetic, not blockers. No suit story: four suits on board mean no flush is possible by the river.",
+                          "recommendedAction":  "call",
+                          "actionReason":  "bluff_catch_turn",
                           "question":  {
                                            "qtype":  "action_choice",
-                                           "prompt":  "Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB\u0027s best action with 8d 8c?",
+                                           "prompt":  "Flop Qs 7d 3c; turn 3h. BTN c-bet small flop, BB called, BTN now barrels. What is BB best action with 8d 8c?",
                                            "choices":  [
                                                            "fold",
                                                            "call",
@@ -51013,35 +51031,39 @@
                                                        ]
                                        },
                           "answer":  {
-                                         "best":  "mixed",
+                                         "best":  "call",
                                          "acceptable":  [
-                                                            "fold",
-                                                            "call"
+
                                                         ],
                                          "bad":  [
-                                                     "check_raise_small"
+                                                     "fold",
+                                                     "check_raise_small",
+                                                     "mixed"
                                                  ],
                                          "critical":  [
                                                           "check_raise_big"
                                                       ]
                                      },
                           "explanation":  {
-                                              "short":  "88 underpair on Q-high paired-low turn -- mixed: thin bluff-catch vs fold both defensible.",
-                                              "turnLogic":  "3h pairs the second board card. Villain barrel range polarizes between Qx-trips-or-FH (rare combos via 33/77) and air. Hero 88 is below Q overpair territory and dominated by Qx but ahead of all air and weaker underpairs. The mix tension: bluff-catch the polarized barrel vs accept that 88 is too weak vs the value cluster.",
-                                              "rangeContext":  "BB flop call with 88 on Q-7-3 was thin (underpair to Q with no draw). Turn 3 doubles second board card; villain range adds rare trips combos (33/77 only since flop-call kept 33 alive).",
-                                              "handLogic":  "8d8c has underpair to Q, no draw, no relevant blocker. Beats all air bluffs and any 7x-or-down. Loses to all Qx, all overpairs, all turned trip combos.",
-                                              "sizingLogic":  "Mixed reflects opponent-and-sizing tension. Small barrel sizing tips toward call (more bluff combos in barrel range); larger sizing tips toward fold (polar value-only). Population tendency to over-bluff small sizings tips toward call slightly.",
-                                              "commonMistake":  "Hard-coding either always-fold OR always-call ignores the genuine close decision -- this is a real mix spot.",
-                                              "takeaway":  "Underpair on Q-high board-pair-low turn = mixed (sizing-and-opponent dependent thin bluff-catch)."
+                                              "short":  "Eights above the sevens on a turn that pairs nobody: the barrel range gained nothing, so the catch got MORE clear, not less -- worth +2.63bb.",
+                                              "turnLogic":  "The 3h is the emptiest card in the deck: no draw completes, and no one barrels 3x for value -- the board paired UNDER both ranges. Villain fires the same Qx he already had plus the same air that missed the flop; nothing about the range improved.",
+                                              "rangeContext":  "The deceptive difficulty -- and why this row is a five -- is that a pairing card FEELS like it should reopen the fold question. It does not: indifference would require villain value to thicken, and a card outside both ranges thickens nothing. The solver prices the call at +2.63bb over folding -- even further from a mix than the ace-board version of this lesson.",
+                                              "handLogic":  "Eights beat all six gutter families, every missed broadway, and the sevens; they lose to Qx, 77, 33 and the odd overpair above. The pay region is the air that must keep bluffing on a static runout -- and it is enormous.",
+                                              "sizingLogic":  "Calling is the whole line: +2.63bb versus zero is a value call, not a coin flip. Folding is the over-fold leak the old label licensed. The small raise loses about two-thirds of a blind repping nothing; the big raise isolates against exactly Qx-plus -- the raise-into-crush punt.",
+                                              "commonMistake":  "Re-litigating the hand every time the board pairs: pairing cards only matter when a range holds them. Here neither does -- the correct read is that nothing changed, so the profitable call stands.",
+                                              "takeaway":  "A board pairing outside both ranges changes nothing: the catch that was right on the flop map stays right -- and the numbers say it was never close to a mix."
                                           },
                           "conceptTags":  [
                                               "turn_bluff_catcher",
-                                              "turn_pot_odds",
-                                              "second_barrel_defense"
+                                              "second_barrel_defense",
+                                              "turn_pot_odds"
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.3.2_strategic_reviewed"
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "arrivalDerivation":  "Preflop: 88 is a chart flat -- a member. Flop Qs 7d 3c vs the small c-bet: the pocket pair above the 7 calls as the standard priced peel; no raise node exists for it. The turn 3h barrel is this scenario. Hero and arrival unchanged from the original row -- the rework re-derives the ANSWER layer only, per the EV-lens ruling.",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb symmetric, 2026-07-21, preflop F-F-F-F-F-R2.5-F-C -- board Qs7d3c3h flop X-R2.1-C turn X-R7.2, stratab strategy_ev",
+                          "solverNote":  "EV-lens (owner rule 2026-07-21): call +2.63bb vs fold 0; raise -0.24 to -0.68bb; strategy pure call 100. Mixed-indifference claim falsified at 10x threshold. WL entry withdrawn by the v4.6.2 migration; XP forward-only."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_turn_Ah9d4d_7h_m4_action_JcTd_v432",
@@ -52092,7 +52114,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.4.0A_strategic_reviewed"
+                          "reviewStatus":  "v4.4.0A_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Js8d5c_Ac_m5_action_JdJh_v440",
@@ -54253,7 +54276,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.4.0A_strategic_reviewed"
+                          "reviewStatus":  "v4.4.0A_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Ac7d4s_2c_m5_action_8d8c_v441a",
@@ -55078,7 +55102,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.4.1A_strategic_reviewed"
+                          "reviewStatus":  "v4.4.1A_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Kh9h5c_2h_m5_reason_JhTh_v441a",
@@ -55331,7 +55356,8 @@
                                           ],
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
-                          "reviewStatus":  "v4.4.1C_strategic_reviewed"
+                          "reviewStatus":  "v4.4.1C_strategic_reviewed",
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Kh8d3s_2d_m6_action_Kc8c_v451",
@@ -56270,7 +56296,8 @@
                           "mixedWhitelistChoices":  [
                                                         "bet_small",
                                                         "check_back"
-                                                    ]
+                                                    ],
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: direction half-confirmed - solver bets 100 at the library single size (75 percent); the bet_small size claim is unverifiable-at-line (library sizing). No rework per owner ruling (direction-only annotation); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_KhTh4c_2s_m6_action_Ah5s_v451",
@@ -57681,7 +57708,8 @@
                           "mixedWhitelistChoices":  [
                                                         "bet_small",
                                                         "check_back"
-                                                    ]
+                                                    ],
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_8d5c2h_Qh_m6_action_8s8h_v451",
@@ -58037,7 +58065,8 @@
                           "mixedWhitelistChoices":  [
                                                         "bet_big",
                                                         "bet_small"
-                                                    ]
+                                                    ],
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: unverifiable-at-line (library sizing) - the corpus line cannot be priced in the MTT General library tree. PASS-conditional on combo logic per owner ruling (no contagion assumption); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Th7d2s_2h_m6_action_TsTc_v451",
@@ -58160,7 +58189,8 @@
                           "mixedWhitelistChoices":  [
                                                         "overbet",
                                                         "bet_big"
-                                                    ]
+                                                    ],
+                          "solverNote":  "Phase-2 WL sweep 2026-07-21: direction half-confirmed - solver bets 100 at the library single size (75 percent); the overbet size claim is unverifiable-at-line (library sizing). No rework per owner ruling (direction-only annotation); first in queue when a pricing-capable line exists."
                       },
                       {
                           "id":  "pf_btn_v_bb_srp_100bb_river_Jh6h2c_8h_m6_action_AhKh_v452a",
@@ -59100,6 +59130,248 @@
                           "sourceConfidence":  "expert_judgment",
                           "auditStatus":  "approved",
                           "reviewStatus":  "v4.5.2A_strategic_reviewed"
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ts6s2d_Ad_m6_action_QsJs_v462",
+                          "version":  "v4.6.2",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_value_ip",
+                          "moduleName":  "River Betting IP",
+                          "street":  "river",
+                          "schemaVersion":  "1.4.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BB checks river",
+                                       "street":  "river",
+                                       "heroPosition":  "BTN",
+                                       "villainPosition":  "BB",
+                                       "heroRole":  "river_bettor_ip",
+                                       "villainRole":  "river_check_caller_oop"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ts",
+                                                          "6s",
+                                                          "2d"
+                                                      ],
+                                        "turnCard":  "3c",
+                                        "riverCard":  "Ad",
+                                        "cards":  [
+                                                      "Ts",
+                                                      "6s",
+                                                      "2d",
+                                                      "3c",
+                                                      "Ad"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "overcard",
+                                        "boardChange":  "range_shift_btn",
+                                        "runoutTexture":  "straight_possible",
+                                        "riverDrawCompletion":  "none"
+                                    },
+                          "heroHand":  [
+                                           "Qs",
+                                           "Js"
+                                       ],
+                          "handClass":  "queen_high",
+                          "heroHandRole":  "air_give_up",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Qs Js removes two of the busted spade draws that populate the BB folding region -- the exact hands an overbet needs villain to still hold. Blocking the folds kills the bluff; the showdown share of checking beats the priced-out jam.",
+                          "recommendedAction":  "check_back",
+                          "actionReason":  "give_up_no_equity_river",
+                          "verdictBasis":  "clear_direction",
+                          "stakeBasis":  "overbet",
+                          "heroRiverSizing":  "none",
+                          "betPurpose":  "give_up",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ts 6s 2d; turn 3c; river Ad. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BB now checks the river. What is BTN best action with Qs Js?",
+                                           "choices":  [
+                                                           "check_back",
+                                                           "bet_small",
+                                                           "bet_big",
+                                                           "overbet",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "check_back",
+                                         "acceptable":  [
+
+                                                        ],
+                                         "bad":  [
+                                                     "bet_small",
+                                                     "bet_big",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+                                                          "overbet"
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "The busted flush draw looks like the natural bluff -- and is the single worst one: your spades sit in the folding half of the villain range.",
+                                              "riverLogic":  "The Ad closes the board with every draw dead. The BB check range is stuffed with exactly the hands that missed: spade draws that peeled twice and broadways that never paired. An overbet folds those out -- but Qs Js holds two of the spades that make up that folding region, so the bluff removes its own customers. The solver jams this combo 1.4 percent and checks 98.6.",
+                                              "rangeContext":  "Bluff selection on blocked rivers is a subtraction exercise: every fold you need is a combo villain must be able to hold. The no-spade QJ -- the twin row on this exact node -- jams at full frequency because it leaves the folding region intact. Same ranks, opposite verdict: the suits are the entire decision.",
+                                              "handLogic":  "Queen-high never wins at showdown against a range that called two streets, so checking wins only the pots where BB gave up too -- a small but real share. Jamming wins nothing extra: the hands that fold are the ones these spades block, and the hands that call all beat queen-high.",
+                                              "sizingLogic":  "No size fixes a blocked bluff: small gets called by every pair, big folds the same nothing, and the overbet is the expensive version of the mistake -- the punt tier here. Check, collect the give-up pots, and leave the bluffing to the twin combo with the right suits.",
+                                              "commonMistake":  "Bluffing BECAUSE the draw missed: a busted draw is not a bluffing licence -- it is a removal profile, and this one points the wrong way.",
+                                              "takeaway":  "Pick bluffs by what they unblock, not by what they missed: the busted-spade QJ checks while its no-spade twin jams -- suits, not ranks, decide."
+                                          },
+                          "conceptTags":  [
+                                              "give_up_discipline",
+                                              "unblock_fold_region",
+                                              "bluff_candidate_selection"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Ts6s2d3cAd, line flop X-R7-C turn X-R21.9-C river X (library sizes; canonical 33/50-66 unpriceable on this texture)",
+                          "solverNote":  "P3 pair, row 1 of 2 (suit-selection lesson; cross-ref the QhJh row on this same node). Solver at library sizes: QsJs overbet-jam 1.4 / check 98.6 -- the busted spades BLOCK the folded-FD region the bluff needs. Direction is combo logic and sizing-robust (owner ruling 2026-07-21); stakeBasis = designated temptation (the jam this combo must not make)."
+                      },
+                      {
+                          "id":  "pf_btn_v_bb_srp_100bb_river_Ts6s2d_Ad_m6_action_QhJh_v462",
+                          "version":  "v4.6.2",
+                          "game":  "NLH_MTT",
+                          "module":  "pf_river_value_ip",
+                          "moduleName":  "River Betting IP",
+                          "street":  "river",
+                          "schemaVersion":  "1.4.0",
+                          "actionHistory":  [
+
+                                            ],
+                          "scoring":  {
+                                          "best":  1,
+                                          "acceptable":  0.5,
+                                          "bad":  0,
+                                          "critical":  0
+                                      },
+                          "difficulty":  4,
+                          "spot":  {
+                                       "format":  "NLH_MTT",
+                                       "stackDepth":  "100BB",
+                                       "potType":  "SRP",
+                                       "preflopAction":  "BTN open 2.5x, BB call",
+                                       "flopAction":  "BTN cbet small (~33%), BB call",
+                                       "turnAction":  "BTN barrel (~50-66%), BB call",
+                                       "riverAction":  "BB checks river",
+                                       "street":  "river",
+                                       "heroPosition":  "BTN",
+                                       "villainPosition":  "BB",
+                                       "heroRole":  "river_bettor_ip",
+                                       "villainRole":  "river_check_caller_oop"
+                                   },
+                          "board":  {
+                                        "flopCards":  [
+                                                          "Ts",
+                                                          "6s",
+                                                          "2d"
+                                                      ],
+                                        "turnCard":  "3c",
+                                        "riverCard":  "Ad",
+                                        "cards":  [
+                                                      "Ts",
+                                                      "6s",
+                                                      "2d",
+                                                      "3c",
+                                                      "Ad"
+                                                  ],
+                                        "boardKind":  "A_high",
+                                        "suitTextureFlop":  "two_tone",
+                                        "suitTextureTurn":  "two_tone",
+                                        "suitTextureRiver":  "two_tone",
+                                        "textureTags":  [
+                                                            "wet",
+                                                            "semi_connected"
+                                                        ],
+                                        "highCardClass":  "A_high",
+                                        "riverCategory":  "overcard",
+                                        "boardChange":  "range_shift_btn",
+                                        "runoutTexture":  "straight_possible",
+                                        "riverDrawCompletion":  "none"
+                                    },
+                          "heroHand":  [
+                                           "Qh",
+                                           "Jh"
+                                       ],
+                          "handClass":  "queen_high",
+                          "heroHandRole":  "air_bluff_candidate",
+                          "drawCategory":  "none",
+                          "showdownValue":  "none",
+                          "blockerNote":  "Qh Jh holds no spade: the busted-FD region of the BB range keeps all its combos, and every one of them folds to the jam. Zero removal of the fold region -- the ideal bluff profile on this runout.",
+                          "recommendedAction":  "overbet",
+                          "actionReason":  "unblock_fold_region_river",
+                          "verdictBasis":  "clear_direction",
+                          "stakeBasis":  "overbet",
+                          "heroRiverSizing":  "overbet",
+                          "betPurpose":  "bluff",
+                          "question":  {
+                                           "qtype":  "action_choice",
+                                           "prompt":  "Flop Ts 6s 2d; turn 3c; river Ad. BTN c-bet flop, BB called; BTN barrelled turn, BB called; BB now checks the river. What is BTN best action with Qh Jh?",
+                                           "choices":  [
+                                                           "check_back",
+                                                           "bet_small",
+                                                           "bet_big",
+                                                           "overbet",
+                                                           "mixed"
+                                                       ]
+                                       },
+                          "answer":  {
+                                         "best":  "overbet",
+                                         "acceptable":  [
+                                                            "bet_big"
+                                                        ],
+                                         "bad":  [
+                                                     "check_back",
+                                                     "bet_small",
+                                                     "mixed"
+                                                 ],
+                                         "critical":  [
+
+                                                      ]
+                                     },
+                          "explanation":  {
+                                              "short":  "Same ranks, no spade: this queen-high holds the perfect removal profile, and the solver turns it into a full-frequency overbet bluff.",
+                                              "riverLogic":  "The Ad river lets BTN rep the ace after barrelling twice, and the BB check range is dense with busted spades and unpaired broadways that cannot continue. Qh Jh blocks none of that folding region -- every fold the jam needs remains in the villain range -- so the overbet prints at full frequency in the solver.",
+                                              "rangeContext":  "This node runs a strict suit test: the spade version of these exact ranks checks back 98.6 percent -- the twin row -- because it blocks the folds. Unblocked, the same queen-high becomes the range bluff of choice. Nothing about hand strength changed; only the removal did.",
+                                              "handLogic":  "Queen-high has zero showdown value against two streets of calls, which makes it a perfect bluff candidate: no value is wasted by jamming, the A-high story is credible from the barrel line, and the fold-out region -- pairs under pressure plus every busted draw -- stays fully populated.",
+                                              "sizingLogic":  "The overbet is the point: maximum pressure on a capped check range that just watched the scare card land. The big bet is the acceptable smaller version; the small bet invites hero-calls, and checking back surrenders a bluff the solver plays at full frequency -- a plain leak with a hand that can never win otherwise.",
+                                              "commonMistake":  "Checking the twin of a good bluff: after learning the spade combo checks, over-applying the lesson -- the discipline is per-suit, not per-rank.",
+                                              "takeaway":  "When the scare card lands and your suits unblock the folds, air with the right removal jams -- selection by suit is the whole edge."
+                                          },
+                          "conceptTags":  [
+                                              "unblock_fold_region",
+                                              "bluff_candidate_selection",
+                                              "sizing_polarity"
+                                          ],
+                          "sourceConfidence":  "consensus_gto",
+                          "auditStatus":  "approved",
+                          "reviewStatus":  "v4.6.2_strategic_reviewed",
+                          "solverRunRef":  "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Ts6s2d3cAd, line flop X-R7-C turn X-R21.9-C river X (library sizes; canonical 33/50-66 unpriceable on this texture)",
+                          "solverNote":  "P3 pair, row 2 of 2 (suit-selection lesson; cross-ref the QsJs row on this same node). Solver at library sizes: no-spade QJ overbet-jams 99.7-100 (QhJh 100 / QdJd 99.7 / QcJc 100) while QsJs checks 98.6. Holding no spade leaves the BB folded-FD region fully intact. Direction is combo logic and sizing-robust (owner ruling 2026-07-21); stakeBasis = best-line sizing."
                       }
                   ]
 }

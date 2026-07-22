@@ -1,22 +1,34 @@
 {
-  "description": "M6 solver_required parking lot (G4 schema ruling): spots rejected during v4.5.1 seed design because the verdict hinges on an exact ratio that cannot be derived from visible combos. HARD-BLOCKED from production until a real solver run exists (would then carry sourceConfidence=consensus_gto + solverRunRef).",
+  "description": "M6 solver_required parking lot (G4 schema ruling): spots rejected during v4.5.1 seed design because the verdict hinges on an exact ratio that cannot be derived from visible combos. HARD-BLOCKED from production until a real solver run exists (would then carry sourceConfidence=consensus_gto + solverRunRef). v4.6.2 status: P3 (the QsJs scare-card spot) PROMOTED as the two-row suit-selection pair (river_Ts6s2d_Ad QsJs/QhJh _v462); P1 and P2 remain parked as dead-by-tree-shape. Promotion protocol (audit plan, owner-banked 2026-07-22): the solver evidence line must MATCH the module's spot script before any promotion enters the corpus.",
   "seedVersion": "v4.5.1",
-  "count": 3,
+  "count": 2,
   "spots": [
     {
       "sketch": "KQ top pair K-kicker on Kh 7c 2d / 9s / 4h, thin-value bet vs check",
       "whySolverRequired": "The turn 9 promotes K9 (a real BB defend) to two pair while KJ/KT remain the dominated callers; the verdict flips on the exact ratio of promoted-K9-that-check-calls vs dominated-Kx-that-calls, and no blocker or line argument settles it qualitatively.",
-      "rejectedFrom": "Category B draft 2"
+      "rejectedFrom": "Category B draft 2",
+      "status": "parked_dead_by_tree_shape",
+      "parkedNote": "Solver session 2026-07-21 (owner ruling): KQ pure-barrels the 9s turn, so the thin-value-vs-check premise never materializes on the module script line; in the barrel line the river tree is check-or-jam-167 only and KQ checks 94.2-99.8 percent. Dead by tree-shape.",
+      "solverRunRef": "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Kh7c2d9s4h, lines X-R2.1-C / X-R17.9-C / X"
     },
     {
       "sketch": "A-high with meaningful showdown value on low, draw-light runouts, bluff vs check",
       "whySolverRequired": "When villain's check-call range keeps enough unpaired floats, ace-high's showdown weight is nontrivial and bluff-vs-check becomes a pure frequency split; unlike the shipped C rows (zero-SDV heroes) no dominance argument exists.",
-      "rejectedFrom": "Category C screening rule"
-    },
+      "rejectedFrom": "Category C screening rule",
+      "status": "parked_dead_by_tree_shape",
+      "parkedNote": "RE-PARKED 2026-07-22 (A2 gate ruling) after a provisional promotion: both check-100 reads came from lines where the turn CHECKED THROUGH (X-X) -- not the module script's barrel line. At the canonical barrel-line river (verified on the Qs7d3c-3h-2s node) the A-high-no-pair family (AK included) barely arrives at equilibrium: the solver rarely barrels the turn with A-high-with-SDV, so the M6 script structurally under-delivers this hero to the river. Dead by tree-shape, P1's class. First application of the promotion protocol (evidence line must match module script).",
+      "solverRunRefs": [
+        "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board 9c6d2s4hJd, line R7-C / X-X / X: AQo Check 100 all 12 combos",
+        "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-21, board Kc7s2d8d3h, line R2.1-C / X-X / X: AQo Check 100 all 12 combos",
+        "GTO Wizard MTTGeneral_8m ChipEV 100bb, 2026-07-22, board Qs7d3c3h2s, line X-R2.1-C / X-R7.2-C / X: BTN river Bet18.8 54.1 / Check 45.9; A-high-no-pair family arrival ~0 (AKo cell empty; AQo = TP-Q bets 100)"
+      ]
+    }
+  ],
+  "promoted": [
     {
       "sketch": "Scare-card overbet bluff on Ts 6s 2d / 3c / Ad with busted spade QsJs",
-      "whySolverRequired": "The river A simultaneously improves villain's A-float region and unlocks hero's AK/AQ rep; whether the bluff prints depends on the exact density of A-high floats that peeled two streets -- a ratio question, not a combo question.",
-      "rejectedFrom": "Category C draft 3"
+      "promotedTo": "pf_btn_v_bb_srp_100bb_river_Ts6s2d_Ad_m6_action_QsJs_v462 + _QhJh_v462 (v4.6.2 suit-selection pair, consensus_gto + solverRunRef)",
+      "promotionNote": "Solver INVERTED the sketch: QsJs (busted FD) checks 98.6 (the spades block the folded-FD region) while no-spade QJ jams 99.7-100. Promoted as a two-row cross-referencing lesson; evidence-at-library-sizes disclosed in-row (T62 texture carries only the big flop/turn sizes; direction is combo logic, sizing-robust per owner ruling)."
     }
   ]
 }
